@@ -80,6 +80,24 @@ button{font-family:inherit}
 .shell-empty .lead{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:15px;color:var(--ink-2);margin-bottom:6px}
 .shell-empty p{font-size:13px;margin:0}
 
+/* ===== 表（一覧） ===== */
+.table-shell{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(20,24,32,.05),0 10px 30px rgba(20,24,32,.05);overflow:hidden;min-height:200px}
+.table-scroll{overflow-x:auto}
+table#grid{width:100%;border-collapse:separate;border-spacing:0}
+#grid thead th{text-align:left;background:#fafbfc;font-family:"Zen Kaku Gothic New",sans-serif;font-size:12px;font-weight:700;color:var(--ink-2);padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+#grid tbody td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:13.5px}
+#grid tbody tr:last-child td{border-bottom:0}
+#grid tbody tr:hover{background:#fcfcfd}
+.tbl-thumb{width:54px;height:54px;border-radius:8px;object-fit:cover;border:1px solid var(--line-2);background:#f2f3f5;display:inline-block}
+span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-size:14px}
+.cell-name{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;min-width:150px}
+.cell-date{white-space:nowrap}
+.cat-badge{font-size:11px;font-weight:700;color:var(--ink-2);background:#eef0f3;border:1px solid var(--line-2);border-radius:7px;padding:3px 8px;white-space:nowrap}
+.url-cell{display:flex;flex-direction:column;gap:3px;max-width:220px}
+.url-cell a{font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--red-strong);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.url-cell a:hover{text-decoration:underline}
+.muted{color:var(--ink-3)}
+.act-cell{display:flex;gap:6px;justify-content:flex-end}
 /* ===== モーダル共通 ===== */
 .overlay{position:fixed;inset:0;background:rgba(20,24,32,.5);display:grid;place-items:center;z-index:80;padding:18px}
 .overlay[hidden]{display:none}
@@ -150,7 +168,7 @@ button{font-family:inherit}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.6.0</span>
+        <span class="version" id="version">v0.7.0</span>
         <button class="btn btn-ghost" id="btnCols">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnCats">📂 カテゴリ管理</button>
         <button class="btn btn-ghost" id="btnStatus">📋 ステータス管理</button>
@@ -166,7 +184,7 @@ button{font-family:inherit}
 <div class="console">
   <!-- 1段目：カテゴリ系 ＋ 右側アクション -->
   <div class="frow frow-cat" id="catRow">
-    <button class="pill on"><span class="ic">📊</span>全体<span class="cnt">0</span></button>
+    <button class="pill on"><span class="ic">📊</span>全体<span class="cnt" id="cntAllCat">0</span></button>
     <button class="pill"><span class="tag-badge tb-new">NEW</span>新規<span class="cnt">0</span></button>
     <button class="pill"><span class="tag-badge tb-r">R</span>楽天あり<span class="cnt">0</span></button>
     <button class="pill"><span class="tag-badge tb-y">Y</span>ヤフショ済<span class="cnt">0</span></button>
@@ -179,7 +197,7 @@ button{font-family:inherit}
 
   <!-- 2段目：ステータス -->
   <div class="frow frow-status" id="statusRow">
-    <button class="spill on">全体<span class="cnt">0</span></button>
+    <button class="spill on">全体<span class="cnt" id="cntAllStatus">0</span></button>
     <button class="spill"><span class="num n-gray">1</span>未着手<span class="cnt">0</span></button>
     <button class="spill"><span class="num n-orange">2</span>作成中<span class="cnt">0</span></button>
     <button class="spill"><span class="num n-blue">3</span>確認待ち<span class="cnt">0</span></button>
@@ -191,9 +209,18 @@ button{font-family:inherit}
 <!-- テーブル（列はあとで） -->
 <div class="table-wrap">
   <div class="table-shell">
-    <div class="shell-empty">
-      <div class="lead">表はここに表示されます</div>
-      <p>表示する項目（列）はあとで設定します。「＋ 新規作成」で行を追加。</p>
+    <div class="table-scroll">
+      <table id="grid" style="display:none">
+        <thead><tr>
+          <th>日付</th><th>楽天画像</th><th>Yahoo画像</th><th>商品名</th>
+          <th>予想月商</th><th>カテゴリ</th><th>ヤフショURL</th><th>楽天URL</th><th></th>
+        </tr></thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+    <div class="shell-empty" id="emptyState">
+      <div class="lead">まだ商品がありません</div>
+      <p>「＋ 新規作成」から商品を登録すると、ここに一覧で表示されます。</p>
     </div>
   </div>
 </div>
@@ -205,8 +232,8 @@ button{font-family:inherit}
       <h2 id="edTitle">新規作成</h2>
       <div class="topbar-actions">
         <button class="btn btn-line" data-close="editModal">キャンセル</button>
-        <button class="btn btn-line" data-close="editModal">保存</button>
-        <button class="btn btn-red" data-close="editModal">保存して閉じる</button>
+        <button class="btn btn-line" id="btnSaveStay">保存</button>
+        <button class="btn btn-red" id="btnSaveClose">保存して閉じる</button>
       </div>
     </div>
     <div class="form-body">
@@ -214,14 +241,14 @@ button{font-family:inherit}
       <div class="form-top">
         <div class="img-col">
           <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天メイン画像</div>
-          <div class="img-box"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
+          <div class="img-box" id="imgRakuten"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
           <input type="file" accept="image/*" hidden>
           <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
         </div>
 
         <div class="img-col">
           <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahooメイン画像</div>
-          <div class="img-box"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
+          <div class="img-box" id="imgYahoo"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
           <input type="file" accept="image/*" hidden>
           <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
         </div>
@@ -279,7 +306,7 @@ button{font-family:inherit}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.6.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.7.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -296,28 +323,87 @@ button{font-family:inherit}
 <script>
 function show(id){document.getElementById(id).hidden=false;}
 function hide(id){document.getElementById(id).hidden=true;}
-document.getElementById('btnSettings').onclick=function(){show('settingsModal');};
-document.getElementById('btnLog').onclick=function(){show('logModal');};
-document.getElementById('btnCols').onclick=function(){show('colModal');};
-document.getElementById('btnCats').onclick=function(){show('catModal');};
-document.getElementById('btnStatus').onclick=function(){show('statusModal');};
-document.getElementById('btnAdd').onclick=function(){document.getElementById('edTitle').textContent='新規作成';show('editModal');};
-document.getElementById('btnAddRow').onclick=function(){document.getElementById('edTitle').textContent='新規作成';show('editModal');};
+function $(id){return document.getElementById(id);}
 
+/* ===== データ ===== */
+var STORE='yafusho_items';
+var items=[];
+try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(items));}catch(e){}}
+var editingId=null;
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escA(s){return esc(s).replace(/"/g,'&quot;');}
+
+function thumb(src){return src?'<img class="tbl-thumb" src="'+escA(src)+'" alt="">':'<span class="tbl-thumb empty">—</span>';}
+function urlCell(arr){arr=(arr||[]).filter(function(u){return u;});if(!arr.length)return '<span class="muted">—</span>';var h='';for(var i=0;i<arr.length;i++){h+='<a href="'+escA(arr[i])+'" target="_blank" rel="noopener">'+esc(arr[i])+'</a>';}return '<div class="url-cell">'+h+'</div>';}
+function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'</span>';}
+
+function render(){
+  var tb=$('gridBody');tb.innerHTML='';
+  for(var i=0;i<items.length;i++){
+    var it=items[i];
+    var tr=document.createElement('tr');
+    var sales=(it.sales!==''&&it.sales!=null)?(esc(it.sales)+' 万円'):'—';
+    tr.innerHTML=
+      '<td class="mono cell-date">'+(it.date?esc(it.date):'<span class="muted">—</span>')+'</td>'+
+      '<td>'+thumb(it.rakutenImg)+'</td>'+
+      '<td>'+thumb(it.yahooImg)+'</td>'+
+      '<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>'+
+      '<td class="mono">'+sales+'</td>'+
+      '<td>'+catBadge(it.category)+'</td>'+
+      '<td>'+urlCell(it.yahooUrls)+'</td>'+
+      '<td>'+urlCell(it.rakutenUrls)+'</td>'+
+      '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
+    tb.appendChild(tr);
+  }
+  $('grid').style.display=items.length?'':'none';
+  $('emptyState').style.display=items.length?'none':'';
+  if($('cntAllCat'))$('cntAllCat').textContent=items.length;
+  if($('cntAllStatus'))$('cntAllStatus').textContent=items.length;
+}
+
+/* ===== フォーム ===== */
+function val(id){var e=$(id);return e?e.value:'';}
+function setVal(id,v){var e=$(id);if(e)e.value=v;}
+function imgSrc(boxId){var img=$(boxId).querySelector('img');return img?img.getAttribute('src'):'';}
+function clearBox(id){$(id).innerHTML='<div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div>';}
+function fillBox(id,src){if(src){$(id).innerHTML='<img src="'+escA(src)+'" alt="">';}else{clearBox(id);}}
+function collectUrls(listId){var ins=document.querySelectorAll('#'+listId+' .url-row input');var a=[];for(var i=0;i<ins.length;i++){if(ins[i].value.trim())a.push(ins[i].value.trim());}return a;}
+function resetUrls(id,ph){$(id).innerHTML='<div class="url-row"><input type="text" placeholder="'+ph+'"><button class="url-del">×</button></div>';}
+function fillUrls(id,arr,ph){arr=(arr||[]).filter(function(u){return u;});if(!arr.length){resetUrls(id,ph);return;}var h='';for(var i=0;i<arr.length;i++){h+='<div class="url-row"><input type="text" value="'+escA(arr[i])+'" placeholder="'+ph+'"><button class="url-del">×</button></div>';}$(id).innerHTML=h;}
+var PH_Y='https://store.shopping.yahoo.co.jp/…';
+var PH_R='https://item.rakuten.co.jp/…';
+
+function resetForm(){clearBox('imgRakuten');clearBox('imgYahoo');setVal('fDate','');setVal('fSales','');setVal('fCategory','単一商品');setVal('fName','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
+function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
+function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';fillBox('imgRakuten',it.rakutenImg);fillBox('imgYahoo',it.yahooImg);setVal('fDate',it.date||'');setVal('fSales',it.sales||'');setVal('fCategory',it.category||'単一商品');setVal('fName',it.name||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+
+function gather(){return{id:editingId||('it'+Date.now()),rakutenImg:imgSrc('imgRakuten'),yahooImg:imgSrc('imgYahoo'),date:val('fDate'),sales:val('fSales'),category:val('fCategory'),name:val('fName'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};}
+function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;break;}}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();if(closeAfter)hide('editModal');}
+
+/* ===== ヘッダー/モーダルのボタン ===== */
+$('btnSettings').onclick=function(){show('settingsModal');};
+$('btnLog').onclick=function(){show('logModal');};
+$('btnCols').onclick=function(){show('colModal');};
+$('btnCats').onclick=function(){show('catModal');};
+$('btnStatus').onclick=function(){show('statusModal');};
+$('btnAdd').onclick=openNew;
+$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),rakutenImg:'',yahooImg:'',date:'',sales:'',category:'単一商品',name:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
+$('btnSaveStay').onclick=function(){saveForm(false);};
+$('btnSaveClose').onclick=function(){saveForm(true);};
+$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();}};
+
+/* 閉じる系 */
 var closers=document.querySelectorAll('[data-close]');
 for(var j=0;j<closers.length;j++){closers[j].addEventListener('click',function(){hide(this.getAttribute('data-close'));});}
 var overlays=document.querySelectorAll('.overlay');
 for(var k=0;k<overlays.length;k++){overlays[k].addEventListener('click',function(e){if(e.target===this)this.hidden=true;});}
 
-
-
-// 画像：各カラム（楽天/Yahoo）ごとに 選択・ドラッグ・URL適用
+/* 画像カラム（楽天/Yahoo） */
 function wireImageCol(col){
-  var box=col.querySelector('.img-box');
-  var file=col.querySelector('input[type=file]');
-  var urlIn=col.querySelector('.img-url-row input');
-  var apply=col.querySelector('.apply-img');
-  function setImg(src){box.innerHTML='<img src="'+src+'" alt="">';}
+  var box=col.querySelector('.img-box');var file=col.querySelector('input[type=file]');var urlIn=col.querySelector('.img-url-row input');var apply=col.querySelector('.apply-img');
+  function setImg(src){box.innerHTML='<img src="'+escA(src)+'" alt="">';}
   function readFile(f){if(!f)return;var r=new FileReader();r.onload=function(){setImg(r.result);};r.readAsDataURL(f);}
   box.addEventListener('click',function(){file.click();});
   file.addEventListener('change',function(e){readFile(e.target.files[0]);});
@@ -329,17 +415,24 @@ function wireImageCol(col){
 var imgCols=document.querySelectorAll('.img-col');
 for(var ic=0;ic<imgCols.length;ic++){wireImageCol(imgCols[ic]);}
 
-// URL欄の追加・削除
+/* URL欄の追加・削除 */
 function makeUrlRow(ph){var d=document.createElement('div');d.className='url-row';d.innerHTML='<input type="text" placeholder="'+ph+'"><button class="url-del">×</button>';return d;}
 var adders=document.querySelectorAll('[data-addurl]');
-for(var a=0;a<adders.length;a++){adders[a].addEventListener('click',function(){var id=this.getAttribute('data-addurl');var list=document.getElementById(id);var ph=(id==='urlYahoo')?'https://store.shopping.yahoo.co.jp/…':'https://item.rakuten.co.jp/…';list.appendChild(makeUrlRow(ph));});}
-document.addEventListener('click',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('url-del')){var row=e.target.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}}});
+for(var a=0;a<adders.length;a++){adders[a].addEventListener('click',function(){var id=this.getAttribute('data-addurl');var list=$(id);list.appendChild(makeUrlRow(id==='urlYahoo'?PH_Y:PH_R));});}
+document.addEventListener('click',function(e){
+  var t=e.target;
+  if(t&&t.classList&&t.classList.contains('url-del')){var row=t.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}return;}
+  if(t&&t.getAttribute){
+    var ed=t.getAttribute('data-edit');if(ed){openEdit(ed);return;}
+    var dl=t.getAttribute('data-del');if(dl){if(confirm('この商品を削除しますか？')){items=items.filter(function(x){return x.id!==dl;});persist();render();}return;}
+  }
+});
 
-function wirePills(rowSel,pillSel){
-  var ps=document.querySelectorAll(rowSel+' '+pillSel);
-  for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}
-}
-wirePills('#catRow','.pill'); wirePills('#statusRow','.spill');
+/* ピル */
+function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
+wirePills('#catRow','.pill');wirePills('#statusRow','.spill');
+
+render();
 </script>
 </body>
 </html>
