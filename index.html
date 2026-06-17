@@ -102,13 +102,16 @@ button{font-family:inherit}
 }
 
 /* ===== 新規作成/編集フォーム ===== */
-.sheet-form{max-width:1080px}
+.sheet-form{max-width:1120px}
 .form-topbar{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
 .form-topbar h2{margin:0;font-size:20px}
 .topbar-actions{margin-left:auto;display:flex;gap:8px}
-.form-body{display:grid;grid-template-columns:264px 1fr;gap:26px;padding:22px;overflow:auto}
+.form-body{padding:22px;overflow:auto}
+.form-top{display:grid;grid-template-columns:1fr 1fr 320px;gap:26px;align-items:start}
+.img-col .fld-label{display:flex;align-items:center;gap:7px}
 .fld-label{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px;font-family:"Zen Kaku Gothic New",sans-serif}
-.form-left .fld,.form-right .fld{display:block;font-size:12.5px;font-weight:500;color:var(--ink-2);margin-top:14px}
+.fld{display:block;font-size:12.5px;font-weight:500;color:var(--ink-2)}
+.meta-col .fld + .fld{margin-top:14px}
 .fld input,.fld select{width:100%;margin-top:6px;font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0;background:#fff}
 .fld input:focus,.fld select:focus{border-color:var(--red)}
 .img-box{width:100%;height:300px;border:1.5px dashed var(--line-2);border-radius:12px;background:#fafbfc;display:grid;place-items:center;overflow:hidden;cursor:pointer;position:relative;transition:.12s}
@@ -118,24 +121,26 @@ button{font-family:inherit}
 .img-drop{text-align:center;color:var(--ink-3);font-size:13px;line-height:1.7;pointer-events:none}
 .img-drop small{font-size:11px;color:var(--ink-3)}
 .img-url-row{display:flex;gap:6px;margin-top:8px}
-.img-url-row input{flex:1;font:inherit;font-size:12.5px;border:1px solid var(--line-2);border-radius:9px;padding:8px 10px;outline:0}
+.img-url-row input{flex:1;min-width:0;font:inherit;font-size:12.5px;border:1px solid var(--line-2);border-radius:9px;padding:8px 10px;outline:0}
 .img-url-row input:focus{border-color:var(--red)}
-.num-wrap{display:flex;align-items:center;gap:0;margin-top:6px;border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
+.num-wrap{display:flex;align-items:center;margin-top:6px;border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
 .num-wrap input{border:0;border-radius:0;margin:0}
 .num-wrap input:focus{box-shadow:none}
 .num-wrap .unit{padding:0 12px;font-size:13px;color:var(--ink-2);background:#f4f5f7;align-self:stretch;display:flex;align-items:center;border-left:1px solid var(--line-2)}
 
-.url-block{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fcfcfd}
+.form-bottom{margin-top:24px}
+.url-block{margin-top:16px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fcfcfd}
 .url-main{border-color:#f3c7bf;background:var(--red-soft)}
 .url-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .url-ttl{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
 .url-head .btn{margin-left:auto}
 .url-row{display:flex;gap:7px;margin-bottom:8px}
 .url-row:last-child{margin-bottom:0}
-.url-row input{flex:1;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;outline:0;background:#fff}
+.url-row input{flex:1;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;outline:0;background:#fff}
 .url-row input:focus{border-color:var(--red)}
 .url-del{flex:none;width:34px;border:1px solid var(--line-2);background:#fff;border-radius:9px;cursor:pointer;color:var(--ink-3);font-size:16px}
 .url-del:hover{border-color:var(--red);color:var(--red)}
+@media(max-width:820px){.form-top{grid-template-columns:1fr 1fr}.meta-col{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -145,7 +150,7 @@ button{font-family:inherit}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.5.0</span>
+        <span class="version" id="version">v0.6.0</span>
         <button class="btn btn-ghost" id="btnCols">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnCats">📂 カテゴリ管理</button>
         <button class="btn btn-ghost" id="btnStatus">📋 ステータス管理</button>
@@ -205,31 +210,35 @@ button{font-family:inherit}
       </div>
     </div>
     <div class="form-body">
-      <!-- 左：画像＋基本情報 -->
-      <div class="form-left">
-        <div class="fld-label">メイン画像</div>
-        <div class="img-box" id="imgBox">
-          <div class="img-drop" id="imgDrop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div>
+      <!-- 上段：楽天画像／Yahoo画像／基本情報 -->
+      <div class="form-top">
+        <div class="img-col">
+          <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天メイン画像</div>
+          <div class="img-box"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
+          <input type="file" accept="image/*" hidden>
+          <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
         </div>
-        <input type="file" accept="image/*" id="imgFile" hidden>
-        <div class="img-url-row">
-          <input type="text" id="imgUrl" placeholder="またはURLを貼り付け（http://…）">
-          <button class="btn btn-line btn-sm" id="btnApplyImg">適用</button>
+
+        <div class="img-col">
+          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahooメイン画像</div>
+          <div class="img-box"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
+          <input type="file" accept="image/*" hidden>
+          <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
         </div>
-        <label class="fld">日付<input type="date" id="fDate"></label>
-        <label class="fld">予想月商
-          <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
-        </label>
-        <label class="fld">カテゴリ
-          <select id="fCategory">
-            <option>単一商品</option>
-            <option>複数商品</option>
-          </select>
-        </label>
+
+        <div class="meta-col">
+          <label class="fld">日付<input type="date" id="fDate"></label>
+          <label class="fld">予想月商
+            <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
+          </label>
+          <label class="fld">カテゴリ
+            <select id="fCategory"><option>単一商品</option><option>複数商品</option></select>
+          </label>
+        </div>
       </div>
 
-      <!-- 右：商品名＋URL -->
-      <div class="form-right">
+      <!-- 下段：商品名＋URL -->
+      <div class="form-bottom">
         <label class="fld">商品名<input type="text" id="fName" placeholder="商品名"></label>
 
         <div class="url-block url-main">
@@ -270,7 +279,7 @@ button{font-family:inherit}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.5.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.6.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -302,17 +311,23 @@ for(var k=0;k<overlays.length;k++){overlays[k].addEventListener('click',function
 
 
 
-// 画像：選択／ドラッグ／URL適用
-var imgBox=document.getElementById('imgBox');
-var imgFile=document.getElementById('imgFile');
-var imgDrop=document.getElementById('imgDrop');
-function setImg(src){imgBox.innerHTML='<img src="'+src+'" alt="">';}
-imgBox.addEventListener('click',function(){imgFile.click();});
-imgFile.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){setImg(r.result);};r.readAsDataURL(f);});
-imgBox.addEventListener('dragover',function(e){e.preventDefault();imgBox.classList.add('drag');});
-imgBox.addEventListener('dragleave',function(){imgBox.classList.remove('drag');});
-imgBox.addEventListener('drop',function(e){e.preventDefault();imgBox.classList.remove('drag');var f=e.dataTransfer.files[0];if(!f)return;var r=new FileReader();r.onload=function(){setImg(r.result);};r.readAsDataURL(f);});
-document.getElementById('btnApplyImg').addEventListener('click',function(){var u=document.getElementById('imgUrl').value.trim();if(u)setImg(u);});
+// 画像：各カラム（楽天/Yahoo）ごとに 選択・ドラッグ・URL適用
+function wireImageCol(col){
+  var box=col.querySelector('.img-box');
+  var file=col.querySelector('input[type=file]');
+  var urlIn=col.querySelector('.img-url-row input');
+  var apply=col.querySelector('.apply-img');
+  function setImg(src){box.innerHTML='<img src="'+src+'" alt="">';}
+  function readFile(f){if(!f)return;var r=new FileReader();r.onload=function(){setImg(r.result);};r.readAsDataURL(f);}
+  box.addEventListener('click',function(){file.click();});
+  file.addEventListener('change',function(e){readFile(e.target.files[0]);});
+  box.addEventListener('dragover',function(e){e.preventDefault();box.classList.add('drag');});
+  box.addEventListener('dragleave',function(){box.classList.remove('drag');});
+  box.addEventListener('drop',function(e){e.preventDefault();box.classList.remove('drag');readFile(e.dataTransfer.files[0]);});
+  apply.addEventListener('click',function(){var u=urlIn.value.trim();if(u)setImg(u);});
+}
+var imgCols=document.querySelectorAll('.img-col');
+for(var ic=0;ic<imgCols.length;ic++){wireImageCol(imgCols[ic]);}
 
 // URL欄の追加・削除
 function makeUrlRow(ph){var d=document.createElement('div');d.className='url-row';d.innerHTML='<input type="text" placeholder="'+ph+'"><button class="url-del">×</button>';return d;}
