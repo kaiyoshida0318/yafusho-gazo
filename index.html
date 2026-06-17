@@ -28,6 +28,12 @@ button{font-family:inherit}
 .logo-img{height:58px;width:auto;display:block}
 .header-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .version{font-size:12px;color:var(--ink-3);font-family:"Roboto Mono",monospace;background:#f1f2f4;padding:4px 10px;border-radius:20px}
+.gh-progress{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);white-space:nowrap}
+.gh-spin{width:14px;height:14px;border:2px solid var(--line-2);border-top-color:var(--red);border-radius:50%;animation:ghspin .7s linear infinite;flex:none}
+.gh-done .gh-spin{display:none}
+@keyframes ghspin{to{transform:rotate(360deg)}}
+.adv-toggle{background:none;border:0;color:var(--ink-2);font-size:12.5px;cursor:pointer;padding:0;margin-bottom:12px}
+.adv-toggle:hover{color:var(--ink)}
 
 .btn{font-size:13px;font-weight:500;border:1px solid transparent;border-radius:9px;padding:9px 14px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:6px;transition:.12s;white-space:nowrap}
 .btn:active{transform:translateY(1px)}
@@ -168,12 +174,13 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.7.0</span>
+        <span class="version" id="version">v0.8.0</span>
         <button class="btn btn-ghost" id="btnCols">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnCats">📂 カテゴリ管理</button>
         <button class="btn btn-ghost" id="btnStatus">📋 ステータス管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
+        <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
         <button class="btn btn-red" id="btnSave">💾 GitHubに保存</button>
       </div>
     </div>
@@ -296,17 +303,22 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 <div class="overlay" id="settingsModal" hidden>
   <div class="mini">
     <h2>GitHub設定</h2>
-    <p class="hint">PATを入力するだけでOK。入力情報はこのブラウザ内（localStorage）にのみ保存されます。</p>
-    <label>Personal Access Token (PAT)<input type="password" placeholder="github_pat_xxxx"></label>
-    <label>リポジトリ名<input type="text" value="yafusho-gazo"></label>
-    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="settingsModal">閉じる</button><button class="btn btn-red">保存</button></div>
+    <p class="hint">PATを入力するだけでOK。入力情報はこのブラウザ内（localStorage）にのみ保存されます。保存・画像アップロードにはリポジトリへの書き込み権限が必要です。</p>
+    <label>Personal Access Token (PAT)<input type="password" id="cfgPat" placeholder="github_pat_xxxx"></label>
+    <button type="button" class="adv-toggle" id="btnAdv">▶ 詳細設定（オーナー／リポジトリ／ブランチ）</button>
+    <div id="advBox" hidden>
+      <label>オーナー（ユーザー名）<input type="text" id="cfgOwner" value="kaiyoshida0318"></label>
+      <label>リポジトリ名<input type="text" id="cfgRepo" value="yafusho-gazo"></label>
+      <label>ブランチ<input type="text" id="cfgBranch" value="main"></label>
+    </div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="settingsModal">閉じる</button><button class="btn btn-red" id="btnSaveSettings">保存</button></div>
   </div>
 </div>
 <div class="overlay" id="logModal" hidden>
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.7.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.8.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -383,7 +395,6 @@ function gather(){return{id:editingId||('it'+Date.now()),rakutenImg:imgSrc('imgR
 function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;break;}}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();if(closeAfter)hide('editModal');}
 
 /* ===== ヘッダー/モーダルのボタン ===== */
-$('btnSettings').onclick=function(){show('settingsModal');};
 $('btnLog').onclick=function(){show('logModal');};
 $('btnCols').onclick=function(){show('colModal');};
 $('btnCats').onclick=function(){show('catModal');};
@@ -432,7 +443,102 @@ document.addEventListener('click',function(e){
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
 wirePills('#catRow','.pill');wirePills('#statusRow','.spill');
 
+/* ===== GitHub 設定 ===== */
+var CFG='yafusho_cfg';
+function getCfg(){var d={owner:'kaiyoshida0318',repo:'yafusho-gazo',branch:'main',pat:''};try{var c=JSON.parse(localStorage.getItem(CFG));if(c)for(var k in c){if(c[k])d[k]=c[k];}}catch(e){}return d;}
+function saveCfg(c){try{localStorage.setItem(CFG,JSON.stringify(c));}catch(e){}}
+
+$('btnAdv').onclick=function(){var b=$('advBox');b.hidden=!b.hidden;this.textContent=(b.hidden?'▶':'▼')+' 詳細設定（オーナー／リポジトリ／ブランチ）';};
+function openSettings(){var c=getCfg();$('cfgPat').value=c.pat||'';$('cfgOwner').value=c.owner;$('cfgRepo').value=c.repo;$('cfgBranch').value=c.branch;show('settingsModal');}
+$('btnSettings').onclick=openSettings;
+$('btnSaveSettings').onclick=function(){saveCfg({pat:$('cfgPat').value.trim(),owner:$('cfgOwner').value.trim(),repo:$('cfgRepo').value.trim(),branch:$('cfgBranch').value.trim()||'main'});hide('settingsModal');log('GitHub設定を保存');};
+
+/* ===== ログ ===== */
+var LOGS=[];
+function log(msg){var t=new Date().toLocaleTimeString('ja-JP');LOGS.unshift('['+t+'] '+msg);if(LOGS.length>500)LOGS.pop();var a=document.querySelector('#logModal textarea');if(a)a.value=LOGS.join('\n');}
+
+/* ===== 進捗表示 ===== */
+function prog(on,text){var p=$('ghProgress');if(on){p.hidden=false;p.classList.remove('gh-done');$('ghText').textContent=text||'処理中…';}else{p.hidden=true;}}
+function progDone(text){var p=$('ghProgress');p.hidden=false;p.classList.add('gh-done');$('ghText').textContent=text||'✓ 完了';setTimeout(function(){p.hidden=true;p.classList.remove('gh-done');},2500);}
+
+/* ===== GitHub API ===== */
+function utf8b64(str){return btoa(unescape(encodeURIComponent(str)));}
+function b64utf8(b){return decodeURIComponent(escape(atob(b)));}
+function mimeExt(durl){var m=/^data:image\/(\w+)/.exec(durl||'');var e=m?m[1].toLowerCase():'png';return e==='jpeg'?'jpg':e;}
+function ghHeaders(pat){return{'Authorization':'Bearer '+pat,'Accept':'application/vnd.github+json'};}
+
+async function ghSha(owner,repo,branch,path,pat){
+  var u='https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path+'?ref='+encodeURIComponent(branch);
+  var r=await fetch(u,{headers:ghHeaders(pat)});
+  if(r.status===200){var j=await r.json();return j.sha;}
+  if(r.status===404)return null;
+  throw new Error('GET '+path+' ('+r.status+')');
+}
+async function ghPut(owner,repo,branch,path,b64,sha,msg,pat){
+  var body={message:msg,content:b64,branch:branch};if(sha)body.sha=sha;
+  var r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:ghHeaders(pat),body:JSON.stringify(body)});
+  if(!r.ok){var t=await r.text();throw new Error('PUT '+path+' ('+r.status+') '+t.slice(0,120));}
+  return r.json();
+}
+
+async function saveToGitHub(){
+  var c=getCfg();
+  if(!c.pat){alert('先に設定でGitHubのPATを入力してください。');openSettings();return;}
+  $('btnSave').disabled=true;
+  try{
+    // 1) 画像（data:のものだけ）をアップロード → rawURLに置換
+    var sides=['rakuten','yahoo'];
+    for(var i=0;i<items.length;i++){
+      var it=items[i];
+      for(var sdi=0;sdi<sides.length;sdi++){
+        var side=sides[sdi];var key=side+'Img';var src=it[key];
+        if(src&&src.indexOf('data:')===0){
+          prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
+          var ext=mimeExt(src);var path='images/'+it.id+'-'+side+'.'+ext;
+          var b64=src.split(',')[1];
+          var sha=await ghSha(c.owner,c.repo,c.branch,path,c.pat);
+          await ghPut(c.owner,c.repo,c.branch,path,b64,sha,'image '+it.id+' '+side,c.pat);
+          it[key]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+path;
+          persist();render();
+        }
+      }
+    }
+    // 2) data.json を保存
+    prog(true,'データを保存中…');
+    var json=JSON.stringify(items,null,2);
+    var dsha=await ghSha(c.owner,c.repo,c.branch,'data.json',c.pat);
+    await ghPut(c.owner,c.repo,c.branch,'data.json',utf8b64(json),dsha,'update data ('+items.length+'件)',c.pat);
+    persist();
+    progDone('✓ 保存しました');
+    log('GitHub保存 完了（'+items.length+'件）');
+  }catch(e){
+    prog(false);
+    alert('GitHub保存に失敗しました:\n'+e.message);
+    log('GitHub保存 失敗: '+e.message);
+  }finally{
+    $('btnSave').disabled=false;
+  }
+}
+$('btnSave').onclick=saveToGitHub;
+
+/* ===== 起動時に GitHub から読み込み（公開リポジトリはPAT不要） ===== */
+async function loadFromGitHub(){
+  var c=getCfg();
+  try{
+    var u='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/data.json?t='+Date.now();
+    var r=await fetch(u,{cache:'no-store'});
+    if(r.ok){
+      var arr=await r.json();
+      if(Array.isArray(arr)){items=arr;persist();render();log('GitHubから読み込み（'+items.length+'件）');}
+    }else if(r.status===404){
+      log('data.json は未作成（初回）。');
+    }
+  }catch(e){log('GitHub読み込みスキップ: '+e.message);}
+}
+
+
 render();
+loadFromGitHub();
 </script>
 </body>
 </html>
