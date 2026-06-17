@@ -24,8 +24,8 @@ function render(){
     var sales=(it.sales!==''&&it.sales!=null)?(esc(it.sales)+' 万円'):'—';
     tr.innerHTML=
       '<td class="mono cell-date">'+(it.date?esc(it.date):'<span class="muted">—</span>')+'</td>'+
-      '<td>'+thumb(it.rakutenImg)+'</td>'+
       '<td>'+thumb(it.yahooImg)+'</td>'+
+      '<td>'+thumb(it.rakutenImg)+'</td>'+
       '<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>'+
       '<td class="mono">'+sales+'</td>'+
       '<td>'+catBadge(it.category)+'</td>'+
