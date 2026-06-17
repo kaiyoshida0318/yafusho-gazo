@@ -46,6 +46,7 @@ h1,h2,.logo-text{font-family:"Zen Kaku Gothic New","Noto Sans JP",sans-serif}
   display:flex;align-items:center;gap:16px;
 }
 .logo{display:flex;align-items:center;gap:10px}
+.logo-img{height:40px;width:auto;display:block}
 .logo-mark{
   width:34px;height:34px;border-radius:9px;
   background:linear-gradient(135deg,var(--accent),var(--accent-dark));
@@ -201,8 +202,7 @@ h1,h2,.logo-text{font-family:"Zen Kaku Gothic New","Noto Sans JP",sans-serif}
   <header class="app-header">
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-mark">🖼</span>
-        <span class="logo-text">ヤフショ画像くん</span>
+        <img class="logo-img" src="logo.png" alt="ヤフショ画像くん">
       </div>
       <div class="header-actions">
         <span class="version" id="version">v0.1.0</span>
