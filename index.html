@@ -80,38 +80,12 @@ button{font-family:inherit}
 .shell-empty .lead{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:15px;color:var(--ink-2);margin-bottom:6px}
 .shell-empty p{font-size:13px;margin:0}
 
-/* ===== モーダル（画像編集・流用） ===== */
+/* ===== モーダル共通 ===== */
 .overlay{position:fixed;inset:0;background:rgba(20,24,32,.5);display:grid;place-items:center;z-index:80;padding:18px}
 .overlay[hidden]{display:none}
 .sheet{background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(20,24,32,.35);width:100%;max-width:980px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
-.sheet-head{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line)}
-.sheet-head h2{margin:0;font-size:18px;max-width:50%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sheet-head .sp{flex:1}
-.mode-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--red-soft);color:var(--red-strong);font-family:"Zen Kaku Gothic New",sans-serif}
-.sheet-body{display:grid;grid-template-columns:200px 1fr;min-height:0;flex:1}
-.ref-rail{border-right:1px solid var(--line);background:#fafbfc;padding:14px;overflow:auto}
-.rail-ttl{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif;margin-bottom:3px}
-.rail-ttl .dot{width:9px;height:9px;border-radius:50%;background:#bf0000}
-.rail-sub{font-size:11px;color:var(--ink-3);margin-bottom:12px}
-.ref-thumb{width:100%;aspect-ratio:1;border-radius:9px;border:1px solid var(--line-2);background:#eef1f4;margin-bottom:9px;display:grid;place-items:center;color:var(--ink-3);font-size:11px;cursor:pointer;position:relative}
-.ref-thumb:hover{border-color:#bf0000}
-.ref-thumb .tag{position:absolute;left:5px;top:5px;font-size:9px;background:rgba(26,27,30,.7);color:#fff;padding:1px 5px;border-radius:5px;font-family:"Roboto Mono",monospace}
-.work{display:flex;flex-direction:column;min-width:0}
-.preview{flex:1;min-height:260px;display:grid;place-items:center;position:relative;padding:20px;
   background:linear-gradient(45deg,#f4f5f7 25%,transparent 25%,transparent 75%,#f4f5f7 75%),linear-gradient(45deg,#f4f5f7 25%,#fff 25%,#fff 75%,#f4f5f7 75%);
   background-size:22px 22px;background-position:0 0,11px 11px}
-.preview .ph{text-align:center;color:var(--ink-3)}
-.preview .ph svg{width:52px;height:52px;margin-bottom:8px}
-.preview .slot-tag{position:absolute;left:16px;top:14px;font-size:12px;font-weight:700;background:var(--ink);color:#fff;padding:5px 11px;border-radius:8px;font-family:"Zen Kaku Gothic New",sans-serif}
-.edit-tools{display:flex;gap:6px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--line)}
-.slot-strip{display:flex;gap:8px;padding:12px 16px 22px;border-top:1px solid var(--line);overflow-x:auto;background:#fbfbfc}
-.yslot-wrap{position:relative;padding-bottom:16px;flex:none}
-.yslot{width:62px;height:62px;border-radius:9px;border:1.5px dashed var(--line-2);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink-3);font-size:10px;transition:.12s}
-.yslot:hover{border-color:var(--red);color:var(--red-strong)}
-.yslot.sel{border-style:solid;border-color:var(--red);box-shadow:0 0 0 3px var(--red-soft)}
-.yslot.has{background:linear-gradient(135deg,#e9edf2,#dde3ea);border-style:solid;border-color:var(--line-2);color:transparent}
-.yslot .lab{position:absolute;bottom:-16px;left:0;right:0;font-size:9px;color:var(--ink-3);text-align:center}
-.sheet-foot{display:flex;align-items:center;gap:8px;padding:14px 20px;border-top:1px solid var(--line)}
 
 .mini{background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(20,24,32,.3);width:100%;max-width:440px;padding:22px}
 .mini h2{margin:0 0 6px;font-size:18px}
@@ -125,9 +99,43 @@ button{font-family:inherit}
 
 @media(max-width:760px){
   .logo-img{height:46px}
-  .sheet-body{grid-template-columns:1fr}
-  .ref-rail{border-right:0;border-bottom:1px solid var(--line);max-height:150px}
 }
+
+/* ===== 新規作成/編集フォーム ===== */
+.sheet-form{max-width:1080px}
+.form-topbar{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
+.form-topbar h2{margin:0;font-size:20px}
+.topbar-actions{margin-left:auto;display:flex;gap:8px}
+.form-body{display:grid;grid-template-columns:264px 1fr;gap:26px;padding:22px;overflow:auto}
+.fld-label{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px;font-family:"Zen Kaku Gothic New",sans-serif}
+.form-left .fld,.form-right .fld{display:block;font-size:12.5px;font-weight:500;color:var(--ink-2);margin-top:14px}
+.fld input,.fld select{width:100%;margin-top:6px;font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0;background:#fff}
+.fld input:focus,.fld select:focus{border-color:var(--red)}
+.img-box{width:100%;height:300px;border:1.5px dashed var(--line-2);border-radius:12px;background:#fafbfc;display:grid;place-items:center;overflow:hidden;cursor:pointer;position:relative;transition:.12s}
+.img-box:hover{border-color:var(--red)}
+.img-box.drag{border-color:var(--red);background:var(--red-soft)}
+.img-box img{width:100%;height:100%;object-fit:cover}
+.img-drop{text-align:center;color:var(--ink-3);font-size:13px;line-height:1.7;pointer-events:none}
+.img-drop small{font-size:11px;color:var(--ink-3)}
+.img-url-row{display:flex;gap:6px;margin-top:8px}
+.img-url-row input{flex:1;font:inherit;font-size:12.5px;border:1px solid var(--line-2);border-radius:9px;padding:8px 10px;outline:0}
+.img-url-row input:focus{border-color:var(--red)}
+.num-wrap{display:flex;align-items:center;gap:0;margin-top:6px;border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
+.num-wrap input{border:0;border-radius:0;margin:0}
+.num-wrap input:focus{box-shadow:none}
+.num-wrap .unit{padding:0 12px;font-size:13px;color:var(--ink-2);background:#f4f5f7;align-self:stretch;display:flex;align-items:center;border-left:1px solid var(--line-2)}
+
+.url-block{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fcfcfd}
+.url-main{border-color:#f3c7bf;background:var(--red-soft)}
+.url-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.url-ttl{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
+.url-head .btn{margin-left:auto}
+.url-row{display:flex;gap:7px;margin-bottom:8px}
+.url-row:last-child{margin-bottom:0}
+.url-row input{flex:1;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;outline:0;background:#fff}
+.url-row input:focus{border-color:var(--red)}
+.url-del{flex:none;width:34px;border:1px solid var(--line-2);background:#fff;border-radius:9px;cursor:pointer;color:var(--ink-3);font-size:16px}
+.url-del:hover{border-color:var(--red);color:var(--red)}
 </style>
 </head>
 <body>
@@ -137,7 +145,7 @@ button{font-family:inherit}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.4.0</span>
+        <span class="version" id="version">v0.5.0</span>
         <button class="btn btn-ghost" id="btnCols">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnCats">📂 カテゴリ管理</button>
         <button class="btn btn-ghost" id="btnStatus">📋 ステータス管理</button>
@@ -185,56 +193,65 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- 画像編集モーダル -->
+<!-- 新規作成/編集モーダル -->
 <div class="overlay" id="editModal" hidden>
-  <div class="sheet">
-    <div class="sheet-head">
-      <h2 id="edName">新規商品</h2>
-      <span class="mode-pill" id="edMode">編集モード</span>
-      <span class="sp"></span>
-      <button class="btn btn-ghost" data-close="editModal">閉じる</button>
+  <div class="sheet sheet-form">
+    <div class="form-topbar">
+      <h2 id="edTitle">新規作成</h2>
+      <div class="topbar-actions">
+        <button class="btn btn-line" data-close="editModal">キャンセル</button>
+        <button class="btn btn-line" data-close="editModal">保存</button>
+        <button class="btn btn-red" data-close="editModal">保存して閉じる</button>
+      </div>
     </div>
-    <div class="sheet-body">
-      <aside class="ref-rail">
-        <div class="rail-ttl"><span class="dot"></span>楽天（元画像）</div>
-        <div class="rail-sub">参照用。クリックで拡大</div>
-        <div class="ref-thumb"><span class="tag">メイン</span>元1</div>
-        <div class="ref-thumb"><span class="tag">サブ1</span>元2</div>
-        <div class="ref-thumb" style="border-style:dashed">＋ 元画像を登録</div>
-      </aside>
-      <section class="work">
-        <div class="preview">
-          <span class="slot-tag" id="slotTag">メイン画像</span>
-          <div class="ph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="m21 16-5-5L5 21"/></svg>
-            <div>このスロットに画像を入れて編集します</div>
+    <div class="form-body">
+      <!-- 左：画像＋基本情報 -->
+      <div class="form-left">
+        <div class="fld-label">メイン画像</div>
+        <div class="img-box" id="imgBox">
+          <div class="img-drop" id="imgDrop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div>
+        </div>
+        <input type="file" accept="image/*" id="imgFile" hidden>
+        <div class="img-url-row">
+          <input type="text" id="imgUrl" placeholder="またはURLを貼り付け（http://…）">
+          <button class="btn btn-line btn-sm" id="btnApplyImg">適用</button>
+        </div>
+        <label class="fld">日付<input type="date" id="fDate"></label>
+        <label class="fld">予想月商
+          <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
+        </label>
+        <label class="fld">カテゴリ
+          <select id="fCategory">
+            <option>単一商品</option>
+            <option>複数商品</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- 右：商品名＋URL -->
+      <div class="form-right">
+        <label class="fld">商品名<input type="text" id="fName" placeholder="商品名"></label>
+
+        <div class="url-block url-main">
+          <div class="url-head">
+            <span class="url-ttl"><span class="tag-badge tb-y">Y</span>ヤフショURL（メイン）</span>
+            <button class="btn btn-line btn-sm" data-addurl="urlYahoo">＋ 追加</button>
+          </div>
+          <div class="url-list" id="urlYahoo">
+            <div class="url-row"><input type="text" placeholder="https://store.shopping.yahoo.co.jp/…"><button class="url-del">×</button></div>
           </div>
         </div>
-        <div class="edit-tools">
-          <button class="btn btn-red btn-sm">⬆ アップロード</button>
-          <button class="btn btn-line btn-sm">🔁 差し替え</button>
-          <button class="btn btn-line btn-sm">✂ トリミング</button>
-          <button class="btn btn-line btn-sm">⬜ 背景白抜き</button>
-          <button class="btn btn-line btn-sm">↔ 並べ替え</button>
-          <button class="btn btn-danger btn-sm">🗑 削除</button>
+
+        <div class="url-block">
+          <div class="url-head">
+            <span class="url-ttl"><span class="tag-badge tb-r">R</span>楽天URL</span>
+            <button class="btn btn-line btn-sm" data-addurl="urlRakuten">＋ 追加</button>
+          </div>
+          <div class="url-list" id="urlRakuten">
+            <div class="url-row"><input type="text" placeholder="https://item.rakuten.co.jp/…"><button class="url-del">×</button></div>
+          </div>
         </div>
-        <div class="slot-strip">
-          <div class="yslot-wrap"><div class="yslot sel" data-slot="メイン画像"><span class="lab">メイン</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ1">＋<span class="lab">サブ1</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ2">＋<span class="lab">サブ2</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ3">＋<span class="lab">サブ3</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ4">＋<span class="lab">サブ4</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ5">＋<span class="lab">サブ5</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ6">＋<span class="lab">サブ6</span></div></div>
-          <div class="yslot-wrap"><div class="yslot" data-slot="サブ7">＋<span class="lab">サブ7</span></div></div>
-        </div>
-      </section>
-    </div>
-    <div class="sheet-foot">
-      <button class="btn btn-danger" data-close="editModal">この商品を削除</button>
-      <span class="sp"></span>
-      <button class="btn btn-ghost" data-close="editModal">キャンセル</button>
-      <button class="btn btn-red" data-close="editModal">保存して閉じる</button>
+      </div>
     </div>
   </div>
 </div>
@@ -253,7 +270,7 @@ button{font-family:inherit}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.4.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.5.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -275,15 +292,33 @@ document.getElementById('btnLog').onclick=function(){show('logModal');};
 document.getElementById('btnCols').onclick=function(){show('colModal');};
 document.getElementById('btnCats').onclick=function(){show('catModal');};
 document.getElementById('btnStatus').onclick=function(){show('statusModal');};
-document.getElementById('btnAdd').onclick=function(){document.getElementById('edName').textContent='新規商品';show('editModal');};
+document.getElementById('btnAdd').onclick=function(){document.getElementById('edTitle').textContent='新規作成';show('editModal');};
+document.getElementById('btnAddRow').onclick=function(){document.getElementById('edTitle').textContent='新規作成';show('editModal');};
 
 var closers=document.querySelectorAll('[data-close]');
 for(var j=0;j<closers.length;j++){closers[j].addEventListener('click',function(){hide(this.getAttribute('data-close'));});}
 var overlays=document.querySelectorAll('.overlay');
 for(var k=0;k<overlays.length;k++){overlays[k].addEventListener('click',function(e){if(e.target===this)this.hidden=true;});}
 
-var slots=document.querySelectorAll('.yslot');
-for(var s=0;s<slots.length;s++){slots[s].addEventListener('click',function(){for(var t=0;t<slots.length;t++){slots[t].classList.remove('sel');}this.classList.add('sel');document.getElementById('slotTag').textContent=this.getAttribute('data-slot');});}
+
+
+// 画像：選択／ドラッグ／URL適用
+var imgBox=document.getElementById('imgBox');
+var imgFile=document.getElementById('imgFile');
+var imgDrop=document.getElementById('imgDrop');
+function setImg(src){imgBox.innerHTML='<img src="'+src+'" alt="">';}
+imgBox.addEventListener('click',function(){imgFile.click();});
+imgFile.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){setImg(r.result);};r.readAsDataURL(f);});
+imgBox.addEventListener('dragover',function(e){e.preventDefault();imgBox.classList.add('drag');});
+imgBox.addEventListener('dragleave',function(){imgBox.classList.remove('drag');});
+imgBox.addEventListener('drop',function(e){e.preventDefault();imgBox.classList.remove('drag');var f=e.dataTransfer.files[0];if(!f)return;var r=new FileReader();r.onload=function(){setImg(r.result);};r.readAsDataURL(f);});
+document.getElementById('btnApplyImg').addEventListener('click',function(){var u=document.getElementById('imgUrl').value.trim();if(u)setImg(u);});
+
+// URL欄の追加・削除
+function makeUrlRow(ph){var d=document.createElement('div');d.className='url-row';d.innerHTML='<input type="text" placeholder="'+ph+'"><button class="url-del">×</button>';return d;}
+var adders=document.querySelectorAll('[data-addurl]');
+for(var a=0;a<adders.length;a++){adders[a].addEventListener('click',function(){var id=this.getAttribute('data-addurl');var list=document.getElementById(id);var ph=(id==='urlYahoo')?'https://store.shopping.yahoo.co.jp/…':'https://item.rakuten.co.jp/…';list.appendChild(makeUrlRow(ph));});}
+document.addEventListener('click',function(e){if(e.target&&e.target.classList&&e.target.classList.contains('url-del')){var row=e.target.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}}});
 
 function wirePills(rowSel,pillSel){
   var ps=document.querySelectorAll(rowSel+' '+pillSel);
