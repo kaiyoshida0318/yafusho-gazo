@@ -28,10 +28,10 @@ function render(){
       '<td>'+thumb(it.rakutenImg)+'</td>'+
       '<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>'+
       '<td class="mono">'+sales+'</td>'+
-      '<td>'+(it.listingType?catBadge(it.listingType):'<span class="muted">—</span>')+'</td>'+
-      '<td>'+(it.pagePlan?esc(it.pagePlan):'<span class="muted">—</span>')+'</td>'+
       '<td>'+urlCell(it.yahooUrls)+'</td>'+
       '<td>'+urlCell(it.rakutenUrls)+'</td>'+
+      '<td class="mono">'+(it.pagePlan?esc(it.pagePlan):'<span class="muted">—</span>')+'</td>'+
+      '<td>'+(it.listingType?catBadge(it.listingType):'<span class="muted">—</span>')+'</td>'+
       '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
     tb.appendChild(tr);
   }
