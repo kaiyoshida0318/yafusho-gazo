@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.11.0">
+<link rel="stylesheet" href="style.css?v=0.12.0">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.11.0</span>
+        <span class="version" id="version">v0.12.0</span>
         <button class="btn btn-ghost" id="btnManage">🗂 各種管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -81,24 +81,17 @@
         <button class="btn btn-red" id="btnSaveClose">保存して閉じる</button>
       </div>
     </div>
+
+    <div class="modal-tabs">
+      <button type="button" class="mtab on" data-tab="basic">基本情報</button>
+      <button type="button" class="mtab" data-tab="images">画像</button>
+    </div>
+
     <div class="form-body">
-      <!-- 上段：楽天画像／Yahoo画像／基本情報 -->
-      <div class="form-top">
-                <div class="img-col">
-          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahooメイン画像</div>
-          <div class="img-box" id="imgYahoo"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
-          <input type="file" accept="image/*" hidden>
-          <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
-        </div>
-
-        <div class="img-col">
-          <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天メイン画像</div>
-          <div class="img-box" id="imgRakuten"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
-          <input type="file" accept="image/*" hidden>
-          <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
-        </div>
-
-        <div class="meta-col">
+      <!-- 基本情報タブ -->
+      <div class="tab-panel" id="panel-basic">
+        <div class="basic-grid">
+          <label class="fld span2">商品名<input type="text" id="fName" placeholder="商品名"></label>
           <label class="fld">日付<input type="date" id="fDate"></label>
           <label class="fld">予想月商
             <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
@@ -113,7 +106,7 @@
           <label class="fld">制作予定ページ
             <input type="number" id="fPagePlan" min="1" max="4" step="1" placeholder="1〜4">
           </label>
-          <label class="fld">状態
+          <label class="fld span2">状態
             <select id="fStatus">
               <option>未着手</option>
               <option>作成中</option>
@@ -122,37 +115,48 @@
             </select>
           </label>
         </div>
-      </div>
 
-      <!-- 下段：商品名＋URL -->
-      <div class="form-bottom">
-        <label class="fld">商品名<input type="text" id="fName" placeholder="商品名"></label>
-
-        <div class="url-block url-main">
-          <div class="url-head">
-            <span class="url-ttl"><span class="tag-badge tb-y">Y</span>ヤフショURL（メイン）</span>
-            <button class="btn btn-line btn-sm" data-addurl="urlYahoo">＋ 追加</button>
+        <div class="form-bottom">
+          <div class="url-block url-main">
+            <div class="url-head">
+              <span class="url-ttl"><span class="tag-badge tb-y">Y</span>ヤフショURL（メイン）</span>
+              <button class="btn btn-line btn-sm" data-addurl="urlYahoo">＋ 追加</button>
+            </div>
+            <div class="url-list" id="urlYahoo">
+              <div class="url-row"><input type="text" placeholder="https://store.shopping.yahoo.co.jp/…"><button class="url-del">×</button></div>
+            </div>
           </div>
-          <div class="url-list" id="urlYahoo">
-            <div class="url-row"><input type="text" placeholder="https://store.shopping.yahoo.co.jp/…"><button class="url-del">×</button></div>
+          <div class="url-block">
+            <div class="url-head">
+              <span class="url-ttl"><span class="tag-badge tb-r">R</span>楽天URL</span>
+              <button class="btn btn-line btn-sm" data-addurl="urlRakuten">＋ 追加</button>
+            </div>
+            <div class="url-list" id="urlRakuten">
+              <div class="url-row"><input type="text" placeholder="https://item.rakuten.co.jp/…"><button class="url-del">×</button></div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="url-block">
-          <div class="url-head">
-            <span class="url-ttl"><span class="tag-badge tb-r">R</span>楽天URL</span>
-            <button class="btn btn-line btn-sm" data-addurl="urlRakuten">＋ 追加</button>
-          </div>
-          <div class="url-list" id="urlRakuten">
-            <div class="url-row"><input type="text" placeholder="https://item.rakuten.co.jp/…"><button class="url-del">×</button></div>
-          </div>
+      <!-- 画像タブ -->
+      <div class="tab-panel" id="panel-images" hidden>
+        <div class="gallery-sec">
+          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahoo画像<span class="gal-hint">複数まとめて登録OK／←→で並び替え／1枚目がメイン</span></div>
+          <div class="dropzone" id="dzYahoo">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
+          <input type="file" id="fileYahoo" accept="image/*" multiple hidden>
+          <div class="img-strip" id="stripYahoo"></div>
+        </div>
+        <div class="gallery-sec">
+          <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天画像<span class="gal-hint">複数まとめて登録OK／←→で並び替え／1枚目がメイン</span></div>
+          <div class="dropzone" id="dzRakuten">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
+          <input type="file" id="fileRakuten" accept="image/*" multiple hidden>
+          <div class="img-strip" id="stripRakuten"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ミニモーダル群 -->
 <div class="overlay" id="settingsModal" hidden>
   <div class="mini">
     <h2>GitHub設定</h2>
@@ -171,7 +175,7 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.11.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.12.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -195,6 +199,6 @@
   </div>
 </div>
 
-<script src="app.js?v=0.11.0"></script>
+<script src="app.js?v=0.12.0"></script>
 </body>
 </html>
