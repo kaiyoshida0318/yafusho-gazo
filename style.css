@@ -403,3 +403,9 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 
 .fld textarea{width:100%;margin-top:6px;font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0;background:#fff;resize:vertical;line-height:1.5;min-height:104px}
 .fld textarea:focus{border-color:var(--red)}
+
+/* 一括編集モード（表内で直接入力） */
+#btnBulkEdit.on{background:var(--red);border-color:var(--red);color:#fff}
+.bulk-inp{width:100%;font:inherit;font-size:13px;color:var(--ink);border:1px solid var(--line-2);border-radius:7px;padding:6px 8px;outline:0;background:#fffdf8;box-sizing:border-box}
+.bulk-inp:focus{border-color:var(--red);background:#fff}
+textarea.bulk-area{resize:vertical;line-height:1.45;min-height:52px;white-space:pre-wrap}
