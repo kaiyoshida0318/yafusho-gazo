@@ -441,6 +441,7 @@ function renderStatusTabs(){
 }
 function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;}
 function clearDirty(){dirty=false;var b=$('btnSaveEdits');if(b)b.hidden=true;}
+window.addEventListener('beforeunload',function(e){if(bulkEdit&&dirty){e.preventDefault();e.returnValue='一括編集中の変更は保存されていません。更新するとキャンセルされます。本当によろしいですか？';return e.returnValue;}});
 function stageEdit(id,field,v){for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}markDirty();}
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
 renderCatTabs();renderStatusTabs();
