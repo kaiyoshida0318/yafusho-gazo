@@ -206,17 +206,18 @@
   {
     "id": "it1781762658141",
     "yahooMain": "",
-    "rakutenMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-main.webp",
     "yahooImgs": [],
     "rakutenImgs": [],
     "date": "2026-06-18",
-    "sales": "",
+    "rating": "",
     "listingType": "cat_a",
     "pagePlan": "複数",
     "status": "st_todo",
     "name": "鼻呼吸テープ",
     "code": "",
     "salesMethod": "30枚から送り込み。",
+    "searchUrl": "",
     "yahooUrls": [],
     "rakutenUrls": []
   }
