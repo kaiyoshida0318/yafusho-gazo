@@ -91,23 +91,23 @@
   },
   {
     "id": "it1781758693408",
-    "yahooMain": "",
+    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758693408-yahoo-main.jpg",
     "rakutenMain": "",
     "yahooImgs": [],
     "rakutenImgs": [],
     "date": "2026-06-18",
-    "sales": "",
+    "rating": "2.75",
     "listingType": "cat_d",
     "pagePlan": "単数",
     "status": "st_todo",
     "name": "ペット爪切り",
     "code": "",
     "salesMethod": "レビュー悪い。\n撤退or作り変え。",
+    "searchUrl": "",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-24-02.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
-    "rakutenUrls": [],
-    "rating": "2.75"
+    "rakutenUrls": []
   },
   {
     "id": "it1781758699729",
