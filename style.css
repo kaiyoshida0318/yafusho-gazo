@@ -248,3 +248,27 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .bulkbar select{font:inherit;font-size:12.5px;border:1px solid var(--line-2);border-radius:8px;padding:6px 9px;background:#fff;outline:0;cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
 .bulkbar select:focus{border-color:var(--red)}
 .subbar{display:flex;align-items:center;gap:10px}
+
+/* ===== マーク（バッジ）＋ セル内ドロップダウン ===== */
+.mk{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:5px;font-size:10px;font-weight:800;color:#fff;line-height:1;font-family:"Roboto Mono",monospace;flex:none}
+.mk:empty{min-width:10px;width:10px;height:10px;padding:0;border-radius:50%}
+.mk-gray{background:#8a93a3}.mk-red{background:#f4442f}.mk-orange{background:#e8870f}.mk-green{background:#23a35a}.mk-blue{background:#2f6df4}.mk-purple{background:#8b5cf6}.mk-teal{background:#14b8a6}
+.selcell{position:relative;display:flex;align-items:center;width:100%}
+.selcell .mk{position:absolute;left:7px;top:50%;transform:translateY(-50%);pointer-events:none}
+.row-sel.has-mk{padding-left:32px}
+.pill .mk{margin-right:5px}
+/* 各種管理：選択肢＋マーク エディタ */
+.opt-scroll{flex:1;overflow:auto;padding-right:2px}
+.opt-sec{margin-bottom:18px}
+.opt-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.opt-head .fld-label{margin:0;font-size:14px;font-weight:800;color:var(--ink-1)}
+.opt-head .btn{margin-left:auto}
+.opt-cols{display:grid;grid-template-columns:34px 96px 64px 1fr 56px;gap:9px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 5px;border-bottom:1px solid var(--line-2)}
+.opt-row{display:grid;grid-template-columns:34px 96px 64px 1fr 56px;gap:9px;align-items:center;padding:6px 2px;border-bottom:1px solid #eef0f3}
+.mk-prev{justify-self:center}
+.opt-color,.opt-mark,.opt-label{font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:8px;padding:7px 8px;outline:0;background:#f4f5f7;min-width:0;font-family:"Zen Kaku Gothic New",sans-serif}
+.opt-color:focus,.opt-mark:focus,.opt-label:focus{border-color:var(--red);background:#fff}
+.opt-mark{text-align:center}
+.opt-row .mv-btns{display:flex;gap:3px;justify-content:flex-end}
+.opt-del{width:26px;height:30px;border:1px solid #f1c7c0;background:#fff;color:var(--red-strong);border-radius:7px;cursor:pointer;font-size:14px;justify-self:end}
+.opt-del:hover{background:var(--red-soft)}
