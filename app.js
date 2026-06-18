@@ -510,24 +510,27 @@ var ghShaCache={};
 async function ghCurrentSha(owner,repo,branch,path,pat){
   try{
     var rr=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/commits/'+encodeURIComponent(branch)+'?t='+Date.now(),{headers:ghHeaders(pat),cache:'no-store'});
-    if(rr.ok){var cj=await rr.json();var csha=cj.sha;
+    if(rr.ok){var cj=await rr.json();var csha=cj.sha;log('  '+branch+' HEAD='+String(csha).slice(0,7));
       var r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path+'?ref='+csha,{headers:ghHeaders(pat),cache:'no-store'});
-      if(r.status===200)return (await r.json()).sha;
-      if(r.status===404)return null;
-    }
-  }catch(e){}
+      if(r.status===200){var fs=(await r.json()).sha;return fs;}
+      if(r.status===404){log('  '+path+' はHEADに存在せず（新規）');return null;}
+      log('  '+path+' sha取得 NG ('+r.status+')');
+    }else{log('  commits('+branch+') 取得NG ('+rr.status+')');}
+  }catch(e){log('  sha取得エラー: '+e.message);}
   return await ghSha(owner,repo,branch,path,pat);
 }
 async function ghPutRetry(owner,repo,branch,path,b64,msg,pat){
   var last='';
   for(var attempt=0;attempt<6;attempt++){
-    var sha;
-    if(attempt===0&&Object.prototype.hasOwnProperty.call(ghShaCache,path)){sha=ghShaCache[path];}
-    else{sha=await ghCurrentSha(owner,repo,branch,path,pat);}
+    var sha,src;
+    if(attempt===0&&Object.prototype.hasOwnProperty.call(ghShaCache,path)){sha=ghShaCache[path];src='キャッシュ';}
+    else{sha=await ghCurrentSha(owner,repo,branch,path,pat);src='取得';}
+    log('PUT '+path+' 試行'+(attempt+1)+' sha='+src+'('+(sha?String(sha).slice(0,7):'なし=新規作成')+')');
     var body={message:msg,content:b64,branch:branch};if(sha)body.sha=sha;
     var r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:ghHeaders(pat),body:JSON.stringify(body)});
-    if(r.ok){var jr=await r.json();if(jr&&jr.content&&jr.content.sha)ghShaCache[path]=jr.content.sha;return jr;}
-    last=await r.text();
+    if(r.ok){var jr=await r.json();var nsha=(jr&&jr.content&&jr.content.sha)||'';if(nsha)ghShaCache[path]=nsha;var csha=(jr&&jr.commit&&jr.commit.sha)||'';var url=(jr&&jr.commit&&jr.commit.html_url)||'';log('PUT '+path+' OK('+r.status+') newSha='+String(nsha).slice(0,7)+' commit='+String(csha).slice(0,7));if(url)log('  '+url);return jr;}
+    last=await r.text();var mm='';try{mm=(JSON.parse(last).message)||'';}catch(e){mm=last.slice(0,90);}
+    log('PUT '+path+' NG('+r.status+') '+mm);
     if(r.status===409||r.status===422){delete ghShaCache[path];await ghSleep(700+attempt*500);continue;}
     throw new Error('PUT '+path+' ('+r.status+') '+last.slice(0,120));
   }
@@ -538,6 +541,8 @@ async function saveToGitHub(silent){
   var c=getCfg();
   if(!c.pat){if(silent)return;alert('先に設定でGitHubのPATを入力してください。');openSettings();return;}
   $('btnSave').disabled=true;
+  log('=== GitHub保存 開始 ['+(silent?'自動':'手動')+'] '+c.owner+'/'+c.repo+'@'+c.branch+' / 商品'+items.length+'件 / PAT'+(c.pat?('あり('+c.pat.length+'字)'):'なし')+' ===');
+  var _imgUp=0;
   try{
     // 1) 画像（data:のものだけ）をアップロード → rawURLに置換（複数対応）
     var sides=['yahoo','rakuten'];
@@ -552,7 +557,7 @@ async function saveToGitHub(silent){
             prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
             var ext=mimeExt(src);var path='images/'+it.id+'-'+side+'-'+n+'.'+ext;
             var b64=src.split(',')[1];
-            await ghPutRetry(c.owner,c.repo,c.branch,path,b64,'image '+it.id+' '+side+' '+n,c.pat);
+            await ghPutRetry(c.owner,c.repo,c.branch,path,b64,'image '+it.id+' '+side+' '+n,c.pat);_imgUp++;
             arr[n]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+path;
             persist();render();
           }
@@ -562,7 +567,7 @@ async function saveToGitHub(silent){
         if(msrc&&msrc.indexOf('data:')===0){
           prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
           var mext=mimeExt(msrc);var mpath='images/'+it.id+'-'+side+'-main.'+mext;
-          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+side+' main',c.pat);
+          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+side+' main',c.pat);_imgUp++;
           it[mkey]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+mpath;
           persist();render();
         }
@@ -573,10 +578,11 @@ async function saveToGitHub(silent){
     // 2) data.json を保存
     prog(true,'データを保存中…');
     var json=JSON.stringify(items,null,2);
+    log('data.json 書込み: '+json.length+'文字 / 画像アップ'+_imgUp+'枚');
     await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
     persist();
     if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
-    log('GitHub保存 完了（'+items.length+'件）');
+    log('=== GitHub保存 完了（商品'+items.length+'件 / 画像'+_imgUp+'枚）上記commitリンクで反映確認 ===');
   }catch(e){
     prog(false);
     if(silent){toast('⚠️ GitHub同期に失敗');}else{alert('GitHub保存に失敗しました:\n'+e.message);}
