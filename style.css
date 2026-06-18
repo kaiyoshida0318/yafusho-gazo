@@ -313,6 +313,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .col-resize-handle::after{content:"";width:3px;height:60%;margin-right:2px;background:var(--red);border-radius:2px;opacity:.55}
 .col-resize-handle:hover::after{opacity:1;width:4px}
 #gridHead th{position:relative}
+.resize-bar[hidden]{display:none}
 .resize-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.15);padding:10px 16px;display:flex;align-items:center;gap:14px;font-size:13px;color:var(--ink)}
 .resize-bar-text{font-weight:600}
 
