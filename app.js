@@ -419,7 +419,7 @@ function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+p
 renderCatTabs();renderStatusTabs();
 if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;listingFilter=b.getAttribute('data-listing')||'';render();});
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;statusFilter=b.getAttribute('data-status')||'';render();});
-if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();clearDirty();render();log('変更を保存しました');};
+if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();clearDirty();render();log('変更を保存しました');toast('✅ 変更を保存しました');};
 document.addEventListener('click',function(e){
   var t=e.target;var item=t.closest?t.closest('.cdd-item'):null;
   if(item&&cddState.btn){cddSelect(item.getAttribute('data-v')||'');return;}
@@ -444,6 +444,8 @@ $('btnSaveSettings').onclick=function(){saveCfg({pat:$('cfgPat').value.trim(),ow
 
 /* ===== ログ ===== */
 var LOGS=[];
+var _toastTimer=null;
+function toast(msg){var t=$('toast');if(!t)return;t.textContent=msg;t.hidden=false;requestAnimationFrame(function(){t.classList.add('show');});if(_toastTimer)clearTimeout(_toastTimer);_toastTimer=setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.hidden=true;},260);},2400);}
 function log(msg){var t=new Date().toLocaleTimeString('ja-JP');LOGS.unshift('['+t+'] '+msg);if(LOGS.length>500)LOGS.pop();var a=document.querySelector('#logModal textarea');if(a)a.value=LOGS.join('\n');}
 
 /* ===== 進捗表示 ===== */
