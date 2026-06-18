@@ -95,13 +95,13 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .muted{color:var(--ink-3)}
 .act-cell{display:flex;gap:6px;justify-content:flex-end}
 /* ===== モーダル共通 ===== */
-.overlay{position:fixed;inset:0;background:rgba(20,24,32,.5);display:grid;place-items:center;z-index:80;padding:18px}
+.overlay{position:fixed;inset:0;background:rgba(15,18,26,.62);backdrop-filter:blur(2px);display:grid;place-items:center;z-index:80;padding:18px}
 .overlay[hidden]{display:none}
 .sheet{background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(20,24,32,.35);width:100%;max-width:980px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
   background:linear-gradient(45deg,#f4f5f7 25%,transparent 25%,transparent 75%,#f4f5f7 75%),linear-gradient(45deg,#f4f5f7 25%,#fff 25%,#fff 75%,#f4f5f7 75%);
   background-size:22px 22px;background-position:0 0,11px 11px}
 
-.mini{background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(20,24,32,.3);width:100%;max-width:440px;padding:22px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 90px rgba(10,14,22,.45),0 4px 12px rgba(10,14,22,.2);width:100%;max-width:440px;padding:22px}
 .mini h2{margin:0 0 6px;font-size:18px}
 .hint{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin:0 0 14px}
 .mini label{display:block;font-size:12.5px;font-weight:500;margin-bottom:12px}
@@ -158,26 +158,29 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 
 /* ===== 各種管理 / 項目調整 ===== */
 .subbar{max-width:1880px;margin:0 auto;padding:10px 24px 0;display:flex}
-.mini-wide{max-width:660px}
-#colsEditor{max-height:50vh;overflow:auto}
+.mini-wide{max-width:660px;max-height:88vh;display:flex;flex-direction:column}
+#colsEditor{flex:1;overflow:auto;padding-right:2px}
 .edit-row{display:flex;gap:7px;margin-bottom:8px}
 .edit-row input{flex:1;min-width:0;font:inherit;font-size:14px;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;outline:0}
 .edit-row input:focus{border-color:var(--red)}
 .row-del{flex:none;width:34px;border:1px solid var(--line-2);background:#fff;border-radius:9px;cursor:pointer;color:var(--ink-3);font-size:16px}
 .row-del:hover{border-color:var(--red);color:var(--red)}
-.col-edit-head{display:grid;grid-template-columns:64px 1fr 84px 92px;gap:10px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 6px}
-.col-edit-row{display:grid;grid-template-columns:64px 1fr 84px 92px;gap:10px;align-items:center;margin-bottom:8px}
+.col-edit-head{display:grid;grid-template-columns:56px 1fr 78px 124px;gap:10px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 8px}
+.col-edit-row{display:grid;grid-template-columns:56px 1fr 78px 124px;gap:10px;align-items:center;margin-bottom:9px}
 .mv-btns{display:flex;gap:3px}
-.mv{width:28px;height:32px;border:1px solid var(--line-2);background:#fff;border-radius:7px;cursor:pointer;color:var(--ink-2);font-size:13px}
+.mv{width:26px;height:32px;border:1px solid var(--line-2);background:#fff;border-radius:7px;cursor:pointer;color:var(--ink-2);font-size:13px}
 .mv:hover{border-color:var(--ink-3);background:#f6f7f9}
 .col-name{min-width:0;font:inherit;font-size:14px;border:1px solid var(--line-2);border-radius:9px;padding:8px 11px;outline:0}
 .col-name:focus{border-color:var(--red)}
-.col-align{min-width:0;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:8px 6px;outline:0;background:#fff}
-.col-align:focus{border-color:var(--red)}
 .col-w-wrap{display:flex;align-items:center;gap:4px;min-width:0}
-.col-w{width:52px;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:8px 6px;outline:0}
+.col-w{width:48px;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:8px 6px;outline:0}
 .col-w:focus{border-color:var(--red)}
 .col-w-wrap .unit{font-size:12px;color:var(--ink-3)}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;width:124px}
+.seg-btn{flex:1;border:0;background:#fff;padding:8px 0;font:inherit;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;border-right:1px solid var(--line-2)}
+.seg-btn:last-child{border-right:0}
+.seg-btn:hover{background:#f4f5f7}
+.seg-btn.on{background:var(--red);color:#fff}
 
 /* ===== 編集モーダル：タブ／基本情報グリッド ===== */
 .modal-tabs{display:flex;gap:4px;padding:0 22px;border-bottom:1px solid var(--line);background:#fff}
@@ -222,3 +225,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .basic-fields .span-all{grid-column:1/-1}
 .basic-fields .span2{grid-column:span 2}
 @media(max-width:680px){.basic-top{flex-direction:column}.mini-imgs{flex-direction:row;width:auto}.basic-fields{grid-template-columns:1fr 1fr}}
+
+/* 基本情報メイン画像（独立・直接登録） */
+.mini-img.drag{border-color:var(--red);background:var(--red-soft)}
+.mini-clear{position:absolute;right:5px;top:5px;width:22px;height:22px;border:0;border-radius:6px;background:rgba(26,27,30,.72);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.mini-clear:hover{background:var(--red)}
