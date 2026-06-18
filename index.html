@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.14.7">
+<link rel="stylesheet" href="style.css?v=0.15.0">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.14.7</span>
+        <span class="version" id="version">v0.15.0</span>
         <button class="btn btn-ghost" id="btnManage">🗂 各種管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -31,11 +31,7 @@
 <div class="console">
   <!-- 1段目：カテゴリ系 ＋ 右側アクション -->
   <div class="frow frow-cat" id="catRow">
-    <button class="pill on"><span class="ic">📊</span>全体<span class="cnt" id="cntAllCat">0</span></button>
-    <button class="pill"><span class="tag-badge tb-new">NEW</span>新規<span class="cnt">0</span></button>
-    <button class="pill"><span class="tag-badge tb-r">R</span>楽天あり<span class="cnt">0</span></button>
-    <button class="pill"><span class="tag-badge tb-y">Y</span>ヤフショ済<span class="cnt">0</span></button>
-    <button class="pill"><span class="tag-badge tb-q">?</span>未設定<span class="cnt">0</span></button>
+    <div class="pill-group" id="catPills"></div>
     <span class="spacer"></span>
     <button class="btn btn-quiet btn-sm" id="btnBulkDel">🗑 一括削除</button>
     <button class="btn btn-green-line btn-sm" id="btnAddRow">＋ 行だけ</button>
@@ -54,7 +50,17 @@
 </div>
 
 <!-- テーブル（列はあとで） -->
-<div class="subbar"><span class="sp"></span><button class="btn btn-line btn-sm" id="btnCols2">📐 項目調整</button></div>
+<div class="subbar">
+  <div class="bulkbar" id="bulkBar" hidden>
+    <span class="bulk-count" id="bulkCount">0件選択</span>
+    <select id="bulkStatus"><option value="">状態：変更なし</option><option>未着手</option><option>作成中</option><option>確認待ち</option><option>完了</option></select>
+    <select id="bulkListing"></select>
+    <button class="btn btn-red btn-sm" id="bulkApply">一括適用</button>
+    <button class="btn btn-line btn-sm" id="bulkClear">選択解除</button>
+  </div>
+  <span class="sp"></span>
+  <button class="btn btn-line btn-sm" id="btnCols2">📐 項目調整</button>
+</div>
 <div class="table-wrap">
   <div class="table-shell">
     <div class="table-scroll">
@@ -111,6 +117,7 @@
                 <option>新規出品</option>
                 <option>リニューアル-同一ページ</option>
                 <option>リニューアル-新規ページ</option>
+                <option>再登録</option>
               </select>
             </label>
             <label class="fld">状態
@@ -183,7 +190,7 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.14.7</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.15.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -207,6 +214,6 @@
   </div>
 </div>
 
-<script src="app.js?v=0.14.7"></script>
+<script src="app.js?v=0.15.0"></script>
 </body>
 </html>
