@@ -119,7 +119,7 @@ function cellHtml(key,it){
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
-  if(key==='salesMethod')return '<td>'+(it.salesMethod?esc(it.salesMethod):md())+'</td>';
+  if(key==='salesMethod')return '<td>'+(it.salesMethod?esc(it.salesMethod).replace(/\n/g,'<br>'):md())+'</td>';
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
 }
