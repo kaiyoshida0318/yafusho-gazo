@@ -16,10 +16,16 @@ function thumb(src){return src?'<img class="tbl-thumb" src="'+escA(src)+'" alt="
 function urlCell(arr){arr=(arr||[]).filter(function(u){return u;});if(!arr.length)return '<span class="muted">—</span>';var h='';for(var i=0;i<arr.length;i++){h+='<a href="'+escA(arr[i])+'" target="_blank" rel="noopener">'+esc(arr[i])+'</a>';}return '<div class="url-cell">'+h+'</div>';}
 function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'</span>';}
 
+var statusFilter='';
+function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
+function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
 function render(){
   var tb=$('gridBody');tb.innerHTML='';
-  for(var i=0;i<items.length;i++){
-    var it=items[i];
+  var list=items;
+  if(statusFilter==='__none__')list=items.filter(function(x){return !x.status;});
+  else if(statusFilter)list=items.filter(function(x){return x.status===statusFilter;});
+  for(var i=0;i<list.length;i++){
+    var it=list[i];
     var tr=document.createElement('tr');
     var sales=(it.sales!==''&&it.sales!=null)?(esc(it.sales)+' 万円'):'—';
     tr.innerHTML=
@@ -35,10 +41,14 @@ function render(){
       '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
     tb.appendChild(tr);
   }
-  $('grid').style.display=items.length?'':'none';
-  $('emptyState').style.display=items.length?'none':'';
+  $('grid').style.display=list.length?'':'none';
+  var es=$('emptyState');es.style.display=list.length?'none':'';
+  if(!list.length){
+    es.querySelector('.lead').textContent=items.length?'この絞り込みに該当する商品はありません':'まだ商品がありません';
+    es.querySelector('p').textContent=items.length?'別の状態タブを選ぶか、「全体」に戻してください。':'「＋ 新規作成」から商品を登録すると、ここに一覧で表示されます。';
+  }
   if($('cntAllCat'))$('cntAllCat').textContent=items.length;
-  if($('cntAllStatus'))$('cntAllStatus').textContent=items.length;
+  updateStatusPills();
 }
 
 /* ===== フォーム ===== */
@@ -54,11 +64,11 @@ var PH_Y='https://store.shopping.yahoo.co.jp/…';
 var PH_R='https://item.rakuten.co.jp/…';
 
 function todayStr(){var d=new Date();var m=('0'+(d.getMonth()+1)).slice(-2);var day=('0'+d.getDate()).slice(-2);return d.getFullYear()+'-'+m+'-'+day;}
-function resetForm(){clearBox('imgRakuten');clearBox('imgYahoo');setVal('fDate',todayStr());setVal('fSales','');setVal('fListing','新規出品');setVal('fPagePlan','');setVal('fName','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
+function resetForm(){clearBox('imgRakuten');clearBox('imgYahoo');setVal('fDate',todayStr());setVal('fSales','');setVal('fListing','新規出品');setVal('fPagePlan','');setVal('fStatus','未着手');setVal('fName','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
-function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';fillBox('imgRakuten',it.rakutenImg);fillBox('imgYahoo',it.yahooImg);setVal('fDate',it.date||'');setVal('fSales',it.sales||'');setVal('fListing',it.listingType||'新規出品');setVal('fPagePlan',it.pagePlan||'');setVal('fName',it.name||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';fillBox('imgRakuten',it.rakutenImg);fillBox('imgYahoo',it.yahooImg);setVal('fDate',it.date||'');setVal('fSales',it.sales||'');setVal('fListing',it.listingType||'新規出品');setVal('fPagePlan',it.pagePlan||'');setVal('fStatus',it.status||'未着手');setVal('fName',it.name||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
-function gather(){return{id:editingId||('it'+Date.now()),rakutenImg:imgSrc('imgRakuten'),yahooImg:imgSrc('imgYahoo'),date:val('fDate'),sales:val('fSales'),listingType:val('fListing'),pagePlan:val('fPagePlan'),name:val('fName'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};}
+function gather(){return{id:editingId||('it'+Date.now()),rakutenImg:imgSrc('imgRakuten'),yahooImg:imgSrc('imgYahoo'),date:val('fDate'),sales:val('fSales'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};}
 function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;break;}}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();if(closeAfter)hide('editModal');}
 
 /* ===== ヘッダー/モーダルのボタン ===== */
@@ -67,7 +77,7 @@ $('btnCols').onclick=function(){show('colModal');};
 $('btnCats').onclick=function(){show('catModal');};
 $('btnStatus').onclick=function(){show('statusModal');};
 $('btnAdd').onclick=openNew;
-$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),rakutenImg:'',yahooImg:'',date:todayStr(),sales:'',listingType:'新規出品',pagePlan:'',name:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
+$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),rakutenImg:'',yahooImg:'',date:todayStr(),sales:'',listingType:'新規出品',pagePlan:'',status:'未着手',name:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
 $('btnSaveStay').onclick=function(){saveForm(false);};
 $('btnSaveClose').onclick=function(){saveForm(true);};
 $('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();}};
@@ -108,7 +118,9 @@ document.addEventListener('click',function(e){
 
 /* ピル */
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
-wirePills('#catRow','.pill');wirePills('#statusRow','.spill');
+wirePills('#catRow','.pill');
+var spills=document.querySelectorAll('#statusRow .spill');
+for(var sp=0;sp<spills.length;sp++){spills[sp].addEventListener('click',function(){for(var q=0;q<spills.length;q++){spills[q].classList.remove('on');}this.classList.add('on');statusFilter=this.getAttribute('data-status')||'';render();});}
 
 /* ===== GitHub 設定 ===== */
 var CFG='yafusho_cfg';
