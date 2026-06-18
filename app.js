@@ -504,6 +504,20 @@ async function ghPut(owner,repo,branch,path,b64,sha,msg,pat){
   if(!r.ok){var t=await r.text();throw new Error('PUT '+path+' ('+r.status+') '+t.slice(0,120));}
   return r.json();
 }
+function ghSleep(ms){return new Promise(function(res){setTimeout(res,ms);});}
+async function ghPutRetry(owner,repo,branch,path,b64,msg,pat){
+  var last='';
+  for(var attempt=0;attempt<5;attempt++){
+    var sha=await ghSha(owner,repo,branch,path,pat);
+    var body={message:msg,content:b64,branch:branch};if(sha)body.sha=sha;
+    var r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:ghHeaders(pat),body:JSON.stringify(body)});
+    if(r.ok)return r.json();
+    last=await r.text();
+    if(r.status===409||r.status===422){await ghSleep(500+attempt*500);continue;}
+    throw new Error('PUT '+path+' ('+r.status+') '+last.slice(0,120));
+  }
+  throw new Error('PUT '+path+' (409) sha競合のリトライ上限: '+last.slice(0,80));
+}
 
 async function saveToGitHub(silent){
   var c=getCfg();
@@ -523,8 +537,7 @@ async function saveToGitHub(silent){
             prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
             var ext=mimeExt(src);var path='images/'+it.id+'-'+side+'-'+n+'.'+ext;
             var b64=src.split(',')[1];
-            var sha=await ghSha(c.owner,c.repo,c.branch,path,c.pat);
-            await ghPut(c.owner,c.repo,c.branch,path,b64,sha,'image '+it.id+' '+side+' '+n,c.pat);
+            await ghPutRetry(c.owner,c.repo,c.branch,path,b64,'image '+it.id+' '+side+' '+n,c.pat);
             arr[n]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+path;
             persist();render();
           }
@@ -534,8 +547,7 @@ async function saveToGitHub(silent){
         if(msrc&&msrc.indexOf('data:')===0){
           prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
           var mext=mimeExt(msrc);var mpath='images/'+it.id+'-'+side+'-main.'+mext;
-          var msha=await ghSha(c.owner,c.repo,c.branch,mpath,c.pat);
-          await ghPut(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],msha,'image '+it.id+' '+side+' main',c.pat);
+          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+side+' main',c.pat);
           it[mkey]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+mpath;
           persist();render();
         }
@@ -546,8 +558,7 @@ async function saveToGitHub(silent){
     // 2) data.json を保存
     prog(true,'データを保存中…');
     var json=JSON.stringify(items,null,2);
-    var dsha=await ghSha(c.owner,c.repo,c.branch,'data.json',c.pat);
-    await ghPut(c.owner,c.repo,c.branch,'data.json',utf8b64(json),dsha,'update data ('+items.length+'件)',c.pat);
+    await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
     persist();
     if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
     log('GitHub保存 完了（'+items.length+'件）');
