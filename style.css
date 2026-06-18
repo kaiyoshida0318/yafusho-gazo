@@ -409,3 +409,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .bulk-inp{width:100%;font:inherit;font-size:13px;color:var(--ink);border:1px solid var(--line-2);border-radius:7px;padding:6px 8px;outline:0;background:#fffdf8;box-sizing:border-box}
 .bulk-inp:focus{border-color:var(--red);background:#fff}
 textarea.bulk-area{resize:vertical;line-height:1.45;min-height:52px;white-space:pre-wrap}
+
+.tbl-thumb.clk{cursor:pointer}
+.tbl-thumb.clk:hover{outline:2px solid var(--red);outline-offset:1px}
+span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
