@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.12.0">
+<link rel="stylesheet" href="style.css?v=0.12.1">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.12.0</span>
+        <span class="version" id="version">v0.12.1</span>
         <button class="btn btn-ghost" id="btnManage">🗂 各種管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -90,30 +90,36 @@
     <div class="form-body">
       <!-- 基本情報タブ -->
       <div class="tab-panel" id="panel-basic">
-        <div class="basic-grid">
-          <label class="fld span2">商品名<input type="text" id="fName" placeholder="商品名"></label>
-          <label class="fld">日付<input type="date" id="fDate"></label>
-          <label class="fld">予想月商
-            <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
-          </label>
-          <label class="fld">出品内容
-            <select id="fListing">
-              <option>新規出品</option>
-              <option>リニューアル-同一ページ</option>
-              <option>リニューアル-新規ページ</option>
-            </select>
-          </label>
-          <label class="fld">制作予定ページ
-            <input type="number" id="fPagePlan" min="1" max="4" step="1" placeholder="1〜4">
-          </label>
-          <label class="fld span2">状態
-            <select id="fStatus">
-              <option>未着手</option>
-              <option>作成中</option>
-              <option>確認待ち</option>
-              <option>完了</option>
-            </select>
-          </label>
+        <div class="basic-top">
+          <div class="mini-imgs">
+            <div class="mini-wrap"><div class="mini-img" id="miniYahoo"></div><div class="mini-cap">Yahooメイン</div></div>
+            <div class="mini-wrap"><div class="mini-img" id="miniRakuten"></div><div class="mini-cap">楽天メイン</div></div>
+          </div>
+          <div class="basic-fields">
+            <label class="fld span-all">商品名<input type="text" id="fName" placeholder="商品名"></label>
+            <label class="fld">日付<input type="date" id="fDate"></label>
+            <label class="fld">予想月商
+              <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
+            </label>
+            <label class="fld">制作予定ページ
+              <input type="number" id="fPagePlan" min="1" max="4" step="1" placeholder="1〜4">
+            </label>
+            <label class="fld span2">出品内容
+              <select id="fListing">
+                <option>新規出品</option>
+                <option>リニューアル-同一ページ</option>
+                <option>リニューアル-新規ページ</option>
+              </select>
+            </label>
+            <label class="fld">状態
+              <select id="fStatus">
+                <option>未着手</option>
+                <option>作成中</option>
+                <option>確認待ち</option>
+                <option>完了</option>
+              </select>
+            </label>
+          </div>
         </div>
 
         <div class="form-bottom">
@@ -175,7 +181,7 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.12.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.12.1</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -199,6 +205,6 @@
   </div>
 </div>
 
-<script src="app.js?v=0.12.0"></script>
+<script src="app.js?v=0.12.1"></script>
 </body>
 </html>
