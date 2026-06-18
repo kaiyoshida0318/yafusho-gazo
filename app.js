@@ -108,18 +108,21 @@ function cddSelect(v){
   var cur=btn.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(cddState.field,v);
   closeCdd();
 }
+var bulkEdit=false;
+function bulkInp(type,it,field){var v=(it[field]!=null?it[field]:'');return '<input class="bulk-inp" type="'+type+'" data-id="'+it.id+'" data-field="'+field+'" value="'+escA(v)+'"'+(type==='number'?' min="0" step="1"':'')+'>';}
+function bulkArea(it,field){var v=(it[field]!=null?it[field]:'');return '<textarea class="bulk-inp bulk-area" rows="2" data-id="'+it.id+'" data-field="'+field+'" placeholder="改行OK">'+esc(v)+'</textarea>';}
 function cellHtml(key,it){
-  if(key==='date')return '<td class="mono cell-date">'+(it.date?esc(it.date):md())+'</td>';
+  if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?esc(it.date):md())+'</td>';
   if(key==='yahooImg')return '<td>'+thumb(mainImg(it,'yahoo'))+'</td>';
   if(key==='rakutenImg')return '<td>'+thumb(mainImg(it,'rakuten'))+'</td>';
-  if(key==='name')return '<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>';
-  if(key==='sales')return '<td class="mono">'+((it.sales!==''&&it.sales!=null)?esc(it.sales)+' 万円':md())+'</td>';
+  if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':'<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>';
+  if(key==='sales')return bulkEdit?'<td>'+bulkInp('number',it,'sales')+'</td>':'<td class="mono">'+((it.sales!==''&&it.sales!=null)?esc(it.sales)+' 万円':md())+'</td>';
   if(key==='yahooUrls')return '<td>'+urlCell(it.yahooUrls)+'</td>';
   if(key==='rakutenUrls')return '<td>'+urlCell(it.rakutenUrls)+'</td>';
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
-  if(key==='salesMethod')return '<td>'+(it.salesMethod?esc(it.salesMethod).replace(/\n/g,'<br>'):md())+'</td>';
+  if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':'<td>'+(it.salesMethod?esc(it.salesMethod).replace(/\n/g,'<br>'):md())+'</td>';
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
 }
@@ -438,6 +441,8 @@ renderCatTabs();renderStatusTabs();
 if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;listingFilter=b.getAttribute('data-listing')||'';render();});
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;statusFilter=b.getAttribute('data-status')||'';render();});
 if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();clearDirty();render();log('変更を保存しました');toast('✅ 変更を保存しました');};
+if($('btnBulkEdit'))$('btnBulkEdit').onclick=function(){bulkEdit=!bulkEdit;this.classList.toggle('on',bulkEdit);this.textContent=bulkEdit?'✓ 一括編集中（保存で確定）':'✏️ 一括編集';render();};
+if($('gridBody'))$('gridBody').addEventListener('input',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('bulk-inp'))return;var id=t.getAttribute('data-id');var field=t.getAttribute('data-field');for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=t.value;break;}}markDirty();});
 document.addEventListener('click',function(e){
   var t=e.target;var item=t.closest?t.closest('.cdd-item'):null;
   if(item&&cddState.btn){cddSelect(item.getAttribute('data-v')||'');return;}
