@@ -131,22 +131,23 @@
   },
   {
     "id": "it1781758747702",
-    "yahooMain": "",
+    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758747702-yahoo-main.jpg",
     "rakutenMain": "",
     "yahooImgs": [],
     "rakutenImgs": [],
     "date": "2026-06-18",
-    "sales": "",
+    "rating": "2.4",
     "listingType": "cat_d",
     "pagePlan": "単数",
     "status": "st_todo",
     "name": "ニップレス",
+    "code": "",
+    "salesMethod": "レビュー悪い。\n作り変えか。",
+    "searchUrl": "",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-23-07.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
     ],
-    "rakutenUrls": [],
-    "salesMethod": "レビュー悪い。\n作り変えか。",
-    "rating": "2.4"
+    "rakutenUrls": []
   },
   {
     "id": "it1781762608550",
