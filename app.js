@@ -195,15 +195,15 @@ $('btnSaveClose').onclick=function(){saveForm(true);};
 /* 各種管理（出品内容の選択肢） */
 var MK_COLORS=[['gray','グレー'],['red','赤'],['orange','オレンジ'],['green','緑'],['blue','青'],['purple','紫'],['teal','ティール']];
 function colorSel(c){var o='';for(var i=0;i<MK_COLORS.length;i++){o+='<option value="'+MK_COLORS[i][0]+'"'+(c===MK_COLORS[i][0]?' selected':'')+'>'+MK_COLORS[i][1]+'</option>';}return o;}
-function optRow(field,opt){opt=opt||{l:'',c:'gray',t:''};var d=document.createElement('div');d.className='opt-row';d.setAttribute('data-field',field);d.innerHTML='<span class="mk-prev mk mk-'+(opt.c||'gray')+'">'+esc(opt.t||'')+'</span><select class="opt-color">'+colorSel(opt.c||'gray')+'</select><input class="opt-mark" maxlength="3" value="'+escA(opt.t||'')+'" placeholder="記号"><input class="opt-label" value="'+escA(opt.l||'')+'" placeholder="選択肢名"><span class="mv-btns"><button type="button" class="mv up">↑</button><button type="button" class="mv down">↓</button></span><button type="button" class="opt-del">×</button>';return d;}
+function optRow(field,opt){opt=opt||{l:'',c:'gray',t:''};var d=document.createElement('div');d.className='opt-row';d.setAttribute('data-field',field);d.innerHTML='<span class="mk-prev mk mk-'+(opt.c||'gray')+'"></span><select class="opt-color">'+colorSel(opt.c||'gray')+'</select><input class="opt-label" value="'+escA(opt.l||'')+'" placeholder="選択肢名"><span class="mv-btns"><button type="button" class="mv up">↑</button><button type="button" class="mv down">↓</button></span><button type="button" class="opt-del">×</button>';return d;}
 function contOf(field){return 'optPage';}
 function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=getOpts('pagePlan');for(var i=0;i<opts.length;i++)box.appendChild(optRow('pagePlan',opts[i]));}show('manageModal');}
-function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:rows[i].querySelector('.opt-color').value,t:rows[i].querySelector('.opt-mark').value.trim()});}return arr;}
+function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:rows[i].querySelector('.opt-color').value,t:''});}return arr;}
 $('btnManage').onclick=openManage;
 var _addBtns=document.querySelectorAll('[data-addopt]');for(var _a=0;_a<_addBtns.length;_a++){_addBtns[_a].addEventListener('click',function(){var f=this.getAttribute('data-addopt');$(contOf(f)).appendChild(optRow(f,{}));});}
 (function(){var os=$('optScroll');if(!os)return;
   function rowOf(t){var r=t;while(r&&r!==os&&!(r.classList&&r.classList.contains('opt-row')))r=r.parentNode;return (r&&r.classList&&r.classList.contains('opt-row'))?r:null;}
-  function prev(r){if(!r)return;var p=r.querySelector('.mk-prev');if(!p)return;p.className='mk-prev mk mk-'+r.querySelector('.opt-color').value;p.textContent=r.querySelector('.opt-mark').value;}
+  function prev(r){if(!r)return;var p=r.querySelector('.mk-prev');if(!p)return;p.className='mk-prev mk mk-'+r.querySelector('.opt-color').value;p.textContent='';}
   os.addEventListener('click',function(e){var t=e.target;var r=rowOf(t);
     if(t.classList.contains('opt-del')){if(r)r.parentNode.removeChild(r);return;}
     if(t.classList.contains('mv')&&r){if(t.classList.contains('up')&&r.previousElementSibling)r.parentNode.insertBefore(r,r.previousElementSibling);else if(t.classList.contains('down')&&r.nextElementSibling)r.parentNode.insertBefore(r.nextElementSibling,r);}
