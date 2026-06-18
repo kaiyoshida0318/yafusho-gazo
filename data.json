@@ -25,7 +25,8 @@
       "https://store.shopping.yahoo.co.jp/yukaiya/ca-02-01-hera.html?sc_i=shopping-pc-web-category-storeitm-rsltlst-img&ea="
     ],
     "rakutenUrls": [],
-    "salesMethod": "売り方変えてどうにかできないか。　"
+    "salesMethod": "売り方変えてどうにかできないか。　",
+    "rating": "3"
   },
   {
     "id": "it1781746183669",
@@ -42,9 +43,11 @@
     "code": "",
     "salesMethod": "20枚1000円だが、ライバル10枚1120円がいる。リニューアルか？",
     "yahooUrls": [
-      "https://shopping.yahoo.co.jp/search/%E3%83%95%E3%83%83%E3%82%AF%E3%82%B7%E3%83%BC%E3%83%AB/0/"
+      "https://store.shopping.yahoo.co.jp/yukaiya/ih-22-03-12set.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [],
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%95%E3%83%83%E3%82%AF%E3%82%B7%E3%83%BC%E3%83%AB/0/",
+    "rating": "4.45"
   },
   {
     "id": "it1781746196902",
@@ -59,10 +62,12 @@
     "status": "st_todo",
     "name": "魔法のテープ",
     "yahooUrls": [
-      "https://shopping.yahoo.co.jp/search/%E9%AD%94%E6%B3%95%E3%81%AE%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1781674292&mcr=e0f26e023121565013f0cf6565f3924e&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox&sretry=0"
+      "https://store.shopping.yahoo.co.jp/yukaiya/ih-22-04.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
     "rakutenUrls": [],
-    "salesMethod": "2個で1000円だがライバル3個で1000円2個で660円がいる。\n撤退orリニューアル。"
+    "salesMethod": "2個で1000円だがライバル3個で1000円2個で660円がいる。\n撤退orリニューアル。",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%AD%94%E6%B3%95%E3%81%AE%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1781674292&mcr=e0f26e023121565013f0cf6565f3924e&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox&sretry=0",
+    "rating": "4"
   },
   {
     "id": "it1781749202241",
@@ -77,10 +82,12 @@
     "status": "st_todo",
     "name": "脇汗パッド",
     "yahooUrls": [
-      "https://shopping.yahoo.co.jp/search/%E6%B1%97%E5%8F%96%E3%82%8A%E3%82%B7%E3%83%BC%E3%83%AB/0/?first=1&ss_first=1&ts=1781686465&mcr=749eea815d75dfe4db0553c04f0e7053&tab_ex=commerce&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox"
+      "https://store.shopping.yahoo.co.jp/yukaiya/si-24-03.html?sc_i=shopping-pc-web-result-storesch-rsltlst-img&ea="
     ],
     "rakutenUrls": [],
-    "salesMethod": "売り方変えてどうにかできないか。"
+    "salesMethod": "売り方変えてどうにかできないか。",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E6%B1%97%E5%8F%96%E3%82%8A%E3%82%B7%E3%83%BC%E3%83%AB/0/?first=1&ss_first=1&ts=1781686465&mcr=749eea815d75dfe4db0553c04f0e7053&tab_ex=commerce&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
+    "rating": "0"
   },
   {
     "id": "it1781758693408",
@@ -99,7 +106,8 @@
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-24-02.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [],
+    "rating": "2.75"
   },
   {
     "id": "it1781758699729",
@@ -117,7 +125,8 @@
       "https://store.shopping.yahoo.co.jp/yukaiya/si-23-11.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
     ],
     "rakutenUrls": [],
-    "salesMethod": "レビュー悪い。\n作り変えか。"
+    "salesMethod": "レビュー悪い。\n作り変えか。",
+    "rating": "3.2"
   },
   {
     "id": "it1781758747702",
@@ -135,7 +144,8 @@
       "https://store.shopping.yahoo.co.jp/yukaiya/si-23-07.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
     ],
     "rakutenUrls": [],
-    "salesMethod": "レビュー悪い。\n作り変えか。"
+    "salesMethod": "レビュー悪い。\n作り変えか。",
+    "rating": "2.4"
   },
   {
     "id": "it1781762608550",
