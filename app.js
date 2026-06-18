@@ -7,6 +7,7 @@ var STORE='yafusho_items';
 var items=[];
 try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(items));}catch(e){}}
+function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}}
 var editingId=null;
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -111,14 +112,15 @@ function cddSelect(v){
 var bulkEdit=false;
 function bulkInp(type,it,field){var v=(it[field]!=null?it[field]:'');return '<input class="bulk-inp" type="'+type+'" data-id="'+it.id+'" data-field="'+field+'" value="'+escA(v)+'"'+(type==='number'?' min="0" step="1"':'')+'>';}
 function bulkArea(it,field){var v=(it[field]!=null?it[field]:'');return '<textarea class="bulk-inp bulk-area" rows="2" data-id="'+it.id+'" data-field="'+field+'" placeholder="改行OK">'+esc(v)+'</textarea>';}
+function bulkUrlArea(it,field){var a=(it[field]||[]);return '<textarea class="bulk-inp bulk-area" rows="2" data-id="'+it.id+'" data-field="'+field+'" placeholder="1行に1URL">'+esc(a.join('\n'))+'</textarea>';}
 function cellHtml(key,it){
   if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?esc(it.date):md())+'</td>';
   if(key==='yahooImg')return '<td>'+thumb(mainImg(it,'yahoo'))+'</td>';
   if(key==='rakutenImg')return '<td>'+thumb(mainImg(it,'rakuten'))+'</td>';
   if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':'<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>';
   if(key==='sales')return bulkEdit?'<td>'+bulkInp('number',it,'sales')+'</td>':'<td class="mono">'+((it.sales!==''&&it.sales!=null)?esc(it.sales)+' 万円':md())+'</td>';
-  if(key==='yahooUrls')return '<td>'+urlCell(it.yahooUrls)+'</td>';
-  if(key==='rakutenUrls')return '<td>'+urlCell(it.rakutenUrls)+'</td>';
+  if(key==='yahooUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'yahooUrls')+'</td>':'<td>'+urlCell(it.yahooUrls)+'</td>';
+  if(key==='rakutenUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'rakutenUrls')+'</td>':'<td>'+urlCell(it.rakutenUrls)+'</td>';
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
@@ -441,9 +443,12 @@ function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+p
 renderCatTabs();renderStatusTabs();
 if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;listingFilter=b.getAttribute('data-listing')||'';render();});
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;statusFilter=b.getAttribute('data-status')||'';render();});
-if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();clearDirty();render();log('変更を保存しました');toast('✅ 変更を保存しました');};
-if($('btnBulkEdit'))$('btnBulkEdit').onclick=function(){bulkEdit=!bulkEdit;this.classList.toggle('on',bulkEdit);this.textContent=bulkEdit?'✏️ 一括編集を終了':'✏️ 一括編集';render();};
-if($('gridBody'))$('gridBody').addEventListener('input',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('bulk-inp'))return;var id=t.getAttribute('data-id');var field=t.getAttribute('data-field');for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=t.value;break;}}markDirty();});
+function setBulkBtn(){var b=$('btnBulkEdit');if(b){b.classList.toggle('on',bulkEdit);b.textContent=bulkEdit?'キャンセル':'✏️ 一括編集';}}
+function enterBulk(){bulkEdit=true;setBulkBtn();var s=$('btnSaveEdits');if(s)s.hidden=false;render();}
+function cancelBulk(){bulkEdit=false;setBulkBtn();reloadItems();clearDirty();render();toast('一括編集をキャンセルしました');}
+if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();if(bulkEdit){bulkEdit=false;setBulkBtn();}clearDirty();render();log('変更を保存しました');toast('✅ 変更を保存しました');};
+if($('btnBulkEdit'))$('btnBulkEdit').onclick=function(){if(bulkEdit)cancelBulk();else enterBulk();};
+if($('gridBody'))$('gridBody').addEventListener('input',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('bulk-inp'))return;var id=t.getAttribute('data-id');var field=t.getAttribute('data-field');for(var i=0;i<items.length;i++){if(items[i].id===id){if(field==='yahooUrls'||field==='rakutenUrls'){items[i][field]=t.value.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=t.value;}break;}}markDirty();});
 document.addEventListener('click',function(e){
   var t=e.target;var item=t.closest?t.closest('.cdd-item'):null;
   if(item&&cddState.btn){cddSelect(item.getAttribute('data-v')||'');return;}
