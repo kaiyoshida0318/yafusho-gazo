@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.19.2">
+<link rel="stylesheet" href="style.css?v=0.19.3">
 </head>
 <body>
 
@@ -16,10 +16,11 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.19.2</span>
+        <span class="version" id="version">v0.19.3</span>
         <button class="btn btn-ghost" id="btnManageCats">📂 カテゴリ管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 ステータス管理</button>
         <button class="btn btn-ghost" id="btnManage">📐 ページ設定</button>
+        <button class="btn btn-ghost" id="btnCols2">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
         <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
@@ -46,9 +47,8 @@
 
 <!-- テーブル（列はあとで） -->
 <div class="subbar">
-  <button class="btn btn-red btn-sm" id="btnSaveEdits" hidden>● 変更を保存</button>
   <span class="sp"></span>
-  <button class="btn btn-line btn-sm" id="btnCols2">📐 項目管理</button>
+  <button class="btn btn-red btn-sm" id="btnSaveEdits" hidden>● 変更を保存</button>
 </div>
 <div class="table-wrap">
   <div class="table-shell">
@@ -179,7 +179,7 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.19.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.19.3</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -248,6 +248,6 @@
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="statusModal">閉じる</button></div>
   </div>
 </div>
-<script src="app.js?v=0.19.2"></script>
+<script src="app.js?v=0.19.3"></script>
 </body>
 </html>
