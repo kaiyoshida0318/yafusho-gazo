@@ -63,9 +63,10 @@ var DEFAULT_COLS=[
   {key:'pagePlan',label:'制作予定ページ',width:110,align:'center'},
   {key:'listingType',label:'出品内容',width:160,align:'left'},
   {key:'status',label:'状態',width:100,align:'left'},
-  {key:'actions',label:'操作',width:130,align:'center'}
+  {key:'salesMethod',label:'販売手法',width:150,align:'left'},
+  {key:'actions',label:'操作',width:90,align:'center'}
 ];
-function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},categories:null,statuses:null};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;}}catch(e){}return d;}
+function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;}}catch(e){}return d;}
 function saveSettings(s){try{localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}}
 function getListing(){return getOpts('listingType').map(function(o){return o.l;});}
 function getCols(){
@@ -118,6 +119,7 @@ function cellHtml(key,it){
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
+  if(key==='salesMethod')return '<td>'+(it.salesMethod?esc(it.salesMethod):md())+'</td>';
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
 }
@@ -125,7 +127,10 @@ function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].k
 function getColCfg(key){var def=colDef(key);var base={visible:true,width:(def?def.width:null),wrap:'wrap',align:(def?def.align:'left'),headAlign:(def?def.align:'left')};var cc=(getSettings().colcfg||{})[key]||{};return {visible:cc.visible!==false,width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign};}
 function setColCfg(key,patch){var s=getSettings();if(!s.colcfg)s.colcfg={};var cur=s.colcfg[key]||{};for(var k in patch)cur[k]=patch[k];s.colcfg[key]=cur;saveSettings(s);}
 function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+cc.width+'px;min-width:'+cc.width+'px;max-width:'+cc.width+'px;';if(cc.wrap==='clip')s+='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';var a=isHeader?cc.headAlign:cc.align;if(a==='left'||a==='center'||a==='right')s+='text-align:'+a+';';return s;}
-function renderHead(){var h='<tr>';for(var i=0;i<DEFAULT_COLS.length;i++){var c=DEFAULT_COLS[i];var cc=getColCfg(c.key);if(!cc.visible)continue;h+='<th data-col-key="'+c.key+'" style="'+colStyleStr(cc,true)+'">'+esc(c.label)+(colResizeMode?'<div class="col-resize-handle" data-rk="'+c.key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'</tr>';}
+function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var saved=getSettings().colorder;if(!saved||!saved.length)return keys.slice();var out=[],seen={};for(var i=0;i<saved.length;i++){if(keys.indexOf(saved[i])>=0&&!seen[saved[i]]){out.push(saved[i]);seen[saved[i]]=1;}}var missing=[];for(var k=0;k<keys.length;k++){if(!seen[keys[k]])missing.push(keys[k]);}if(missing.length){var ai=out.indexOf('actions');if(ai>=0){out=out.slice(0,ai).concat(missing).concat(out.slice(ai));}else{out=out.concat(missing);}}return out;}
+function setColOrder(arr){var s=getSettings();s.colorder=arr;saveSettings(s);}
+function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
+function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+esc(def.label)+(colResizeMode?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'</tr>';}
 
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
@@ -140,7 +145,7 @@ function render(){
   });
   for(var i=0;i<list.length;i++){
     var it=list[i];var tr=document.createElement('tr');var tds='';
-    for(var c=0;c<DEFAULT_COLS.length;c++){var key=DEFAULT_COLS[c].key;var cc=getColCfg(key);if(!cc.visible)continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
+    var _ord=getColOrder();for(var c=0;c<_ord.length;c++){var key=_ord[c];if(!colDef(key))continue;var cc=getColCfg(key);if(!cc.visible)continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
     tr.innerHTML=tds;tb.appendChild(tr);
   }
   $('grid').style.display=list.length?'':'none';
@@ -166,17 +171,17 @@ function fillSel(id,field,blank){var sel=$(id);if(!sel)return;var opts=getOpts(f
 function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var h='<option value="">未設定</option>';for(var i=0;i<arr.length;i++)h+='<option value="'+escA(arr[i].v)+'">'+esc(arr[i].label)+'</option>';sel.innerHTML=h;sel.value=cur;}
 function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);}
 function populateListing(){populateFormSelects();}
-function resetForm(){populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fSales','');setVal('fListing','');setVal('fPagePlan','');setVal('fStatus','');setVal('fName','');setVal('fCode','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
+function resetForm(){populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fSales','');setVal('fListing','');setVal('fPagePlan','');setVal('fStatus','');setVal('fName','');setVal('fCode','');setVal('fMethod','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
-function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',it.date||'');setVal('fSales',it.sales||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',it.date||'');setVal('fSales',it.sales||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
-function gather(){return{id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:galYahoo.slice(),rakutenImgs:galRakuten.slice(),date:val('fDate'),sales:val('fSales'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};}
+function gather(){return{id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:galYahoo.slice(),rakutenImgs:galRakuten.slice(),date:val('fDate'),sales:val('fSales'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};}
 function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;break;}}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();if(closeAfter)hide('editModal');}
 
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
 $('btnAdd').onclick=openNew;
-$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),sales:'',listingType:'',pagePlan:'',status:'',name:'',code:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
+$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),sales:'',listingType:'',pagePlan:'',status:'',name:'',code:'',salesMethod:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
 $('btnSaveStay').onclick=function(){saveForm(false);};
 $('btnSaveClose').onclick=function(){saveForm(true);};
 
@@ -255,10 +260,23 @@ function makeColAlignGroup(labelText,value,onChange){var g=document.createElemen
 function renderColManager(){
   var visWrap=$('colListVisible'),hidWrap=$('colListHidden');if(!visWrap||!hidWrap)return;
   visWrap.innerHTML='';hidWrap.innerHTML='';
-  for(var i=0;i<DEFAULT_COLS.length;i++){(function(c){
-    var cc=getColCfg(c.key);var isVis=cc.visible!==false;
+  var order=getColOrder();
+  var visKeys=[];for(var q=0;q<order.length;q++){if(getColCfg(order[q]).visible!==false)visKeys.push(order[q]);}
+  for(var i=0;i<order.length;i++){(function(key){
+    var c=colDef(key);if(!c)return;
+    var cc=getColCfg(key);var isVis=cc.visible!==false;
     var card=document.createElement('div');card.className='col-card';
-    var name=document.createElement('div');name.className='col-card-name';name.textContent=c.label;card.appendChild(name);
+    var name=document.createElement('div');name.className='col-card-name';
+    if(isVis){
+      var vi=visKeys.indexOf(key);
+      var ordWrap=document.createElement('span');ordWrap.className='col-ord-wrap';
+      var up=document.createElement('button');up.type='button';up.className='col-ord';up.textContent='▲';up.title='上へ';up.disabled=vi<=0;up.onclick=function(){moveCol(key,-1);};
+      var dn=document.createElement('button');dn.type='button';dn.className='col-ord';dn.textContent='▼';dn.title='下へ';dn.disabled=vi>=visKeys.length-1;dn.onclick=function(){moveCol(key,1);};
+      ordWrap.appendChild(up);ordWrap.appendChild(dn);
+      var nm=document.createElement('span');nm.textContent=c.label;
+      name.appendChild(ordWrap);name.appendChild(nm);
+    }else{name.textContent=c.label;}
+    card.appendChild(name);
     if(isVis){
       var controls=document.createElement('div');controls.className='col-card-controls';
       var w=document.createElement('input');w.type='number';w.min='0';w.step='10';w.className='col-width-input';w.title='幅(px)。空欄で自動';
@@ -277,7 +295,7 @@ function renderColManager(){
       mb.onclick=function(){setColCfg(c.key,{visible:true});renderHead();render();renderColManager();};card.appendChild(mb);
       hidWrap.appendChild(card);
     }
-  })(DEFAULT_COLS[i]);}
+  })(order[i]);}
   if(!visWrap.children.length){var e1=document.createElement('div');e1.className='col-empty';e1.textContent='表示中の項目がありません';visWrap.appendChild(e1);}
   if(!hidWrap.children.length){var e2=document.createElement('div');e2.className='col-empty';e2.textContent='（すべて表示中）';hidWrap.appendChild(e2);}
 }
