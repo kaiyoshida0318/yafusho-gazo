@@ -36,6 +36,7 @@ function markHtml(opt){if(!opt)return '';return '<span class="mk mk-'+esc(opt.c|
 var DEFAULT_CATEGORIES=[{id:'cat_a',label:'新規出品',icon:'letter:A'},{id:'cat_b',label:'リニューアル-同一ページ',icon:'letter:B'},{id:'cat_c',label:'リニューアル-新規ページ',icon:'letter:C'},{id:'cat_d',label:'再登録',icon:'letter:D'}];
 var DEFAULT_STATUSES=[{id:'st_todo',label:'未着手',icon:'num:1'},{id:'st_doing',label:'作成中',icon:'num:2'},{id:'st_review',label:'確認待ち',icon:'num:3'},{id:'st_done',label:'完了',icon:'num:4'}];
 function getCategories(){var s=getSettings();return (s.categories&&s.categories.length)?s.categories:DEFAULT_CATEGORIES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
+function defaultStatusId(){var s=getStatuses();return s.length?s[0].id:'';}
 function getStatuses(){var s=getSettings();return (s.statuses&&s.statuses.length)?s.statuses:DEFAULT_STATUSES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
 function saveCategories(a){var s=getSettings();s.categories=a;saveSettings(s);}
 function saveStatuses(a){var s=getSettings();s.statuses=a;saveSettings(s);}
@@ -177,7 +178,7 @@ function fillSel(id,field,blank){var sel=$(id);if(!sel)return;var opts=getOpts(f
 function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var h='<option value="">未設定</option>';for(var i=0;i<arr.length;i++)h+='<option value="'+escA(arr[i].v)+'">'+esc(arr[i].label)+'</option>';sel.innerHTML=h;sel.value=cur;}
 function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);}
 function populateListing(){populateFormSelects();}
-function resetForm(){populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fSales','');setVal('fListing','');setVal('fPagePlan','');setVal('fStatus','');setVal('fName','');setVal('fCode','');setVal('fMethod','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
+function resetForm(){populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fSales','');setVal('fListing','');setVal('fPagePlan','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
 function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',it.date||'');setVal('fSales',it.sales||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
@@ -187,7 +188,7 @@ function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.l
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
 $('btnAdd').onclick=openNew;
-$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),sales:'',listingType:'',pagePlan:'',status:'',name:'',code:'',salesMethod:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
+$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),sales:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
 $('btnSaveStay').onclick=function(){saveForm(false);};
 $('btnSaveClose').onclick=function(){saveForm(true);};
 
