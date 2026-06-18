@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.15.0">
+<link rel="stylesheet" href="style.css?v=0.16.0">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.15.0</span>
+        <span class="version" id="version">v0.16.0</span>
         <button class="btn btn-ghost" id="btnManage">🗂 各種管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -51,13 +51,7 @@
 
 <!-- テーブル（列はあとで） -->
 <div class="subbar">
-  <div class="bulkbar" id="bulkBar" hidden>
-    <span class="bulk-count" id="bulkCount">0件選択</span>
-    <select id="bulkStatus"><option value="">状態：変更なし</option><option>未着手</option><option>作成中</option><option>確認待ち</option><option>完了</option></select>
-    <select id="bulkListing"></select>
-    <button class="btn btn-red btn-sm" id="bulkApply">一括適用</button>
-    <button class="btn btn-line btn-sm" id="bulkClear">選択解除</button>
-  </div>
+  <button class="btn btn-red btn-sm" id="btnSaveEdits" hidden>● 変更を保存</button>
   <span class="sp"></span>
   <button class="btn btn-line btn-sm" id="btnCols2">📐 項目調整</button>
 </div>
@@ -110,7 +104,7 @@
               <span class="num-wrap"><input type="number" id="fSales" min="0" placeholder="0"><span class="unit">万円</span></span>
             </label>
             <label class="fld">制作予定ページ
-              <input type="number" id="fPagePlan" min="1" max="4" step="1" placeholder="1〜4">
+              <select id="fPagePlan"></select>
             </label>
             <label class="fld span2">出品内容
               <select id="fListing">
@@ -190,18 +184,32 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.15.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.16.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="manageModal" hidden>
-  <div class="mini">
+  <div class="mini mini-wide">
     <h2>🗂 各種管理</h2>
-    <p class="hint">出品内容のドロップダウンの選択肢を編集できます。並びはそのまま選択肢の順番になります。</p>
-    <div class="fld-label">出品内容の選択肢</div>
-    <div id="listingEditor"></div>
-    <button type="button" class="btn btn-line btn-sm" id="btnAddListing" style="margin-top:4px">＋ 選択肢を追加</button>
-    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="manageModal">閉じる</button><button class="btn btn-red" id="btnSaveListing">保存</button></div>
+    <p class="hint">状態・出品内容・制作予定ページの選択肢と、マーク（色＋短い記号）を編集できます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
+    <div class="opt-scroll" id="optScroll">
+      <div class="opt-sec">
+        <div class="opt-head"><span class="fld-label">状態</span><button type="button" class="btn btn-line btn-sm" data-addopt="status">＋ 追加</button></div>
+        <div class="opt-cols"><span>マーク</span><span>色</span><span>記号</span><span>選択肢名</span><span></span></div>
+        <div id="optStatus"></div>
+      </div>
+      <div class="opt-sec">
+        <div class="opt-head"><span class="fld-label">出品内容</span><button type="button" class="btn btn-line btn-sm" data-addopt="listingType">＋ 追加</button></div>
+        <div class="opt-cols"><span>マーク</span><span>色</span><span>記号</span><span>選択肢名</span><span></span></div>
+        <div id="optListing"></div>
+      </div>
+      <div class="opt-sec">
+        <div class="opt-head"><span class="fld-label">制作予定ページ</span><button type="button" class="btn btn-line btn-sm" data-addopt="pagePlan">＋ 追加</button></div>
+        <div class="opt-cols"><span>マーク</span><span>色</span><span>記号</span><span>選択肢名</span><span></span></div>
+        <div id="optPage"></div>
+      </div>
+    </div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="manageModal">閉じる</button><button class="btn btn-red" id="btnSaveOpts">保存</button></div>
   </div>
 </div>
 <div class="overlay" id="colsModal" hidden>
@@ -214,6 +222,6 @@
   </div>
 </div>
 
-<script src="app.js?v=0.15.0"></script>
+<script src="app.js?v=0.16.0"></script>
 </body>
 </html>
