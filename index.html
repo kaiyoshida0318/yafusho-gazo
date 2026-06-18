@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.9.1">
+<link rel="stylesheet" href="style.css?v=0.10.0">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.9.1</span>
+        <span class="version" id="version">v0.10.0</span>
         <button class="btn btn-ghost" id="btnCols">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnCats">📂 カテゴリ管理</button>
         <button class="btn btn-ghost" id="btnStatus">📋 ステータス管理</button>
@@ -46,12 +46,12 @@
 
   <!-- 2段目：ステータス -->
   <div class="frow frow-status" id="statusRow">
-    <button class="spill on">全体<span class="cnt" id="cntAllStatus">0</span></button>
-    <button class="spill"><span class="num n-gray">1</span>未着手<span class="cnt">0</span></button>
-    <button class="spill"><span class="num n-orange">2</span>作成中<span class="cnt">0</span></button>
-    <button class="spill"><span class="num n-blue">3</span>確認待ち<span class="cnt">0</span></button>
-    <button class="spill"><span class="num n-green">4</span>完了<span class="cnt">0</span></button>
-    <button class="spill"><span class="num" style="background:#c8ccd2">?</span>未設定<span class="cnt">0</span></button>
+    <button class="spill on" data-status="">全体<span class="cnt" id="cntAllStatus">0</span></button>
+    <button class="spill" data-status="未着手"><span class="num n-gray">1</span>未着手<span class="cnt">0</span></button>
+    <button class="spill" data-status="作成中"><span class="num n-orange">2</span>作成中<span class="cnt">0</span></button>
+    <button class="spill" data-status="確認待ち"><span class="num n-blue">3</span>確認待ち<span class="cnt">0</span></button>
+    <button class="spill" data-status="完了"><span class="num n-green">4</span>完了<span class="cnt">0</span></button>
+    <button class="spill" data-status="__none__"><span class="num" style="background:#c8ccd2">?</span>未設定<span class="cnt">0</span></button>
   </div>
 </div>
 
@@ -88,16 +88,16 @@
     <div class="form-body">
       <!-- 上段：楽天画像／Yahoo画像／基本情報 -->
       <div class="form-top">
-        <div class="img-col">
-          <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天メイン画像</div>
-          <div class="img-box" id="imgRakuten"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
+                <div class="img-col">
+          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahooメイン画像</div>
+          <div class="img-box" id="imgYahoo"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
           <input type="file" accept="image/*" hidden>
           <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
         </div>
 
         <div class="img-col">
-          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahooメイン画像</div>
-          <div class="img-box" id="imgYahoo"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
+          <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天メイン画像</div>
+          <div class="img-box" id="imgRakuten"><div class="img-drop">画像を選択<br><small>クリック / ドラッグ＆ドロップ</small></div></div>
           <input type="file" accept="image/*" hidden>
           <div class="img-url-row"><input type="text" placeholder="またはURLを貼り付け（http://…）"><button class="btn btn-line btn-sm apply-img">適用</button></div>
         </div>
@@ -116,6 +116,14 @@
           </label>
           <label class="fld">制作予定ページ
             <input type="number" id="fPagePlan" min="1" max="4" step="1" placeholder="1〜4">
+          </label>
+          <label class="fld">状態
+            <select id="fStatus">
+              <option>未着手</option>
+              <option>作成中</option>
+              <option>確認待ち</option>
+              <option>完了</option>
+            </select>
           </label>
         </div>
       </div>
@@ -167,7 +175,7 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.9.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.10.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -181,6 +189,6 @@
   <div class="mini"><h2>ステータス管理</h2><p class="hint">2段目のステータスを管理します（後で実装）。</p><p class="hint" style="text-align:center;padding:24px 0">（準備中）</p><div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="statusModal">閉じる</button></div></div>
 </div>
 
-<script src="app.js?v=0.9.1"></script>
+<script src="app.js?v=0.10.0"></script>
 </body>
 </html>
