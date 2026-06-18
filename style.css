@@ -59,6 +59,7 @@ button{font-family:inherit}
 .tb-new{background:var(--red)} .tb-r{background:#bf0000} .tb-y{background:#ff0033} .tb-q{background:#c8ccd2}
 
 .frow-cat .spacer{flex:1}
+.frow-status .spacer{flex:1}
 
 /* ステータス ピル（番号付き） */
 .spill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line-2);border-radius:999px;padding:7px 14px 7px 8px;font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:.12s}
@@ -158,8 +159,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 
 /* ===== 各種管理 / 項目調整 ===== */
 .subbar{max-width:1880px;margin:0 auto;padding:0 24px;display:flex}
-#btnSaveEdits{margin:10px 0 2px}
-.mini-wide{max-width:600px;max-height:86vh;display:flex;flex-direction:column}
+#btnSaveEdits{flex:none}
+.mini-wide{max-width:780px;max-height:86vh;display:flex;flex-direction:column}
 #colsEditor{flex:1;overflow:auto;padding-right:2px}
 .edit-row{display:flex;gap:7px;margin-bottom:8px}
 .edit-row input{flex:1;min-width:0;font:inherit;font-size:14px;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;outline:0}
@@ -287,7 +288,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cdd-item.on{background:var(--red-soft);color:var(--red-strong);font-weight:700}
 
 /* ===== 項目管理（yusen式 表示中／非表示 2カラム） ===== */
-.mini.modal-col{max-width:920px;max-height:88vh;display:flex;flex-direction:column}
+.mini.modal-col{max-width:1080px;max-height:88vh;display:flex;flex-direction:column}
 .col-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0;margin-bottom:10px}
 .col-col{display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
 .col-col-head{padding:9px 12px;font-weight:700;font-size:12px;text-align:center;border-bottom:1px solid var(--line)}
@@ -373,7 +374,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .status-num-opt.selected{border-color:var(--red);box-shadow:0 0 0 1.5px var(--red)}
 .status-num-opt .status-num{width:20px;height:20px}
 .status-num-opt.status-num-none{color:var(--ink-3);font-size:13px}
-.mini.modal-status{max-width:560px}
+.mini.modal-status{max-width:720px}
+.mini.modal-cat{max-width:680px}
 
 /* ===== モーダルカードを確実に不透明な白パネルに（編集モーダルと統一） ===== */
 .overlay>.mini{
