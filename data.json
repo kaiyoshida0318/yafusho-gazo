@@ -111,27 +111,26 @@
   },
   {
     "id": "it1781758699729",
-    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-yahoo-main.jpg",
+    "yahooMain": "",
     "rakutenMain": "",
     "yahooImgs": [],
     "rakutenImgs": [],
     "date": "2026-06-18",
-    "rating": "3.2",
+    "sales": "",
     "listingType": "cat_d",
     "pagePlan": "単数",
     "status": "st_todo",
     "name": "鼻毛ハサミ",
-    "code": "",
-    "salesMethod": "レビュー悪い。\n作り変えか。",
-    "searchUrl": "",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-23-11.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [],
+    "salesMethod": "レビュー悪い。\n作り変えか。",
+    "rating": "3.2"
   },
   {
     "id": "it1781758747702",
-    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758747702-yahoo-main.jpg",
+    "yahooMain": "",
     "rakutenMain": "",
     "yahooImgs": [],
     "rakutenImgs": [],
