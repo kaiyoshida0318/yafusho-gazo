@@ -231,3 +231,20 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .mini-img.drag{border-color:var(--red);background:var(--red-soft)}
 .mini-clear{position:absolute;right:5px;top:5px;width:22px;height:22px;border:0;border-radius:6px;background:rgba(26,27,30,.72);color:#fff;font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center}
 .mini-clear:hover{background:var(--red)}
+
+/* ===== カテゴリピル（動的）/ インライン選択 / 一括更新バー ===== */
+.pill-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row-sel{font:inherit;font-size:12.5px;border:1px solid var(--line-2);border-radius:7px;padding:5px 22px 5px 8px;background:#fff;max-width:100%;outline:0;cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%237a8190' stroke-width='1.6'/></svg>");background-repeat:no-repeat;background-position:right 7px center}
+.row-sel:focus{border-color:var(--red)}
+.row-sel:hover{border-color:#b9c0cb}
+.row-status.s-gray{background-color:#f3f4f6;border-color:#d5d9df;color:#4b5563}
+.row-status.s-orange{background-color:#fff3e6;border-color:#f4c894;color:#b5650c}
+.row-status.s-blue{background-color:#eaf1ff;border-color:#aac6fb;color:#2256c7}
+.row-status.s-green{background-color:#e7f6ed;border-color:#a4ddbb;color:#16864a}
+.col-check{width:34px}
+.col-check input{width:15px;height:15px;cursor:pointer;accent-color:var(--red)}
+.bulkbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bulk-count{font-size:12.5px;font-weight:800;color:var(--red)}
+.bulkbar select{font:inherit;font-size:12.5px;border:1px solid var(--line-2);border-radius:8px;padding:6px 9px;background:#fff;outline:0;cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
+.bulkbar select:focus{border-color:var(--red)}
+.subbar{display:flex;align-items:center;gap:10px}
