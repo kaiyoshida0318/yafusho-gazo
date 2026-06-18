@@ -97,6 +97,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .act-cell{display:flex;gap:6px;justify-content:flex-end}
 /* ===== モーダル共通 ===== */
 .overlay{position:fixed;inset:0;background:rgba(15,18,24,.46);display:grid;place-items:center;z-index:80;padding:18px}
+[hidden]{display:none!important}
 .overlay[hidden]{display:none}
 .sheet{background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(20,24,32,.35);width:100%;max-width:980px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
   background:linear-gradient(45deg,#f4f5f7 25%,transparent 25%,transparent 75%,#f4f5f7 75%),linear-gradient(45deg,#f4f5f7 25%,#fff 25%,#fff 75%,#f4f5f7 75%);
@@ -386,3 +387,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
   max-height:90vh;
   overflow:auto;
 }
+
+
+/* トースト（保存などの明確な通知） */
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-10px);z-index:200;background:var(--green-strong);color:#fff;padding:11px 20px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(20,24,32,.28);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;font-family:"Zen Kaku Gothic New",sans-serif}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
