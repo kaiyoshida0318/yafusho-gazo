@@ -185,12 +185,12 @@ function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetF
 function openEdit(id){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
 function gather(){return{id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:galYahoo.slice(),rakutenImgs:galRakuten.slice(),date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};}
-function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;break;}}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();if(closeAfter)hide('editModal');}
+function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;break;}}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();scheduleSync();if(closeAfter)hide('editModal');}
 
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
 $('btnAdd').onclick=openNew;
-$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',searchUrl:'',yahooUrls:[],rakutenUrls:[]});persist();render();};
+$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',searchUrl:'',yahooUrls:[],rakutenUrls:[]});persist();render();scheduleSync();};
 $('btnSaveStay').onclick=function(){saveForm(false);};
 $('btnSaveClose').onclick=function(){saveForm(true);};
 
@@ -325,7 +325,7 @@ function startColResize(e,th,key){
 if($('btnDragResize'))$('btnDragResize').onclick=enterColResizeMode;
 if($('btnResizeDone'))$('btnResizeDone').onclick=exitColResizeMode;
 var _gh=$('gridHead');if(_gh)_gh.addEventListener('mousedown',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('col-resize-handle')){startColResize(e,t.parentNode,t.getAttribute('data-rk'));}});
-$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();}};
+$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();scheduleSync();}};
 
 /* 閉じる系 */
 var closers=document.querySelectorAll('[data-close]');
@@ -415,7 +415,7 @@ document.addEventListener('click',function(e){
   if(t&&t.classList&&t.classList.contains('url-del')){var row=t.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}return;}
   if(t&&t.getAttribute){
     var ed=t.getAttribute('data-edit');if(ed){openEdit(ed);return;}
-    var dl=t.getAttribute('data-del');if(dl){if(confirm('この商品を削除しますか？')){items=items.filter(function(x){return x.id!==dl;});persist();render();}return;}
+    var dl=t.getAttribute('data-del');if(dl){if(confirm('この商品を削除しますか？')){items=items.filter(function(x){return x.id!==dl;});persist();render();scheduleSync();}return;}
   }
 });
 
@@ -449,7 +449,7 @@ if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.ta
 function setBulkBtn(){var b=$('btnBulkEdit');if(b){b.classList.toggle('on',bulkEdit);b.textContent=bulkEdit?'キャンセル':'✏️ 一括編集';}}
 function enterBulk(){bulkEdit=true;setBulkBtn();var s=$('btnSaveEdits');if(s)s.hidden=false;render();}
 function cancelBulk(){bulkEdit=false;setBulkBtn();reloadItems();clearDirty();render();toast('一括編集をキャンセルしました');}
-if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();if(bulkEdit){bulkEdit=false;setBulkBtn();}clearDirty();render();log('変更を保存しました');toast('✅ 変更を保存しました');};
+if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();if(bulkEdit){bulkEdit=false;setBulkBtn();}clearDirty();render();scheduleSync();log('変更を保存しました');toast('✅ 変更を保存しました');};
 if($('btnBulkEdit'))$('btnBulkEdit').onclick=function(){if(bulkEdit)cancelBulk();else enterBulk();};
 if($('gridBody'))$('gridBody').addEventListener('input',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('bulk-inp'))return;var id=t.getAttribute('data-id');var field=t.getAttribute('data-field');for(var i=0;i<items.length;i++){if(items[i].id===id){if(field==='yahooUrls'||field==='rakutenUrls'){items[i][field]=t.value.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=t.value;}break;}}markDirty();});
 document.addEventListener('click',function(e){
@@ -505,9 +505,9 @@ async function ghPut(owner,repo,branch,path,b64,sha,msg,pat){
   return r.json();
 }
 
-async function saveToGitHub(){
+async function saveToGitHub(silent){
   var c=getCfg();
-  if(!c.pat){alert('先に設定でGitHubのPATを入力してください。');openSettings();return;}
+  if(!c.pat){if(silent)return;alert('先に設定でGitHubのPATを入力してください。');openSettings();return;}
   $('btnSave').disabled=true;
   try{
     // 1) 画像（data:のものだけ）をアップロード → rawURLに置換（複数対応）
@@ -549,17 +549,20 @@ async function saveToGitHub(){
     var dsha=await ghSha(c.owner,c.repo,c.branch,'data.json',c.pat);
     await ghPut(c.owner,c.repo,c.branch,'data.json',utf8b64(json),dsha,'update data ('+items.length+'件)',c.pat);
     persist();
-    progDone('✓ 保存しました');
+    if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
     log('GitHub保存 完了（'+items.length+'件）');
   }catch(e){
     prog(false);
-    alert('GitHub保存に失敗しました:\n'+e.message);
+    if(silent){toast('⚠️ GitHub同期に失敗');}else{alert('GitHub保存に失敗しました:\n'+e.message);}
     log('GitHub保存 失敗: '+e.message);
   }finally{
     $('btnSave').disabled=false;
   }
 }
-$('btnSave').onclick=saveToGitHub;
+var _syncTimer=null,_syncing=false,_syncAgain=false;
+function scheduleSync(){if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(runSync,800);}
+async function runSync(){if(_syncing){_syncAgain=true;return;}_syncing=true;try{await saveToGitHub(true);}catch(e){}_syncing=false;if(_syncAgain){_syncAgain=false;scheduleSync();}}
+$('btnSave').onclick=function(){saveToGitHub(false);};
 
 /* ===== 起動時に GitHub から読み込み（公開リポジトリはPAT不要） ===== */
 async function loadFromGitHub(){
