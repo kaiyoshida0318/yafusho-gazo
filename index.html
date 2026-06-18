@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.16.0">
+<link rel="stylesheet" href="style.css?v=0.19.0">
 </head>
 <body>
 
@@ -16,8 +16,10 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.16.0</span>
-        <button class="btn btn-ghost" id="btnManage">🗂 各種管理</button>
+        <span class="version" id="version">v0.19.0</span>
+        <button class="btn btn-ghost" id="btnManageCats">📂 カテゴリ管理</button>
+        <button class="btn btn-ghost" id="btnManageStatus">📋 ステータス管理</button>
+        <button class="btn btn-ghost" id="btnManage">📐 ページ設定</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
         <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
@@ -39,21 +41,14 @@
   </div>
 
   <!-- 2段目：ステータス -->
-  <div class="frow frow-status" id="statusRow">
-    <button class="spill on" data-status="">全体<span class="cnt" id="cntAllStatus">0</span></button>
-    <button class="spill" data-status="未着手"><span class="num n-gray">1</span>未着手<span class="cnt">0</span></button>
-    <button class="spill" data-status="作成中"><span class="num n-orange">2</span>作成中<span class="cnt">0</span></button>
-    <button class="spill" data-status="確認待ち"><span class="num n-blue">3</span>確認待ち<span class="cnt">0</span></button>
-    <button class="spill" data-status="完了"><span class="num n-green">4</span>完了<span class="cnt">0</span></button>
-    <button class="spill" data-status="__none__"><span class="num" style="background:#c8ccd2">?</span>未設定<span class="cnt">0</span></button>
-  </div>
+  <div class="frow frow-status" id="statusRow"></div>
 </div>
 
 <!-- テーブル（列はあとで） -->
 <div class="subbar">
   <button class="btn btn-red btn-sm" id="btnSaveEdits" hidden>● 変更を保存</button>
   <span class="sp"></span>
-  <button class="btn btn-line btn-sm" id="btnCols2">📐 項目調整</button>
+  <button class="btn btn-line btn-sm" id="btnCols2">📐 項目管理</button>
 </div>
 <div class="table-wrap">
   <div class="table-shell">
@@ -184,25 +179,15 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.16.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.19.0</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="manageModal" hidden>
   <div class="mini mini-wide">
-    <h2>🗂 各種管理</h2>
-    <p class="hint">状態・出品内容・制作予定ページの選択肢と、マーク（色＋短い記号）を編集できます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
+    <h2>📐 ページ設定</h2>
+    <p class="hint">制作予定ページの選択肢と、マーク（色＋短い記号）を編集できます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
     <div class="opt-scroll" id="optScroll">
-      <div class="opt-sec">
-        <div class="opt-head"><span class="fld-label">状態</span><button type="button" class="btn btn-line btn-sm" data-addopt="status">＋ 追加</button></div>
-        <div class="opt-cols"><span>マーク</span><span>色</span><span>記号</span><span>選択肢名</span><span></span></div>
-        <div id="optStatus"></div>
-      </div>
-      <div class="opt-sec">
-        <div class="opt-head"><span class="fld-label">出品内容</span><button type="button" class="btn btn-line btn-sm" data-addopt="listingType">＋ 追加</button></div>
-        <div class="opt-cols"><span>マーク</span><span>色</span><span>記号</span><span>選択肢名</span><span></span></div>
-        <div id="optListing"></div>
-      </div>
       <div class="opt-sec">
         <div class="opt-head"><span class="fld-label">制作予定ページ</span><button type="button" class="btn btn-line btn-sm" data-addopt="pagePlan">＋ 追加</button></div>
         <div class="opt-cols"><span>マーク</span><span>色</span><span>記号</span><span>選択肢名</span><span></span></div>
@@ -213,15 +198,56 @@
   </div>
 </div>
 <div class="overlay" id="colsModal" hidden>
-  <div class="mini mini-wide">
-    <h2>📐 項目調整</h2>
-    <p class="hint">表示名・並び順・横幅(px)・揃えを調整できます（↑↓で並び替え）。設定はこの端末にのみ保存されます。</p>
-    <div class="col-edit-head"><span>並び</span><span>表示名</span><span>横幅</span><span>揃え</span></div>
-    <div id="colsEditor"></div>
-    <div class="acts"><button class="btn btn-ghost" id="btnResetCols">デフォルトに戻す</button><span class="sp"></span><button class="btn btn-ghost" data-close="colsModal">閉じる</button><button class="btn btn-red" id="btnSaveCols">保存</button></div>
+  <div class="mini modal-col">
+    <h2>📐 項目管理</h2>
+    <p class="hint">左が「表示中」、右が「非表示」の項目です。「非表示にする →」「← 表示する」で切り替えられます。表示中の項目は幅(px)・折り返し・タイトル/データの揃えも設定できます。この設定はこの端末にのみ保存されます。</p>
+    <div class="col-cols">
+      <div class="col-col col-col-visible">
+        <div class="col-col-head">✅ 表示中</div>
+        <div id="colListVisible" class="col-list"></div>
+      </div>
+      <div class="col-col col-col-hidden">
+        <div class="col-col-head">🚫 非表示</div>
+        <div id="colListHidden" class="col-list"></div>
+      </div>
+    </div>
+    <div class="acts">
+      <button class="btn btn-ghost" id="btnResetCols">🔄 デフォルトに戻す</button>
+      <button class="btn btn-ghost" id="btnDragResize">↔ ドラッグで幅調整</button>
+      <span class="sp"></span>
+      <button class="btn btn-ghost" data-close="colsModal">閉じる</button>
+    </div>
   </div>
 </div>
+<div class="resize-bar" id="resizeBar" hidden>
+  <span class="resize-bar-text">↔ 列の境界をドラッグして幅を調整できます</span>
+  <button class="btn btn-red btn-sm" id="btnResizeDone">完了</button>
+</div>
 
-<script src="app.js?v=0.16.0"></script>
+<div class="overlay" id="catModal" hidden>
+  <div class="mini">
+    <h2>📂 カテゴリ管理</h2>
+    <p class="hint">上段タブのカテゴリを管理します。並び替え・名前変更・アイコン変更・削除ができます。</p>
+    <div class="cat-add-row">
+      <input type="text" id="newCatLabel" placeholder="新しいカテゴリ名">
+      <button class="btn btn-red" id="btnAddCat">追加</button>
+    </div>
+    <div id="catList" class="cat-list"></div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="catModal">閉じる</button></div>
+  </div>
+</div>
+<div class="overlay" id="statusModal" hidden>
+  <div class="mini modal-status">
+    <h2>📋 ステータス管理</h2>
+    <p class="hint">下段タブのステータスを管理します。番号バッジ・並び替え・名前変更・追加・削除ができます。</p>
+    <div class="cat-add-row">
+      <input type="text" id="newStatusLabel" placeholder="新しいステータス名">
+      <button class="btn btn-red" id="btnAddStatus">追加</button>
+    </div>
+    <div id="statusList" class="cat-list"></div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="statusModal">閉じる</button></div>
+  </div>
+</div>
+<script src="app.js?v=0.19.0"></script>
 </body>
 </html>
