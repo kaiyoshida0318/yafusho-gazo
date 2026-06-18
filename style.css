@@ -267,14 +267,14 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .opt-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .opt-head .fld-label{margin:0;font-size:14px;font-weight:800;color:var(--ink-1)}
 .opt-head .btn{margin-left:auto}
-.opt-cols{display:grid;grid-template-columns:34px 96px 64px 1fr 56px;gap:9px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 5px;border-bottom:1px solid var(--line-2)}
-.opt-row{display:grid;grid-template-columns:34px 96px 64px 1fr 56px;gap:9px;align-items:center;padding:6px 2px;border-bottom:1px solid #eef0f3}
+.opt-cols{display:grid;grid-template-columns:34px 96px 240px auto auto 1fr;gap:9px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 5px;border-bottom:1px solid var(--line-2)}
+.opt-row{display:grid;grid-template-columns:34px 96px 240px auto auto 1fr;gap:9px;align-items:center;padding:6px 2px;border-bottom:1px solid #eef0f3}
 .mk-prev{justify-self:center}
 .opt-color,.opt-mark,.opt-label{font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:8px;padding:7px 8px;outline:0;background:#f4f5f7;min-width:0;font-family:"Zen Kaku Gothic New",sans-serif}
 .opt-color:focus,.opt-mark:focus,.opt-label:focus{border-color:var(--red);background:#fff}
 .opt-mark{text-align:center}
 .opt-row .mv-btns{display:flex;gap:3px;justify-content:flex-end}
-.opt-del{width:26px;height:30px;border:1px solid #f1c7c0;background:#fff;color:var(--red-strong);border-radius:7px;cursor:pointer;font-size:14px;justify-self:end}
+.opt-del{width:30px;height:30px;border:1px solid #f1c7c0;background:#fff;color:var(--red-strong);border-radius:7px;cursor:pointer;font-size:14px;justify-self:start}
 .opt-del:hover{background:var(--red-soft)}
 
 /* ===== 独自ドロップダウン（一覧内もマーク表示） ===== */
