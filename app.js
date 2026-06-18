@@ -60,6 +60,7 @@ var DEFAULT_COLS=[
   {key:'rakutenImg',label:'楽天画像',width:90,align:'center'},
   {key:'name',label:'商品名',width:220,align:'left'},
   {key:'sales',label:'予想月商',width:100,align:'right'},
+  {key:'searchUrl',label:'検索ページURL',width:200,align:'left'},
   {key:'yahooUrls',label:'ヤフショURL',width:220,align:'left'},
   {key:'rakutenUrls',label:'楽天URL',width:220,align:'left'},
   {key:'pagePlan',label:'制作予定ページ',width:110,align:'center'},
@@ -120,6 +121,7 @@ function cellHtml(key,it){
   if(key==='rakutenImg')return '<td>'+thumb(mainImg(it,'rakuten'))+'</td>';
   if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':'<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>';
   if(key==='sales')return bulkEdit?'<td>'+bulkInp('number',it,'sales')+'</td>':'<td class="mono">'+((it.sales!==''&&it.sales!=null)?esc(it.sales)+' 万円':md())+'</td>';
+  if(key==='searchUrl')return bulkEdit?'<td>'+bulkInp('text',it,'searchUrl')+'</td>':'<td>'+(it.searchUrl?'<div class="url-cell"><a href="'+escA(it.searchUrl)+'" target="_blank" rel="noopener">'+esc(it.searchUrl)+'</a></div>':md())+'</td>';
   if(key==='yahooUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'yahooUrls')+'</td>':'<td>'+urlCell(it.yahooUrls)+'</td>';
   if(key==='rakutenUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'rakutenUrls')+'</td>':'<td>'+urlCell(it.rakutenUrls)+'</td>';
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
