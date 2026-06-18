@@ -179,3 +179,31 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .col-w{width:60px;font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:9px;padding:8px;outline:0}
 .col-w:focus{border-color:var(--red)}
 .col-w-wrap .unit{font-size:12px;color:var(--ink-3)}
+
+/* ===== 編集モーダル：タブ／基本情報グリッド ===== */
+.modal-tabs{display:flex;gap:4px;padding:0 22px;border-bottom:1px solid var(--line);background:#fff}
+.mtab{border:0;background:none;padding:13px 16px;font:inherit;font-size:14px;font-weight:700;color:var(--ink-3);cursor:pointer;border-bottom:2px solid transparent;font-family:"Zen Kaku Gothic New",sans-serif}
+.mtab:hover{color:var(--ink-2)}
+.mtab.on{color:var(--red-strong);border-bottom-color:var(--red)}
+.basic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.basic-grid .fld{margin:0}
+.basic-grid .span2{grid-column:1/-1}
+
+/* ===== 編集モーダル：画像ギャラリー ===== */
+.gallery-sec{margin-bottom:24px}
+.gal-hint{font-size:11px;color:var(--ink-3);font-weight:400;margin-left:8px}
+.dropzone{border:1.5px dashed var(--line-2);border-radius:12px;background:#fafbfc;padding:26px;text-align:center;color:var(--ink-3);font-size:13px;cursor:pointer;transition:.12s}
+.dropzone:hover,.dropzone.drag{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
+.img-strip{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.strip-empty{color:var(--ink-3);font-size:12px;padding:6px 2px}
+.strip-item{position:relative;width:112px}
+.strip-item img{width:112px;height:112px;object-fit:contain;background:#fff;border:1px solid var(--line-2);border-radius:10px;display:block}
+.strip-no{position:absolute;left:6px;top:6px;font-size:10px;font-weight:700;background:rgba(26,27,30,.78);color:#fff;border-radius:6px;padding:2px 6px;font-family:"Roboto Mono",monospace}
+.strip-ctrls{display:flex;gap:4px;margin-top:5px;justify-content:center}
+.sbtn{width:30px;height:26px;border:1px solid var(--line-2);background:#fff;border-radius:7px;cursor:pointer;color:var(--ink-2);font-size:12px}
+.sbtn:hover{border-color:var(--ink-3);background:#f6f7f9}
+.sbtn.strip-del:hover{border-color:var(--red);color:var(--red)}
+
+/* ===== 表：状態バッジ ===== */
+.status-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;white-space:nowrap;font-family:"Zen Kaku Gothic New",sans-serif}
+.status-badge .num{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;font-family:"Roboto Mono",monospace;flex:none}
