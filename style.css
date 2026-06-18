@@ -103,9 +103,9 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
   background:linear-gradient(45deg,#f4f5f7 25%,transparent 25%,transparent 75%,#f4f5f7 75%),linear-gradient(45deg,#f4f5f7 25%,#fff 25%,#fff 75%,#f4f5f7 75%);
   background-size:22px 22px;background-position:0 0,11px 11px}
 
-.mini{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(20,24,32,.35);width:100%;max-width:440px;padding:24px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(20,24,32,.35);width:100%;max-width:480px;padding:28px 30px}
 .mini h2{margin:0 0 6px;font-size:18px}
-.hint{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin:0 0 14px}
+.hint{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin:0 0 18px;padding-right:6px}
 .mini label{display:block;font-size:12.5px;font-weight:500;margin-bottom:12px}
 .mini input{width:100%;margin-top:6px;font:inherit;font-size:14px;border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0}
 .mini input:focus{border-color:var(--red)}
@@ -161,7 +161,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 /* ===== 各種管理 / 項目調整 ===== */
 .subbar{max-width:1880px;margin:0 auto;padding:0 24px;display:flex}
 #btnSaveEdits{flex:none}
-.mini-wide{max-width:780px;max-height:86vh;display:flex;flex-direction:column}
+.mini-wide{max-width:880px;max-height:88vh;display:flex;flex-direction:column}
 #colsEditor{flex:1;overflow:auto;padding-right:2px}
 .edit-row{display:flex;gap:7px;margin-bottom:8px}
 .edit-row input{flex:1;min-width:0;font:inherit;font-size:14px;border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;outline:0}
@@ -289,7 +289,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cdd-item.on{background:var(--red-soft);color:var(--red-strong);font-weight:700}
 
 /* ===== 項目管理（yusen式 表示中／非表示 2カラム） ===== */
-.mini.modal-col{max-width:1080px;max-height:88vh;display:flex;flex-direction:column}
+.mini.modal-col{max-width:1180px;max-height:90vh;display:flex;flex-direction:column}
 .col-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0;margin-bottom:10px}
 .col-col{display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
 .col-col-head{padding:9px 12px;font-weight:700;font-size:12px;text-align:center;border-bottom:1px solid var(--line)}
@@ -375,8 +375,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .status-num-opt.selected{border-color:var(--red);box-shadow:0 0 0 1.5px var(--red)}
 .status-num-opt .status-num{width:20px;height:20px}
 .status-num-opt.status-num-none{color:var(--ink-3);font-size:13px}
-.mini.modal-status{max-width:720px}
-.mini.modal-cat{max-width:680px}
+.mini.modal-status{max-width:820px}
+.mini.modal-cat{max-width:780px}
 
 /* ===== モーダルカードを確実に不透明な白パネルに（編集モーダルと統一） ===== */
 .overlay>.mini{
