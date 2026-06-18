@@ -95,13 +95,13 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .muted{color:var(--ink-3)}
 .act-cell{display:flex;gap:6px;justify-content:flex-end}
 /* ===== モーダル共通 ===== */
-.overlay{position:fixed;inset:0;background:rgba(228,231,238,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;z-index:80;padding:18px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;z-index:80;padding:18px}
 .overlay[hidden]{display:none}
 .sheet{background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(20,24,32,.35);width:100%;max-width:980px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
   background:linear-gradient(45deg,#f4f5f7 25%,transparent 25%,transparent 75%,#f4f5f7 75%),linear-gradient(45deg,#f4f5f7 25%,#fff 25%,#fff 75%,#f4f5f7 75%);
   background-size:22px 22px;background-position:0 0,11px 11px}
 
-.mini{background:#fff;border:1px solid #c7ccd4;border-radius:18px;box-shadow:0 22px 60px rgba(40,46,60,.32),0 6px 18px rgba(40,46,60,.20);width:100%;max-width:440px;padding:24px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.04);width:100%;max-width:440px;padding:24px}
 .mini h2{margin:0 0 6px;font-size:18px}
 .hint{font-size:12.5px;color:var(--ink-2);line-height:1.6;margin:0 0 14px}
 .mini label{display:block;font-size:12.5px;font-weight:500;margin-bottom:12px}
@@ -272,3 +272,103 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .opt-row .mv-btns{display:flex;gap:3px;justify-content:flex-end}
 .opt-del{width:26px;height:30px;border:1px solid #f1c7c0;background:#fff;color:var(--red-strong);border-radius:7px;cursor:pointer;font-size:14px;justify-self:end}
 .opt-del:hover{background:var(--red-soft)}
+
+/* ===== 独自ドロップダウン（一覧内もマーク表示） ===== */
+.cdd{display:flex;align-items:center;gap:6px;width:100%;background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:5px 8px;font:inherit;font-size:12.5px;cursor:pointer;text-align:left;color:var(--ink-1);font-family:"Zen Kaku Gothic New",sans-serif}
+.cdd:hover{border-color:#b9c0cb}
+.cdd-cur{display:flex;align-items:center;gap:6px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cdd-cur .cdd-lbl{overflow:hidden;text-overflow:ellipsis}
+.cdd-arrow{color:var(--ink-3);font-size:10px;flex:none}
+.cdd-empty{color:var(--ink-3)}
+.cdd-menu{position:fixed;z-index:200;background:#fff;border:1px solid #cfd4db;border-radius:10px;box-shadow:0 16px 42px rgba(20,26,40,.24),0 4px 12px rgba(20,26,40,.14);padding:5px;max-height:300px;overflow:auto}
+.cdd-item{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-radius:7px;padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;text-align:left;color:var(--ink-1);font-family:"Zen Kaku Gothic New",sans-serif;white-space:nowrap}
+.cdd-item:hover{background:#f4f5f7}
+.cdd-item.on{background:var(--red-soft);color:var(--red-strong);font-weight:700}
+
+/* ===== 項目管理（yusen式 表示中／非表示 2カラム） ===== */
+.mini.modal-col{max-width:920px;max-height:88vh;display:flex;flex-direction:column}
+.col-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0;margin-bottom:10px}
+.col-col{display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.col-col-head{padding:9px 12px;font-weight:700;font-size:12px;text-align:center;border-bottom:1px solid var(--line)}
+.col-col-visible .col-col-head{background:var(--green-soft);color:var(--green-strong)}
+.col-col-hidden .col-col-head{background:#f4f5f7;color:var(--ink-3)}
+.col-col .col-list{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px}
+.col-card{background:#faf9f7;border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.col-card-name{font-size:13px;font-weight:700;color:var(--ink)}
+.col-card-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.col-card-controls .col-width-input{flex:0 0 84px;width:84px;padding:6px 8px;border:1px solid var(--line-2);border-radius:6px;font:inherit;font-size:12px;background:#fff;color:var(--ink);box-sizing:border-box}
+.col-card-controls .col-align-sel,.col-card-controls .col-wrap-sel{flex:1;min-width:104px;padding:6px 8px;border:1px solid var(--line-2);border-radius:6px;font:inherit;font-size:12px;background:#fff;color:var(--ink);cursor:pointer}
+.col-card-controls .col-width-input:focus,.col-card-controls .col-align-sel:focus,.col-card-controls .col-wrap-sel:focus{outline:0;border-color:var(--red)}
+.col-align-group{display:flex;align-items:center;gap:4px;flex:1;min-width:132px;margin:0}
+.col-ctrl-label{font-size:11px;color:var(--ink-3);flex:0 0 auto}
+.col-align-group .col-align-sel{flex:1;min-width:56px}
+.col-move-btn{padding:6px 10px;border:1px solid var(--line-2);border-radius:6px;background:#fff;font:inherit;font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;align-self:flex-end}
+.col-move-btn:hover{border-color:var(--red);color:var(--red)}
+.col-move-btn.col-move-back{align-self:flex-start;color:var(--green-strong)}
+.col-move-btn.col-move-back:hover{border-color:var(--green-strong);color:var(--green-strong)}
+.col-empty{color:var(--ink-3);font-size:12px;text-align:center;padding:18px 8px}
+
+/* 列幅ドラッグ調整 */
+.col-resize-handle{position:absolute;top:0;right:0;width:9px;height:100%;cursor:col-resize;z-index:6;display:flex;align-items:center;justify-content:flex-end}
+.col-resize-handle::after{content:"";width:3px;height:60%;margin-right:2px;background:var(--red);border-radius:2px;opacity:.55}
+.col-resize-handle:hover::after{opacity:1;width:4px}
+#gridHead th{position:relative}
+.resize-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.15);padding:10px 16px;display:flex;align-items:center;gap:14px;font-size:13px;color:var(--ink)}
+.resize-bar-text{font-weight:600}
+
+/* ===== カテゴリ／ステータス タブ（yusen式 アイコン・番号バッジ） ===== */
+#catPills{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#statusRow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ctab{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line-2);border-radius:999px;padding:7px 13px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
+.ctab:hover{border-color:var(--red);color:var(--red)}
+.ctab.on{background:var(--red);border-color:var(--red);color:#fff}
+.ctab-ico{display:inline-flex;align-items:center;font-size:15px}
+.ctab-ico .cat-logo{width:18px;height:18px;border-radius:4px;display:block}
+.ctab .cnt{font-size:11px;background:rgba(0,0,0,.08);padding:1px 7px;border-radius:999px;min-width:18px;text-align:center}
+.ctab.on .cnt{background:rgba(255,255,255,.25)}
+.ctab-none{border-style:dashed;color:var(--ink-3)}
+.ctab-none.on{background:var(--ink-3);border-color:var(--ink-3);color:#fff}
+.stab{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:8px 13px;font:inherit;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
+.stab:hover{border-color:var(--green);color:var(--green)}
+.stab.on{background:var(--green);border-color:var(--green);color:#fff}
+.stab-ico{display:inline-flex;align-items:center}
+.stab-ico:empty{display:none}
+.stab-ico .status-num{width:18px;height:18px;display:block}
+.stab.on .status-num circle{stroke:#fff;stroke-width:1.5}
+.stab .cnt{font-size:11px;font-weight:600;background:#f1f1f4;color:var(--ink-3);padding:2px 8px;border-radius:999px;min-width:20px;text-align:center}
+.stab.on .cnt{background:rgba(255,255,255,.3);color:#fff}
+.stab-none{border-style:dashed;color:var(--ink-3)}
+.stab-none.on{background:var(--ink-3);border-color:var(--ink-3);color:#fff}
+
+/* cdd 内アイコン */
+.cdd-ico{display:inline-flex;align-items:center;flex:0 0 auto}
+.cdd-ico .cat-logo,.cdd-ico .status-num{width:16px;height:16px;display:block}
+.cdd-item .cdd-ico .cat-logo,.cdd-item .cdd-ico .status-num{width:18px;height:18px}
+
+/* ===== カテゴリ／ステータス 管理モーダル ===== */
+.cat-add-row{display:flex;gap:8px;margin-bottom:14px}
+.cat-add-row input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;font:inherit}
+.cat-add-row input:focus{outline:0;border-color:var(--red)}
+.cat-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow:auto;margin-bottom:8px}
+.cat-row{display:flex;align-items:center;gap:6px;padding:8px;background:#faf9f7;border-radius:8px}
+.cat-icon-btn{background:#fff;border:1px solid var(--line-2);border-radius:8px;width:42px;height:38px;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.cat-icon-btn .cat-logo{width:22px;height:22px;border-radius:4px}
+.cat-icon-btn:hover{border-color:var(--red)}
+.cat-label-input{flex:1;min-width:0;padding:7px 9px;border:1px solid var(--line-2);border-radius:8px;font:inherit}
+.cat-label-input:focus{outline:0;border-color:var(--red)}
+.cat-mv{background:#fff;border:1px solid var(--line-2);border-radius:6px;width:28px;height:32px;cursor:pointer;font-size:11px;flex:none}
+.cat-mv:disabled{opacity:.3;cursor:not-allowed}
+.cat-del{background:#fff;border:1px solid var(--line-2);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:13px;flex:none}
+.cat-del:hover{border-color:var(--red);color:var(--red)}
+.cat-icon-palette{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:8px;margin:-2px 0 6px;background:var(--paper);border:1px solid var(--line-2);border-radius:8px}
+.cat-icon-opt{background:#fff;border:1px solid var(--line-2);border-radius:6px;height:34px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cat-icon-opt:hover{border-color:var(--red)}
+.cat-icon-opt.selected{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+.cat-icon-opt .cat-logo{width:20px;height:20px;border-radius:4px}
+.status-num-picker{display:inline-flex;gap:3px;align-items:center;flex-shrink:0}
+.status-num-opt{width:30px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line-2);border-radius:7px;cursor:pointer;padding:3px}
+.status-num-opt:hover{border-color:var(--red)}
+.status-num-opt.selected{border-color:var(--red);box-shadow:0 0 0 1.5px var(--red)}
+.status-num-opt .status-num{width:20px;height:20px}
+.status-num-opt.status-num-none{color:var(--ink-3);font-size:13px}
+.mini.modal-status{max-width:560px}
