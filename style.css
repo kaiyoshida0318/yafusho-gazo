@@ -400,3 +400,6 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .col-ord{width:24px;height:22px;border:1px solid var(--line-2);background:#fff;border-radius:5px;cursor:pointer;font-size:9px;color:var(--ink-3);line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center}
 .col-ord:hover:not(:disabled){border-color:var(--red);color:var(--red)}
 .col-ord:disabled{opacity:.3;cursor:not-allowed}
+
+.fld textarea{width:100%;margin-top:6px;font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0;background:#fff;resize:vertical;line-height:1.5;min-height:104px}
+.fld textarea:focus{border-color:var(--red)}
