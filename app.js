@@ -189,6 +189,7 @@ function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.l
 
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
+$('btnCopyLog').onclick=function(){var a=document.querySelector('#logModal textarea');var txt=a?a.value:LOGS.join('\n');function ok(){toast('📋 ログをコピーしました');}function fb(){try{if(a){a.removeAttribute('readonly');a.focus();a.select();document.execCommand('copy');a.setAttribute('readonly','');ok();}else{toast('コピーできませんでした');}}catch(e){toast('コピーできませんでした');}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}};
 $('btnAdd').onclick=openNew;
 $('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',searchUrl:'',yahooUrls:[],rakutenUrls:[]});persist();render();scheduleSync();};
 $('btnSaveStay').onclick=function(){saveForm(false);};
@@ -505,15 +506,29 @@ async function ghPut(owner,repo,branch,path,b64,sha,msg,pat){
   return r.json();
 }
 function ghSleep(ms){return new Promise(function(res){setTimeout(res,ms);});}
+var ghShaCache={};
+async function ghCurrentSha(owner,repo,branch,path,pat){
+  try{
+    var rr=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/commits/'+encodeURIComponent(branch)+'?t='+Date.now(),{headers:ghHeaders(pat),cache:'no-store'});
+    if(rr.ok){var cj=await rr.json();var csha=cj.sha;
+      var r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path+'?ref='+csha,{headers:ghHeaders(pat),cache:'no-store'});
+      if(r.status===200)return (await r.json()).sha;
+      if(r.status===404)return null;
+    }
+  }catch(e){}
+  return await ghSha(owner,repo,branch,path,pat);
+}
 async function ghPutRetry(owner,repo,branch,path,b64,msg,pat){
   var last='';
-  for(var attempt=0;attempt<5;attempt++){
-    var sha=await ghSha(owner,repo,branch,path,pat);
+  for(var attempt=0;attempt<6;attempt++){
+    var sha;
+    if(attempt===0&&Object.prototype.hasOwnProperty.call(ghShaCache,path)){sha=ghShaCache[path];}
+    else{sha=await ghCurrentSha(owner,repo,branch,path,pat);}
     var body={message:msg,content:b64,branch:branch};if(sha)body.sha=sha;
     var r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:ghHeaders(pat),body:JSON.stringify(body)});
-    if(r.ok)return r.json();
+    if(r.ok){var jr=await r.json();if(jr&&jr.content&&jr.content.sha)ghShaCache[path]=jr.content.sha;return jr;}
     last=await r.text();
-    if(r.status===409||r.status===422){await ghSleep(500+attempt*500);continue;}
+    if(r.status===409||r.status===422){delete ghShaCache[path];await ghSleep(700+attempt*500);continue;}
     throw new Error('PUT '+path+' ('+r.status+') '+last.slice(0,120));
   }
   throw new Error('PUT '+path+' (409) sha競合のリトライ上限: '+last.slice(0,80));
@@ -570,10 +585,10 @@ async function saveToGitHub(silent){
     $('btnSave').disabled=false;
   }
 }
-var _syncTimer=null,_syncing=false,_syncAgain=false;
-function scheduleSync(){if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(runSync,800);}
-async function runSync(){if(_syncing){_syncAgain=true;return;}_syncing=true;try{await saveToGitHub(true);}catch(e){}_syncing=false;if(_syncAgain){_syncAgain=false;scheduleSync();}}
-$('btnSave').onclick=function(){saveToGitHub(false);};
+var _syncTimer=null,ghBusy=false,ghPending=false;
+function scheduleSync(){if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
+async function triggerSync(silent){if(ghBusy){ghPending=true;return;}ghBusy=true;try{await saveToGitHub(silent);}catch(e){}ghBusy=false;if(ghPending){ghPending=false;triggerSync(true);}}
+$('btnSave').onclick=function(){triggerSync(false);};
 
 /* ===== 起動時に GitHub から読み込み（公開リポジトリはPAT不要） ===== */
 async function loadFromGitHub(){
