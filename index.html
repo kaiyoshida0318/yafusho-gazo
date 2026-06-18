@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=0.20.1">
+<link rel="stylesheet" href="style.css?v=0.20.2">
 </head>
 <body>
 
@@ -16,10 +16,10 @@
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん">
       <div class="header-actions">
-        <span class="version" id="version">v0.20.1</span>
-        <button class="btn btn-ghost" id="btnManageCats">📂 カテゴリ管理</button>
-        <button class="btn btn-ghost" id="btnManageStatus">📋 ステータス管理</button>
-        <button class="btn btn-ghost" id="btnManage">📐 ページ設定</button>
+        <span class="version" id="version">v0.20.2</span>
+        <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
+        <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
+        <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
         <button class="btn btn-ghost" id="btnCols2">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -177,13 +177,13 @@
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.20.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.20.2</textarea>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="manageModal" hidden>
   <div class="mini mini-wide">
-    <h2>📐 ページ設定</h2>
+    <h2>📄 制作予定ページ管理</h2>
     <p class="hint">制作予定ページの選択肢と、マーク（色＋短い記号）を編集できます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
     <div class="opt-scroll" id="optScroll">
       <div class="opt-sec">
@@ -224,8 +224,8 @@
 
 <div class="overlay" id="catModal" hidden>
   <div class="mini modal-cat">
-    <h2>📂 カテゴリ管理</h2>
-    <p class="hint">上段タブのカテゴリを管理します。並び替え・名前変更・アイコン変更・削除ができます。</p>
+    <h2>📂 出品内容管理</h2>
+    <p class="hint">出品内容（上段タブ）を管理します。並び替え・名前変更・アイコン変更・削除ができます。</p>
     <div class="cat-add-row">
       <input type="text" id="newCatLabel" placeholder="新しいカテゴリ名">
       <button class="btn btn-red" id="btnAddCat">追加</button>
@@ -236,8 +236,8 @@
 </div>
 <div class="overlay" id="statusModal" hidden>
   <div class="mini modal-status">
-    <h2>📋 ステータス管理</h2>
-    <p class="hint">下段タブのステータスを管理します。番号バッジ・並び替え・名前変更・追加・削除ができます。</p>
+    <h2>📋 状態管理</h2>
+    <p class="hint">状態（下段タブ）を管理します。番号バッジ・並び替え・名前変更・追加・削除ができます。</p>
     <div class="cat-add-row">
       <input type="text" id="newStatusLabel" placeholder="新しいステータス名">
       <button class="btn btn-red" id="btnAddStatus">追加</button>
@@ -246,6 +246,6 @@
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="statusModal">閉じる</button></div>
   </div>
 </div>
-<script src="app.js?v=0.20.1"></script>
+<script src="app.js?v=0.20.2"></script>
 </body>
 </html>
