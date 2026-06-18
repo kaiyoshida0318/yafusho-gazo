@@ -8,6 +8,9 @@ var items=[];
 try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(items));}catch(e){}}
 function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}}
+var PENDING='yafusho_pending';
+function getPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
+function setPending(b){try{if(b){localStorage.setItem(PENDING,'1');}else{localStorage.removeItem(PENDING);}}catch(e){}}
 var editingId=null;
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -441,7 +444,7 @@ function renderStatusTabs(){
 }
 function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;}
 function clearDirty(){dirty=false;var b=$('btnSaveEdits');if(b)b.hidden=true;}
-window.addEventListener('beforeunload',function(e){if(bulkEdit&&dirty){e.preventDefault();e.returnValue='一括編集中の変更は保存されていません。更新するとキャンセルされます。本当によろしいですか？';return e.returnValue;}});
+window.addEventListener('beforeunload',function(e){if((bulkEdit&&dirty)||ghBusy){e.preventDefault();e.returnValue='まだGitHubへ同期中（または一括編集中）です。今更新すると未保存の変更が失われる可能性があります。よろしいですか？';return e.returnValue;}});
 function stageEdit(id,field,v){for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}markDirty();}
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
 renderCatTabs();renderStatusTabs();
@@ -488,6 +491,7 @@ function progDone(text){var p=$('ghProgress');p.hidden=false;p.classList.add('gh
 
 /* ===== GitHub API ===== */
 function utf8b64(str){return btoa(unescape(encodeURIComponent(str)));}
+function b64utf8(b64){try{return decodeURIComponent(escape(atob(String(b64||'').replace(/\s/g,''))));}catch(e){try{return atob(String(b64||'').replace(/\s/g,''));}catch(e2){return '';}}}
 function b64utf8(b){return decodeURIComponent(escape(atob(b)));}
 function mimeExt(durl){var m=/^data:image\/(\w+)/.exec(durl||'');var e=m?m[1].toLowerCase():'png';return e==='jpeg'?'jpg':e;}
 function ghHeaders(pat){return{'Authorization':'Bearer '+pat,'Accept':'application/vnd.github+json'};}
@@ -582,6 +586,7 @@ async function saveToGitHub(silent){
     await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
     persist();
     if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
+    setPending(false);
     log('=== GitHub保存 完了（商品'+items.length+'件 / 画像'+_imgUp+'枚）上記commitリンクで反映確認 ===');
   }catch(e){
     prog(false);
@@ -592,22 +597,34 @@ async function saveToGitHub(silent){
   }
 }
 var _syncTimer=null,ghBusy=false,ghPending=false;
-function scheduleSync(){if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
+function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
 async function triggerSync(silent){if(ghBusy){ghPending=true;return;}ghBusy=true;try{await saveToGitHub(silent);}catch(e){}ghBusy=false;if(ghPending){ghPending=false;triggerSync(true);}}
 $('btnSave').onclick=function(){triggerSync(false);};
 
 /* ===== 起動時に GitHub から読み込み（公開リポジトリはPAT不要） ===== */
 async function loadFromGitHub(){
   var c=getCfg();
+  if(getPending()){log('未同期のローカル変更あり → GitHub読込をスキップしローカルを保持。再同期します。');render();triggerSync(true);return;}
   try{
-    var u='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/data.json?t='+Date.now();
-    var r=await fetch(u,{cache:'no-store'});
-    if(r.ok){
-      var arr=await r.json();
-      if(Array.isArray(arr)){items=arr;persist();render();log('GitHubから読み込み（'+items.length+'件）');}
-    }else if(r.status===404){
-      log('data.json は未作成（初回）。');
+    var arr=null;
+    if(c.pat){
+      try{
+        var rr=await fetch('https://api.github.com/repos/'+c.owner+'/'+c.repo+'/commits/'+encodeURIComponent(c.branch)+'?t='+Date.now(),{headers:ghHeaders(c.pat),cache:'no-store'});
+        if(rr.ok){var csha=(await rr.json()).sha;
+          var r=await fetch('https://api.github.com/repos/'+c.owner+'/'+c.repo+'/contents/data.json?ref='+csha,{headers:ghHeaders(c.pat),cache:'no-store'});
+          if(r.status===200){var jj=await r.json();ghShaCache['data.json']=jj.sha;arr=JSON.parse(b64utf8(jj.content));log('GitHub読込(API) HEAD='+String(csha).slice(0,7)+' sha='+String(jj.sha).slice(0,7));}
+          else if(r.status===404){log('data.json 未作成（初回）。');return;}
+          else{log('contents取得NG('+r.status+') → rawへ');}
+        }else{log('commits取得NG('+rr.status+') → rawへ');}
+      }catch(e){log('API読込エラー: '+e.message+' → rawへ');}
     }
+    if(arr===null){
+      var u='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/data.json?t='+Date.now();
+      var r2=await fetch(u,{cache:'no-store'});
+      if(r2.ok){arr=await r2.json();log('GitHub読込(raw)');}
+      else if(r2.status===404){log('data.json 未作成（初回）。');return;}
+    }
+    if(Array.isArray(arr)){items=arr;persist();render();log('GitHubから読み込み（'+items.length+'件）');}
   }catch(e){log('GitHub読み込みスキップ: '+e.message);}
 }
 
