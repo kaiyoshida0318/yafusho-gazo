@@ -443,3 +443,8 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .strip-ctrls{flex-wrap:wrap}
 .sbtn.strip-copy{flex-basis:100%;width:100%;margin-top:3px;font-size:11px;font-weight:700;color:var(--red-strong);border:1px solid #f1c7c0;background:#fff;border-radius:6px;padding:3px 0;cursor:pointer}
 .sbtn.strip-copy:hover{background:var(--red-soft)}
+
+/* 画像ギャラリー：画像があるときは小さい正方形の追加タイル */
+#stripYahoo,#stripRakuten{align-items:flex-start}
+.strip-add{flex:0 0 auto;width:112px;height:112px;border:1.5px dashed var(--line-2);border-radius:10px;background:#fafbfc;color:var(--ink-3);display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;transition:.12s}
+.strip-add:hover,.strip-add.drag{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
