@@ -410,6 +410,7 @@ function renderStrip(side){
          '<button type="button" class="sbtn mv-l" data-side="'+side+'" data-idx="'+i+'" title="左へ">←</button>'+
          '<button type="button" class="sbtn mv-r" data-side="'+side+'" data-idx="'+i+'" title="右へ">→</button>'+
          '<button type="button" class="sbtn strip-del" data-side="'+side+'" data-idx="'+i+'" title="削除">×</button>'+
+         '<button type="button" class="sbtn strip-move" data-side="'+side+'" data-idx="'+i+'" title="位置を選んで移動">↕ 移動</button>'+
          '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↓コピー↓':'↑コピー↑')+'</button>'+
        '</div></div>';
   }
@@ -439,6 +440,7 @@ wireStripDrop('stripYahoo','yahoo');
 wireStripDrop('stripRakuten','rakuten');
 var pendingAddSide=null;
 function closeAddMenu(){var m=document.getElementById('addMenu');if(m)m.parentNode.removeChild(m);}
+function openMoveMenu(side,idx,x,y){closeAddMenu();var ar=galOf(side);var m=document.createElement('div');m.id='addMenu';m.className='add-menu move-menu';var h='';for(var p=0;p<ar.length;p++){h+='<button type="button" class="add-menu-item" data-mv="'+p+'">'+(p+1)+'枚目'+(p===idx?'（現在）':'')+'</button>';}m.innerHTML=h;document.body.appendChild(m);var mw=m.offsetWidth||160;m.style.left=Math.max(8,Math.min(x,window.innerWidth-mw-8))+'px';m.style.top=Math.max(8,Math.min(y,window.innerHeight-Math.min(250,m.offsetHeight)-8))+'px';m.addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.add-menu-item'):null;if(!b)return;var to=parseInt(b.getAttribute('data-mv'),10);closeAddMenu();if(to===idx)return;var a=galOf(side);var x2=a.splice(idx,1)[0];a.splice(to,0,x2);renderStrip(side);});}
 function openAddMenu(side,x,y){closeAddMenu();pendingAddSide=side;var m=document.createElement('div');m.id='addMenu';m.className='add-menu';m.innerHTML='<button type="button" class="add-menu-item" data-act="img">📷 画像を追加</button><button type="button" class="add-menu-item" data-act="text">📝 文章を追加</button>';document.body.appendChild(m);var mw=m.offsetWidth||180;m.style.left=Math.max(8,Math.min(x,window.innerWidth-mw-8))+'px';m.style.top=Math.min(y,window.innerHeight-110)+'px';m.addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.add-menu-item'):null;if(!b)return;var act=b.getAttribute('data-act');closeAddMenu();if(act==='img'){var fi=$(side==='yahoo'?'fileYahoo':'fileRakuten');if(fi)fi.click();}else{openTextAdd(side);}});}
 document.addEventListener('mousedown',function(e){var m=document.getElementById('addMenu');if(!m)return;if(!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.strip-add')))closeAddMenu();},true);
 var pendingEditIdx=null,pendingTextColor='';
@@ -468,6 +470,7 @@ document.addEventListener('click',function(e){
   var t=e.target;
   if(t&&t.classList&&t.classList.contains('mini-clear')){var ms=t.getAttribute('data-main');if(ms==='yahoo')mainYahoo='';else mainRakuten='';updateMini(ms);return;}
   if(t&&t.classList&&t.classList.contains('seg-btn')){var sg=t.parentNode;var bs=sg.querySelectorAll('.seg-btn');for(var b=0;b<bs.length;b++)bs[b].classList.remove('on');t.classList.add('on');return;}
+  if(t&&t.classList&&t.classList.contains('strip-move')){openMoveMenu(t.getAttribute('data-side'),parseInt(t.getAttribute('data-idx'),10),e.clientX,e.clientY);return;}
   if(t&&t.classList&&t.classList.contains('strip-text')){openTextEditor(t.getAttribute('data-textedit'),parseInt(t.getAttribute('data-idx'),10));return;}
   if(t&&t.classList&&t.classList.contains('strip-copy')){
     var csd=t.getAttribute('data-side');var cix=parseInt(t.getAttribute('data-idx'),10);var car=galOf(csd);var csrc=car[cix];
