@@ -437,3 +437,4 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .img2-tag.tb-r{background:var(--red)}
 .img2-empty{color:var(--ink-3);font-size:13px}
 .strip-more{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;height:66px;min-width:48px;padding:0 12px;border:1px dashed var(--line-2);border-radius:6px;color:var(--ink-2);font-weight:700;cursor:pointer;background:#fafafa}
+.col-view-label{font-size:13px;font-weight:600;color:var(--red);margin-left:6px}
