@@ -16,11 +16,15 @@ var editingId=null;
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function escA(s){return esc(s).replace(/"/g,'&quot;');}
 
+var TEXT_COLORS=[{k:'',label:'白',bg:'#ffffff',fg:'#1a1b1e'},{k:'red',label:'赤',bg:'#fdeae6',fg:'#d8331f'},{k:'yellow',label:'黄',bg:'#fff6da',fg:'#7a5a00'},{k:'green',label:'緑',bg:'#e7f7ec',fg:'#1c7a3d'},{k:'blue',label:'青',bg:'#e6f0fd',fg:'#1f5bd8'},{k:'gray',label:'灰',bg:'#eef0f2',fg:'#444444'},{k:'dark',label:'黒',bg:'#1a1b1e',fg:'#ffffff'}];
+function textColor(k){for(var i=0;i<TEXT_COLORS.length;i++)if(TEXT_COLORS[i].k===k)return TEXT_COLORS[i];return TEXT_COLORS[0];}
 function isTextItem(s){return typeof s==='string'&&s.indexOf('TXT:')===0;}
-function textItemVal(s){return s.slice(4);}
-function makeTextItem(t){return 'TXT:'+t;}
-function thumbItem(src,id,cls){var de=id?' data-edit="'+escA(id)+'"':'';if(isTextItem(src))return '<span class="'+cls+' strip-thumb-text clk"'+de+'>'+esc(textItemVal(src))+'</span>';return '<img class="'+cls+' clk"'+de+' loading="lazy" src="'+escA(src)+'" alt="">';}
-function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src))return '<span class="tbl-thumb strip-thumb-text clk"'+de+'>'+esc(textItemVal(src))+'</span>';return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
+function parseTextItem(s){var raw=s.slice(4);var o={t:raw,c:''};try{var p=JSON.parse(raw);if(p&&typeof p==='object'){o.t=(p.t!=null?p.t:'');o.c=p.c||'';}}catch(e){}return o;}
+function makeTextItem(t,c){return 'TXT:'+JSON.stringify({t:t,c:c||''});}
+function txtStyle(o){var col=textColor(o.c);return 'background:'+col.bg+';color:'+col.fg;}
+function thumbItem(src,id,cls){var de=id?' data-edit="'+escA(id)+'"':'';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="'+cls+' strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="'+cls+' clk"'+de+' loading="lazy" src="'+escA(src)+'" alt="">';}
+function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="tbl-thumb strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
+function stripInner(side,i,v){if(isTextItem(v)){var o=parseTextItem(v);return '<div class="strip-text" data-textedit="'+side+'" data-idx="'+i+'" style="'+txtStyle(o)+'" title="クリックで編集">'+esc(o.t)+'</div>';}return '<img src="'+escA(v)+'" alt="">';}
 function urlCell(arr){arr=(arr||[]).filter(function(u){return u;});if(!arr.length)return '<span class="muted">—</span>';var h='';for(var i=0;i<arr.length;i++){h+='<a href="'+escA(arr[i])+'" target="_blank" rel="noopener">'+esc(arr[i])+'</a>';}return '<div class="url-cell">'+h+'</div>';}
 function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'</span>';}
 
@@ -401,7 +405,7 @@ function renderStrip(side){
   for(var i=0;i<arr.length;i++){
     h+='<div class="strip-item">'+
        '<span class="strip-no">'+(i===0?'メイン':(i+1)+'枚目')+'</span>'+
-       (isTextItem(arr[i])?'<div class="strip-text">'+esc(textItemVal(arr[i]))+'</div>':'<img src="'+escA(arr[i])+'" alt="">')+
+       stripInner(side,i,arr[i])+
        '<div class="strip-ctrls">'+
          '<button type="button" class="sbtn mv-l" data-side="'+side+'" data-idx="'+i+'" title="左へ">←</button>'+
          '<button type="button" class="sbtn mv-r" data-side="'+side+'" data-idx="'+i+'" title="右へ">→</button>'+
@@ -437,8 +441,12 @@ var pendingAddSide=null;
 function closeAddMenu(){var m=document.getElementById('addMenu');if(m)m.parentNode.removeChild(m);}
 function openAddMenu(side,x,y){closeAddMenu();pendingAddSide=side;var m=document.createElement('div');m.id='addMenu';m.className='add-menu';m.innerHTML='<button type="button" class="add-menu-item" data-act="img">📷 画像を追加</button><button type="button" class="add-menu-item" data-act="text">📝 文章を追加</button>';document.body.appendChild(m);var mw=m.offsetWidth||180;m.style.left=Math.max(8,Math.min(x,window.innerWidth-mw-8))+'px';m.style.top=Math.min(y,window.innerHeight-110)+'px';m.addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.add-menu-item'):null;if(!b)return;var act=b.getAttribute('data-act');closeAddMenu();if(act==='img'){var fi=$(side==='yahoo'?'fileYahoo':'fileRakuten');if(fi)fi.click();}else{openTextAdd(side);}});}
 document.addEventListener('mousedown',function(e){var m=document.getElementById('addMenu');if(!m)return;if(!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.strip-add')))closeAddMenu();},true);
-function openTextAdd(side){pendingAddSide=side;setVal('textAddInput','');show('textAddModal');var ti=$('textAddInput');if(ti)setTimeout(function(){ti.focus();},30);}
-if($('btnTextAdd'))$('btnTextAdd').onclick=function(){var tx=val('textAddInput').trim();if(!tx){toast('文章を入力してください');return;}galOf(pendingAddSide).push(makeTextItem(tx));renderStrip(pendingAddSide);hide('textAddModal');toast('文章タイルを追加しました');};
+var pendingEditIdx=null,pendingTextColor='';
+function renderTextColors(){var r=$('textColorRow');if(!r)return;var h='';for(var i=0;i<TEXT_COLORS.length;i++){var c=TEXT_COLORS[i];h+='<button type="button" class="tcsw'+(c.k===pendingTextColor?' on':'')+'" data-ck="'+c.k+'" style="background:'+c.bg+';color:'+c.fg+'" title="'+c.label+'">あ</button>';}r.innerHTML=h;}
+function openTextEditor(side,idx){pendingAddSide=side;pendingEditIdx=(idx==null?null:idx);var cur={t:'',c:''};if(idx!=null){var v=galOf(side)[idx];if(isTextItem(v))cur=parseTextItem(v);}pendingTextColor=cur.c||'';setVal('textAddInput',cur.t||'');renderTextColors();var ttl=$('textAddTitle');if(ttl)ttl.textContent=(idx!=null?'📝 文章を編集':'📝 文章を追加');show('textAddModal');var ti=$('textAddInput');if(ti)setTimeout(function(){ti.focus();},30);}
+function openTextAdd(side){openTextEditor(side,null);}
+if($('textColorRow'))$('textColorRow').addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.tcsw'):null;if(!b)return;pendingTextColor=b.getAttribute('data-ck')||'';renderTextColors();});
+if($('btnTextAdd'))$('btnTextAdd').onclick=function(){var tx=val('textAddInput').trim();if(!tx){toast('文章を入力してください');return;}var item=makeTextItem(tx,pendingTextColor);if(pendingEditIdx!=null){galOf(pendingAddSide)[pendingEditIdx]=item;}else{galOf(pendingAddSide).push(item);}renderStrip(pendingAddSide);hide('textAddModal');toast(pendingEditIdx!=null?'文章を更新しました':'文章タイルを追加しました');pendingEditIdx=null;};
 function setMain(side,src){if(side==='yahoo')mainYahoo=src;else mainRakuten=src;updateMini(side);}
 function wireMini(elId,fileId,side){
   var el=$(elId),file=$(fileId);if(!el)return;
@@ -460,6 +468,7 @@ document.addEventListener('click',function(e){
   var t=e.target;
   if(t&&t.classList&&t.classList.contains('mini-clear')){var ms=t.getAttribute('data-main');if(ms==='yahoo')mainYahoo='';else mainRakuten='';updateMini(ms);return;}
   if(t&&t.classList&&t.classList.contains('seg-btn')){var sg=t.parentNode;var bs=sg.querySelectorAll('.seg-btn');for(var b=0;b<bs.length;b++)bs[b].classList.remove('on');t.classList.add('on');return;}
+  if(t&&t.classList&&t.classList.contains('strip-text')){openTextEditor(t.getAttribute('data-textedit'),parseInt(t.getAttribute('data-idx'),10));return;}
   if(t&&t.classList&&t.classList.contains('strip-copy')){
     var csd=t.getAttribute('data-side');var cix=parseInt(t.getAttribute('data-idx'),10);var car=galOf(csd);var csrc=car[cix];
     if(csrc){var other=(csd==='yahoo')?'rakuten':'yahoo';galOf(other).push(csrc);renderStrip(other);toast(csd==='yahoo'?'楽天へコピーしました':'Yahooへコピーしました');}
