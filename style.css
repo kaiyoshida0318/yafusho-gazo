@@ -413,3 +413,9 @@ textarea.bulk-area{resize:vertical;line-height:1.45;min-height:52px;white-space:
 .tbl-thumb.clk{cursor:pointer}
 .tbl-thumb.clk:hover{outline:2px solid var(--red);outline-offset:1px}
 span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
+
+/* ビュー切替（画像 / 基礎情報）セグメントトグル */
+.view-toggle{display:inline-flex;border:1px solid var(--line-2);border-radius:10px;overflow:hidden;background:#fff;flex:0 0 auto}
+.view-toggle .vt-btn{appearance:none;border:0;background:transparent;padding:7px 13px;font:inherit;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;line-height:1;white-space:nowrap}
+.view-toggle .vt-btn+.vt-btn{border-left:1px solid var(--line-2)}
+.view-toggle .vt-btn.on{background:var(--red);color:#fff}
