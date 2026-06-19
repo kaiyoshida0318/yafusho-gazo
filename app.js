@@ -350,7 +350,7 @@ function renderColManager(){var _vl=document.getElementById('colViewLabel');if(_
 }
 function openCols(){renderColManager();show('colsModal');}
 $('btnCols2').onclick=openCols;
-$('btnResetCols').onclick=function(){if(!confirm('項目の表示設定をすべてデフォルトに戻します。よろしいですか？'))return;var s=getSettings();s.colcfg={};saveSettings(s);renderHead();render();renderColManager();log('項目をデフォルトに戻す');};
+$('btnResetCols').onclick=function(){if(!confirm('この端末の項目表示設定（基礎情報・画像一覧の両ビュー）をデフォルトに戻します。よろしいですか？'))return;var s=getSettings();s.colcfg={};s.colorder=null;s.colcfgV={};s.colorderV={};saveSettings(s);renderHead();render();renderColManager();log('項目をデフォルトに戻しました（全ビュー）');};
 /* ドラッグ幅調整モード */
 function enterColResizeMode(){colResizeMode=true;hide('colsModal');var bar=$('resizeBar');if(bar)bar.hidden=false;renderHead();render();}
 function exitColResizeMode(){colResizeMode=false;var bar=$('resizeBar');if(bar)bar.hidden=true;renderHead();render();show('colsModal');renderColManager();}
