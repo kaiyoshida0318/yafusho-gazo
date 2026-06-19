@@ -448,3 +448,12 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 #stripYahoo,#stripRakuten{align-items:flex-start}
 .strip-add{flex:0 0 auto;width:112px;height:112px;border:1.5px dashed var(--line-2);border-radius:10px;background:#fafbfc;color:var(--ink-3);display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;transition:.12s}
 .strip-add:hover,.strip-add.drag{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
+
+/* 画像ギャラリー：文章タイル & 追加メニュー */
+.strip-item .strip-text{width:112px;height:112px;border:1px solid var(--line-2);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-size:12px;line-height:1.4;overflow:auto;white-space:pre-wrap;word-break:break-word;box-sizing:border-box}
+.strip-thumb-text{display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 6px;font-size:10px;line-height:1.3;width:90px;height:66px;flex:0 0 auto;overflow:hidden;white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid var(--line-2);border-radius:6px;cursor:pointer}
+.strip-add-l{font-size:10px;line-height:1.4;text-align:center;color:var(--ink-3);pointer-events:none}
+.strip-add-or{color:var(--ink-3);opacity:.7}
+.add-menu{position:fixed;z-index:300;background:#fff;border:1px solid var(--line-2);border-radius:10px;box-shadow:0 12px 30px rgba(20,24,32,.18);padding:6px;min-width:170px;display:flex;flex-direction:column;gap:2px}
+.add-menu-item{appearance:none;border:0;background:transparent;text-align:left;padding:9px 12px;border-radius:7px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+.add-menu-item:hover{background:var(--red-soft);color:var(--red-strong)}
