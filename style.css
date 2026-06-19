@@ -467,3 +467,8 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 
 /* 文章入力欄を最終タイル(112px正方形)と同じ折り返しに */
 #textAddInput{width:112px;max-width:112px;min-height:112px;box-sizing:border-box;font-size:12px;line-height:1.4;padding:8px;text-align:center;resize:vertical;white-space:pre-wrap;word-break:break-word}
+
+/* 画像/文章タイル：位置選択で移動 */
+.sbtn.strip-move{flex-basis:100%;width:100%;box-sizing:border-box;margin-top:3px;font-size:11px;font-weight:700;color:var(--ink-2);border:1px solid var(--line-2);background:#fff;border-radius:6px;padding:3px 0;cursor:pointer;text-align:center}
+.sbtn.strip-move:hover{background:#f5f6f8;border-color:var(--ink-3)}
+.move-menu{max-height:250px;overflow:auto}
