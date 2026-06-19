@@ -134,6 +134,14 @@ function cellHtml(key,it){
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
 }
+var VIEWMODE='yafusho_viewmode';
+var VIEW_COLS={
+  images:['date','yahooImg','rakutenImg','name','pagePlan','listingType','status','actions'],
+  basic:['date','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','listingType','status','salesMethod','actions']
+};
+function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic')?'basic':'images';}catch(e){return 'images';}}
+function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic')?'basic':'images');}catch(e){}}
+function inViewMode(key){var s=VIEW_COLS[getViewMode()]||VIEW_COLS.images;return s.indexOf(key)>=0;}
 function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].key===key)return DEFAULT_COLS[i];}return null;}
 function getColCfg(key){var def=colDef(key);var base={visible:true,width:(def?def.width:null),wrap:'wrap',align:(def?def.align:'left'),headAlign:(def?def.align:'left')};var cc=(getSettings().colcfg||{})[key]||{};return {visible:cc.visible!==false,width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign};}
 function setColCfg(key,patch){var s=getSettings();if(!s.colcfg)s.colcfg={};var cur=s.colcfg[key]||{};for(var k in patch)cur[k]=patch[k];s.colcfg[key]=cur;saveSettings(s);}
@@ -141,7 +149,7 @@ function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+c
 function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var saved=getSettings().colorder;if(!saved||!saved.length)return keys.slice();var out=[],seen={};for(var i=0;i<saved.length;i++){if(keys.indexOf(saved[i])>=0&&!seen[saved[i]]){out.push(saved[i]);seen[saved[i]]=1;}}var missing=[];for(var k=0;k<keys.length;k++){if(!seen[keys[k]])missing.push(keys[k]);}if(missing.length){var ai=out.indexOf('actions');if(ai>=0){out=out.slice(0,ai).concat(missing).concat(out.slice(ai));}else{out=out.concat(missing);}}return out;}
 function setColOrder(arr){var s=getSettings();s.colorder=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
-function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+esc(def.label)+(colResizeMode?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'</tr>';}
+function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;if(!inViewMode(key))continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+esc(def.label)+(colResizeMode?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'</tr>';}
 
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
@@ -157,7 +165,7 @@ function render(){
   });
   for(var i=0;i<list.length;i++){
     var it=list[i];var tr=document.createElement('tr');var tds='';
-    var _ord=getColOrder();for(var c=0;c<_ord.length;c++){var key=_ord[c];if(!colDef(key))continue;var cc=getColCfg(key);if(!cc.visible)continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
+    var _ord=getColOrder();for(var c=0;c<_ord.length;c++){var key=_ord[c];if(!colDef(key))continue;var cc=getColCfg(key);if(!cc.visible)continue;if(!inViewMode(key))continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
     tr.innerHTML=tds;tb.appendChild(tr);
   }
   $('grid').style.display=list.length?'':'none';
@@ -192,6 +200,11 @@ function saveForm(closeAfter){var d=gather();if(editingId){for(var i=0;i<items.l
 
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
+function syncViewToggle(){var m=getViewMode();var a=$('vtImages'),b=$('vtBasic');if(a)a.classList.toggle('on',m==='images');if(b)b.classList.toggle('on',m==='basic');}
+function applyView(m){setViewMode(m);syncViewToggle();renderHead();render();updateStickyH();}
+if($('vtImages'))$('vtImages').onclick=function(){applyView('images');};
+if($('vtBasic'))$('vtBasic').onclick=function(){applyView('basic');};
+syncViewToggle();
 $('btnCopyLog').onclick=function(){var a=document.querySelector('#logModal textarea');var txt=a?a.value:LOGS.join('\n');function ok(){toast('📋 ログをコピーしました');}function fb(){try{if(a){a.removeAttribute('readonly');a.focus();a.select();document.execCommand('copy');a.setAttribute('readonly','');ok();}else{toast('コピーできませんでした');}}catch(e){toast('コピーできませんでした');}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}};
 $('btnAdd').onclick=openNew;
 $('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',searchUrl:'',yahooUrls:[],rakutenUrls:[]});persist();render();scheduleSync();};
