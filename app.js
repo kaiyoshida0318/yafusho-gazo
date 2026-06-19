@@ -390,7 +390,9 @@ function updateMini(side){
 }
 function renderStrip(side){
   var arr=galOf(side);var el=$(side==='yahoo'?'stripYahoo':'stripRakuten');if(!el)return;
-  if(!arr.length){el.innerHTML='<div class="strip-empty">まだ画像がありません</div>';return;}
+  var dz=$(side==='yahoo'?'dzYahoo':'dzRakuten');
+  if(!arr.length){if(dz)dz.style.display='';el.innerHTML='';return;}
+  if(dz)dz.style.display='none';
   var h='';
   for(var i=0;i<arr.length;i++){
     h+='<div class="strip-item">'+
@@ -403,6 +405,7 @@ function renderStrip(side){
          '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↓コピー↓':'↑コピー↑')+'</button>'+
        '</div></div>';
   }
+  h+='<div class="strip-add" data-add="'+side+'" title="画像を追加（クリック / ドロップ）">＋</div>';
   el.innerHTML=h;
 }
 function addFiles(side,files){
@@ -423,6 +426,9 @@ function wireDrop(dzId,fileId,side){
 }
 wireDrop('dzYahoo','fileYahoo','yahoo');
 wireDrop('dzRakuten','fileRakuten','rakuten');
+function wireStripDrop(stripId,side){var el=$(stripId);if(!el)return;el.addEventListener('dragover',function(e){e.preventDefault();var a=el.querySelector('.strip-add');if(a)a.classList.add('drag');});el.addEventListener('dragleave',function(){var a=el.querySelector('.strip-add');if(a)a.classList.remove('drag');});el.addEventListener('drop',function(e){e.preventDefault();var a=el.querySelector('.strip-add');if(a)a.classList.remove('drag');addFiles(side,e.dataTransfer.files);});}
+wireStripDrop('stripYahoo','yahoo');
+wireStripDrop('stripRakuten','rakuten');
 function setMain(side,src){if(side==='yahoo')mainYahoo=src;else mainRakuten=src;updateMini(side);}
 function wireMini(elId,fileId,side){
   var el=$(elId),file=$(fileId);if(!el)return;
@@ -449,6 +455,7 @@ document.addEventListener('click',function(e){
     if(csrc){var other=(csd==='yahoo')?'rakuten':'yahoo';galOf(other).push(csrc);renderStrip(other);toast(csd==='yahoo'?'楽天へコピーしました':'Yahooへコピーしました');}
     return;
   }
+  if(t&&t.classList&&t.classList.contains('strip-add')){var asd=t.getAttribute('data-add');var fi=$(asd==='yahoo'?'fileYahoo':'fileRakuten');if(fi)fi.click();return;}
   if(t&&t.classList&&(t.classList.contains('mv-l')||t.classList.contains('mv-r')||t.classList.contains('strip-del'))){
     var sd=t.getAttribute('data-side');var ix=parseInt(t.getAttribute('data-idx'),10);var ar=galOf(sd);
     if(t.classList.contains('strip-del'))ar.splice(ix,1);
