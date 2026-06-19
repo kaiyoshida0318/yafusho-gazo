@@ -410,7 +410,7 @@ function renderStrip(side){
          '<button type="button" class="sbtn mv-l" data-side="'+side+'" data-idx="'+i+'" title="左へ">←</button>'+
          '<button type="button" class="sbtn mv-r" data-side="'+side+'" data-idx="'+i+'" title="右へ">→</button>'+
          '<button type="button" class="sbtn strip-del" data-side="'+side+'" data-idx="'+i+'" title="削除">×</button>'+
-         '<button type="button" class="sbtn strip-move" data-side="'+side+'" data-idx="'+i+'" title="位置を選んで移動">↕ 移動</button>'+
+         '<button type="button" class="sbtn strip-move" data-side="'+side+'" data-idx="'+i+'" title="位置を選んで移動">移動</button>'+
          '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↓コピー↓':'↑コピー↑')+'</button>'+
        '</div></div>';
   }
