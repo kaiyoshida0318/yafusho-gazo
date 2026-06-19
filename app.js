@@ -400,6 +400,7 @@ function renderStrip(side){
          '<button type="button" class="sbtn mv-l" data-side="'+side+'" data-idx="'+i+'" title="左へ">←</button>'+
          '<button type="button" class="sbtn mv-r" data-side="'+side+'" data-idx="'+i+'" title="右へ">→</button>'+
          '<button type="button" class="sbtn strip-del" data-side="'+side+'" data-idx="'+i+'" title="削除">×</button>'+
+         '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↓コピー↓':'↑コピー↑')+'</button>'+
        '</div></div>';
   }
   el.innerHTML=h;
@@ -443,6 +444,11 @@ document.addEventListener('click',function(e){
   var t=e.target;
   if(t&&t.classList&&t.classList.contains('mini-clear')){var ms=t.getAttribute('data-main');if(ms==='yahoo')mainYahoo='';else mainRakuten='';updateMini(ms);return;}
   if(t&&t.classList&&t.classList.contains('seg-btn')){var sg=t.parentNode;var bs=sg.querySelectorAll('.seg-btn');for(var b=0;b<bs.length;b++)bs[b].classList.remove('on');t.classList.add('on');return;}
+  if(t&&t.classList&&t.classList.contains('strip-copy')){
+    var csd=t.getAttribute('data-side');var cix=parseInt(t.getAttribute('data-idx'),10);var car=galOf(csd);var csrc=car[cix];
+    if(csrc){var other=(csd==='yahoo')?'rakuten':'yahoo';galOf(other).push(csrc);renderStrip(other);toast(csd==='yahoo'?'楽天へコピーしました':'Yahooへコピーしました');}
+    return;
+  }
   if(t&&t.classList&&(t.classList.contains('mv-l')||t.classList.contains('mv-r')||t.classList.contains('strip-del'))){
     var sd=t.getAttribute('data-side');var ix=parseInt(t.getAttribute('data-idx'),10);var ar=galOf(sd);
     if(t.classList.contains('strip-del'))ar.splice(ix,1);
