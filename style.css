@@ -119,7 +119,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 }
 
 /* ===== 新規作成/編集フォーム ===== */
-.sheet-form{max-width:1120px}
+.sheet-form{max-width:1280px}
 .form-topbar{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
 .form-topbar h2{margin:0;font-size:20px}
 .topbar-actions{margin-left:auto;display:flex;gap:8px}
