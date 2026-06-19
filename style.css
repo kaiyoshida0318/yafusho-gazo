@@ -464,3 +464,6 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .tcsw.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
 .strip-item .strip-text{cursor:pointer}
 .strip-item .strip-text:hover{outline:2px solid var(--red);outline-offset:1px}
+
+/* 文章入力欄を最終タイル(112px正方形)と同じ折り返しに */
+#textAddInput{width:112px;max-width:112px;min-height:112px;box-sizing:border-box;font-size:12px;line-height:1.4;padding:8px;text-align:center;resize:vertical;white-space:pre-wrap;word-break:break-word}
