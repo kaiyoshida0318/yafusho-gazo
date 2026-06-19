@@ -59,6 +59,8 @@ function statusIconHtml(ic){if(isNumIcon(ic))return statusNumSvg(ic);return '';}
 var CAT_ICONS=['📦','✨','🛒','🛍️','📊','🎯','🔥','⭐','🏷️','💡','📸','🎨','📝','🆕','💰','🎁','👕','👟','🧸','🏠','🚗','⚽','🎮','💄','📱','💻','🔧','🌸'];
 var DEFAULT_COLS=[
   {key:'date',label:'日付',width:110,align:'left'},
+  {key:'yahooMain',label:'Yahooメイン',width:96,align:'center'},
+  {key:'rakutenMain',label:'楽天メイン',width:96,align:'center'},
   {key:'yahooImg',label:'Yahoo画像',width:360,align:'left'},
   {key:'rakutenImg',label:'楽天画像',width:360,align:'left'},
   {key:'imageBlock',label:'画像',width:null,align:'left'},
@@ -134,8 +136,10 @@ function imgBlockHtml(it){return '<div class="img2-wrap"><div class="img2">'+img
 function cellHtml(key,it){
   if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?esc(it.date):md())+'</td>';
   if(key==='imageBlock')return '<td>'+imgBlockHtml(it)+'</td>';
-  if(key==='yahooImg')return '<td>'+stripHtml(allImgs(it,'yahoo'),it.id)+'</td>';
-  if(key==='rakutenImg')return '<td>'+stripHtml(allImgs(it,'rakuten'),it.id)+'</td>';
+  if(key==='yahooMain')return '<td>'+thumb(mainImg(it,'yahoo'),it.id)+'</td>';
+  if(key==='rakutenMain')return '<td>'+thumb(mainImg(it,'rakuten'),it.id)+'</td>';
+  if(key==='yahooImg')return '<td>'+stripHtml((it.yahooImgs||[]),it.id)+'</td>';
+  if(key==='rakutenImg')return '<td>'+stripHtml((it.rakutenImgs||[]),it.id)+'</td>';
   if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':'<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>';
   if(key==='rating')return bulkEdit?'<td><input class="bulk-inp" type="number" step="0.1" min="0" data-id="'+it.id+'" data-field="rating" value="'+escA(it.rating!=null?it.rating:'')+'"></td>':'<td>'+((it.rating!==''&&it.rating!=null)?esc(it.rating):md())+'</td>';
   if(key==='searchUrl')return bulkEdit?'<td>'+bulkInp('text',it,'searchUrl')+'</td>':'<td>'+(it.searchUrl?'<div class="url-cell"><a href="'+escA(it.searchUrl)+'" target="_blank" rel="noopener">'+esc(it.searchUrl)+'</a></div>':md())+'</td>';
