@@ -438,3 +438,8 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .img2-empty{color:var(--ink-3);font-size:13px}
 .strip-more{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;height:66px;min-width:48px;padding:0 12px;border:1px dashed var(--line-2);border-radius:6px;color:var(--ink-2);font-weight:700;cursor:pointer;background:#fafafa}
 .col-view-label{font-size:13px;font-weight:600;color:var(--red);margin-left:6px}
+
+/* 画像ギャラリー：もう片方へコピー */
+.strip-ctrls{flex-wrap:wrap}
+.sbtn.strip-copy{flex-basis:100%;width:100%;margin-top:3px;font-size:11px;font-weight:700;color:var(--red-strong);border:1px solid #f1c7c0;background:#fff;border-radius:6px;padding:3px 0;cursor:pointer}
+.sbtn.strip-copy:hover{background:var(--red-soft)}
