@@ -522,7 +522,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.32.1</span>
+        <span class="version" id="version">v0.32.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -555,6 +555,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="pill-group" id="statusRow"></div>
     <span class="spacer"></span>
     <button class="btn btn-line btn-sm" id="btnBulkEdit">✏️ 一括編集</button>
+    <button class="btn btn-ghost btn-sm" id="btnDiscardEdits" hidden>取り消し</button>
     <button class="btn btn-save-hero" id="btnSaveEdits" hidden>● 変更を保存</button>
   </div>
   </div>
@@ -702,7 +703,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.32.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.32.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1306,8 +1307,8 @@ function renderStatusTabs(){
   h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   el.innerHTML=h;
 }
-function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;}
-function clearDirty(){dirty=false;var b=$('btnSaveEdits');if(b)b.hidden=true;}
+function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;var d=$('btnDiscardEdits');if(d)d.hidden=!!bulkEdit;}
+function clearDirty(){dirty=false;var b=$('btnSaveEdits');if(b)b.hidden=true;var d=$('btnDiscardEdits');if(d)d.hidden=true;}
 window.addEventListener('beforeunload',function(e){if((bulkEdit&&dirty)||ghBusy){e.preventDefault();e.returnValue='まだGitHubへ同期中（または一括編集中）です。今更新すると未保存の変更が失われる可能性があります。よろしいですか？';return e.returnValue;}});
 function stageEdit(id,field,v){for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}markDirty();}
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
@@ -1318,6 +1319,7 @@ function setBulkBtn(){var b=$('btnBulkEdit');if(b){b.classList.toggle('on',bulkE
 function enterBulk(){bulkEdit=true;setBulkBtn();var s=$('btnSaveEdits');if(s)s.hidden=false;render();}
 function cancelBulk(){bulkEdit=false;setBulkBtn();reloadItems();clearDirty();render();toast('一括編集をキャンセルしました');}
 if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();if(bulkEdit){bulkEdit=false;setBulkBtn();}clearDirty();render();scheduleSync();log('変更を保存しました');toast('✅ 変更を保存しました');};
+if($('btnDiscardEdits'))$('btnDiscardEdits').onclick=function(){reloadItems();clearDirty();render();toast('変更を取り消しました');};
 if($('btnBulkEdit'))$('btnBulkEdit').onclick=function(){if(bulkEdit)cancelBulk();else enterBulk();};
 if($('gridBody'))$('gridBody').addEventListener('input',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('bulk-inp'))return;var id=t.getAttribute('data-id');var field=t.getAttribute('data-field');for(var i=0;i<items.length;i++){if(items[i].id===id){if(field==='yahooUrls'||field==='rakutenUrls'){items[i][field]=t.value.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=t.value;}break;}}markDirty();});
 document.addEventListener('click',function(e){
