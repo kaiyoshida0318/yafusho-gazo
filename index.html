@@ -517,7 +517,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.31.3</span>
+        <span class="version" id="version">v0.31.4</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -697,7 +697,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.31.3</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.31.4</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -854,12 +854,12 @@ var DEFAULT_COLS=[
   {key:'code',label:'商品コード',width:120,align:'left'},
   {key:'name',label:'商品名',width:220,align:'left'},
   {key:'rating',label:'評価',width:90,align:'center'},
-  {key:'searchUrl',label:'検索ページURL',width:200,align:'left'},
-  {key:'yahooUrls',label:'ヤフショURL',width:220,align:'left'},
-  {key:'rakutenUrls',label:'楽天URL',width:220,align:'left'},
+  {key:'searchUrl',label:'検索ページURL',width:140,align:'left',wrap:'clip'},
+  {key:'yahooUrls',label:'ヤフショURL',width:140,align:'left',wrap:'clip'},
+  {key:'rakutenUrls',label:'楽天URL',width:140,align:'left',wrap:'clip'},
   {key:'pagePlan',label:'制作予定ページ',width:110,align:'center'},
-  {key:'listingType',label:'出品内容',width:160,align:'left'},
-  {key:'status',label:'状態',width:100,align:'left'},
+  {key:'listingType',label:'出品内容',width:240,align:'left'},
+  {key:'status',label:'状態',width:150,align:'left'},
   {key:'salesMethod',label:'販売手法',width:150,align:'left'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
@@ -954,7 +954,7 @@ function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='bas
 function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic')?'basic':'images');}catch(e){}}
 function inViewMode(key){var s=VIEW_COLS[getViewMode()]||VIEW_COLS.images;return s.indexOf(key)>=0;}
 function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].key===key)return DEFAULT_COLS[i];}return null;}
-function getColCfg(key){var def=colDef(key);var vm=getViewMode();var defVis=(DEFAULT_VISIBLE[vm]||[]).indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:'wrap',align:(def?def.align:'left'),headAlign:(def?def.align:'left')};var s=getSettings();var cc=((s.colcfgV[vm]||{})[key])||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign};}
+function getColCfg(key){var def=colDef(key);var vm=getViewMode();var defVis=(DEFAULT_VISIBLE[vm]||[]).indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left')};var s=getSettings();var cc=((s.colcfgV[vm]||{})[key])||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign};}
 function setColCfg(key,patch){var vm=getViewMode();var s=getSettings();if(!s.colcfgV)s.colcfgV={};if(!s.colcfgV[vm])s.colcfgV[vm]={};var cur=s.colcfgV[vm][key]||{};for(var k in patch)cur[k]=patch[k];s.colcfgV[vm][key]=cur;saveSettings(s);}
 function effCfg(key,cc){if(getViewMode()==='images'&&(key==='yahooImg'||key==='rakutenImg')){var o={};for(var k in cc)o[k]=cc[k];o.width=Math.max(cc.width||0,360);o.wrap='wrap';return o;}return cc;}
 function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+cc.width+'px;min-width:'+cc.width+'px;max-width:'+cc.width+'px;';if(cc.wrap==='clip')s+='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';var a=isHeader?cc.headAlign:cc.align;if(a==='left'||a==='center'||a==='right')s+='text-align:'+a+';';return s;}
