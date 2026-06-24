@@ -259,5 +259,25 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001266/"
     ]
+  },
+  {
+    "id": "it1782280573454",
+    "yahooMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-main.webp",
+    "yahooImgs": [],
+    "rakutenImgs": [],
+    "date": "2026-06-24",
+    "rating": "",
+    "listingType": "cat_a",
+    "pagePlan": "",
+    "status": "st_todo",
+    "name": "携帯トイレ",
+    "code": "eq-22-05-toilet",
+    "salesMethod": "1/2/4/5/10/15/25セット\nページは2つ。1セット（4個）は単一で出してPR30。2セット（8個）以上は一つのページで、個別価格設定で段々にして出す。",
+    "searchUrl": "",
+    "yahooUrls": [],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001267/"
+    ]
   }
 ]
