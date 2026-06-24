@@ -498,6 +498,11 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 
 .logo-text{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:#1a1b1e}
 
+/* 販売手法：2行で省略＋全行の高さ統一＋ホバー全文ポップ */
+#gridBody td{height:58px;vertical-align:top}
+.sm-cell{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;max-height:2.9em;white-space:normal;word-break:break-word;cursor:help}
+.sm-pop{position:fixed;z-index:400;display:none;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 16px 44px rgba(20,24,32,.22);padding:16px 18px;font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-width:440px}
+
 </style>
 <style id="modal-guarantee">
 /* === モーダルの寸法・見た目を index 側で保証（外部CSSのキャッシュに依存しない） === */
@@ -517,7 +522,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.31.4</span>
+        <span class="version" id="version">v0.32.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -697,7 +702,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.31.4</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.32.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -937,7 +942,7 @@ function cellHtml(key,it){
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
-  if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':'<td>'+(it.salesMethod?esc(it.salesMethod).replace(/\n/g,'<br>'):md())+'</td>';
+  if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':'<td>'+(it.salesMethod?'<div class="sm-cell" data-full="'+escA(it.salesMethod)+'">'+esc(it.salesMethod).replace(/\n/g,'<br>')+'</div>':md())+'</td>';
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
 }
@@ -966,6 +971,13 @@ function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.l
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
 
+var _smTimer=null;
+function _smPopEl(){var p=document.getElementById('smPop');if(!p){p=document.createElement('div');p.id='smPop';p.className='sm-pop';document.body.appendChild(p);}return p;}
+function showSmPop(el){var full=el.getAttribute('data-full')||'';if(!full)return;var p=_smPopEl();p.textContent=full;p.style.display='block';var pw=Math.min(440,window.innerWidth-24);p.style.maxWidth=pw+'px';var r=el.getBoundingClientRect();var left=Math.min(r.left,window.innerWidth-pw-12);p.style.left=Math.max(12,left)+'px';var top=r.bottom+8;if(top+p.offsetHeight>window.innerHeight-12){var up=r.top-p.offsetHeight-8;top=up>12?up:12;}p.style.top=top+'px';}
+function hideSmPop(){var p=document.getElementById('smPop');if(p)p.style.display='none';clearTimeout(_smTimer);}
+document.addEventListener('mouseover',function(e){var el=(e.target.closest)?e.target.closest('.sm-cell'):null;if(!el)return;clearTimeout(_smTimer);_smTimer=setTimeout(function(){showSmPop(el);},480);});
+document.addEventListener('mouseout',function(e){var el=(e.target.closest)?e.target.closest('.sm-cell'):null;if(!el)return;hideSmPop();});
+document.addEventListener('scroll',function(){hideSmPop();},true);
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
 function render(){
   closeCdd();
