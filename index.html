@@ -25,7 +25,7 @@ button{font-family:inherit}
 /* ===== ヘッダー ===== */
 .sticky-top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
 .header-inner{max-width:1880px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px}
-.logo-img{height:58px;width:auto;display:block}
+.logo-img{height:70px;width:auto;display:block}
 .header-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .version{font-size:12px;color:var(--ink-3);font-family:"Roboto Mono",monospace;background:#f1f2f4;padding:4px 10px;border-radius:20px}
 .gh-progress{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);white-space:nowrap}
@@ -125,7 +125,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .mini textarea{width:100%;height:230px;font-family:"Roboto Mono",monospace;font-size:12px;border:1px solid var(--line-2);border-radius:10px;padding:11px;resize:vertical}
 
 @media(max-width:760px){
-  .logo-img{height:46px}
+  .logo-img{height:56px}
 }
 
 /* ===== 新規作成/編集フォーム ===== */
@@ -496,7 +496,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .btn-save-hero:hover{background:linear-gradient(180deg,#ff6a55,#d8331f);animation-play-state:paused;box-shadow:0 6px 20px rgba(244,68,47,.55)}
 .btn-save-hero:active{transform:translateY(1px)}
 
-.logo-text{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:#1a1b1e}
+.logo-text{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:24px;color:#1a1b1e}
 
 /* 販売手法：2行で省略＋全行の高さ統一＋ホバー全文ポップ */
 #gridBody td{height:58px;vertical-align:top}
@@ -522,7 +522,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.32.2</span>
+        <span class="version" id="version">v0.32.3</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -703,7 +703,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.32.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.32.3</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
