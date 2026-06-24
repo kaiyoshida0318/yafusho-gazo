@@ -239,5 +239,25 @@
     "searchUrl": "",
     "yahooUrls": [],
     "rakutenUrls": []
+  },
+  {
+    "id": "it1782280445223",
+    "yahooMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280445223-rakuten-main.webp",
+    "yahooImgs": [],
+    "rakutenImgs": [],
+    "date": "2026-06-24",
+    "rating": "",
+    "listingType": "cat_a",
+    "pagePlan": "",
+    "status": "st_todo",
+    "name": "洗濯ネット",
+    "code": "ih-24-08",
+    "salesMethod": "定番/定番+小型+バリエ+1人暮らし\nページは2つ。1人暮らしは単一で出してPR30。それ以外を一つのページで、個別価格設定で段々にして出す。1人暮らしのサムネは、前面のネットをその内容に合わせる。",
+    "searchUrl": "",
+    "yahooUrls": [],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001266/"
+    ]
   }
 ]
