@@ -23,11 +23,13 @@
     "name": "プロテクションフィルム",
     "code": "",
     "salesMethod": "売り方変えてどうにかできないか。　",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%97%E3%83%AD%E3%83%86%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%95%E3%82%A3%E3%83%AB%E3%83%A0/0/?first=1&ss_first=1&ts=1782280904&mcr=0a5a9f84defd716a06af219335b98820&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox&sretry=0",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/ca-02-01-hera.html?sc_i=shopping-pc-web-category-storeitm-rsltlst-img&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001057/"
+    ]
   },
   {
     "id": "it1781746183669",
@@ -46,7 +48,9 @@
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/ih-22-03-12set.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
-    "rakutenUrls": [],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001179/"
+    ],
     "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%95%E3%83%83%E3%82%AF%E3%82%B7%E3%83%BC%E3%83%AB/0/",
     "rating": "4.45"
   },
@@ -65,7 +69,9 @@
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/ih-22-04.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
-    "rakutenUrls": [],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001181/"
+    ],
     "salesMethod": "2個で1000円だがライバル3個で1000円2個で660円がいる。\n撤退orリニューアル。",
     "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%AD%94%E6%B3%95%E3%81%AE%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1781674292&mcr=e0f26e023121565013f0cf6565f3924e&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox&sretry=0",
     "rating": "4"
@@ -81,11 +87,13 @@
     "listingType": "cat_b",
     "pagePlan": "複数",
     "status": "st_todo",
-    "name": "脇汗パッド",
+    "name": "脇汗パッド 汗取りパッド",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-24-03.html?sc_i=shopping-pc-web-result-storesch-rsltlst-img&ea="
     ],
-    "rakutenUrls": [],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001287/"
+    ],
     "salesMethod": "売り方変えてどうにかできないか。",
     "searchUrl": "https://shopping.yahoo.co.jp/search/%E6%B1%97%E5%8F%96%E3%82%8A%E3%82%B7%E3%83%BC%E3%83%AB/0/?first=1&ss_first=1&ts=1781686465&mcr=749eea815d75dfe4db0553c04f0e7053&tab_ex=commerce&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "rating": "0"
@@ -104,11 +112,13 @@
     "name": "ペット爪切り",
     "code": "",
     "salesMethod": "レビュー悪い。\n撤退or作り変え。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%9A%E3%83%83%E3%83%88%E7%88%AA%E5%88%87%E3%82%8A/32679/?aq=0&oq=%E3%83%9A%E3%83%83%E3%83%88%E7%88%AA%E5%88%87%E3%82%8A&first=1&ss_first=1&ts=1782281444&mcr=2d093a218a60f7ade03d2d75af81f846&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwdc-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-24-02.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001278/"
+    ]
   },
   {
     "id": "it1781758699729",
@@ -124,11 +134,13 @@
     "name": "鼻毛ハサミ",
     "code": "",
     "salesMethod": "レビュー悪い。\n作り変えか。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%BC%BB%E6%AF%9B%E3%83%8F%E3%82%B5%E3%83%9F/0/?aq=0&oq=%E9%BC%BB%E6%AF%9B%E3%83%8F%E3%82%B5%E3%83%9F&first=1&ss_first=1&ts=1782281466&mcr=fd72d6a54cffd21e656678ee72c6080b&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwd-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-23-11.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001265/"
+    ]
   },
   {
     "id": "it1781758747702",
@@ -144,11 +156,13 @@
     "name": "ニップレス",
     "code": "",
     "salesMethod": "レビュー悪い。\n作り変えか。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%8B%E3%83%83%E3%83%97%E3%83%AC%E3%82%B9/68287/?aq=0&oq=%E3%83%8B%E3%83%83%E3%83%97%E3%83%AC%E3%82%B9&first=1&ss_first=1&ts=1782281472&mcr=95f7793d6b1ab5fc600f1744bd59afee&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwdc-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-23-07.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
     ],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001245/"
+    ]
   },
   {
     "id": "it1781762608550",
@@ -161,12 +175,16 @@
     "listingType": "cat_a",
     "pagePlan": "",
     "status": "st_todo",
-    "name": "脇汗パッド　サラリーナ",
+    "name": "脇汗パッド　さらリーナ",
     "code": "",
     "salesMethod": "10枚or20枚から送り込み。\n売値下げすぎない。\nサムネで格上感を出したい。",
-    "searchUrl": "",
-    "yahooUrls": [],
-    "rakutenUrls": []
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E8%84%87%E6%B1%97%E3%83%91%E3%83%83%E3%83%89/0/?first=1&ss_first=1&ts=1782281481&mcr=9b3a37860a3a8928de80f01d653ff883&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
+    "yahooUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001266/"
+    ],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001303/"
+    ]
   },
   {
     "id": "it1781762654651",
@@ -182,9 +200,11 @@
     "name": "IHマット",
     "code": "ih-25-03",
     "salesMethod": "1枚から送り込み。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/IH%E3%83%9E%E3%83%83%E3%83%88/0/?first=1&ss_first=1&ts=1782281498&mcr=38258d3a0957da45eb8062f1c2ce28ec&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001305/"
+    ]
   },
   {
     "id": "it1781762657761",
@@ -200,9 +220,11 @@
     "name": "joy-conカバー",
     "code": "si-25-05",
     "salesMethod": "4個から送り込み。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/joy-con%E3%82%AB%E3%83%90%E3%83%BC/65347/?aq=0&oq=joy-con%E3%82%AB%E3%83%90%E3%83%BC&first=1&ss_first=1&ts=1782281520&mcr=dd97433d2d43a3c984b2813bd3725e60&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwdc-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/565955/"
+    ]
   },
   {
     "id": "it1781762658141",
@@ -218,9 +240,11 @@
     "name": "鼻呼吸テープ",
     "code": "si-25-01",
     "salesMethod": "30枚から送り込み。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%BC%BB%E5%91%BC%E5%90%B8%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1782281527&mcr=e99b3f26cb737ebd7dc1b689b688c068&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001296/"
+    ]
   },
   {
     "id": "it1782279961527",
@@ -233,12 +257,14 @@
     "listingType": "cat_a",
     "pagePlan": "",
     "status": "st_todo",
-    "name": "airpods pro イヤーチップ ",
+    "name": "airpods pro イヤーピース",
     "code": "et-a-25-01",
     "salesMethod": "pro/pro2/pro3-黒/白-2/4/6個\nどの機種も同一価格だから個数でページを分ける。ページは2つ。2個は単一で出してPR30。4/6個は一つのページで、個別価格設定にして段々で出す。売れてるライバルが580円だから、680円よりは下げたほうがいいか？\n",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/airpods+pro+%E3%82%A4%E3%83%A4%E3%83%BC%E3%83%94%E3%83%BC%E3%82%B9/0/?aq=0&oq=airpods+pro+%E3%82%A4%E3%83%A4%E3%83%BC&first=1&ss_first=1&ts=1782281534&mcr=f81d3b62c22ab2622059ddc1ab587f57&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwd-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
-    "rakutenUrls": []
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001312/"
+    ]
   },
   {
     "id": "it1782280445223",
@@ -254,7 +280,7 @@
     "name": "洗濯ネット",
     "code": "ih-24-08",
     "salesMethod": "定番/定番+小型+バリエ+1人暮らし\nページは2つ。1人暮らしは単一で出してPR30。それ以外を一つのページで、個別価格設定で段々にして出す。1人暮らしのサムネは、前面のネットをその内容に合わせる。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E6%B4%97%E6%BF%AF%E3%83%8D%E3%83%83%E3%83%88/0/?first=1&ss_first=1&ts=1782281546&mcr=9c8e09eaecaf59b6dfa419eb428fc5fe&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001266/"
@@ -274,7 +300,7 @@
     "name": "携帯トイレ",
     "code": "eq-22-05-toilet",
     "salesMethod": "1/2/4/5/10/15/25セット\nページは2つ。1セット（4個）は単一で出してPR30。2セット（8個）以上は一つのページで、個別価格設定で段々にして出す。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E6%90%BA%E5%B8%AF%E3%83%88%E3%82%A4%E3%83%AC/0/?first=1&ss_first=1&ts=1782281558&mcr=4efed0c58744bad53dc1af0ba42e0e52&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001267/"
@@ -294,7 +320,7 @@
     "name": "防水テープ",
     "code": "tape-24-01",
     "salesMethod": "※まずは単品-1ori-2.2-クリアのページと、単品-残りの4種類のページの2つだけ出して、結果が出たら2個セットページを作る。/ページは3つ。単品-1ori-2.2-クリアのページと、単品-残りの4種類のページと、2個セットのページ。単品-1ori-2.2-クリアを最安値1000円とかにしてPR30。単品-残りの4種類は同一価格だから1つのページでOK。2個セット（組み合わせ15通り）は一つのページで、個別価格設定で段々に。お互いひも付け。",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%98%B2%E6%B0%B4%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1782281567&mcr=edf17b3835e276bec13ea71cc27615b5&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001280/"
@@ -311,10 +337,10 @@
     "listingType": "cat_a",
     "pagePlan": "",
     "status": "st_todo",
-    "name": "ピンバッジ留め具",
+    "name": "ピンバッジ 留め具",
     "code": "si-26-02",
     "salesMethod": "ページは3つ。10個セットを同一価格で出して、PR30。20個セット・30個セットはそれぞれページを作って出し、個別価格設定で段々に。お互いをひも付け。ライバルが10個699円だから780円よりは下げるか？",
-    "searchUrl": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%94%E3%83%B3%E3%83%90%E3%83%83%E3%82%B8+%E7%95%99%E3%82%81%E5%85%B7/0/?aq=2&oq=%E3%83%94%E3%83%B3%E3%83%90%E3%83%83%E3%82%B8&first=1&ss_first=1&ts=1782281575&mcr=2896071fad34676aabc35f1c59fad55d&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwd-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001326/"
