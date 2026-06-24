@@ -522,7 +522,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.32.0</span>
+        <span class="version" id="version">v0.32.1</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -702,7 +702,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.32.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.32.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -973,7 +973,7 @@ function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill
 
 var _smTimer=null;
 function _smPopEl(){var p=document.getElementById('smPop');if(!p){p=document.createElement('div');p.id='smPop';p.className='sm-pop';document.body.appendChild(p);}return p;}
-function showSmPop(el){var full=el.getAttribute('data-full')||'';if(!full)return;var p=_smPopEl();p.textContent=full;p.style.display='block';var pw=Math.min(440,window.innerWidth-24);p.style.maxWidth=pw+'px';var r=el.getBoundingClientRect();var left=Math.min(r.left,window.innerWidth-pw-12);p.style.left=Math.max(12,left)+'px';var top=r.bottom+8;if(top+p.offsetHeight>window.innerHeight-12){var up=r.top-p.offsetHeight-8;top=up>12?up:12;}p.style.top=top+'px';}
+function showSmPop(el){var full=el.getAttribute('data-full')||'';if(!full)return;var p=_smPopEl();p.textContent=full;p.style.display='block';var pw=Math.min(440,window.innerWidth-24);p.style.maxWidth=pw+'px';var r=el.getBoundingClientRect();var left=Math.min(r.left,window.innerWidth-pw-12);p.style.left=Math.max(12,left)+'px';var top=r.top-p.offsetHeight-8;if(top<8)top=8;p.style.top=top+'px';}
 function hideSmPop(){var p=document.getElementById('smPop');if(p)p.style.display='none';clearTimeout(_smTimer);}
 document.addEventListener('mouseover',function(e){var el=(e.target.closest)?e.target.closest('.sm-cell'):null;if(!el)return;clearTimeout(_smTimer);_smTimer=setTimeout(function(){showSmPop(el);},480);});
 document.addEventListener('mouseout',function(e){var el=(e.target.closest)?e.target.closest('.sm-cell'):null;if(!el)return;hideSmPop();});
