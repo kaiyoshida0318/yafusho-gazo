@@ -24,7 +24,7 @@ button{font-family:inherit}
 
 /* ===== ヘッダー ===== */
 .sticky-top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
-.header-inner{max-width:1880px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px}
+.header-inner{max-width:1880px;margin:0 auto;padding:4px 24px;display:flex;align-items:center;gap:14px}
 .logo-img{height:70px;width:auto;display:block}
 .header-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .version{font-size:12px;color:var(--ink-3);font-family:"Roboto Mono",monospace;background:#f1f2f4;padding:4px 10px;border-radius:20px}
@@ -53,7 +53,7 @@ button{font-family:inherit}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
 
 /* ===== フィルタ帯 ===== */
-.console{max-width:1880px;margin:0 auto;padding:16px 24px 6px}
+.console{max-width:1880px;margin:0 auto;padding:8px 24px 6px}
 
 .frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .frow + .frow{margin-top:10px}
@@ -522,7 +522,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.32.3</span>
+        <span class="version" id="version">v0.32.4</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -703,7 +703,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.32.3</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.32.4</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
