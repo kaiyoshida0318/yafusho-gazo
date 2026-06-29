@@ -343,5 +343,27 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001326/"
     ]
+  },
+  {
+    "id": "it1782725238359",
+    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725238359-yahoo-main.jpg",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725238359-rakuten-main.jpg",
+    "yahooImgs": [],
+    "rakutenImgs": [],
+    "date": "2026-06-29",
+    "rating": "",
+    "listingType": "cat_c",
+    "pagePlan": "",
+    "status": "st_todo",
+    "name": "眉毛ケアセット テンプレ無し",
+    "code": "ih-22-10",
+    "salesMethod": "テンプレ無し。PR30で上げて、テンプレ付きとひも付けをする。",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E7%9C%89%E6%AF%9B%E3%83%8F%E3%82%B5%E3%83%9F/0/?aq=1&oq=%E7%9C%89%E6%AF%9B&first=1&ss_first=1&ts=1782725037&mcr=b46532fe7a447c95f0eb97c5861cc013&tab_ex=commerce&sretry=0&sc_i=shopping-pc-web-result-suggest-suggest-kwd-sgstfrom-result-item-h_srch-srchbox",
+    "yahooUrls": [
+      "https://store.shopping.yahoo.co.jp/yukaiya/ih-22-10-0set.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
+    ],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001208/"
+    ]
   }
 ]
