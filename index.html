@@ -503,6 +503,9 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .sm-cell{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;max-height:2.9em;white-space:normal;word-break:break-word;cursor:help}
 .sm-pop{position:fixed;z-index:400;display:none;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 16px 44px rgba(20,24,32,.22);padding:16px 18px;font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-width:440px}
 
+.row-thumb{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--line-2);background:#f2f3f5;display:inline-block;cursor:pointer}
+.row-thumb:hover{outline:2px solid var(--red);outline-offset:1px}
+span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-content:center;font-size:8px;line-height:1.1;padding:2px;overflow:hidden;text-align:center}
 </style>
 <style id="modal-guarantee">
 /* === モーダルの寸法・見た目を index 側で保証（外部CSSのキャッシュに依存しない） === */
@@ -522,7 +525,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.32.4</span>
+        <span class="version" id="version">v0.32.5</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -703,7 +706,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.32.4</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.32.5</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -807,6 +810,7 @@ function isTextItem(s){return typeof s==='string'&&s.indexOf('TXT:')===0;}
 function parseTextItem(s){var raw=s.slice(4);var o={t:raw,c:''};try{var p=JSON.parse(raw);if(p&&typeof p==='object'){o.t=(p.t!=null?p.t:'');o.c=p.c||'';}}catch(e){}return o;}
 function makeTextItem(t,c){return 'TXT:'+JSON.stringify({t:t,c:c||''});}
 function txtStyle(o){var col=textColor(o.c);return 'background:'+col.bg+';color:'+col.fg;}
+function pickMain(it){var y=allImgs(it,'yahoo');if(y.length)return y[0];var r=allImgs(it,'rakuten');if(r.length)return r[0];return '';}
 function thumbItem(src,id,cls){var de=id?' data-edit="'+escA(id)+'"':'';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="'+cls+' strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="'+cls+' clk"'+de+' loading="lazy" src="'+escA(src)+'" alt="">';}
 function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="tbl-thumb strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
 function stripInner(side,i,v){if(isTextItem(v)){var o=parseTextItem(v);return '<div class="strip-text" data-textedit="'+side+'" data-idx="'+i+'" style="'+txtStyle(o)+'" title="クリックで編集">'+esc(o.t)+'</div>';}return '<img src="'+escA(v)+'" alt="">';}
@@ -857,6 +861,7 @@ var DEFAULT_COLS=[
   {key:'yahooImg',label:'Yahoo画像',width:360,align:'left'},
   {key:'rakutenImg',label:'楽天画像',width:360,align:'left'},
   {key:'imageBlock',label:'画像',width:null,align:'left'},
+  {key:'mainThumb',label:'画像',width:64,align:'center'},
   {key:'code',label:'商品コード',width:120,align:'left'},
   {key:'name',label:'商品名',width:220,align:'left'},
   {key:'rating',label:'評価',width:90,align:'center'},
@@ -934,6 +939,7 @@ function cellHtml(key,it){
   if(key==='rakutenMain')return '<td>'+thumb(mainImg(it,'rakuten'),it.id)+'</td>';
   if(key==='yahooImg')return '<td>'+stripHtml((it.yahooImgs||[]),it.id)+'</td>';
   if(key==='rakutenImg')return '<td>'+stripHtml((it.rakutenImgs||[]),it.id)+'</td>';
+  if(key==='mainThumb'){var _mt=pickMain(it);return '<td>'+(_mt?(isTextItem(_mt)?'<span class="row-thumb strip-thumb-text clk" data-edit="'+escA(it.id)+'" style="'+txtStyle(parseTextItem(_mt))+'">'+esc(parseTextItem(_mt).t)+'</span>':'<img class="row-thumb clk" data-edit="'+escA(it.id)+'" loading="lazy" src="'+escA(_mt)+'" alt="">'):md())+'</td>';}
   if(key==='code')return bulkEdit?'<td>'+bulkInp('text',it,'code')+'</td>':'<td class="mono">'+(it.code?esc(it.code):md())+'</td>';
   if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':'<td class="cell-name">'+(it.name?esc(it.name):'<span class="muted">(無題)</span>')+'</td>';
   if(key==='rating')return bulkEdit?'<td><input class="bulk-inp" type="number" step="0.1" min="0" data-id="'+it.id+'" data-field="rating" value="'+escA(it.rating!=null?it.rating:'')+'"></td>':'<td>'+((it.rating!==''&&it.rating!=null)?esc(it.rating):md())+'</td>';
@@ -950,11 +956,11 @@ function cellHtml(key,it){
 var VIEWMODE='yafusho_viewmode';
 var VIEW_COLS={
   images:['name','imageBlock','actions'],
-  basic:['date','code','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','listingType','status','salesMethod','actions']
+  basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','listingType','status','salesMethod','actions']
 };
 var DEFAULT_VISIBLE={
   images:['name','imageBlock','actions'],
-  basic:['date','code','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','listingType','status','salesMethod','actions']
+  basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','listingType','status','salesMethod','actions']
 };
 function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic')?'basic':'images';}catch(e){return 'images';}}
 function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic')?'basic':'images');}catch(e){}}
