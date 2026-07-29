@@ -510,6 +510,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .sm-edit{width:100%;min-height:84px;font:inherit;font-size:13px;line-height:1.5;padding:8px 10px;border:1px solid var(--red);border-radius:8px;resize:vertical;box-sizing:border-box;outline:0}
 .sm-edit-btns{display:flex;gap:6px;justify-content:flex-end}
 .sm-empty{color:var(--ink-3);font-size:12px}
+.frow-label{flex:0 0 auto;width:72px;font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;display:inline-flex;align-items:center}
 </style>
 <style id="modal-guarantee">
 /* === モーダルの寸法・見た目を index 側で保証（外部CSSのキャッシュに依存しない） === */
@@ -529,7 +530,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.35.2</span>
+        <span class="version" id="version">v0.36.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -546,6 +547,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="console">
   <!-- 1段目：カテゴリ系 ＋ 右側アクション -->
   <div class="frow frow-cat" id="catRow">
+    <span class="frow-label">出品内容</span>
     <div class="pill-group" id="catPills"></div>
     <span class="spacer"></span>
     <div class="view-toggle" id="viewToggle">
@@ -560,6 +562,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 
   <!-- 2段目：ステータス ＋ 変更を保存（右上） -->
   <div class="frow frow-status">
+    <span class="frow-label">状態</span>
     <div class="pill-group" id="statusRow"></div>
     <span class="spacer"></span>
     <button class="btn btn-line btn-sm" id="btnBulkEdit">✏️ 一括編集</button>
@@ -714,7 +717,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.35.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.36.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -843,7 +846,7 @@ function getOpts(field){return getSettings().opts[field]||DEFAULT_OPTS[field];}
 function optByLabel(field,label){if(!label)return null;var a=getOpts(field);for(var i=0;i<a.length;i++){if(a[i].l===label)return a[i];}return null;}
 function markHtml(opt){if(!opt)return '';return '<span class="mk mk-'+esc(opt.c||'gray')+'">'+esc(opt.t||'')+'</span>';}
 var DEFAULT_CATEGORIES=[{id:'cat_a',label:'新規出品',icon:'letter:A'},{id:'cat_b',label:'リニューアル-同一ページ',icon:'letter:B'},{id:'cat_c',label:'リニューアル-新規ページ',icon:'letter:C'},{id:'cat_d',label:'再登録',icon:'letter:D'}];
-var DEFAULT_STATUSES=[{id:'st_todo',label:'未着手',icon:'num:1'},{id:'st_doing',label:'作成中',icon:'num:2'},{id:'st_review',label:'確認待ち',icon:'num:3'},{id:'st_done',label:'完了',icon:'num:4'}];
+var DEFAULT_STATUSES=[{id:'st_todo',label:'制作前',icon:'num:1'},{id:'st_next',label:'次やる候補',icon:'num:2'},{id:'st_doing',label:'制作中',icon:'num:3'},{id:'st_review',label:'確認待ち',icon:'num:4'},{id:'st_done',label:'完了',icon:'num:5'}];
 function getCategories(){var s=getSettings();return (s.categories&&s.categories.length)?s.categories:DEFAULT_CATEGORIES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
 function defaultStatusId(){var s=getStatuses();return s.length?s[0].id:'';}
 function getStatuses(){var s=getSettings();return (s.statuses&&s.statuses.length)?s.statuses:DEFAULT_STATUSES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
@@ -858,8 +861,8 @@ function isLetterIcon(ic){return typeof ic==='string'&&/^letter:[A-Z]$/.test(ic)
 function letterSvg(ic){var ch=ic.split(':')[1];var color=LETTER_COLORS[ch]||'#7a756d';return '<svg class="cat-logo" viewBox="0 0 20 20"><rect width="20" height="20" rx="4" fill="'+color+'"/><text x="10" y="15" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="14" fill="#fff">'+ch+'</text></svg>';}
 function logoSvg(ic){if(ic==='logo:rakuten')return '<svg class="cat-logo" viewBox="0 0 20 20"><rect width="20" height="20" rx="4" fill="#bf0000"/><text x="10" y="15" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="14" fill="#fff">R</text></svg>';if(ic==='logo:yahoo')return '<svg class="cat-logo" viewBox="0 0 20 20"><defs><linearGradient id="yg'+Math.random().toString(36).slice(2,7)+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff0033"/><stop offset="1" stop-color="#ff7a00"/></linearGradient></defs><rect width="20" height="20" rx="4" fill="#ff5a1f"/><text x="10" y="15" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="14" fill="#fff">Y</text></svg>';if(isLetterIcon(ic))return letterSvg(ic);return '';}
 function iconHtml(ic){if(isLogoIcon(ic)||isLetterIcon(ic))return logoSvg(ic);return esc(ic||'');}
-var STATUS_NUM_COLORS={1:'#3f9b6e',2:'#2f6fb0',3:'#d98324',4:'#8257c9'};
-function isNumIcon(ic){return typeof ic==='string'&&/^num:[1-4]$/.test(ic);}
+var STATUS_NUM_COLORS={1:'#3f9b6e',2:'#2f6fb0',3:'#d98324',4:'#8257c9',5:'#c0392b'};
+function isNumIcon(ic){return typeof ic==='string'&&/^num:[1-5]$/.test(ic);}
 function statusNumSvg(ic){var n=parseInt(ic.split(':')[1],10);var color=STATUS_NUM_COLORS[n]||'#7a756d';return '<svg class="status-num" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="'+color+'"/><text x="10" y="14.5" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="12" fill="#fff">'+n+'</text></svg>';}
 function statusIconHtml(ic){if(isNumIcon(ic))return statusNumSvg(ic);return '';}
 var CAT_ICONS=['📦','✨','🛒','🛍️','📊','🎯','🔥','⭐','🏷️','💡','📸','🎨','📝','🆕','💰','🎁','👕','👟','🧸','🏠','🚗','⚽','🎮','💄','📱','💻','🔧','🌸'];
@@ -1114,7 +1117,7 @@ function renderStatusManager(){
   for(var idx=0;idx<sts.length;idx++){(function(s,idx){
     var row=document.createElement('div');row.className='cat-row';
     var numWrap=document.createElement('div');numWrap.className='status-num-picker';
-    [null,1,2,3,4].forEach(function(n){var b=document.createElement('button');b.type='button';b.className='status-num-opt';var val=n===null?'':('num:'+n);if((s.icon||'')===val)b.classList.add('selected');if(n===null){b.textContent='—';b.classList.add('status-num-none');}else b.innerHTML=statusNumSvg('num:'+n);b.onclick=function(){var a=getStatuses();a[idx].icon=val;saveStatuses(a);renderStatusManager();render();};numWrap.appendChild(b);});
+    [null,1,2,3,4,5].forEach(function(n){var b=document.createElement('button');b.type='button';b.className='status-num-opt';var val=n===null?'':('num:'+n);if((s.icon||'')===val)b.classList.add('selected');if(n===null){b.textContent='—';b.classList.add('status-num-none');}else b.innerHTML=statusNumSvg('num:'+n);b.onclick=function(){var a=getStatuses();a[idx].icon=val;saveStatuses(a);renderStatusManager();render();};numWrap.appendChild(b);});
     var labelInp=document.createElement('input');labelInp.type='text';labelInp.value=s.label;labelInp.className='cat-label-input';
     labelInp.onchange=function(){var a=getStatuses();a[idx].label=labelInp.value.trim()||a[idx].label;saveStatuses(a);render();};
     var up=document.createElement('button');up.type='button';up.className='cat-mv';up.textContent='▲';up.disabled=idx===0;up.onclick=function(){var a=getStatuses();var t=a[idx-1];a[idx-1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
@@ -1323,15 +1326,15 @@ function countStatus(id){var n=0;for(var i=0;i<items.length;i++){if(statusMatchF
 function renderCatTabs(){
   var el=$('catPills');if(!el)return;var cs=getCategories();
   var h='<button class="ctab'+(listingFilter===''?' on':'')+'" data-listing=""><span class="ctab-ico">📊</span>全体<span class="cnt">'+countCat('')+'</span></button>';
+  h+='<button class="ctab ctab-none'+(listingFilter==='__none__'?' on':'')+'" data-listing="__none__">未設定<span class="cnt">'+countCat('__none__')+'</span></button>';
   for(var i=0;i<cs.length;i++){h+='<button class="ctab'+(listingFilter===cs[i].id?' on':'')+'" data-listing="'+escA(cs[i].id)+'"><span class="ctab-ico">'+iconHtml(cs[i].icon)+'</span>'+esc(cs[i].label)+'<span class="cnt">'+countCat(cs[i].id)+'</span></button>';}
-  h+='<button class="ctab ctab-none'+(listingFilter==='__none__'?' on':'')+'" data-listing="__none__"><span class="ctab-ico">❓</span>未設定<span class="cnt">'+countCat('__none__')+'</span></button>';
   el.innerHTML=h;
 }
 function renderStatusTabs(){
   var el=$('statusRow');if(!el)return;var ss=getStatuses();
   var h='<button class="stab'+(statusFilter===''?' on':'')+'" data-status="">全体<span class="cnt">'+countStatus('')+'</span></button>';
-  for(var i=0;i<ss.length;i++){h+='<button class="stab'+(statusFilter===ss[i].id?' on':'')+'" data-status="'+escA(ss[i].id)+'"><span class="stab-ico">'+statusIconHtml(ss[i].icon)+'</span>'+esc(ss[i].label)+'<span class="cnt">'+countStatus(ss[i].id)+'</span></button>';}
   h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
+  for(var i=0;i<ss.length;i++){h+='<button class="stab'+(statusFilter===ss[i].id?' on':'')+'" data-status="'+escA(ss[i].id)+'"><span class="stab-ico">'+statusIconHtml(ss[i].icon)+'</span>'+esc(ss[i].label)+'<span class="cnt">'+countStatus(ss[i].id)+'</span></button>';}
   el.innerHTML=h;
 }
 function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;var d=$('btnDiscardEdits');if(d)d.hidden=!!bulkEdit;}
@@ -1523,6 +1526,7 @@ async function loadFromGitHub(){
 }
 
 
+(function(){try{if(!localStorage.getItem('yafusho_statmig2')){var s=getSettings();s.statuses=DEFAULT_STATUSES.map(function(x){return {id:x.id,label:x.label,icon:x.icon};});saveSettings(s);localStorage.setItem('yafusho_statmig2','1');}}catch(e){}})();
 renderHead();
 render();
 loadFromGitHub();
