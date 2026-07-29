@@ -533,7 +533,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.36.4</span>
+        <span class="version" id="version">v0.36.5</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -555,7 +555,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <span class="spacer"></span>
     <div class="view-toggle" id="viewToggle">
       <button type="button" class="vt-btn" data-view="basic" id="vtBasic">📋 基礎情報</button>
-      <button type="button" class="vt-btn" data-view="detail" id="vtDetail">📑 詳細情報</button>
+      <button type="button" class="vt-btn" data-view="detail" id="vtDetail">📑 販売設計</button>
       <button type="button" class="vt-btn on" data-view="images" id="vtImages">🖼️ 画像一覧</button>
     </div>
     <button class="btn btn-danger btn-sm" id="btnBulkDel">🗑 一括削除</button>
@@ -720,7 +720,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.36.4</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.36.5</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1142,7 +1142,7 @@ if($('newStatusLabel'))$('newStatusLabel').addEventListener('keydown',function(e
 /* ===== 項目管理（表示中／非表示・幅・折り返し・揃え・ドラッグ幅調整） ===== */
 function getRenderedColWidth(key){var th=document.querySelector('#gridHead th[data-col-key="'+key+'"]');if(!th)return null;var w=th.getBoundingClientRect().width;return w>0?Math.round(w):null;}
 function makeColAlignGroup(labelText,value,onChange){var g=document.createElement('label');g.className='col-align-group';var sp=document.createElement('span');sp.className='col-ctrl-label';sp.textContent=labelText;var s=document.createElement('select');s.className='col-align-sel';[['left','左'],['center','中央'],['right','右']].forEach(function(p){var o=document.createElement('option');o.value=p[0];o.textContent=p[1];s.appendChild(o);});s.value=value||'left';s.onchange=function(){onChange(s.value);};g.appendChild(sp);g.appendChild(s);return g;}
-function renderColManager(){var _vl=document.getElementById('colViewLabel');if(_vl)_vl.textContent='（'+({images:'画像一覧',basic:'基礎情報',detail:'詳細情報'}[getViewMode()]||'')+'ビューの列）';
+function renderColManager(){var _vl=document.getElementById('colViewLabel');if(_vl)_vl.textContent='（'+({images:'画像一覧',basic:'基礎情報',detail:'販売設計'}[getViewMode()]||'')+'ビューの列）';
   var visWrap=$('colListVisible'),hidWrap=$('colListHidden');if(!visWrap||!hidWrap)return;
   visWrap.innerHTML='';hidWrap.innerHTML='';
   var order=getColOrder();
