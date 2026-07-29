@@ -408,5 +408,25 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001208/"
     ]
+  },
+  {
+    "id": "it1785303895739",
+    "yahooMain": "",
+    "rakutenMain": "",
+    "yahooImgs": [],
+    "rakutenImgs": [],
+    "date": "2026-07-29",
+    "rating": "",
+    "listingType": "cat_a",
+    "pagePlan": "",
+    "status": "st_next",
+    "name": "ケーブルボックス",
+    "code": "23-06",
+    "salesMethod": "",
+    "searchUrl": "",
+    "yahooUrls": [],
+    "rakutenUrls": [],
+    "variation": "",
+    "buttonElem": ""
   }
 ]
