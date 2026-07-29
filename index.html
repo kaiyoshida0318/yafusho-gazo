@@ -510,7 +510,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .sm-edit{width:100%;min-height:84px;font:inherit;font-size:13px;line-height:1.5;padding:8px 10px;border:1px solid var(--red);border-radius:8px;resize:vertical;box-sizing:border-box;outline:0}
 .sm-edit-btns{display:flex;gap:6px;justify-content:flex-end}
 .sm-empty{color:var(--ink-3);font-size:12px}
-.frow-label{flex:0 0 auto;width:72px;font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;display:inline-flex;align-items:center}
+.frow-label{flex:0 0 auto;width:56px;font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;display:inline-flex;align-items:center;justify-content:center}
 .ctab-ico .cat-logo{width:18px;height:18px}
 .dc-cell.cell-name{font-weight:600}
 .dc-cell.mono{font-family:'Roboto Mono',monospace}
@@ -533,7 +533,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.36.2</span>
+        <span class="version" id="version">v0.36.4</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -720,7 +720,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.36.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.36.4</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1330,15 +1330,15 @@ function countStatus(id){var n=0;for(var i=0;i<items.length;i++){if(statusMatchF
 function renderCatTabs(){
   var el=$('catPills');if(!el)return;var cs=getCategories();
   var h='<button class="ctab'+(listingFilter===''?' on':'')+'" data-listing="">全体<span class="cnt">'+countCat('')+'</span></button>';
-  h+='<button class="ctab ctab-none'+(listingFilter==='__none__'?' on':'')+'" data-listing="__none__">未設定<span class="cnt">'+countCat('__none__')+'</span></button>';
   for(var i=0;i<cs.length;i++){h+='<button class="ctab'+(listingFilter===cs[i].id?' on':'')+'" data-listing="'+escA(cs[i].id)+'"><span class="ctab-ico">'+iconHtml(cs[i].icon)+'</span>'+esc(cs[i].label)+'<span class="cnt">'+countCat(cs[i].id)+'</span></button>';}
+  h+='<button class="ctab ctab-none'+(listingFilter==='__none__'?' on':'')+'" data-listing="__none__">未設定<span class="cnt">'+countCat('__none__')+'</span></button>';
   el.innerHTML=h;
 }
 function renderStatusTabs(){
   var el=$('statusRow');if(!el)return;var ss=getStatuses();
   var h='<button class="stab'+(statusFilter===''?' on':'')+'" data-status="">全体<span class="cnt">'+countStatus('')+'</span></button>';
-  h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   for(var i=0;i<ss.length;i++){h+='<button class="stab'+(statusFilter===ss[i].id?' on':'')+'" data-status="'+escA(ss[i].id)+'"><span class="stab-ico">'+statusIconHtml(ss[i].icon)+'</span>'+esc(ss[i].label)+'<span class="cnt">'+countStatus(ss[i].id)+'</span></button>';}
+  h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   el.innerHTML=h;
 }
 function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;var d=$('btnDiscardEdits');if(d)d.hidden=!!bulkEdit;}
