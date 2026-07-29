@@ -499,8 +499,8 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .logo-text{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:24px;color:#1a1b1e}
 
 /* 販売手法：2行で省略＋全行の高さ統一＋ホバー全文ポップ */
-#gridBody td{height:58px;vertical-align:top}
-.sm-cell,.dc-cell{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;max-height:2.9em;white-space:normal;word-break:break-word;cursor:help}
+#gridBody td{height:var(--row-h,58px);vertical-align:top}
+.sm-cell,.dc-cell{position:relative;display:-webkit-box;-webkit-line-clamp:var(--dc-lines,2);-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;white-space:normal;word-break:break-word;cursor:help}
 .sm-pop{position:fixed;z-index:400;display:none;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 16px 44px rgba(20,24,32,.22);padding:16px 18px;font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-width:440px}
 
 .row-thumb{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--line-2);background:#f2f3f5;display:inline-block;cursor:pointer}
@@ -514,6 +514,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .ctab-ico .cat-logo{width:18px;height:18px}
 .dc-cell.cell-name{font-weight:600}
 .dc-cell.mono{font-family:'Roboto Mono',monospace}
+.dc-hres{position:absolute;left:0;right:0;bottom:-1px;height:8px;cursor:ns-resize;z-index:4}
+.dc-hres::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:1px;width:28px;height:3px;background:var(--red);border-radius:3px;opacity:0;transition:.1s}
+.dc-cell:hover .dc-hres::after{opacity:.45}
+.dc-hres:hover::after{opacity:1;height:4px}
+.dc-cell.dc-fill{word-break:break-all;overflow-wrap:anywhere}
 </style>
 <style id="modal-guarantee">
 /* === モーダルの寸法・見た目を index 側で保証（外部CSSのキャッシュに依存しない） === */
@@ -533,7 +538,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.36.5</span>
+        <span class="version" id="version">v0.37.1</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -720,7 +725,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.36.5</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.37.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -826,7 +831,7 @@ function makeTextItem(t,c){return 'TXT:'+JSON.stringify({t:t,c:c||''});}
 function txtStyle(o){var col=textColor(o.c);return 'background:'+col.bg+';color:'+col.fg;}
 function pickMain(it){var y=allImgs(it,'yahoo');if(y.length)return y[0];var r=allImgs(it,'rakuten');if(r.length)return r[0];return '';}
 function dcCellArr(it,field){var arr=it[field]||[];var full=arr.join('\n');var disp=arr.length?esc(full).replace(/\n/g,'<br>'):'<span class="sm-empty">—（ダブルクリックで入力）</span>';return '<td><div class="dc-cell" data-id="'+escA(it.id)+'" data-field="'+field+'" data-arr="1" data-full="'+escA(full)+'">'+disp+'</div></td>';}
-function dcCell(it,field,xtra){var v=it[field]||'';return '<td><div class="dc-cell'+(xtra?' '+xtra:'')+'" data-id="'+escA(it.id)+'" data-field="'+field+'" data-full="'+escA(v)+'">'+(v?esc(v).replace(/\n/g,'<br>'):'<span class="sm-empty">—（ダブルクリックで入力）</span>')+'</div></td>';}
+function dcCell(it,field,xtra,flow){var v=it[field]||'';var hr=(getViewMode()==='detail'&&(field==='salesMethod'||field==='buttonElem'))?'<div class="dc-hres" title="下にドラッグで高さ調整"></div>':'';var disp=v?(flow?esc(v.replace(/\n/g,' ')):esc(v).replace(/\n/g,'<br>')):'<span class="sm-empty">—（ダブルクリックで入力）</span>';return '<td><div class="dc-cell'+(xtra?' '+xtra:'')+(flow?' dc-fill':'')+'" data-id="'+escA(it.id)+'" data-field="'+field+'" data-full="'+escA(v)+'">'+disp+hr+'</div></td>';}
 function thumbItem(src,id,cls){var de=id?' data-edit="'+escA(id)+'"':'';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="'+cls+' strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="'+cls+' clk"'+de+' loading="lazy" src="'+escA(src)+'" alt="">';}
 function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="tbl-thumb strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
 function stripInner(side,i,v){if(isTextItem(v)){var o=parseTextItem(v);return '<div class="strip-text" data-textedit="'+side+'" data-idx="'+i+'" style="'+txtStyle(o)+'" title="クリックで編集">'+esc(o.t)+'</div>';}return '<img src="'+escA(v)+'" alt="">';}
@@ -968,7 +973,7 @@ function cellHtml(key,it){
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
   if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':dcCell(it,'salesMethod');
-  if(key==='variation')return bulkEdit?'<td>'+bulkArea(it,'variation')+'</td>':dcCell(it,'variation');
+  if(key==='variation')return bulkEdit?'<td>'+bulkArea(it,'variation')+'</td>':dcCell(it,'variation',null,true);
   if(key==='buttonElem')return bulkEdit?'<td>'+bulkArea(it,'buttonElem')+'</td>':dcCell(it,'buttonElem');
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
@@ -995,7 +1000,7 @@ function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+c
 function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var saved=(getSettings().colorderV||{})[getViewMode()];if(!saved||!saved.length)return keys.slice();var out=[],seen={};for(var i=0;i<saved.length;i++){if(keys.indexOf(saved[i])>=0&&!seen[saved[i]]){out.push(saved[i]);seen[saved[i]]=1;}}var missing=[];for(var k=0;k<keys.length;k++){if(!seen[keys[k]])missing.push(keys[k]);}if(missing.length){var ai=out.indexOf('actions');if(ai>=0){out=out.slice(0,ai).concat(missing).concat(out.slice(ai));}else{out=out.concat(missing);}}return out;}
 function setColOrder(arr){var vm=getViewMode();var s=getSettings();if(!s.colorderV)s.colorderV={};s.colorderV[vm]=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
-function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+esc(def.label)+((colResizeMode||key==='searchUrl'||key==='yahooUrls'||key==='rakutenUrls'||key==='variation'||key==='salesMethod'||key==='buttonElem')?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'</tr>';}
+function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+esc(def.label)+((colResizeMode||key==='searchUrl'||key==='yahooUrls'||key==='rakutenUrls'||key==='variation'||key==='salesMethod'||key==='buttonElem'||key==='name')?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'</tr>';}
 
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
@@ -1011,6 +1016,13 @@ document.addEventListener('dblclick',function(e){var cell=(e.target.closest)?e.t
 document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;if(t.classList.contains('sm-cancel')){render();return;}if(t.classList.contains('sm-save')){var id=t.getAttribute('data-id');var field=t.getAttribute('data-field')||'salesMethod';var wrap=t.closest('.sm-editwrap');var ta=wrap?wrap.querySelector('.sm-edit'):null;var v=ta?ta.value:'';for(var i=0;i<items.length;i++){if(items[i].id===id){if(t.getAttribute('data-arr')==='1'){items[i][field]=v.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=v;}break;}}persist();render();scheduleSync();toast('保存しました');return;}});
 function cleanExcelText(t){t=String(t==null?'':t).replace(/\r\n/g,'\n').replace(/\r/g,'\n').replace(/\n$/,'');if(t.length>=2&&t.charAt(0)==='"'&&t.charAt(t.length-1)==='"'){t=t.slice(1,-1).replace(/""/g,'"');}return t;}
 document.addEventListener('paste',function(e){var t=e.target;if(!t||t.tagName!=='TEXTAREA')return;var isSales=(t.id==='fMethod')||(t.classList&&t.classList.contains('bulk-area'))||(t.classList&&t.classList.contains('sm-edit'));if(!isSales)return;var cd=e.clipboardData||window.clipboardData;if(!cd)return;var text=cd.getData?(cd.getData('text/plain')||cd.getData('text')):'';if(text==null)return;var cleaned=cleanExcelText(text);e.preventDefault();var s=t.selectionStart,en=t.selectionEnd;t.value=t.value.slice(0,s)+cleaned+t.value.slice(en);var pos=s+cleaned.length;try{t.setSelectionRange(pos,pos);}catch(_e){}t.dispatchEvent(new Event('input',{bubbles:true}));});
+var ROWH='yafusho_rowh';
+function getRowHAll(){try{return JSON.parse(localStorage.getItem(ROWH))||{};}catch(e){return {};}}
+function getRowH(){return getRowHAll()[getViewMode()]||0;}
+function setRowH(px){var o=getRowHAll();o[getViewMode()]=px;try{localStorage.setItem(ROWH,JSON.stringify(o));}catch(e){}}
+function rowLines(h){return Math.max(2,Math.round((h-14)/19));}
+function applyRowH(){var gb=$('gridBody');if(!gb)return;var h=getRowH();if(h){gb.style.setProperty('--row-h',h+'px');gb.style.setProperty('--dc-lines',String(rowLines(h)));}else{gb.style.removeProperty('--row-h');gb.style.removeProperty('--dc-lines');}}
+document.addEventListener('mousedown',function(e){var hd=(e.target.closest)?e.target.closest('.dc-hres'):null;if(!hd)return;e.preventDefault();e.stopPropagation();var startY=e.clientY;var startH=getRowH()||58;var cur=startH;var gb=$('gridBody');function mv(ev){cur=Math.max(40,Math.round(startH+(ev.clientY-startY)));if(gb){gb.style.setProperty('--row-h',cur+'px');gb.style.setProperty('--dc-lines',String(rowLines(cur)));}}function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);document.body.style.userSelect='';setRowH(cur);}document.body.style.userSelect='none';document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);});
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
 function render(){
   closeCdd();
@@ -1031,7 +1043,7 @@ function render(){
     es.querySelector('.lead').textContent=items.length?'この絞り込みに該当する商品はありません':'まだ商品がありません';
     es.querySelector('p').textContent=items.length?'別の状態タブを選ぶか、「全体」に戻してください。':'「＋ 新規作成」から商品を登録すると、ここに一覧で表示されます。';
   }
-  renderCatTabs();renderStatusTabs();updateStickyH();
+  renderCatTabs();renderStatusTabs();updateStickyH();applyRowH();
 }
 
 /* ===== フォーム ===== */
