@@ -453,5 +453,27 @@
     ],
     "variation": "",
     "buttonElem": ""
+  },
+  {
+    "id": "it1785308381446",
+    "yahooMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-main.webp",
+    "yahooImgs": [],
+    "rakutenImgs": [],
+    "date": "2026-07-29",
+    "rating": "",
+    "listingType": "cat_a",
+    "pagePlan": "",
+    "status": "st_todo",
+    "name": "耳ツボ　スティック　",
+    "code": "si-26-01",
+    "salesMethod": "ページは4つ？A単品を単体で出してPR30。B/C単品を一つのページか。\n2個セットを一つのページで個別価格設定にして段々で出す。\nABCセットは一つのページで出す。",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E8%80%B3%E3%83%84%E3%83%9C+%E6%A3%92/0/?first=1&tab_ex=commerce&fr=shp-prop&mcr=34a76d9e1c656a40574b84fcefdbe047&ts=1785308312&sretry=1&sc_i=shopping-pc-web-search-suggest-suggest-kwd-sgstfrom-top--h_srch-kwd&aq=0&oq=%E8%80%B3%E3%83%84%E3%83%9C%E3%80%80%E6%A3%92",
+    "yahooUrls": [],
+    "rakutenUrls": [
+      "https://item.rakuten.co.jp/yukaiya/10001325/"
+    ],
+    "variation": "Aバネ式/Bバネなし/Cツボ押しスティック\nA/B/C\nAB/AC/BC\nABC",
+    "buttonElem": "■個数：1個/2個セット/3個セット\n内容：単体、2個、3個全組み合わせ\n"
   }
 ]
