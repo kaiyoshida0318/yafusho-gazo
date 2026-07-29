@@ -533,7 +533,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.36.1</span>
+        <span class="version" id="version">v0.36.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -720,7 +720,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.36.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.36.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -825,6 +825,7 @@ function parseTextItem(s){var raw=s.slice(4);var o={t:raw,c:''};try{var p=JSON.p
 function makeTextItem(t,c){return 'TXT:'+JSON.stringify({t:t,c:c||''});}
 function txtStyle(o){var col=textColor(o.c);return 'background:'+col.bg+';color:'+col.fg;}
 function pickMain(it){var y=allImgs(it,'yahoo');if(y.length)return y[0];var r=allImgs(it,'rakuten');if(r.length)return r[0];return '';}
+function dcCellArr(it,field){var arr=it[field]||[];var full=arr.join('\n');var disp=arr.length?esc(full).replace(/\n/g,'<br>'):'<span class="sm-empty">—（ダブルクリックで入力）</span>';return '<td><div class="dc-cell" data-id="'+escA(it.id)+'" data-field="'+field+'" data-arr="1" data-full="'+escA(full)+'">'+disp+'</div></td>';}
 function dcCell(it,field,xtra){var v=it[field]||'';return '<td><div class="dc-cell'+(xtra?' '+xtra:'')+'" data-id="'+escA(it.id)+'" data-field="'+field+'" data-full="'+escA(v)+'">'+(v?esc(v).replace(/\n/g,'<br>'):'<span class="sm-empty">—（ダブルクリックで入力）</span>')+'</div></td>';}
 function thumbItem(src,id,cls){var de=id?' data-edit="'+escA(id)+'"':'';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="'+cls+' strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="'+cls+' clk"'+de+' loading="lazy" src="'+escA(src)+'" alt="">';}
 function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="tbl-thumb strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
@@ -959,10 +960,10 @@ function cellHtml(key,it){
   if(key==='mainThumb'){var _mt=pickMain(it);return '<td>'+(_mt?(isTextItem(_mt)?'<span class="row-thumb strip-thumb-text clk" data-edit="'+escA(it.id)+'" style="'+txtStyle(parseTextItem(_mt))+'">'+esc(parseTextItem(_mt).t)+'</span>':'<img class="row-thumb clk" data-edit="'+escA(it.id)+'" loading="lazy" src="'+escA(_mt)+'" alt="">'):md())+'</td>';}
   if(key==='code')return bulkEdit?'<td>'+bulkInp('text',it,'code')+'</td>':dcCell(it,'code','mono');
   if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':dcCell(it,'name','cell-name');
-  if(key==='rating')return bulkEdit?'<td><input class="bulk-inp" type="number" step="0.1" min="0" data-id="'+it.id+'" data-field="rating" value="'+escA(it.rating!=null?it.rating:'')+'"></td>':'<td>'+((it.rating!==''&&it.rating!=null)?esc(it.rating):md())+'</td>';
-  if(key==='searchUrl')return bulkEdit?'<td>'+bulkInp('text',it,'searchUrl')+'</td>':'<td>'+(it.searchUrl?'<div class="url-cell"><a href="'+escA(it.searchUrl)+'" target="_blank" rel="noopener">'+esc(it.searchUrl)+'</a></div>':md())+'</td>';
-  if(key==='yahooUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'yahooUrls')+'</td>':'<td>'+urlCell(it.yahooUrls)+'</td>';
-  if(key==='rakutenUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'rakutenUrls')+'</td>':'<td>'+urlCell(it.rakutenUrls)+'</td>';
+  if(key==='rating')return bulkEdit?'<td><input class="bulk-inp" type="number" step="0.1" min="0" data-id="'+it.id+'" data-field="rating" value="'+escA(it.rating!=null?it.rating:'')+'"></td>':dcCell(it,'rating');
+  if(key==='searchUrl')return bulkEdit?'<td>'+bulkInp('text',it,'searchUrl')+'</td>':dcCell(it,'searchUrl');
+  if(key==='yahooUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'yahooUrls')+'</td>':dcCellArr(it,'yahooUrls');
+  if(key==='rakutenUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'rakutenUrls')+'</td>':dcCellArr(it,'rakutenUrls');
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
@@ -1006,8 +1007,8 @@ function hideSmPop(){var p=document.getElementById('smPop');if(p)p.style.display
 document.addEventListener('mouseover',function(e){var el=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!el)return;clearTimeout(_smTimer);_smTimer=setTimeout(function(){showSmPop(el);},480);});
 document.addEventListener('mouseout',function(e){var el=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!el)return;hideSmPop();});
 document.addEventListener('scroll',function(){hideSmPop();},true);
-document.addEventListener('dblclick',function(e){var cell=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!cell)return;if(cell.querySelector&&cell.querySelector('.sm-edit'))return;hideSmPop();var id=cell.getAttribute('data-id');var field=cell.getAttribute('data-field')||'salesMethod';var cur=cell.getAttribute('data-full')||'';var td=cell.parentNode;td.innerHTML='<div class="sm-editwrap"><textarea class="sm-edit"></textarea><div class="sm-edit-btns"><button type="button" class="btn btn-line btn-sm sm-cancel">キャンセル</button><button type="button" class="btn btn-red btn-sm sm-save" data-id="'+id+'" data-field="'+field+'">保存</button></div></div>';var ta=td.querySelector('.sm-edit');ta.value=cur;ta.focus();});
-document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;if(t.classList.contains('sm-cancel')){render();return;}if(t.classList.contains('sm-save')){var id=t.getAttribute('data-id');var field=t.getAttribute('data-field')||'salesMethod';var wrap=t.closest('.sm-editwrap');var ta=wrap?wrap.querySelector('.sm-edit'):null;var v=ta?ta.value:'';for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}persist();render();scheduleSync();toast('保存しました');return;}});
+document.addEventListener('dblclick',function(e){var cell=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!cell)return;if(cell.querySelector&&cell.querySelector('.sm-edit'))return;hideSmPop();var id=cell.getAttribute('data-id');var field=cell.getAttribute('data-field')||'salesMethod';var cur=cell.getAttribute('data-full')||'';var td=cell.parentNode;td.innerHTML='<div class="sm-editwrap"><textarea class="sm-edit"></textarea><div class="sm-edit-btns"><button type="button" class="btn btn-line btn-sm sm-cancel">キャンセル</button><button type="button" class="btn btn-red btn-sm sm-save" data-id="'+id+'" data-field="'+field+'" data-arr="'+(cell.getAttribute('data-arr')||'')+'">保存</button></div></div>';var ta=td.querySelector('.sm-edit');ta.value=cur;ta.focus();});
+document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;if(t.classList.contains('sm-cancel')){render();return;}if(t.classList.contains('sm-save')){var id=t.getAttribute('data-id');var field=t.getAttribute('data-field')||'salesMethod';var wrap=t.closest('.sm-editwrap');var ta=wrap?wrap.querySelector('.sm-edit'):null;var v=ta?ta.value:'';for(var i=0;i<items.length;i++){if(items[i].id===id){if(t.getAttribute('data-arr')==='1'){items[i][field]=v.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=v;}break;}}persist();render();scheduleSync();toast('保存しました');return;}});
 function cleanExcelText(t){t=String(t==null?'':t).replace(/\r\n/g,'\n').replace(/\r/g,'\n').replace(/\n$/,'');if(t.length>=2&&t.charAt(0)==='"'&&t.charAt(t.length-1)==='"'){t=t.slice(1,-1).replace(/""/g,'"');}return t;}
 document.addEventListener('paste',function(e){var t=e.target;if(!t||t.tagName!=='TEXTAREA')return;var isSales=(t.id==='fMethod')||(t.classList&&t.classList.contains('bulk-area'))||(t.classList&&t.classList.contains('sm-edit'));if(!isSales)return;var cd=e.clipboardData||window.clipboardData;if(!cd)return;var text=cd.getData?(cd.getData('text/plain')||cd.getData('text')):'';if(text==null)return;var cleaned=cleanExcelText(text);e.preventDefault();var s=t.selectionStart,en=t.selectionEnd;t.value=t.value.slice(0,s)+cleaned+t.value.slice(en);var pos=s+cleaned.length;try{t.setSelectionRange(pos,pos);}catch(_e){}t.dispatchEvent(new Event('input',{bubbles:true}));});
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
