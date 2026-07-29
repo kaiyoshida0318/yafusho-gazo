@@ -529,7 +529,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.35.1</span>
+        <span class="version" id="version">v0.35.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -642,12 +642,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
                   </select>
                 </label>
               </div>
-              <label class="fld">販売手法<textarea id="fMethod" rows="4" placeholder="複数行で入力できます（改行OK）"></textarea></label>
+              <label class="fld">バリエーション<textarea id="fVariation" rows="4" placeholder="複数行OK"></textarea></label>
             </div>
-            <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
-              <label class="fld">バリエーション<textarea id="fVariation" rows="3" placeholder="複数行OK"></textarea></label>
-              <label class="fld">ボタン要素<textarea id="fButtonElem" rows="3" placeholder="複数行OK"></textarea></label>
-            </div>
+            <label class="fld span-all">販売手法<textarea id="fMethod" rows="4" placeholder="複数行で入力できます（改行OK）"></textarea></label>
+            <label class="fld span-all">ボタン要素<textarea id="fButtonElem" rows="3" placeholder="複数行OK"></textarea></label>
           </div>
         </div>
 
@@ -716,7 +714,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.35.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.35.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
