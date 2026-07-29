@@ -499,7 +499,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .logo-text{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:24px;color:#1a1b1e}
 
 /* 販売手法：2行で省略＋全行の高さ統一＋ホバー全文ポップ */
-#gridBody td{height:var(--row-h,58px);vertical-align:top}
+#gridBody td{height:var(--row-h,58px);vertical-align:top;position:relative}
 .sm-cell,.dc-cell{position:relative;display:-webkit-box;-webkit-line-clamp:var(--dc-lines,2);-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;white-space:normal;word-break:break-word;cursor:help}
 .sm-pop{position:fixed;z-index:400;display:none;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 16px 44px rgba(20,24,32,.22);padding:16px 18px;font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-width:440px}
 
@@ -514,9 +514,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .ctab-ico .cat-logo{width:18px;height:18px}
 .dc-cell.cell-name{font-weight:600}
 .dc-cell.mono{font-family:'Roboto Mono',monospace}
-.dc-hres{position:absolute;left:0;right:0;bottom:-1px;height:8px;cursor:ns-resize;z-index:4}
+.dc-hres{position:absolute;left:0;right:0;bottom:0;height:9px;cursor:ns-resize;z-index:5}
 .dc-hres::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:1px;width:28px;height:3px;background:var(--red);border-radius:3px;opacity:0;transition:.1s}
-.dc-cell:hover .dc-hres::after{opacity:.45}
+#gridBody td:hover .dc-hres::after{opacity:.5}
 .dc-hres:hover::after{opacity:1;height:4px}
 .dc-cell.dc-fill{word-break:break-all;overflow-wrap:anywhere}
 .dc-url{color:#1f5bd8;text-decoration:underline;cursor:pointer;word-break:break-all}
@@ -540,7 +540,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.37.2</span>
+        <span class="version" id="version">v0.37.3</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -727,7 +727,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.37.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.37.3</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -835,7 +835,7 @@ function pickMain(it){var y=allImgs(it,'yahoo');if(y.length)return y[0];var r=al
 function urlLink(u){return '<a class="dc-url" href="'+escA(u)+'" target="_blank" rel="noopener">'+esc(u)+'</a>';}
 function dcCellUrl(it,field){var v=it[field]||'';var disp=v?urlLink(v):'<span class="sm-empty">—</span>';return '<td><div class="dc-cell" data-id="'+escA(it.id)+'" data-field="'+field+'" data-full="'+escA(v)+'">'+disp+'</div></td>';}
 function dcCellArr(it,field){var arr=it[field]||[];var full=arr.join('\n');var disp=arr.length?arr.map(urlLink).join('<br>'):'<span class="sm-empty">—</span>';return '<td><div class="dc-cell" data-id="'+escA(it.id)+'" data-field="'+field+'" data-arr="1" data-full="'+escA(full)+'">'+disp+'</div></td>';}
-function dcCell(it,field,xtra,flow){var v=it[field]||'';var hr=(getViewMode()==='detail'&&(field==='salesMethod'||field==='buttonElem'))?'<div class="dc-hres" title="下にドラッグで高さ調整"></div>':'';var disp=v?(flow?esc(v.replace(/\n/g,' ')):esc(v).replace(/\n/g,'<br>')):'<span class="sm-empty">—</span>';return '<td><div class="dc-cell'+(xtra?' '+xtra:'')+(flow?' dc-fill':'')+'" data-id="'+escA(it.id)+'" data-field="'+field+'" data-full="'+escA(v)+'">'+disp+hr+'</div></td>';}
+function dcCell(it,field,xtra,flow){var v=it[field]||'';var hr=(getViewMode()==='detail'&&(field==='salesMethod'||field==='buttonElem'))?'<div class="dc-hres" title="下にドラッグで高さ調整"></div>':'';var disp=v?(flow?esc(v.replace(/\n/g,' ')):esc(v).replace(/\n/g,'<br>')):'<span class="sm-empty">—</span>';return '<td><div class="dc-cell'+(xtra?' '+xtra:'')+(flow?' dc-fill':'')+'" data-id="'+escA(it.id)+'" data-field="'+field+'" data-full="'+escA(v)+'">'+disp+'</div>'+hr+'</td>';}
 function thumbItem(src,id,cls){var de=id?' data-edit="'+escA(id)+'"':'';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="'+cls+' strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="'+cls+' clk"'+de+' loading="lazy" src="'+escA(src)+'" alt="">';}
 function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="tbl-thumb strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
 function stripInner(side,i,v){if(isTextItem(v)){var o=parseTextItem(v);return '<div class="strip-text" data-textedit="'+side+'" data-idx="'+i+'" style="'+txtStyle(o)+'" title="クリックで編集">'+esc(o.t)+'</div>';}return '<img src="'+escA(v)+'" alt="">';}
