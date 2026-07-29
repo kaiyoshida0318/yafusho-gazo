@@ -540,7 +540,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.37.3</span>
+        <span class="version" id="version">v0.37.5</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -727,7 +727,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.37.3</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.37.5</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1020,15 +1020,14 @@ var _urlTimer=null;
 document.addEventListener('click',function(e){var a=(e.target.closest)?e.target.closest('.dc-url'):null;if(!a)return;e.preventDefault();var url=a.getAttribute('href');clearTimeout(_urlTimer);_urlTimer=setTimeout(function(){try{window.open(url,'_blank','noopener');}catch(_e){}},240);});
 document.addEventListener('dblclick',function(e){var cell=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!cell)return;if(cell.querySelector&&cell.querySelector('.sm-edit'))return;clearTimeout(_urlTimer);hideSmPop();var id=cell.getAttribute('data-id');var field=cell.getAttribute('data-field')||'salesMethod';var cur=cell.getAttribute('data-full')||'';var td=cell.parentNode;td.innerHTML='<div class="sm-editwrap"><textarea class="sm-edit"></textarea><div class="sm-edit-btns"><button type="button" class="btn btn-line btn-sm sm-cancel">キャンセル</button><button type="button" class="btn btn-red btn-sm sm-save" data-id="'+id+'" data-field="'+field+'" data-arr="'+(cell.getAttribute('data-arr')||'')+'">保存</button></div></div>';var ta=td.querySelector('.sm-edit');ta.value=cur;ta.focus();});
 document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;if(t.classList.contains('sm-cancel')){render();return;}if(t.classList.contains('sm-save')){var id=t.getAttribute('data-id');var field=t.getAttribute('data-field')||'salesMethod';var wrap=t.closest('.sm-editwrap');var ta=wrap?wrap.querySelector('.sm-edit'):null;var v=ta?ta.value:'';for(var i=0;i<items.length;i++){if(items[i].id===id){if(t.getAttribute('data-arr')==='1'){items[i][field]=v.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=v;}break;}}persist();render();scheduleSync();toast('保存しました');return;}});
-function cleanExcelText(t){t=String(t==null?'':t).replace(/\r\n/g,'\n').replace(/\r/g,'\n').replace(/\n$/,'');if(t.length>=2&&t.charAt(0)==='"'&&t.charAt(t.length-1)==='"'){t=t.slice(1,-1).replace(/""/g,'"');}return t;}
-document.addEventListener('paste',function(e){var t=e.target;if(!t||t.tagName!=='TEXTAREA')return;var isSales=(t.id==='fMethod')||(t.classList&&t.classList.contains('bulk-area'))||(t.classList&&t.classList.contains('sm-edit'));if(!isSales)return;var cd=e.clipboardData||window.clipboardData;if(!cd)return;var text=cd.getData?(cd.getData('text/plain')||cd.getData('text')):'';if(text==null)return;var cleaned=cleanExcelText(text);e.preventDefault();var s=t.selectionStart,en=t.selectionEnd;t.value=t.value.slice(0,s)+cleaned+t.value.slice(en);var pos=s+cleaned.length;try{t.setSelectionRange(pos,pos);}catch(_e){}t.dispatchEvent(new Event('input',{bubbles:true}));});
-var ROWH='yafusho_rowh';
-function getRowHAll(){try{return JSON.parse(localStorage.getItem(ROWH))||{};}catch(e){return {};}}
-function getRowH(){return getRowHAll()[getViewMode()]||0;}
-function setRowH(px){var o=getRowHAll();o[getViewMode()]=px;try{localStorage.setItem(ROWH,JSON.stringify(o));}catch(e){}}
+function cleanExcelText(t){t=String(t==null?'':t).replace(/\r\n/g,'\n').replace(/\r/g,'\n');var core=t.replace(/\n$/,'');if(core.length>=2&&core.charAt(0)==='"'&&core.charAt(core.length-1)==='"'){return core.slice(1,-1).replace(/""/g,'"');}return t;}
+document.addEventListener('paste',function(e){var t=e.target;if(!t||!t.tagName)return;var tag=t.tagName;var ok=(tag==='TEXTAREA')||(tag==='INPUT'&&/^(text|search|url|number|date|tel|email)$/i.test(t.type||'text'));if(!ok)return;var cd=e.clipboardData||window.clipboardData;if(!cd)return;var text=cd.getData?(cd.getData('text/plain')||cd.getData('text')):'';if(text==null)return;var cleaned=cleanExcelText(text);if(cleaned===text)return;e.preventDefault();try{var s=t.selectionStart,en=t.selectionEnd;if(s!=null&&en!=null){t.value=t.value.slice(0,s)+cleaned+t.value.slice(en);var pos=s+cleaned.length;try{t.setSelectionRange(pos,pos);}catch(_e){}}else{t.value=cleaned;}}catch(_e2){t.value=cleaned;}t.dispatchEvent(new Event('input',{bubbles:true}));});
+var ROWHI='yafusho_rowh_items';
+function rowHItemsAll(){try{return JSON.parse(localStorage.getItem(ROWHI))||{};}catch(e){return {};}}
+function getRowHItem(id){return rowHItemsAll()[id]||0;}
+function setRowHItem(id,px){var o=rowHItemsAll();o[id]=px;try{localStorage.setItem(ROWHI,JSON.stringify(o));}catch(e){}}
 function rowLines(h){return Math.max(2,Math.round((h-14)/19));}
-function applyRowH(){var gb=$('gridBody');if(!gb)return;var h=getRowH();if(h){gb.style.setProperty('--row-h',h+'px');gb.style.setProperty('--dc-lines',String(rowLines(h)));}else{gb.style.removeProperty('--row-h');gb.style.removeProperty('--dc-lines');}}
-document.addEventListener('mousedown',function(e){var hd=(e.target.closest)?e.target.closest('.dc-hres'):null;if(!hd)return;e.preventDefault();e.stopPropagation();var startY=e.clientY;var startH=getRowH()||58;var cur=startH;var gb=$('gridBody');function mv(ev){cur=Math.max(40,Math.round(startH+(ev.clientY-startY)));if(gb){gb.style.setProperty('--row-h',cur+'px');gb.style.setProperty('--dc-lines',String(rowLines(cur)));}}function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);document.body.style.userSelect='';setRowH(cur);}document.body.style.userSelect='none';document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);});
+document.addEventListener('mousedown',function(e){var hd=(e.target.closest)?e.target.closest('.dc-hres'):null;if(!hd)return;e.preventDefault();e.stopPropagation();var tr=hd.closest('tr');if(!tr)return;var id=tr.getAttribute('data-id');var startY=e.clientY;var startH=getRowHItem(id)||tr.offsetHeight||58;var cur=startH;function mv(ev){cur=Math.max(40,Math.round(startH+(ev.clientY-startY)));tr.style.height=cur+'px';tr.style.setProperty('--dc-lines',String(rowLines(cur)));}function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);document.body.style.userSelect='';setRowHItem(id,cur);}document.body.style.userSelect='none';document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);});
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
 function render(){
   closeCdd();
@@ -1039,7 +1038,7 @@ function render(){
     return true;
   });
   for(var i=0;i<list.length;i++){
-    var it=list[i];var tr=document.createElement('tr');var tds='';
+    var it=list[i];var tr=document.createElement('tr');tr.setAttribute('data-id',it.id);if(getViewMode()==='detail'){var _ph=getRowHItem(it.id);if(_ph){tr.style.height=_ph+'px';tr.style.setProperty('--dc-lines',String(rowLines(_ph)));}}var tds='';
     var _ord=getColOrder();for(var c=0;c<_ord.length;c++){var key=_ord[c];if(!colDef(key))continue;var cc=getColCfg(key);if(!cc.visible)continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
     tr.innerHTML=tds;tb.appendChild(tr);
   }
@@ -1049,7 +1048,7 @@ function render(){
     es.querySelector('.lead').textContent=items.length?'この絞り込みに該当する商品はありません':'まだ商品がありません';
     es.querySelector('p').textContent=items.length?'別の状態タブを選ぶか、「全体」に戻してください。':'「＋ 新規作成」から商品を登録すると、ここに一覧で表示されます。';
   }
-  renderCatTabs();renderStatusTabs();updateStickyH();applyRowH();
+  renderCatTabs();renderStatusTabs();updateStickyH();
 }
 
 /* ===== フォーム ===== */
