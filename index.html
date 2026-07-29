@@ -529,7 +529,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="header-inner">
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="this.style.display='none';var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.appendChild(s);">
       <div class="header-actions">
-        <span class="version" id="version">v0.34.1</span>
+        <span class="version" id="version">v0.34.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -711,7 +711,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.34.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.34.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -992,6 +992,8 @@ document.addEventListener('mouseout',function(e){var el=(e.target.closest)?e.tar
 document.addEventListener('scroll',function(){hideSmPop();},true);
 document.addEventListener('dblclick',function(e){var cell=(e.target.closest)?e.target.closest('.sm-cell'):null;if(!cell)return;if(cell.querySelector&&cell.querySelector('.sm-edit'))return;hideSmPop();var id=cell.getAttribute('data-id');var cur=cell.getAttribute('data-full')||'';var td=cell.parentNode;td.innerHTML='<div class="sm-editwrap"><textarea class="sm-edit"></textarea><div class="sm-edit-btns"><button type="button" class="btn btn-line btn-sm sm-cancel">キャンセル</button><button type="button" class="btn btn-red btn-sm sm-save" data-id="'+id+'">保存</button></div></div>';var ta=td.querySelector('.sm-edit');ta.value=cur;ta.focus();});
 document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;if(t.classList.contains('sm-cancel')){render();return;}if(t.classList.contains('sm-save')){var id=t.getAttribute('data-id');var wrap=t.closest('.sm-editwrap');var ta=wrap?wrap.querySelector('.sm-edit'):null;var v=ta?ta.value:'';for(var i=0;i<items.length;i++){if(items[i].id===id){items[i].salesMethod=v;break;}}persist();render();scheduleSync();toast('販売手法を保存しました');return;}});
+function cleanExcelText(t){t=String(t==null?'':t).replace(/\r\n/g,'\n').replace(/\r/g,'\n').replace(/\n$/,'');if(t.length>=2&&t.charAt(0)==='"'&&t.charAt(t.length-1)==='"'){t=t.slice(1,-1).replace(/""/g,'"');}return t;}
+document.addEventListener('paste',function(e){var t=e.target;if(!t||t.tagName!=='TEXTAREA')return;var isSales=(t.id==='fMethod')||(t.classList&&t.classList.contains('bulk-area')&&t.getAttribute('data-field')==='salesMethod')||(t.classList&&t.classList.contains('sm-edit'));if(!isSales)return;var cd=e.clipboardData||window.clipboardData;if(!cd)return;var text=cd.getData?(cd.getData('text/plain')||cd.getData('text')):'';if(text==null)return;var cleaned=cleanExcelText(text);e.preventDefault();var s=t.selectionStart,en=t.selectionEnd;t.value=t.value.slice(0,s)+cleaned+t.value.slice(en);var pos=s+cleaned.length;try{t.setSelectionRange(pos,pos);}catch(_e){}t.dispatchEvent(new Event('input',{bubbles:true}));});
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
 function render(){
   closeCdd();
