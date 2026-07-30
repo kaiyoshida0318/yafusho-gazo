@@ -526,10 +526,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .img2-left{display:flex;flex-direction:column;gap:8px;flex:0 0 auto;border-right:1px solid var(--line-2);padding-right:8px}
 .img2-right{display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-width:0;padding-left:8px}
 .img2-right .img-strip{min-height:66px}
-.ic-wrap{position:relative;display:inline-flex;flex:0 0 auto}
-.ic-copy{position:absolute;top:3px;right:3px;width:22px;height:22px;border:none;border-radius:6px;background:rgba(26,27,30,.74);color:#fff;font-size:13px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;z-index:3}
-.ic-wrap:hover .ic-copy{display:inline-flex}
-.ic-copy:hover{background:var(--red)}
 .tag-cnt{font-weight:800;margin-left:3px;opacity:.95;font-size:11px}
 </style>
 <style id="modal-guarantee">
@@ -551,7 +547,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.38.11</span>
+        <span class="version" id="version">v0.38.12</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -738,7 +734,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.38.11</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.38.12</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -960,7 +956,6 @@ function bulkArea(it,field){var v=(it[field]!=null?it[field]:'');return '<textar
 function bulkUrlArea(it,field){var a=(it[field]||[]);return '<textarea class="bulk-inp bulk-area" rows="2" data-id="'+it.id+'" data-field="'+field+'" placeholder="1行に1URL">'+esc(a.join('\n'))+'</textarea>';}
 function allImgs(it,side){var out=[];var m=it[side+'Main'];if(m)out.push(m);var a=it[side+'Imgs']||[];for(var i=0;i<a.length;i++){if(a[i]&&out.indexOf(a[i])<0)out.push(a[i]);}if(!out.length){var s=it[side+'Img'];if(s)out.push(s);}return out;}
 function stripHtml(arr,id){if(!arr||!arr.length)return '<span class="tbl-thumb empty clk" data-edit="'+escA(id)+'">—</span>';var h='<div class="img-strip">';for(var i=0;i<arr.length;i++){if(!arr[i])continue;h+=thumbItem(arr[i],id,'strip-thumb');}return h+'</div>';}
-function imgThumbCopy(it,side,idx){var arr=allImgs(it,side);var src=arr[idx];var ar=(side==='yahoo')?'⤵':'⤴';var ti=(side==='yahoo')?'楽天へコピー':'Yahooへコピー';return '<span class="ic-wrap">'+thumbItem(src,it.id,'strip-thumb')+'<button type="button" class="ic-copy" data-id="'+escA(it.id)+'" data-side="'+side+'" data-idx="'+idx+'" title="'+ti+'">'+ar+'</button></span>';}
 function imgSideMain(it,side,tag,cls){
   var full=allImgs(it,side);var total=full.length;var arr=full.slice(0,20);
   var cnt=(total>0)?(total-1):0;var s='<div class="img2-row"><span class="img2-tag '+cls+'">'+tag+(total?' <span class="tag-cnt">'+cnt+'枚</span>':'')+'</span>';
@@ -970,7 +965,7 @@ function imgSideMain(it,side,tag,cls){
 function imgSideRest(it,side){
   var full=allImgs(it,side);var more=full.length>20?(full.length-20):0;var arr=full.slice(0,20);
   var s='<div class="img-strip">';
-  for(var i=1;i<arr.length;i++){if(!arr[i])continue;s+=imgThumbCopy(it,side,i);}
+  for(var i=1;i<arr.length;i++){if(!arr[i])continue;s+=thumbItem(arr[i],it.id,'strip-thumb');}
   if(more)s+='<span class="strip-more clk" data-edit="'+escA(it.id)+'">+'+more+'</span>';
   return s+'</div>';
 }
@@ -1036,7 +1031,7 @@ document.addEventListener('mouseover',function(e){var el=(e.target.closest)?e.ta
 document.addEventListener('mouseout',function(e){var el=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!el)return;hideSmPop();});
 document.addEventListener('scroll',function(){hideSmPop();},true);
 var _urlTimer=null;
-document.addEventListener('click',function(e){var btn=(e.target.closest)?e.target.closest('.ic-copy'):null;if(!btn)return;e.preventDefault();e.stopPropagation();var id=btn.getAttribute('data-id');var side=btn.getAttribute('data-side');var idx=parseInt(btn.getAttribute('data-idx'),10);for(var i=0;i<items.length;i++){if(items[i].id===id){var arr=allImgs(items[i],side);var val=arr[idx];if(val==null)return;var other=(side==='yahoo')?'rakuten':'yahoo';var key=other+'Imgs';if(!items[i][key])items[i][key]=[];items[i][key].push(val);persist();render();scheduleSync();toast(side==='yahoo'?'楽天へコピーしました':'Yahooへコピーしました');break;}}});
+
 document.addEventListener('click',function(e){var a=(e.target.closest)?e.target.closest('.dc-url'):null;if(!a)return;e.preventDefault();var url=a.getAttribute('href');clearTimeout(_urlTimer);_urlTimer=setTimeout(function(){try{window.open(url,'_blank','noopener');}catch(_e){}},240);});
 document.addEventListener('dblclick',function(e){var cell=(e.target.closest)?e.target.closest('.dc-cell'):null;if(!cell)return;if(cell.querySelector&&cell.querySelector('.sm-edit'))return;clearTimeout(_urlTimer);hideSmPop();var id=cell.getAttribute('data-id');var field=cell.getAttribute('data-field')||'salesMethod';var cur=cell.getAttribute('data-full')||'';var td=cell.parentNode;td.innerHTML='<div class="sm-editwrap"><textarea class="sm-edit"></textarea><div class="sm-edit-btns"><button type="button" class="btn btn-line btn-sm sm-cancel">キャンセル</button><button type="button" class="btn btn-red btn-sm sm-save" data-id="'+id+'" data-field="'+field+'" data-arr="'+(cell.getAttribute('data-arr')||'')+'">保存</button></div></div>';var ta=td.querySelector('.sm-edit');ta.value=cur;ta.focus();});
 document.addEventListener('click',function(e){var t=e.target;if(!t||!t.classList)return;if(t.classList.contains('sm-cancel')){render();return;}if(t.classList.contains('sm-save')){var id=t.getAttribute('data-id');var field=t.getAttribute('data-field')||'salesMethod';var wrap=t.closest('.sm-editwrap');var ta=wrap?wrap.querySelector('.sm-edit'):null;var v=ta?ta.value:'';for(var i=0;i<items.length;i++){if(items[i].id===id){if(t.getAttribute('data-arr')==='1'){items[i][field]=v.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});}else{items[i][field]=v;}break;}}persist();render();scheduleSync();toast('保存しました');return;}});
