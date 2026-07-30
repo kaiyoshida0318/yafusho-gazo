@@ -561,7 +561,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.39.0</span>
+        <span class="version" id="version">v0.39.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -748,7 +748,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.39.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.39.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -883,6 +883,8 @@ var DEFAULT_CATEGORIES=[{id:'cat_a',label:'新規出品',icon:'letter:A'},{id:'c
 var DEFAULT_STATUSES=[{id:'st_todo',label:'制作前',icon:'num:1'},{id:'st_next',label:'次やる候補',icon:'num:2'},{id:'st_doing',label:'制作中',icon:'num:3'},{id:'st_review',label:'確認待ち',icon:'num:4'},{id:'st_done',label:'完了',icon:'num:5'}];
 function getCategories(){var s=getSettings();return (s.categories&&s.categories.length)?s.categories:DEFAULT_CATEGORIES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
 function defaultStatusId(){var s=getStatuses();return s.length?s[0].id:'';}
+function doneStatusId(){var s=getStatuses();for(var i=0;i<s.length;i++){if(s[i].label==='完了'||s[i].icon==='num:5'||s[i].id==='st_done')return s[i].id;}return 'st_done';}
+function isDone(st){return !!st&&st===doneStatusId();}
 function getStatuses(){var s=getSettings();return (s.statuses&&s.statuses.length)?s.statuses:DEFAULT_STATUSES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
 function saveCategories(a){var s=getSettings();s.categories=a;saveSettings(s);}
 function saveStatuses(a){var s=getSettings();s.statuses=a;saveSettings(s);}
@@ -1061,7 +1063,7 @@ function render(){var _g=$('grid');if(_g)_g.classList.toggle('imgfix',getViewMod
   closeCdd();
   var tb=$('gridBody');tb.innerHTML='';
   var list=items.filter(function(x){
-    if(statusFilter!=='st_done'&&x.status==='st_done')return false;
+    if(statusFilter!==doneStatusId()&&isDone(x.status))return false;
     if(listingFilter==='__none__'){if(x.listingType)return false;}else if(listingFilter){if(x.listingType!==listingFilter)return false;}
     if(statusFilter==='__none__'){if(x.status)return false;}else if(statusFilter){if(x.status!==statusFilter)return false;}
     return true;
@@ -1379,8 +1381,8 @@ document.addEventListener('click',function(e){
 /* ピル */
 function catMatchF(rc,sel){if(sel==='')return true;if(sel==='__none__')return !rc;return rc===sel;}
 function statusMatchF(rs,sel){if(sel==='')return true;if(sel==='__none__')return !rs;return rs===sel;}
-function countCat(id){var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(statusFilter!=='st_done'&&x.status==='st_done')continue;if(catMatchF(x.listingType,id)&&statusMatchF(x.status,statusFilter))n++;}return n;}
-function countStatus(id){var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(id!=='st_done'&&x.status==='st_done')continue;if(statusMatchF(x.status,id)&&catMatchF(x.listingType,listingFilter))n++;}return n;}
+function countCat(id){var _d=doneStatusId();var sf=(statusFilter===_d)?'':statusFilter;var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;if(catMatchF(x.listingType,id)&&statusMatchF(x.status,sf))n++;}return n;}
+function countStatus(id){var _d=doneStatusId();var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(id!==_d&&x.status===_d)continue;if(statusMatchF(x.status,id)&&catMatchF(x.listingType,listingFilter))n++;}return n;}
 function renderCatTabs(){
   var el=$('catPills');if(!el)return;var cs=getCategories();
   var h='<button class="ctab'+(listingFilter===''?' on':'')+'" data-listing="">全体<span class="cnt">'+countCat('')+'</span></button>';
@@ -1391,8 +1393,8 @@ function renderCatTabs(){
 function renderStatusTabs(){
   var el=$('statusRow');if(!el)return;var ss=getStatuses();
   var h='<button class="stab'+(statusFilter===''?' on':'')+'" data-status="">全体<span class="cnt">'+countStatus('')+'</span></button>';
-  var done=null;
-  for(var i=0;i<ss.length;i++){if(ss[i].id==='st_done'){done=ss[i];continue;}h+='<button class="stab'+(statusFilter===ss[i].id?' on':'')+'" data-status="'+escA(ss[i].id)+'"><span class="stab-ico">'+statusIconHtml(ss[i].icon)+'</span>'+esc(ss[i].label)+'<span class="cnt">'+countStatus(ss[i].id)+'</span></button>';}
+  var done=null;var _d=doneStatusId();
+  for(var i=0;i<ss.length;i++){if(ss[i].id===_d){done=ss[i];continue;}h+='<button class="stab'+(statusFilter===ss[i].id?' on':'')+'" data-status="'+escA(ss[i].id)+'"><span class="stab-ico">'+statusIconHtml(ss[i].icon)+'</span>'+esc(ss[i].label)+'<span class="cnt">'+countStatus(ss[i].id)+'</span></button>';}
   h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   if(done){h+='<span class="stab-sep" title="完了は全体に表示されません"></span>';h+='<button class="stab stab-done'+(statusFilter===done.id?' on':'')+'" data-status="'+escA(done.id)+'"><span class="stab-ico">'+statusIconHtml(done.icon)+'</span>'+esc(done.label)+'<span class="cnt">'+countStatus(done.id)+'</span></button>';}
   el.innerHTML=h;
