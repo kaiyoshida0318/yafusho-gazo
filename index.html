@@ -278,8 +278,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .opt-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .opt-head .fld-label{margin:0;font-size:14px;font-weight:800;color:var(--ink-1)}
 .opt-head .btn{margin-left:auto}
-.opt-cols{display:grid;grid-template-columns:34px 96px 240px auto auto 1fr;gap:9px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 5px;border-bottom:1px solid var(--line-2)}
-.opt-row{display:grid;grid-template-columns:34px 96px 240px auto auto 1fr;gap:9px;align-items:center;padding:6px 2px;border-bottom:1px solid #eef0f3}
+.opt-cols{display:grid;grid-template-columns:1fr auto auto;gap:9px;font-size:11px;color:var(--ink-3);font-weight:700;padding:0 2px 5px;border-bottom:1px solid var(--line-2)}
+.opt-row{display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:center;padding:6px 2px;border-bottom:1px solid #eef0f3}
 .mk-prev{justify-self:center}
 .opt-color,.opt-mark,.opt-label{font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:8px;padding:7px 8px;outline:0;background:#f4f5f7;min-width:0;font-family:"Zen Kaku Gothic New",sans-serif}
 .opt-color:focus,.opt-mark:focus,.opt-label:focus{border-color:var(--red);background:#fff}
@@ -566,8 +566,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.46.0</span>
-        <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
+        <span class="version" id="version">v0.47.0</span>
+        <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
         <button class="btn btn-ghost" id="btnCols2">📐 項目管理</button>
@@ -661,7 +661,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
               <label class="fld">評価<input type="number" id="fRating" step="0.1" min="0" placeholder="4.2 など" autocomplete="off"></label>
             </div>
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px">
-              <label class="fld">制作予定ページ
+              <label class="fld">制作LP本数
                 <select id="fPagePlan"></select>
               </label>
               <label class="fld">LP方針
@@ -763,18 +763,18 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.46.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.47.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="manageModal" hidden>
   <div class="mini mini-wide">
-    <h2>📄 制作予定ページ管理</h2>
-    <p class="hint">制作予定ページの選択肢と、マーク（色＋短い記号）を編集できます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
+    <h2>📄 制作LP本数管理</h2>
+    <p class="hint">制作LP本数の選択肢（数字）を編集できます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
     <div class="opt-scroll" id="optScroll">
       <div class="opt-sec">
-        <div class="opt-head"><span class="fld-label">制作予定ページ</span><button type="button" class="btn btn-line btn-sm" data-addopt="pagePlan">＋ 追加</button></div>
-        <div class="opt-cols"><span>マーク</span><span>色</span><span>選択肢名</span><span></span><span></span><span></span></div>
+        <div class="opt-head"><span class="fld-label">制作LP本数</span><button type="button" class="btn btn-line btn-sm" data-addopt="pagePlan">＋ 追加</button></div>
+        <div class="opt-cols"><span>本数</span><span></span><span></span></div>
         <div id="optPage"></div>
       </div>
     </div>
@@ -931,7 +931,7 @@ var DEFAULT_COLS=[
   {key:'searchUrl',label:'検索ページURL',width:140,align:'left',wrap:'clip'},
   {key:'yahooUrls',label:'ヤフショURL',width:140,align:'left',wrap:'clip'},
   {key:'rakutenUrls',label:'楽天URL',width:140,align:'left',wrap:'clip'},
-  {key:'pagePlan',label:'制作予定ページ',width:110,align:'center'},
+  {key:'pagePlan',label:'制作LP本数',width:110,align:'center'},
   {key:'listingType',label:'出品内容',width:210,align:'left'},
   {key:'lpType',label:'LP方針',width:130,align:'left'},
   {key:'status',label:'状態',width:130,align:'left'},
@@ -959,7 +959,7 @@ function mainImg(it,side){return it[side+'Main']||firstImg(it,side);}
 function stKey(st){return ({'未着手':'s-gray','作成中':'s-orange','確認待ち':'s-blue','完了':'s-green'})[st]||'s-none';}
 function statusBadge(st){var map={'未着手':['1','n-gray'],'作成中':['2','n-orange'],'確認待ち':['3','n-blue'],'完了':['4','n-green']};var m=map[st];if(!m)return md();return '<span class="status-badge"><span class="num '+m[1]+'">'+m[0]+'</span>'+esc(st)+'</span>';}
 var LP_OPTS=[{v:'lp_new_sq',label:'新規-正方形'},{v:'lp_reuse_rect',label:'流用-長方形'},{v:'lp_edit_rect',label:'編集-長方形'}];
-function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){for(var i=0;i<LP_OPTS.length;i++)arr.push({v:LP_OPTS[i].v,label:LP_OPTS[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:markHtml(op[i])});}return arr;}
+function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){for(var i=0;i<LP_OPTS.length;i++)arr.push({v:LP_OPTS[i].v,label:LP_OPTS[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
 function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)if(a[i].v===value)return a[i];return null;}
 function cddCell(field,id,value){return '<td><button type="button" class="cdd" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button></td>';}
 var cddState={field:null,id:null,btn:null};
@@ -1145,10 +1145,10 @@ $('btnSaveClose').onclick=function(){saveForm(true);};
 /* 各種管理（出品内容の選択肢） */
 var MK_COLORS=[['gray','グレー'],['red','赤'],['orange','オレンジ'],['green','緑'],['blue','青'],['purple','紫'],['teal','ティール']];
 function colorSel(c){var o='';for(var i=0;i<MK_COLORS.length;i++){o+='<option value="'+MK_COLORS[i][0]+'"'+(c===MK_COLORS[i][0]?' selected':'')+'>'+MK_COLORS[i][1]+'</option>';}return o;}
-function optRow(field,opt){opt=opt||{l:'',c:'gray',t:''};var d=document.createElement('div');d.className='opt-row';d.setAttribute('data-field',field);d.innerHTML='<span class="mk-prev mk mk-'+(opt.c||'gray')+'"></span><select class="opt-color">'+colorSel(opt.c||'gray')+'</select><input class="opt-label" value="'+escA(opt.l||'')+'" placeholder="選択肢名"><span class="mv-btns"><button type="button" class="mv up">↑</button><button type="button" class="mv down">↓</button></span><button type="button" class="opt-del">×</button>';return d;}
+function optRow(field,opt){opt=opt||{l:'',c:'gray',t:''};var d=document.createElement('div');d.className='opt-row';d.setAttribute('data-field',field);d.innerHTML='<input class="opt-label" value="'+escA(opt.l||'')+'" placeholder="本数（例：1）"><span class="mv-btns"><button type="button" class="mv up">↑</button><button type="button" class="mv down">↓</button></span><button type="button" class="opt-del">×</button>';return d;}
 function contOf(field){return 'optPage';}
 function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=getOpts('pagePlan');for(var i=0;i<opts.length;i++)box.appendChild(optRow('pagePlan',opts[i]));}show('manageModal');}
-function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:rows[i].querySelector('.opt-color').value,t:''});}return arr;}
+function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:'gray',t:''});}return arr;}
 $('btnManage').onclick=openManage;
 var _addBtns=document.querySelectorAll('[data-addopt]');for(var _a=0;_a<_addBtns.length;_a++){_addBtns[_a].addEventListener('click',function(){var f=this.getAttribute('data-addopt');$(contOf(f)).appendChild(optRow(f,{}));});}
 (function(){var os=$('optScroll');if(!os)return;
@@ -1161,7 +1161,7 @@ var _addBtns=document.querySelectorAll('[data-addopt]');for(var _a=0;_a<_addBtns
   os.addEventListener('input',function(e){var t=e.target;if(t.classList.contains('opt-mark')||t.classList.contains('opt-color'))prev(rowOf(t));});
   os.addEventListener('change',function(e){var t=e.target;if(t.classList.contains('opt-color'))prev(rowOf(t));});
 })();
-$('btnSaveOpts').onclick=function(){var s=getSettings();var pp=collectOpts('pagePlan');s.opts.pagePlan=pp.length?pp:DEFAULT_OPTS.pagePlan.map(function(x){return {l:x.l,c:x.c,t:x.t};});saveSettings(s);populateFormSelects();render();hide('manageModal');log('制作予定ページの選択肢を更新');};
+$('btnSaveOpts').onclick=function(){var s=getSettings();var pp=collectOpts('pagePlan');s.opts.pagePlan=pp.length?pp:DEFAULT_OPTS.pagePlan.map(function(x){return {l:x.l,c:x.c,t:x.t};});saveSettings(s);populateFormSelects();render();hide('manageModal');log('制作LP本数の選択肢を更新');};
 /* ===== カテゴリ管理 ===== */
 var catIconOpen=-1;
 function openCatManager(){catIconOpen=-1;renderCatManager();show('catModal');}
@@ -1615,6 +1615,7 @@ async function loadFromGitHub(){
 
 
 (function(){try{if(!localStorage.getItem('yafusho_statmig2')){var s=getSettings();s.statuses=DEFAULT_STATUSES.map(function(x){return {id:x.id,label:x.label,icon:x.icon};});saveSettings(s);localStorage.setItem('yafusho_statmig2','1');}}catch(e){}})();
+(function(){try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'}];saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}})();
 renderHead();
 render();
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
