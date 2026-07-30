@@ -37,14 +37,33 @@
     "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-yahoo-main.jpg",
     "rakutenMain": "",
     "yahooImgs": [],
-    "rakutenImgs": [],
+    "rakutenImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-0.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-1.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-2.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-3.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-4.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-5.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-6.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-7.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-8.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-9.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-10.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-11.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-12.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-13.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-14.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-15.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-16.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-17.webp"
+    ],
     "date": "2026-06-18",
     "rating": "4.45",
     "listingType": "cat_b",
     "pagePlan": "",
     "status": "st_todo",
     "name": "フックシール",
-    "code": "ih-22-03-12set\n",
+    "code": "ih-22-03-12set",
     "salesMethod": "ページは2つ。10枚1000円をPR30で上げて、20枚とひも付け。",
     "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%95%E3%83%83%E3%82%AF%E3%82%B7%E3%83%BC%E3%83%AB/0/",
     "yahooUrls": [
@@ -53,6 +72,7 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001179/"
     ],
+    "variation": "",
     "buttonElem": "■個数：10個/20個"
   },
   {
