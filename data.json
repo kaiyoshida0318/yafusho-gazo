@@ -832,16 +832,14 @@
     "status": "st_doing",
     "name": "爪切りS+ケース/L+ケース",
     "code": "si-22-05",
-    "salesMethod": "Sサイズは既存のページを作り変え、Lサイズは新規で出す。S/Lどちらもアルミケース付き。\nページは2つ。S+ケースを1480円でPR30で出す。L+ケースを1680円で出してひも付け。",
+    "salesMethod": "ページは3つ。Sのアルミケース無1380円を単体で出してPR30（既存のページを使用か）。Lのアルミケース無し1680円も単体。\nS+アルミケース1480円・L+アルミケース1780円を1つのページで出す。3つをひも付ける。",
     "searchUrl": "https://shopping.yahoo.co.jp/search/%E7%88%AA%E5%88%87%E3%82%8A/0/?first=1&tab_ex=commerce&fr=shp-prop&mcr=da2d320a30dde3a8b446c438f6793adb&ts=1785308747&sretry=1&sc_i=shopping-pc-web-search-suggest-suggest-kwd-sgstfrom-top--h_srch-kwd",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/si-22-05.html?sc_i=shopping-pc-web-result-storesch-rsltlst-title&ea="
     ],
-    "rakutenUrls": [
-      "https://item.rakuten.co.jp/yukaiya/10001158/?l-id=shoptop_widget_item_list"
-    ],
-    "variation": "グレー/ブラック/シャンパン/\nブロンズ/シルバー\nS/L\n1480 1680 ",
-    "buttonElem": "■カラー：グレー/ブラック/シャンパン/ブロンズ/シルバー\n■サイズ：S/L\n",
+    "rakutenUrls": [],
+    "variation": "グレー/ブラック/シャンパン/\nブロンズ/シルバー\nS/L\nアルミケース無/有\n1380　1680\n1480　1780",
+    "buttonElem": "■カラー：グレー/ブラック/シャンパン/ブロンズ/シルバー\n■サイズ：S/L\n■アルミケース：無/有\n",
     "lpType": "lp_edit_rect"
   },
   {
