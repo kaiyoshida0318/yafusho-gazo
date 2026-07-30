@@ -533,7 +533,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 #gridBody td.col-spx{border-bottom:0!important;background:#fff}
 #grid.imgfix .img-strip{max-width:100%}
 #grid.imgfix th[data-col-key="listingType"],#grid.imgfix td[data-col-key="listingType"]{width:120px!important}
-#grid.imgfix td[data-col-key="listingType"] .cdd-lbl{max-width:52px}
+.strip-item{cursor:grab}
+.strip-item:active{cursor:grabbing}
+.strip-item.dragging{opacity:.4}
+.strip-item.drop-target{outline:2px dashed var(--red);outline-offset:2px;border-radius:8px}
+.strip-item .sbtn{cursor:pointer}
 </style>
 <style id="modal-guarantee">
 /* === モーダルの寸法・見た目を index 側で保証（外部CSSのキャッシュに依存しない） === */
@@ -554,7 +558,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.38.23</span>
+        <span class="version" id="version">v0.38.25</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -741,7 +745,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.38.23</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.38.25</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -938,7 +942,7 @@ function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)i
 function cddCell(field,id,value){return '<td><button type="button" class="cdd" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button></td>';}
 var cddState={field:null,id:null,btn:null};
 function closeCdd(){var m=document.getElementById('cddMenu');if(m)m.hidden=true;cddState.btn=null;}
-function cddInner(field,value){var it=cddFind(field,value);if(value&&it)return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+'<span class="cdd-lbl">'+esc(it.label)+'</span>';return '<span class="cdd-empty">未設定</span>';}
+function cddInner(field,value){var it=cddFind(field,value);if(value&&it){var lbl=it.label;if(field==='listingType'&&getViewMode()==='images'&&lbl.length>4)lbl=lbl.slice(0,4)+'…';return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+'<span class="cdd-lbl">'+esc(lbl)+'</span>';}return '<span class="cdd-empty">未設定</span>';}
 function openCdd(btn){
   var field=btn.getAttribute('data-field');var id=btn.getAttribute('data-id');var cur=btn.getAttribute('data-value')||'';
   var m=document.getElementById('cddMenu');if(!m){m=document.createElement('div');m.id='cddMenu';m.className='cdd-menu';document.body.appendChild(m);}
@@ -1266,6 +1270,11 @@ function updateMini(side){
   if(src){el.innerHTML=tag+'<img src="'+escA(src)+'" alt=""><button type="button" class="mini-clear" data-main="'+side+'" title="削除">×</button>';}
   else{el.innerHTML=tag+'<div class="mini-ph">＋ 画像</div>';}
 }
+var _dragSide=null,_dragIdx=-1;
+document.addEventListener('dragstart',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it)return;_dragSide=it.getAttribute('data-side');_dragIdx=parseInt(it.getAttribute('data-idx'),10);try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain','x');}catch(_e){}it.classList.add('dragging');});
+document.addEventListener('dragend',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(it)it.classList.remove('dragging');var ts=document.querySelectorAll('.strip-item.drop-target');for(var k=0;k<ts.length;k++)ts[k].classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
+document.addEventListener('dragover',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();try{e.dataTransfer.dropEffect='move';}catch(_e){}var ts=document.querySelectorAll('.strip-item.drop-target');for(var k=0;k<ts.length;k++)ts[k].classList.remove('drop-target');it.classList.add('drop-target');});
+document.addEventListener('drop',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();var to=parseInt(it.getAttribute('data-idx'),10);var from=_dragIdx;var arr=galOf(_dragSide);if(arr&&from>=0&&to>=0&&from!==to){var x=arr.splice(from,1)[0];arr.splice(to,0,x);renderStrip(_dragSide);}it.classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
 function renderStrip(side){
   var arr=galOf(side);var el=$(side==='yahoo'?'stripYahoo':'stripRakuten');if(!el)return;
   var dz=$(side==='yahoo'?'dzYahoo':'dzRakuten');
@@ -1273,7 +1282,7 @@ function renderStrip(side){
   if(dz)dz.style.display='none';
   var h='';
   for(var i=0;i<arr.length;i++){
-    h+='<div class="strip-item">'+
+    h+='<div class="strip-item" draggable="true" data-side="'+side+'" data-idx="'+i+'">'+
        '<span class="strip-no">'+((i+1)+'枚目')+'</span>'+
        stripInner(side,i,arr[i])+
        '<div class="strip-ctrls">'+
