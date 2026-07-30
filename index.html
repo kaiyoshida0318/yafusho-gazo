@@ -548,7 +548,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.38.14</span>
+        <span class="version" id="version">v0.38.15</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -735,7 +735,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.38.14</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.38.15</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -957,14 +957,15 @@ function bulkArea(it,field){var v=(it[field]!=null?it[field]:'');return '<textar
 function bulkUrlArea(it,field){var a=(it[field]||[]);return '<textarea class="bulk-inp bulk-area" rows="2" data-id="'+it.id+'" data-field="'+field+'" placeholder="1行に1URL">'+esc(a.join('\n'))+'</textarea>';}
 function allImgs(it,side){var out=[];var m=it[side+'Main'];if(m)out.push(m);var a=it[side+'Imgs']||[];for(var i=0;i<a.length;i++){if(a[i]&&out.indexOf(a[i])<0)out.push(a[i]);}if(!out.length){var s=it[side+'Img'];if(s)out.push(s);}return out;}
 function stripHtml(arr,id){if(!arr||!arr.length)return '<span class="tbl-thumb empty clk" data-edit="'+escA(id)+'">—</span>';var h='<div class="img-strip">';for(var i=0;i<arr.length;i++){if(!arr[i])continue;h+=thumbItem(arr[i],id,'strip-thumb');}return h+'</div>';}
+function listImgs(it,side){var a=imgArr(it,side);return a.length?a:allImgs(it,side);}
 function imgSideMain(it,side,tag,cls){
-  var full=allImgs(it,side);var total=full.length;var arr=full.slice(0,20);
+  var full=listImgs(it,side);var total=full.length;var arr=full.slice(0,20);
   var s='<div class="img2-row"><span class="img2-tag '+cls+'">'+tag+(total?' <span class="tag-cnt">'+total+'枚</span>':'')+'</span>';
   if(arr.length){s+=thumbItem(arr[0],it.id,'strip-thumb');}else{s+='<span class="img2-empty">—</span>';}
   return s+'</div>';
 }
 function imgSideRest(it,side){
-  var full=allImgs(it,side);var more=full.length>20?(full.length-20):0;var arr=full.slice(0,20);
+  var full=listImgs(it,side);var more=full.length>20?(full.length-20):0;var arr=full.slice(0,20);
   var s='<div class="img-strip">';
   for(var i=1;i<arr.length;i++){if(!arr[i])continue;s+=thumbItem(arr[i],it.id,'strip-thumb');}
   if(more)s+='<span class="strip-more clk" data-edit="'+escA(it.id)+'">+'+more+'</span>';
