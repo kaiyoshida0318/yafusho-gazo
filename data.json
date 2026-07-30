@@ -201,7 +201,24 @@
     "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-yahoo-main.jpg",
     "rakutenMain": "",
     "yahooImgs": [],
-    "rakutenImgs": [],
+    "rakutenImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-0.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-1.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-2.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-3.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-4.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-5.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-6.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-7.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-8.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-9.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-10.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-11.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-12.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-13.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-14.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781758699729-rakuten-15.gif"
+    ],
     "date": "2026-06-18",
     "rating": "3.2",
     "listingType": "cat_d",
@@ -216,7 +233,9 @@
     ],
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001265/"
-    ]
+    ],
+    "variation": "",
+    "buttonElem": ""
   },
   {
     "id": "it1781758747702",
