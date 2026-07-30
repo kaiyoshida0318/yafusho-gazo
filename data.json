@@ -792,7 +792,17 @@
     "id": "it1785308763473",
     "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-main.jpg",
     "rakutenMain": "",
-    "yahooImgs": [],
+    "yahooImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-0.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-1.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-2.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-3.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-4.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-5.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-6.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-7.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo-8.jpg"
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-rakuten-0.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-rakuten-1.webp",
