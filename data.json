@@ -80,23 +80,42 @@
     "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-yahoo-main.jpg",
     "rakutenMain": "",
     "yahooImgs": [],
-    "rakutenImgs": [],
+    "rakutenImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-0.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-1.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-2.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-3.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-4.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-5.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-6.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-7.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-8.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-9.gif",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-10.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-11.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-12.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-13.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-14.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-15.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-16.gif"
+    ],
     "date": "2026-06-18",
-    "sales": "",
+    "rating": "4",
     "listingType": "cat_b",
     "pagePlan": "",
     "status": "st_todo",
     "name": "魔法のテープ",
+    "code": "ih-22-04",
+    "salesMethod": "2個で1000円だがライバル3個で1000円2個で660円がいる。\n撤退orリニューアル。",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%AD%94%E6%B3%95%E3%81%AE%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1781674292&mcr=e0f26e023121565013f0cf6565f3924e&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox&sretry=0",
     "yahooUrls": [
       "https://store.shopping.yahoo.co.jp/yukaiya/ih-22-04.html?sc_i=shopping-pc-web-result-item-rsltlst-img&ea="
     ],
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001181/"
     ],
-    "salesMethod": "2個で1000円だがライバル3個で1000円2個で660円がいる。\n撤退orリニューアル。",
-    "searchUrl": "https://shopping.yahoo.co.jp/search/%E9%AD%94%E6%B3%95%E3%81%AE%E3%83%86%E3%83%BC%E3%83%97/0/?first=1&ss_first=1&ts=1781674292&mcr=e0f26e023121565013f0cf6565f3924e&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox&sretry=0",
-    "rating": "4",
-    "code": "ih-22-04\n"
+    "variation": "",
+    "buttonElem": ""
   },
   {
     "id": "it1781749202241",
