@@ -724,8 +724,7 @@
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-15.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-16.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-17.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-18.jpg",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-19.gif"
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-18.jpg"
     ],
     "date": "2026-07-29",
     "rating": "4.53",
@@ -743,7 +742,8 @@
       "https://item.rakuten.co.jp/kai-ry/10000038"
     ],
     "variation": "",
-    "buttonElem": ""
+    "buttonElem": "",
+    "lpType": ""
   },
   {
     "id": "it1785308381446",
