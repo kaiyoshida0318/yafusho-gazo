@@ -429,7 +429,19 @@
     "yahooMain": "",
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-main.webp",
     "yahooImgs": [],
-    "rakutenImgs": [],
+    "rakutenImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-0.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-1.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-2.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-3.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-4.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-5.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-6.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-7.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-8.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-9.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782279961527-rakuten-10.webp"
+    ],
     "date": "2026-06-24",
     "rating": "",
     "listingType": "cat_a",
@@ -443,6 +455,7 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001312/"
     ],
+    "variation": "",
     "buttonElem": "■内容：AirPodsPro/Pro2-ブラック　/　AirPodsPro/Pro2-ホワイト\npro3-ブラック　/　pro3-ホワイト\n■個数：2個(1set)/4個(2set)・6個(3set)から選ぶ"
   },
   {
