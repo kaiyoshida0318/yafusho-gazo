@@ -464,6 +464,10 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 /* 画像ギャラリー：文章タイル & 追加メニュー */
 .strip-item .strip-text{width:112px;height:112px;border:1px solid var(--line-2);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-size:12px;line-height:1.4;overflow:auto;white-space:pre-wrap;word-break:break-word;box-sizing:border-box}
 .strip-thumb-text{display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 6px;font-size:10px;line-height:1.3;width:90px;height:66px;flex:0 0 auto;overflow:hidden;white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid var(--line-2);border-radius:6px;cursor:pointer}
+.strip-more-tile{flex:0 0 auto;width:112px;height:112px;border:1.5px dashed var(--line-2);border-radius:10px;background:#f6f7f9;color:var(--ink-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:.12s;align-self:flex-start}
+.strip-more-tile:hover{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
+.strip-more-tile .smt-n{font-size:22px;font-weight:800;line-height:1}
+.strip-more-tile .smt-sub{font-size:11px;font-weight:700}
 .strip-add-l{font-size:10px;line-height:1.4;text-align:center;color:var(--ink-3);pointer-events:none}
 .strip-add-or{color:var(--ink-3);opacity:.7}
 .add-menu{position:fixed;z-index:300;background:#fff;border:1px solid var(--line-2);border-radius:10px;box-shadow:0 12px 30px rgba(20,24,32,.18);padding:6px;min-width:170px;display:flex;flex-direction:column;gap:2px}
@@ -562,7 +566,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.44.0</span>
+        <span class="version" id="version">v0.45.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作予定ページ管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -759,7 +763,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.44.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.45.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -991,10 +995,13 @@ function imgSideMain(it,side,tag,cls){
   if(thumb){s+=thumbItem(thumb,it.id,'strip-thumb');}else{s+='<span class="img2-empty">—</span>';}
   return s+'</div>';
 }
+var IMG_CAP=20;
 function imgSideRest(it,side){
   var arr=imgArr(it,side);
   var s='<div class="img-strip">';
-  for(var i=0;i<arr.length;i++){if(!arr[i])continue;s+=thumbItem(arr[i],it.id,'strip-thumb');}
+  var n=arr.length,lim=(n>IMG_CAP)?IMG_CAP:n;
+  for(var i=0;i<lim;i++){if(!arr[i])continue;s+=thumbItem(arr[i],it.id,'strip-thumb');}
+  if(n>IMG_CAP){s+='<span class="strip-more clk" data-edit="'+escA(it.id)+'" title="残り'+(n-IMG_CAP)+'枚（クリックで全画像を編集）">+'+(n-IMG_CAP)+'</span>';}
   return s+'</div>';
 }
 function imgBlockHtml(it){return '<div class="img2-wrap"><div class="img2">'+
@@ -1110,9 +1117,9 @@ function fillSel(id,field,blank){var sel=$(id);if(!sel)return;var opts=getOpts(f
 function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var h='<option value="">未設定</option>';for(var i=0;i<arr.length;i++)h+='<option value="'+escA(arr[i].v)+'">'+esc(arr[i].label)+'</option>';sel.innerHTML=h;sel.value=cur;}
 function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);fillSelItems('fLp',LP_OPTS);}
 function populateListing(){populateFormSelects();}
-function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
+function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];stripExpanded={yahoo:false,rakuten:false};renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
-function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');renderStrip('yahoo');renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');stripExpanded={yahoo:false,rakuten:false};renderStrip('yahoo');renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
 function gather(){var _d={id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:galYahoo.slice(),rakutenImgs:galRakuten.slice(),date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');return _d;}
 function saveForm(closeAfter){var d=gather();if(editingId){var _f=false;for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;_f=true;break;}}if(!_f){items.push(d);$('edTitle').textContent='編集';}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();scheduleSync();if(closeAfter)hide('editModal');}
@@ -1294,13 +1301,16 @@ document.addEventListener('dragstart',function(e){var it=(e.target.closest)?e.ta
 document.addEventListener('dragend',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(it)it.classList.remove('dragging');var ts=document.querySelectorAll('.strip-item.drop-target');for(var k=0;k<ts.length;k++)ts[k].classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
 document.addEventListener('dragover',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();try{e.dataTransfer.dropEffect='move';}catch(_e){}var ts=document.querySelectorAll('.strip-item.drop-target');for(var k=0;k<ts.length;k++)ts[k].classList.remove('drop-target');it.classList.add('drop-target');});
 document.addEventListener('drop',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();var to=parseInt(it.getAttribute('data-idx'),10);var from=_dragIdx;var arr=galOf(_dragSide);if(arr&&from>=0&&to>=0&&from!==to){var x=arr.splice(from,1)[0];arr.splice(to,0,x);renderStrip(_dragSide);}it.classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
+var STRIP_CAP=20;
+var stripExpanded={yahoo:false,rakuten:false};
 function renderStrip(side){
   var arr=galOf(side);var el=$(side==='yahoo'?'stripYahoo':'stripRakuten');if(!el)return;
   var dz=$(side==='yahoo'?'dzYahoo':'dzRakuten');
   if(!arr.length){if(dz)dz.style.display='';el.innerHTML='';return;}
   if(dz)dz.style.display='none';
+  var _n=arr.length,_exp=!!stripExpanded[side],_lim=(!_exp&&_n>STRIP_CAP)?STRIP_CAP:_n;
   var h='';
-  for(var i=0;i<arr.length;i++){
+  for(var i=0;i<_lim;i++){
     h+='<div class="strip-item" draggable="true" data-side="'+side+'" data-idx="'+i+'">'+
        '<span class="strip-no">'+((i+1)+'枚目')+'</span>'+
        stripInner(side,i,arr[i])+
@@ -1312,6 +1322,7 @@ function renderStrip(side){
          '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↓コピー↓':'↑コピー↑')+'</button>'+
        '</div></div>';
   }
+  if(!_exp&&_n>STRIP_CAP){h+='<div class="strip-more-tile" data-expand="'+side+'" title="残り'+(_n-STRIP_CAP)+'枚を表示"><span class="smt-n">+'+(_n-STRIP_CAP)+'</span><span class="smt-sub">もっと見る</span></div>';}
   h+='<div class="strip-add" data-add="'+side+'" title="クリックで追加メニュー / 画像はドロップでも追加"><span class="strip-add-l">📤 ドラッグ＆ドロップ<br><span class="strip-add-or">or</span><br>情報追加</span></div>';
   el.innerHTML=h;
 }
@@ -1375,6 +1386,7 @@ document.addEventListener('click',function(e){
     if(csrc){var other=(csd==='yahoo')?'rakuten':'yahoo';galOf(other).push(csrc);renderStrip(other);toast(csd==='yahoo'?'楽天へコピーしました':'Yahooへコピーしました');}
     return;
   }
+  var _exEl=(t&&t.closest)?t.closest('[data-expand]'):null;if(_exEl){var _es=_exEl.getAttribute('data-expand');stripExpanded[_es]=true;renderStrip(_es);return;}
   var _addEl=(t&&t.closest)?t.closest('.strip-add'):null;if(_addEl){openAddMenu(_addEl.getAttribute('data-add'),e.clientX,e.clientY);return;}
   if(t&&t.classList&&(t.classList.contains('mv-l')||t.classList.contains('mv-r')||t.classList.contains('strip-del'))){
     var sd=t.getAttribute('data-side');var ix=parseInt(t.getAttribute('data-idx'),10);var ar=galOf(sd);
