@@ -209,6 +209,26 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 /* ===== 編集モーダル：画像ギャラリー ===== */
 .gallery-sec{margin-bottom:24px}
 .gal-sec-r{border-top:2px solid var(--line-2);padding-top:20px;margin-top:4px}
+.memo-field{width:100%;box-sizing:border-box;min-height:96px;font:inherit;font-size:13px;line-height:1.6;padding:10px 12px;border:1px solid var(--line-2);border-radius:8px;resize:vertical;outline:0;font-family:"Zen Kaku Gothic New",sans-serif;background:#fff}
+.memo-field:focus{border-color:var(--red)}
+/* 一覧：メモ列（最小幅） */
+#grid th[data-col-key="memo"],#grid td[data-col-key="memo"]{padding-left:4px;padding-right:4px;text-align:center}
+.memo-btn{position:relative;appearance:none;border:1px solid var(--line-2);background:#fff;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:.12s}
+.memo-btn:hover{border-color:var(--red);background:var(--red-soft)}
+.memo-btn.has{border-color:#1f3a63;background:#eef3fb}
+.memo-dot{position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+/* メモ フローティングパネル（ドラッグ移動可） */
+.memo-pop{position:fixed;z-index:350;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 18px 48px rgba(20,24,32,.28),0 4px 14px rgba(20,24,32,.16);display:flex;flex-direction:column;overflow:hidden;min-width:260px}
+.memo-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#1f3a63;color:#fff;cursor:move;user-select:none;-webkit-user-select:none}
+.memo-head .memo-title{font-weight:800;font-size:13px;flex:0 0 auto}
+.memo-head .memo-name{flex:1 1 auto;min-width:0;font-size:12px;font-weight:600;color:#cdd8ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.memo-x{appearance:none;border:0;background:transparent;color:#fff;font-size:19px;line-height:1;cursor:pointer;padding:0 2px;flex:0 0 auto}
+.memo-x:hover{color:#ffd7d0}
+.memo-ta{border:0;outline:0;resize:none;padding:12px 14px;font:inherit;font-size:13.5px;line-height:1.65;flex:1 1 auto;min-height:0;font-family:"Zen Kaku Gothic New",sans-serif;background:#fff}
+.memo-btns{display:flex;justify-content:flex-end;gap:8px;padding:10px 26px 10px 12px;border-top:1px solid var(--line-2);background:#fafbfc}
+.memo-resize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;z-index:3}
+.memo-resize::after{content:"";position:absolute;right:3px;bottom:3px;width:0;height:0;border-style:solid;border-width:0 0 12px 12px;border-color:transparent transparent #9aa4b2 transparent}
+.memo-resize:hover::after{border-color:transparent transparent var(--red) transparent}
 .gal-hint{font-size:11px;color:var(--ink-3);font-weight:400;margin-left:8px}
 .dropzone{border:1.5px dashed var(--line-2);border-radius:12px;background:#fafbfc;padding:26px;text-align:center;color:var(--ink-3);font-size:13px;cursor:pointer;transition:.12s}
 .dropzone:hover,.dropzone.drag{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
@@ -566,7 +586,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.47.0</span>
+        <span class="version" id="version">v0.49.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -740,9 +760,27 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
           <input type="file" id="fileRakuten" accept="image/*" multiple hidden>
           <div class="img-strip" id="stripRakuten"></div>
         </div>
+        <div class="gallery-sec gal-sec-r">
+          <div class="fld-label">📝 メモ</div>
+          <textarea id="fMemo" class="memo-field" rows="4" placeholder="メモを入力…（改行OK）"></textarea>
+        </div>
       </div>
     </div>
   </div>
+</div>
+
+<div class="memo-pop" id="memoPop" hidden>
+  <div class="memo-head" id="memoHead">
+    <span class="memo-title">📝 メモ</span>
+    <span class="memo-name" id="memoName"></span>
+    <button type="button" class="memo-x" id="memoClose" title="閉じる">×</button>
+  </div>
+  <textarea class="memo-ta" id="memoTa" placeholder="メモを入力…（改行OK）"></textarea>
+  <div class="memo-btns">
+    <button type="button" class="btn btn-line btn-sm" id="memoCancelBtn">閉じる</button>
+    <button type="button" class="btn btn-red btn-sm" id="memoSaveBtn">保存</button>
+  </div>
+  <div class="memo-resize" id="memoResize" title="ドラッグで幅・高さを調整"></div>
 </div>
 
 <div class="overlay" id="settingsModal" hidden>
@@ -763,7 +801,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.47.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.49.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -938,6 +976,7 @@ var DEFAULT_COLS=[
   {key:'variation',label:'バリエーション',width:null,align:'left'},
   {key:'salesMethod',label:'販売手法',width:null,align:'left'},
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
+  {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
 function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,colcfgV:{},colorderV:{}};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;}}catch(e){}return d;}
@@ -1029,17 +1068,18 @@ function cellHtml(key,it){
   if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':dcCell(it,'salesMethod');
   if(key==='variation')return bulkEdit?'<td>'+bulkArea(it,'variation')+'</td>':dcCell(it,'variation','dc-fill');
   if(key==='buttonElem')return bulkEdit?'<td>'+bulkArea(it,'buttonElem')+'</td>':dcCell(it,'buttonElem');
+  if(key==='memo'){var _hm=!!(it.memo&&String(it.memo).trim());return '<td><button type="button" class="memo-btn'+(_hm?' has':'')+'" data-memo="'+escA(it.id)+'" title="'+(_hm?'メモを開く（入力あり）':'メモを開く')+'">📝'+(_hm?'<span class="memo-dot"></span>':'')+'</button></td>';}
   if(key==='actions')return '<td><div class="act-cell"><button class="btn btn-line btn-sm" data-edit="'+it.id+'">編集</button><button class="btn btn-danger btn-sm" data-del="'+it.id+'">削除</button></div></td>';
   return '<td></td>';
 }
 var VIEWMODE='yafusho_viewmode';
 var VIEW_COLS={
-  images:['name','imageBlock','listingType','lpType','actions'],
+  images:['name','imageBlock','listingType','lpType','memo','actions'],
   basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
   detail:['date','mainThumb','code','name','variation','salesMethod','buttonElem','actions']
 };
 var DEFAULT_VISIBLE={
-  images:['name','imageBlock','listingType','lpType','actions'],
+  images:['name','imageBlock','listingType','lpType','memo','actions'],
   basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
   detail:['date','mainThumb','code','name','variation','salesMethod','buttonElem','actions']
 };
@@ -1117,11 +1157,11 @@ function fillSel(id,field,blank){var sel=$(id);if(!sel)return;var opts=getOpts(f
 function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var h='<option value="">未設定</option>';for(var i=0;i<arr.length;i++)h+='<option value="'+escA(arr[i].v)+'">'+esc(arr[i].label)+'</option>';sel.innerHTML=h;sel.value=cur;}
 function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);fillSelItems('fLp',LP_OPTS);}
 function populateListing(){populateFormSelects();}
-function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];stripExpanded={yahoo:false,rakuten:false};renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
+function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahoo=[];galRakuten=[];stripExpanded={yahoo:false,rakuten:false};renderStrip('yahoo');renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fMemo','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
-function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');stripExpanded={yahoo:false,rakuten:false};renderStrip('yahoo');renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahoo=imgArr(it,'yahoo');galRakuten=imgArr(it,'rakuten');stripExpanded={yahoo:false,rakuten:false};renderStrip('yahoo');renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
-function gather(){var _d={id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:galYahoo.slice(),rakutenImgs:galRakuten.slice(),date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');return _d;}
+function gather(){var _d={id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:galYahoo.slice(),rakutenImgs:galRakuten.slice(),date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');_d.memo=val('fMemo');return _d;}
 function saveForm(closeAfter){var d=gather();if(editingId){var _f=false;for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;_f=true;break;}}if(!_f){items.push(d);$('edTitle').textContent='編集';}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();scheduleSync();if(closeAfter)hide('editModal');}
 function dupCurrent(){if(!editingId)return;editingId='it'+Date.now();setVal('fDate',todayStr());$('edTitle').textContent='複製（新規として保存）';var fc=$('fCode');if(fc){setTimeout(function(){fc.focus();fc.select();},40);}toast('複製モード：商品コードを変更して保存してください');}
 
@@ -1138,7 +1178,56 @@ document.addEventListener('click',function(e){var t=e.target;if(t&&t.classList&&
 syncViewToggle();
 $('btnCopyLog').onclick=function(){var a=document.querySelector('#logModal textarea');var txt=a?a.value:LOGS.join('\n');function ok(){toast('📋 ログをコピーしました');}function fb(){try{if(a){a.removeAttribute('readonly');a.focus();a.select();document.execCommand('copy');a.setAttribute('readonly','');ok();}else{toast('コピーできませんでした');}}catch(e){toast('コピーできませんでした');}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(ok,fb);}else{fb();}};
 $('btnAdd').onclick=openNew;
-$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',searchUrl:'',yahooUrls:[],rakutenUrls:[]});persist();render();scheduleSync();};
+$('btnAddRow').onclick=function(){items.push({id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],rakutenImgs:[],date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:'',code:'',salesMethod:'',searchUrl:'',yahooUrls:[],rakutenUrls:[],memo:''});persist();render();scheduleSync();};
+
+/* ===== メモ フローティングパネル ===== */
+var memoEditId=null;
+var MEMOSZ='yafusho_memosize_items';
+function getMemoSizes(){try{return JSON.parse(localStorage.getItem(MEMOSZ))||{};}catch(e){return {};}}
+function getMemoSize(id){var m=getMemoSizes();return m[id]||null;}
+function setMemoSize(id,w,h){var m=getMemoSizes();m[id]={w:Math.round(w),h:Math.round(h)};try{localStorage.setItem(MEMOSZ,JSON.stringify(m));}catch(e){}}
+function openMemo(id,btn){
+  var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;
+  memoEditId=id;
+  var pop=$('memoPop'),ta=$('memoTa'),nm=$('memoName');
+  if(ta)ta.value=it.memo||'';
+  if(nm)nm.textContent=it.name||it.code||'';
+  var nameTh=document.querySelector('#gridHead th[data-col-key="name"]');
+  var actTh=document.querySelector('#gridHead th[data-col-key="actions"]');
+  var left=200,width=460;
+  if(nameTh&&actTh){var nr=nameTh.getBoundingClientRect(),ar=actTh.getBoundingClientRect();left=Math.round(nr.left);width=Math.round(Math.max(300,ar.right-nr.left));}
+  pop.hidden=false;
+  var sz=getMemoSize(id);
+  if(sz&&sz.w)width=sz.w;
+  width=Math.min(width,window.innerWidth-16);
+  if(left<8)left=8;
+  if(left+width>window.innerWidth-8)left=Math.max(8,window.innerWidth-8-width);
+  pop.style.left=left+'px';pop.style.width=width+'px';
+  pop.style.height=((sz&&sz.h)?sz.h:300)+'px';
+  var top=110;if(btn){var br=btn.getBoundingClientRect();top=Math.round(br.top-8);}
+  var ph=pop.offsetHeight||300;
+  if(top<64)top=64;
+  if(top+ph>window.innerHeight-8)top=Math.max(64,window.innerHeight-8-ph);
+  pop.style.top=top+'px';
+  if(ta)ta.focus();
+}
+function closeMemo(){var pop=$('memoPop');if(pop)pop.hidden=true;memoEditId=null;}
+function saveMemo(){if(memoEditId==null)return;var v=$('memoTa').value;for(var i=0;i<items.length;i++){if(items[i].id===memoEditId){items[i].memo=v;break;}}persist();render();scheduleSync();toast('メモを保存しました');}
+if($('memoClose'))$('memoClose').onclick=closeMemo;
+if($('memoCancelBtn'))$('memoCancelBtn').onclick=closeMemo;
+if($('memoSaveBtn'))$('memoSaveBtn').onclick=saveMemo;
+(function(){
+  var head=$('memoHead');if(!head)return;var drag=false,ox=0,oy=0;
+  head.addEventListener('mousedown',function(e){if(e.target.closest&&e.target.closest('.memo-x'))return;var pop=$('memoPop');var r=pop.getBoundingClientRect();drag=true;ox=e.clientX-r.left;oy=e.clientY-r.top;document.body.style.userSelect='none';e.preventDefault();});
+  document.addEventListener('mousemove',function(e){if(!drag)return;var pop=$('memoPop');var w=pop.offsetWidth,h=pop.offsetHeight;var left=Math.max(4,Math.min(e.clientX-ox,window.innerWidth-w-4));var top=Math.max(4,Math.min(e.clientY-oy,window.innerHeight-h-4));pop.style.left=left+'px';pop.style.top=top+'px';});
+  document.addEventListener('mouseup',function(){if(drag){drag=false;document.body.style.userSelect='';}});
+})();
+(function(){
+  var h=$('memoResize');if(!h)return;var rz=false,sx=0,sy=0,sw=0,sh=0;
+  h.addEventListener('mousedown',function(e){var pop=$('memoPop');var r=pop.getBoundingClientRect();rz=true;sx=e.clientX;sy=e.clientY;sw=r.width;sh=r.height;document.body.style.userSelect='none';e.preventDefault();e.stopPropagation();});
+  document.addEventListener('mousemove',function(e){if(!rz)return;var pop=$('memoPop');var w=Math.max(240,sw+(e.clientX-sx));var ht=Math.max(150,sh+(e.clientY-sy));w=Math.min(w,window.innerWidth-8);ht=Math.min(ht,window.innerHeight-8);pop.style.width=w+'px';pop.style.height=ht+'px';});
+  document.addEventListener('mouseup',function(){if(!rz)return;rz=false;document.body.style.userSelect='';var pop=$('memoPop');if(memoEditId!=null)setMemoSize(memoEditId,pop.offsetWidth,pop.offsetHeight);});
+})();
 $('btnSaveStay').onclick=function(){saveForm(false);};
 $('btnSaveClose').onclick=function(){saveForm(true);};
 
@@ -1399,6 +1488,7 @@ document.addEventListener('click',function(e){
   if(t&&t.classList&&t.classList.contains('mv')){var row=t.closest('.col-edit-row');if(row){var bx=row.parentNode;if(t.classList.contains('up')&&row.previousElementSibling){bx.insertBefore(row,row.previousElementSibling);}else if(t.classList.contains('down')&&row.nextElementSibling){bx.insertBefore(row.nextElementSibling,row);}}return;}
   if(t&&t.classList&&t.classList.contains('url-del')){var row=t.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}return;}
   if(t&&t.getAttribute){
+    var mmEl=(t.closest?t.closest('[data-memo]'):null);if(mmEl){openMemo(mmEl.getAttribute('data-memo'),mmEl);return;}
     var edEl=(t.closest?t.closest('[data-edit]'):null);if(edEl){var wantImg=(t.tagName==='IMG')||(t.classList&&(t.classList.contains('strip-thumb')||t.classList.contains('tbl-thumb')||t.classList.contains('strip-more')))||getViewMode()==='images';openEdit(edEl.getAttribute('data-edit'),wantImg?'images':'basic');return;}
     var dl=t.getAttribute('data-del');if(dl){if(confirm('この商品を削除しますか？')){items=items.filter(function(x){return x.id!==dl;});persist();render();scheduleSync();}return;}
   }
