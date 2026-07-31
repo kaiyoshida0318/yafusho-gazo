@@ -462,7 +462,8 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 
 /* 画像一覧ビュー：Yahoo上／楽天下の2段ストリップ */
 .img2-wrap{width:calc(100vw - 400px);max-width:calc(100vw - 400px);min-width:280px}
-.img2{display:flex;flex-direction:row;align-items:stretch;gap:0}
+.img2{display:flex;flex-direction:column;gap:10px}
+.img2-side{display:flex;flex-direction:row;align-items:flex-start}
 .img2-row{display:flex;align-items:center;gap:8px;min-width:0}
 .img2-tag{flex:0 0 auto;font-size:11px;font-weight:700;padding:4px 6px;border-radius:6px;color:#fff;width:46px;text-align:center;line-height:1.2}
 .img2-tag.tb-y{background:#ff9800}
@@ -553,9 +554,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 #grid th[data-col-key="pagePlan"]{white-space:normal;line-height:1.22;word-break:break-all}
 #grid td[data-col-key="pagePlan"] .cdd{padding-left:5px;padding-right:5px;gap:3px}
 .col-spx{padding:0!important;border-right:0!important;min-width:0;width:auto}
-.img2-left{display:flex;flex-direction:column;gap:8px;flex:0 0 auto;border-right:1px solid var(--line-2);padding-right:8px}
+.img2-left{display:flex;flex-direction:column;gap:8px;flex:0 0 auto;width:128px;box-sizing:border-box;border-right:1px solid var(--line-2);padding-right:8px}
+.img2-side .img2-left .strip-thumb{width:66px;height:66px;max-width:66px;object-fit:contain;background:#fff}
 .img2-right{display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-width:0;padding-left:8px}
-.img2-right .img-strip{min-height:66px}
+.img2-right .img-strip{min-height:66px;margin-top:0}
 .tag-cnt{font-weight:800;margin-left:3px;opacity:.95;font-size:11px}
 #grid.imgfix{table-layout:fixed}
 #grid.imgfix .col-spx{width:1px}
@@ -590,7 +592,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.50.2</span>
+        <span class="version" id="version">v0.51.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -805,7 +807,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.50.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.51.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1048,8 +1050,14 @@ function imgSideRest(it,side){
   return s+'</div>';
 }
 function imgBlockHtml(it){return '<div class="img2-wrap"><div class="img2">'+
-  '<div class="img2-left">'+imgSideMain(it,'yahoo','Yahoo','tb-y')+imgSideMain(it,'rakuten','楽天','tb-r')+'</div>'+
-  '<div class="img2-right">'+imgSideRest(it,'yahoo')+imgSideRest(it,'rakuten')+'</div>'+
+  '<div class="img2-side">'+
+    '<div class="img2-left">'+imgSideMain(it,'yahoo','Yahoo','tb-y')+'</div>'+
+    '<div class="img2-right">'+imgSideRest(it,'yahoo')+'</div>'+
+  '</div>'+
+  '<div class="img2-side">'+
+    '<div class="img2-left">'+imgSideMain(it,'rakuten','楽天','tb-r')+'</div>'+
+    '<div class="img2-right">'+imgSideRest(it,'rakuten')+'</div>'+
+  '</div>'+
   '</div></div>';}
 function cellHtml(key,it){
   if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?esc(it.date):md())+'</td>';
