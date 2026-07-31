@@ -483,7 +483,8 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 
 /* 画像ギャラリー：文章タイル & 追加メニュー */
 .strip-item .strip-text{width:112px;height:112px;border:1px solid var(--line-2);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-size:12px;line-height:1.4;overflow:auto;white-space:pre-wrap;word-break:break-word;box-sizing:border-box}
-.strip-thumb-text{display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 6px;font-size:10px;line-height:1.3;width:90px;height:66px;flex:0 0 auto;overflow:hidden;white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid var(--line-2);border-radius:6px;cursor:pointer}
+.strip-thumb-text{display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:4px 5px;font-size:9.5px;line-height:1.28;width:66px;height:66px;box-sizing:border-box;flex:0 0 auto;overflow:hidden;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:#fff;border:1px solid var(--line-2);border-radius:6px;cursor:pointer}
+.img-strip .strip-thumb-text{width:66px;height:66px;box-sizing:border-box;flex:0 0 auto}
 .strip-more-tile{flex:0 0 auto;width:112px;height:112px;border:1.5px dashed var(--line-2);border-radius:10px;background:#f6f7f9;color:var(--ink-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:.12s;align-self:flex-start}
 .strip-more-tile:hover{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
 .strip-more-tile .smt-n{font-size:22px;font-weight:800;line-height:1}
@@ -589,7 +590,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.50.1</span>
+        <span class="version" id="version">v0.50.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -804,7 +805,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.50.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.50.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
