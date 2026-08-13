@@ -233,8 +233,10 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .lb-img:active{cursor:grabbing}
 .lb-info{display:flex;align-items:center;gap:16px;color:#e6e9ef;font-size:13px;font-weight:700}
 .lb-info .lb-hint{color:#aab2c0;font-weight:400;font-size:12px}
-.lb-nav{appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:52px;height:52px;border-radius:50%;font-size:32px;line-height:1;cursor:pointer;flex:0 0 auto;display:flex;align-items:center;justify-content:center;transition:.12s}
+.lb-nav{position:fixed;top:50%;transform:translateY(-50%);appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:52px;height:52px;border-radius:50%;font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;z-index:3}
 .lb-nav:hover{background:rgba(255,255,255,.3)}
+.lb-prev{left:calc(50vw - min(100vw - 170px, 100vh - 120px) / 2 - 60px)}
+.lb-next{right:calc(50vw - min(100vw - 170px, 100vh - 120px) / 2 - 60px)}
 .lb-close{position:fixed;top:18px;right:22px;appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:44px;height:44px;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
 .lb-close:hover{background:rgba(255,255,255,.3)}
 .memo-resize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;z-index:3}
@@ -603,7 +605,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.52.0</span>
+        <span class="version" id="version">v0.52.2</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -828,7 +830,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.52.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.52.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
