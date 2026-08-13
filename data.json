@@ -561,7 +561,13 @@
     "id": "it1782280896016",
     "yahooMain": "",
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-main.webp",
-    "yahooImgs": [],
+    "yahooImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-4.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-5.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-6.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-7.webp",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-8.webp"
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-0.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280896016-rakuten-1.webp",
@@ -598,7 +604,9 @@
       "https://item.rakuten.co.jp/yukaiya/10001280/"
     ],
     "variation": "A(1つ折り)/B(2つ折り)\n\n-A(1つ折り)クリア/ホワイト\n-B(2つ折り)→クリア/ホワイト\n\n-A(1つ折り)→2.2/3.8\n-B(2つ折り)→3.8",
-    "buttonElem": "■内容：単品-1つ折りクリア-2.2cm幅/単品-1つ/2つ折り-クリア/ホワイト-3.8cm幅から選ぶ/2個セット\n（2個セットは全部の組み合わせで段々）"
+    "buttonElem": "■内容：単品-1つ折りクリア-2.2cm幅/単品-1つ/2つ折り-クリア/ホワイト-3.8cm幅から選ぶ/2個セット\n（2個セットは全部の組み合わせで段々）",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1782281410150",
