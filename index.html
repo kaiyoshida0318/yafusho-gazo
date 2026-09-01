@@ -689,6 +689,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 /* 販売設計：LPラベル列（画像一覧と同じタグを使用） */
 .belp-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .belp-row{display:flex;align-items:flex-start}
+.belp-tag{display:inline-flex;align-items:center;width:120px;box-sizing:border-box;border-radius:6px;color:#fff;font-size:11px;font-weight:700;line-height:1.2;padding:4px 6px}
+.belp-tag .belp-l{flex:1 1 auto;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.belp-tag .belp-sep{flex:0 0 auto;width:1px;height:14px;background:rgba(255,255,255,.6);margin:0 6px}
+.belp-tag .belp-n{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 3px;box-sizing:border-box;border-radius:999px;background:#fff;font-size:10px;font-weight:800;font-family:"Roboto Mono",monospace}
 .dc-url{color:#1f5bd8;text-decoration:underline;cursor:pointer;word-break:break-all}
 .dc-url:hover{color:#d8331f}
 #grid td[data-col-key="listingType"],#grid th[data-col-key="listingType"],#grid td[data-col-key="status"],#grid th[data-col-key="status"],#grid td[data-col-key="lpType"],#grid th[data-col-key="lpType"]{padding-left:6px;padding-right:6px}
@@ -745,7 +749,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.84.0</span>
+        <span class="version" id="version">v0.86.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
@@ -963,7 +967,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.84.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.86.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -983,11 +987,13 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 <div class="overlay" id="manageModal" hidden>
   <div class="mini mini-wide">
     <h2>📄 制作LP本数管理</h2>
-    <p class="hint">制作LP本数の選択肢（数字）と色を編集できます。左のマークをクリックすると色を選べます。↑↓で並び替え。表のドロップダウンに反映されます。</p>
+    <p class="hint">制作LP本数の選択肢（数字）を編集できます。マークの色は全数字＋「Yahoo新規」で共通です。↑↓で並び替え。表のドロップダウンに反映されます。</p>
     <div class="opt-scroll" id="optScroll">
       <div class="opt-sec">
         <div class="opt-head"><span class="fld-label">制作LP本数</span><button type="button" class="btn btn-line btn-sm" data-addopt="pagePlan">＋ 追加</button></div>
-        <div class="opt-cols"><span>マーク（色）</span><span>本数</span><span></span><span></span></div>
+        <div class="cap-sec-ttl" style="margin-top:0">マークの色（ボタン要素・画像一覧の「Yahoo新規」と共通）</div>
+        <div class="cat-icon-palette lp-color-palette" id="ppPalette"></div>
+        <div class="opt-cols"><span>マーク</span><span>本数</span><span></span><span></span></div>
         <div id="optPage"></div>
       </div>
     </div>
@@ -1232,11 +1238,11 @@ var DEFAULT_COLS=[
   {key:'variation',label:'バリエーション',width:null,align:'left'},
   {key:'salesMethod',label:'販売手法',width:null,align:'left'},
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
-  {key:'buttonElemLp',label:'ボタン要素',width:120,align:'left'},
+  {key:'buttonElemLp',label:'ボタン要素',width:140,align:'left'},
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
-function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{}};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;}}catch(e){}return d;}
+function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},ppColor:''};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.ppColor)d.ppColor=c.ppColor;}}catch(e){}return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -1261,7 +1267,9 @@ var LP_OPTS=[{v:'lp_new_sq',label:'新規-正方形'},{v:'lp_reuse_rect',label:'
 var LP_COLORS={lp_new_sq:'#2f6fb0',lp_reuse_rect:'#1f9d63',lp_edit_rect:'#c0392b'};
 var PP_COLORS={'1':'#1f9d63','2':'#2f6fb0','3':'#d98324','4':'#c0392b','5':'#8257c9'};
 var PP_DEFAULT_COLOR='#2f6fb0';
-function ppColor(v){var op=getOpts('pagePlan');for(var i=0;i<op.length;i++){if(op[i].l===v){var c=op[i].c||'';if(/^#[0-9a-fA-F]{3,8}$/.test(c))return c;break;}}return PP_DEFAULT_COLOR;}
+function ppMarkColor(){var c=(getSettings().ppColor||'');return /^#[0-9a-fA-F]{3,8}$/.test(c)?c:PP_DEFAULT_COLOR;}
+function setPpMarkColor(c){var s=getSettings();s.ppColor=c;saveSettings(s);}
+function ppColor(v){return ppMarkColor();}
 function lpIndexOf(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return i;return -1;}
 function lpTileHtml(v){var i=lpIndexOf(v);if(i<0)return '';var c=lpColor(v)||'#7a756d';return '<span class="lp-tile" style="background:'+esc(c)+'">'+(i+1)+'</span>';}
 function cddColorStyle(field,value){return '';}
@@ -1331,12 +1339,16 @@ function imgBlockHtml(it){
 }
 /* ===== 販売設計：LP別ボタン要素 ===== */
 function findItemById(id){for(var i=0;i<items.length;i++){if(items[i].id===id)return items[i];}return null;}
+function beLpTagHtml(label,col,count,editId,g){
+  var l=(editId!=null)?('<span class="belp-l lp-name-edit clk" data-id="'+escA(editId)+'" data-lpg="'+g+'" title="クリックで名前を編集">'+esc(label)+'</span>'):('<span class="belp-l">'+esc(label)+'</span>');
+  return '<span class="belp-tag" style="background:'+col+'">'+l+'<span class="belp-sep"></span><span class="belp-n" style="color:'+col+'">'+(count||0)+'</span></span>';
+}
 function beLpCellHtml(it){
   var h='<td><div class="belp-wrap">';
   var rk=imgArr(it,'rakuten');
-  h+='<div class="belp-row">'+tagLbl('楽天','tb-r',rk.length)+'</div>';
+  h+='<div class="belp-row">'+beLpTagHtml('楽天','var(--red)',rk.length,null,0)+'</div>';
   var lps=itemYahooLps(it,ppShowCount(it));
-  for(var g=0;g<lps.length;g++){h+='<div class="belp-row">'+tagLblY(it,g,lps.length,lps[g].length,true)+'</div>';}
+  for(var g=0;g<lps.length;g++){h+='<div class="belp-row">'+beLpTagHtml(lpDispName(it,g,lps.length),lpTagColor(g),lps[g].length,(g>=1?it.id:null),g)+'</div>';}
   return h+'</div></td>';
 }
 function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
@@ -1537,10 +1549,14 @@ $('btnSaveClose').onclick=function(){saveForm(true);};
 /* 各種管理（出品内容の選択肢） */
 var MK_COLORS=[['gray','グレー'],['red','赤'],['orange','オレンジ'],['green','緑'],['blue','青'],['purple','紫'],['teal','ティール']];
 function colorSel(c){var o='';for(var i=0;i<MK_COLORS.length;i++){o+='<option value="'+MK_COLORS[i][0]+'"'+(c===MK_COLORS[i][0]?' selected':'')+'>'+MK_COLORS[i][1]+'</option>';}return o;}
-function optRow(field,opt){opt=opt||{l:'',c:'',t:''};var _c=(/^#[0-9a-fA-F]{3,8}$/.test(opt.c||''))?opt.c:PP_DEFAULT_COLOR;var d=document.createElement('div');d.className='opt-row';d.setAttribute('data-field',field);d.innerHTML='<span class="pp-badge pp-prev pp-prev-btn" data-c="'+escA(_c)+'" style="background:'+_c+'" title="クリックで色を変更">'+esc(opt.l||'')+'</span><input class="opt-label" value="'+escA(opt.l||'')+'" placeholder="本数（例：1）"><span class="mv-btns"><button type="button" class="mv up">↑</button><button type="button" class="mv down">↓</button></span><button type="button" class="opt-del">×</button>';return d;}
+function optRow(field,opt){opt=opt||{l:'',c:'',t:''};var _c=ppMarkColor();var d=document.createElement('div');d.className='opt-row';d.setAttribute('data-field',field);d.innerHTML='<span class="pp-badge pp-prev" style="background:'+_c+'">'+esc(opt.l||'')+'</span><input class="opt-label" value="'+escA(opt.l||'')+'" placeholder="本数（例：1）"><span class="mv-btns"><button type="button" class="mv up">↑</button><button type="button" class="mv down">↓</button></span><button type="button" class="opt-del">×</button>';return d;}
 function contOf(field){return 'optPage';}
-function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=getOpts('pagePlan');for(var i=0;i<opts.length;i++)box.appendChild(optRow('pagePlan',opts[i]));}show('manageModal');}
-function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;var pv=rows[i].querySelector('.pp-prev');var c=(pv&&pv.getAttribute('data-c'))||PP_DEFAULT_COLOR;arr.push({l:l,c:c,t:''});}return arr;}
+function renderPpPalette(){var pal=$('ppPalette');if(!pal)return;pal.innerHTML='';var cur=ppMarkColor();
+  for(var i=0;i<LP_PALETTE.length;i++){(function(pc){var bb=document.createElement('button');bb.type='button';bb.className='cat-icon-opt lp-color-opt'+((pc[0].toLowerCase()===cur.toLowerCase())?' selected':'');bb.style.background=pc[0];bb.title=pc[1];
+    bb.onclick=function(){setPpMarkColor(pc[0]);renderPpPalette();var bs=$('optPage')?$('optPage').querySelectorAll('.pp-prev'):[];for(var k=0;k<bs.length;k++)bs[k].style.background=pc[0];renderLpCountTabs();render();log('マーク色を変更: '+pc[1]);};
+    pal.appendChild(bb);})(LP_PALETTE[i]);}}
+function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=getOpts('pagePlan');for(var i=0;i<opts.length;i++)box.appendChild(optRow('pagePlan',opts[i]));}renderPpPalette();show('manageModal');}
+function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:'',t:''});}return arr;}
 if($('btnManage'))$('btnManage').onclick=openManage;
 if($('tmLp'))$('tmLp').onclick=function(){hide('topMgrModal');openManage();};
 if($('tmLpType'))$('tmLpType').onclick=function(){hide('topMgrModal');openLpManager();};
@@ -1571,14 +1587,8 @@ var _addBtns=document.querySelectorAll('[data-addopt]');for(var _a=0;_a<_addBtns
 (function(){var os=$('optScroll');if(!os)return;
   function rowOf(t){var r=t;while(r&&r!==os&&!(r.classList&&r.classList.contains('opt-row')))r=r.parentNode;return (r&&r.classList&&r.classList.contains('opt-row'))?r:null;}
   function prev(r){if(!r)return;var p=r.querySelector('.mk-prev');if(!p)return;p.className='mk-prev mk mk-'+r.querySelector('.opt-color').value;p.textContent='';}
-  function closePpPal(){var old=os.querySelector('.pp-color-palette');if(old)old.parentNode.removeChild(old);}
   os.addEventListener('click',function(e){var t=e.target;var r=rowOf(t);
-    if(t.classList.contains('pp-color-opt')){var pal=t.parentNode;var row=pal.previousElementSibling;var pv=row?row.querySelector('.pp-prev'):null;if(pv){pv.setAttribute('data-c',t.getAttribute('data-c'));pv.style.background=t.getAttribute('data-c');}closePpPal();return;}
-    if(t.classList.contains('pp-prev')&&r){var open=r.nextElementSibling&&r.nextElementSibling.classList&&r.nextElementSibling.classList.contains('pp-color-palette');closePpPal();if(open)return;
-      var pal=document.createElement('div');pal.className='cat-icon-palette lp-color-palette pp-color-palette';
-      for(var pi=0;pi<LP_PALETTE.length;pi++){var bb=document.createElement('button');bb.type='button';bb.className='cat-icon-opt lp-color-opt pp-color-opt'+((t.getAttribute('data-c')===LP_PALETTE[pi][0])?' selected':'');bb.style.background=LP_PALETTE[pi][0];bb.title=LP_PALETTE[pi][1];bb.setAttribute('data-c',LP_PALETTE[pi][0]);pal.appendChild(bb);}
-      r.parentNode.insertBefore(pal,r.nextSibling);return;}
-    if(t.classList.contains('opt-del')){if(r){closePpPal();r.parentNode.removeChild(r);}return;}
+    if(t.classList.contains('opt-del')){if(r)r.parentNode.removeChild(r);return;}
     if(t.classList.contains('mv')&&r){if(t.classList.contains('up')&&r.previousElementSibling)r.parentNode.insertBefore(r,r.previousElementSibling);else if(t.classList.contains('down')&&r.nextElementSibling)r.parentNode.insertBefore(r.nextElementSibling,r);}
   });
   os.addEventListener('input',function(e){var t=e.target;if(t.classList.contains('opt-label')){var r=rowOf(t);if(r){var p=r.querySelector('.pp-prev');if(p){var v=(t.value||'').trim();p.textContent=v;}}}});
@@ -1705,7 +1715,7 @@ for(var mt=0;mt<mtabs.length;mt++){mtabs[mt].addEventListener('click',function()
 /* ===== 画像ギャラリー（複数・並び替え） ===== */
 var galYahooLps=[[]],galYahooLpNames=[],galRakuten=[],mainYahoo='',mainRakuten='';
 function lpDefName(g,total){return (g===0)?'Yahoo元々':((g===1)?'Yahoo新規':'Yahoo新規'+g);}
-function lpTagColor(g){return (g===0)?'#ff9800':'#2f6fb0';}
+function lpTagColor(g){return (g===0)?'#ff9800':ppMarkColor();}
 function lpDispName(it,g,total){if(g===0)return lpDefName(0,total);if(it.yahooLpNames&&it.yahooLpNames[g]!=null){var _n=String(it.yahooLpNames[g]).trim();if(_n)return _n;}return lpDefName(g,total);}
 function ppCount(pp){var n=parseInt(pp,10);return (isFinite(n)&&n>0)?n:1;}
 /* 制作LP本数＝Yahoo新規の本数。表示グループ数は「Yahoo元々1つ＋新規の本数」 */
