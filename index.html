@@ -549,7 +549,12 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .img2-row{display:flex;align-items:center;gap:8px;min-width:0}
 .img2-tag{flex:0 0 auto;display:inline-flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;font-weight:700;padding:4px 6px;border-radius:6px;color:#fff;min-width:52px;text-align:center;line-height:1.2}
 .img2-tag .itag-l{white-space:nowrap}
-.lp-name-edit{cursor:pointer;border-radius:4px;padding:0 2px}
+.lp-name-edit{cursor:pointer;border-radius:4px;padding:0 2px;min-width:34px;display:inline-block}
+.lp-name-edit:empty{min-height:13px;border:1px dashed rgba(255,255,255,.65)}
+.img2-tagwrap{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.tag-cnt-o{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 3px;box-sizing:border-box;border-radius:999px;border:1.5px solid currentColor;background:#fff;font-size:10.5px;font-weight:800;font-family:"Roboto Mono",monospace;line-height:1}
+.cnt-r{color:var(--red)}
+.cnt-y{color:#ff9800}
 .lp-name-edit:hover{background:rgba(255,255,255,.28)}
 .lp-name-inp{width:60px;max-width:60px;box-sizing:border-box;font:inherit;font-size:11px;font-weight:700;border:0;border-radius:4px;padding:1px 3px;color:#222;background:#fff;text-align:center}
 .lp-name-inp:focus{outline:2px solid rgba(255,255,255,.7)}
@@ -713,7 +718,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.77.0</span>
+        <span class="version" id="version">v0.78.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -930,7 +935,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.77.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.78.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1208,8 +1213,9 @@ function stripOfArr(arr,id,badge){
   if(n>IMG_CAP){s+='<span class="strip-more clk" data-edit="'+escA(id)+'" title="残り'+(n-IMG_CAP)+'枚（クリックで全画像を編集）">+'+(n-IMG_CAP)+'</span>';}
   return s+'</div>';
 }
-function tagLbl(label,cls,count){return '<span class="img2-tag '+cls+'"><span class="itag-l">'+esc(label)+'</span>'+(count?'<span class="tag-cnt">'+count+'枚</span>':'')+'</span>';}
-function tagLblY(it,g,total,count){var nm=lpDispName(it,g,total);return '<span class="img2-tag tb-y"><span class="itag-l lp-name-edit clk" data-id="'+escA(it.id)+'" data-lpg="'+g+'" title="クリックで名前を編集">'+esc(nm)+'</span>'+(count?'<span class="tag-cnt">'+count+'枚</span>':'')+'</span>';}
+function cntCircle(cls,count){if(!count)return '';return '<span class="tag-cnt-o '+(cls==='tb-r'?'cnt-r':'cnt-y')+'" title="'+count+'枚">'+count+'</span>';}
+function tagLbl(label,cls,count){return '<span class="img2-tagwrap"><span class="img2-tag '+cls+'"><span class="itag-l">'+esc(label)+'</span></span>'+cntCircle(cls,count)+'</span>';}
+function tagLblY(it,g,total,count){var nm=lpDispName(it,g,total);return '<span class="img2-tagwrap"><span class="img2-tag tb-y"><span class="itag-l lp-name-edit clk" data-id="'+escA(it.id)+'" data-lpg="'+g+'" title="クリックで名前を編集">'+esc(nm)+'</span></span>'+cntCircle('tb-y',count)+'</span>';}
 function startLpNameEdit(el){var id=el.getAttribute('data-id');var g=parseInt(el.getAttribute('data-lpg'),10);var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;var cur=(it.yahooLpNames&&it.yahooLpNames[g]!=null)?String(it.yahooLpNames[g]):'';var inp=document.createElement('input');inp.type='text';inp.className='lp-name-inp';inp.value=cur;inp.placeholder=el.textContent;el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();var done=false;function save(){if(done)return;done=true;var v=inp.value.trim();if(!it.yahooLpNames)it.yahooLpNames=[];it.yahooLpNames[g]=v;persist();render();markDirty();}inp.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();inp.blur();}else if(ev.key==='Escape'){done=true;render();}});inp.addEventListener('blur',save);inp.addEventListener('click',function(ev){ev.stopPropagation();});}
 function imgSideRow(tagHtml,imagesHtml){return '<div class="img2-side"><div class="img2-left img2-taglab">'+tagHtml+'</div><div class="img2-right">'+imagesHtml+'</div></div>';}
 function imgBlockHtml(it){
@@ -1355,7 +1361,7 @@ function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetF
 function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahooLps=itemYahooLps(it,ppShowCount(it));galYahooLpNames=(it.yahooLpNames||[]).slice();galRakuten=imgArr(it,'rakuten');stripExpanded={};renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlYahooRank',it.yahooRank,PH_RANK);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
 function firstRealImg(arr){for(var i=0;i<arr.length;i++){if(arr[i]&&!isTextItem(arr[i]))return arr[i];}return '';}
-function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0)_lps.pop();var _names=[];for(var _n=0;_n<_lps.length;_n++){_names.push((galYahooLpNames[_n]||'').trim());}var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _rk=galRakuten.slice();var _d={id:editingId||('it'+Date.now()),yahooMain:firstRealImg(_yflat),rakutenMain:firstRealImg(_rk),yahooImgs:_yflat,yahooLps:_lps,yahooLpNames:_names,rakutenImgs:_rk,date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');_d.memo=val('fMemo');if(editingId){var _old=findItemById(editingId);if(_old&&_old.buttonElemLps)_d.buttonElemLps=_old.buttonElemLps;}return _d;}
+function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0)_lps.pop();var _names=[];for(var _n=0;_n<_lps.length;_n++){_names.push(galYahooLpNames[_n]!=null?String(galYahooLpNames[_n]).trim():null);}var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _rk=galRakuten.slice();var _d={id:editingId||('it'+Date.now()),yahooMain:firstRealImg(_yflat),rakutenMain:firstRealImg(_rk),yahooImgs:_yflat,yahooLps:_lps,yahooLpNames:_names,rakutenImgs:_rk,date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');_d.memo=val('fMemo');if(editingId){var _old=findItemById(editingId);if(_old&&_old.buttonElemLps)_d.buttonElemLps=_old.buttonElemLps;}return _d;}
 function saveForm(closeAfter){var d=gather();if(editingId){var _f=false;for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;_f=true;break;}}if(!_f){items.push(d);$('edTitle').textContent='編集';}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();scheduleSync();if(closeAfter)hide('editModal');}
 function dupCurrent(){if(!editingId)return;editingId='it'+Date.now();setVal('fDate',todayStr());$('edTitle').textContent='複製（新規として保存）';var fc=$('fCode');if(fc){setTimeout(function(){fc.focus();fc.select();},40);}toast('複製モード：商品コードを変更して保存してください');}
 
@@ -1590,7 +1596,7 @@ for(var mt=0;mt<mtabs.length;mt++){mtabs[mt].addEventListener('click',function()
 /* ===== 画像ギャラリー（複数・並び替え） ===== */
 var galYahooLps=[[]],galYahooLpNames=[],galRakuten=[],mainYahoo='',mainRakuten='';
 function lpDefName(g,total){return (total>1)?'Yahoo'+(g+1):'Yahoo';}
-function lpDispName(it,g,total){var nm=(it.yahooLpNames&&it.yahooLpNames[g]!=null)?String(it.yahooLpNames[g]).trim():'';return nm||lpDefName(g,total);}
+function lpDispName(it,g,total){if(it.yahooLpNames&&it.yahooLpNames[g]!=null)return String(it.yahooLpNames[g]).trim();return lpDefName(g,total);}
 function ppCount(pp){var n=parseInt(pp,10);return (isFinite(n)&&n>0)?n:1;}
 function itemYahooLps(it,n){var lps=(it.yahooLps&&it.yahooLps.length)?it.yahooLps.map(function(a){return (a||[]).slice();}):[(it.yahooImgs||[]).slice()];n=n||1;while(lps.length<n)lps.push([]);return lps;}
 function ppShowCount(it){return Math.max(ppCount(it.pagePlan),(it.yahooLps&&it.yahooLps.length)?it.yahooLps.length:1);}
