@@ -304,10 +304,6 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-main.webp",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762654651-rakuten-6.webp",
@@ -337,8 +333,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001305/"
     ],
+    "yahooRank": [],
     "variation": "4色-1/2/3枚",
-    "buttonElem": "■カラー：ブラック/ブルー/レッド/グレー\n■枚数：1枚/2枚・3枚から選ぶ"
+    "buttonElem": "■カラー：ブラック/ブルー/レッド/グレー\n■枚数：1枚/2枚・3枚から選ぶ",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1781762657761",
