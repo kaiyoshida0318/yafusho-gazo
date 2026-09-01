@@ -383,10 +383,6 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-main.webp",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762658141-rakuten-6.webp",
@@ -417,8 +413,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001296/"
     ],
+    "yahooRank": [],
     "variation": "X/I-30/60/90/120/180/240/300枚",
-    "buttonElem": "■内容：X型/I型　（60枚以上はXとIの組み合わせが出てくる）\n■枚数：30枚/60・90・120・180・240・300枚から選ぶ"
+    "buttonElem": "■内容：X型/I型　（60枚以上はXとIの組み合わせが出てくる）\n■枚数：30枚/60・90・120・180・240・300枚から選ぶ",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1782279961527",
