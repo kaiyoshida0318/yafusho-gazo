@@ -99,6 +99,8 @@ table#grid{width:100%;border-collapse:separate;border-spacing:0}
 span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-size:14px}
 .cell-name{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;min-width:150px}
 .cell-date{white-space:nowrap}
+.cell-date .d-y{display:block;font-size:12px;color:var(--ink-3);line-height:1.2}
+.cell-date .d-md{display:block;font-weight:700;font-size:14px;line-height:1.2}
 .cat-badge{font-size:11px;font-weight:700;color:var(--ink-2);background:#eef0f3;border:1px solid var(--line-2);border-radius:7px;padding:3px 8px;white-space:nowrap}
 .url-cell{display:flex;flex-direction:column;gap:3px;max-width:220px}
 .url-cell a{font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--red-strong);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -675,7 +677,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.66.0</span>
+        <span class="version" id="version">v0.66.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
@@ -897,7 +899,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.66.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.66.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1196,8 +1198,9 @@ function imgBlockHtml(it){return '<div class="img2-wrap"><div class="img2 img2-n
     '<div class="img2-right">'+imgSideRest(it,'yahoo')+'</div>'+
   '</div>'+
   '</div></div>';}
+function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
 function cellHtml(key,it){
-  if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?esc(it.date):md())+'</td>';
+  if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?fmtDate(it.date):md())+'</td>';
   if(key==='imageBlock')return '<td>'+imgBlockHtml(it)+'</td>';
   if(key==='yahooMain')return '<td>'+thumb(mainImg(it,'yahoo'),it.id)+'</td>';
   if(key==='rakutenMain')return '<td>'+thumb(mainImg(it,'rakuten'),it.id)+'</td>';
