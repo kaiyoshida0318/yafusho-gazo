@@ -34,9 +34,15 @@
   },
   {
     "id": "it1781746183669",
-    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-yahoo-main.jpg",
-    "rakutenMain": "",
+    "yahooMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-3.webp",
     "yahooImgs": [],
+    "yahooLps": [
+      []
+    ],
+    "yahooLpNames": [
+      ""
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-2.webp",
@@ -72,9 +78,6 @@
     "buttonElem": "■個数：10個/20個",
     "lpType": "",
     "memo": "",
-    "yahooLpNames": [
-      ""
-    ],
     "buttonElemLps": {
       "y0": ""
     }
