@@ -754,7 +754,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.87.1</span>
+        <span class="version" id="version">v0.88.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
@@ -972,7 +972,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.87.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.88.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1159,6 +1159,22 @@ function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse
 var PENDING='yafusho_pending';
 function getPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
 function setPending(b){try{if(b){localStorage.setItem(PENDING,'1');}else{localStorage.removeItem(PENDING);}}catch(e){}}
+function isPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
+/* ===== 離脱・リロード時の確認 ===== */
+function hasUnsavedWork(){
+  try{
+    var em=document.getElementById('editModal');
+    if(em&&!em.hidden&&typeof dirty!=='undefined'&&dirty)return true;
+    if(document.querySelector('.sm-edit,.lp-name-inp,.cat-label-input:focus'))return true;
+    if(typeof ghBusy!=='undefined'&&ghBusy)return true;
+    if(isPending()&&getCfg().pat)return true;
+  }catch(e){}
+  return false;
+}
+window.addEventListener('beforeunload',function(e){
+  if(!hasUnsavedWork())return;
+  e.preventDefault();e.returnValue='';return '';
+});
 var editingId=null;
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -1574,7 +1590,7 @@ function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row
 if($('btnManage'))$('btnManage').onclick=openManage;
 if($('tmLp'))$('tmLp').onclick=function(){hide('topMgrModal');openManage();};
 if($('tmLpType'))$('tmLpType').onclick=function(){hide('topMgrModal');openLpManager();};
-var LP_PALETTE=[['#2f6fb0','青'],['#1f9d63','緑'],['#c0392b','赤'],['#d98324','オレンジ'],['#8257c9','紫'],['#0e9aa7','ティール'],['#e84393','ピンク'],['#2c3e50','ネイビー'],['#7a756d','グレー']];
+var LP_PALETTE=[['#2f6fb0','青'],['#4db8e8','水色'],['#1f9d63','緑'],['#16c79a','ミント'],['#c0392b','赤'],['#d98324','オレンジ'],['#f5b301','イエロー'],['#8257c9','紫'],['#0e9aa7','ティール'],['#e84393','ピンク'],['#2c3e50','ネイビー'],['#8d6e63','ブラウン'],['#7a756d','グレー']];
 function lpColorSel(c){var o='';for(var i=0;i<LP_PALETTE.length;i++){o+='<option value="'+LP_PALETTE[i][0]+'"'+(c===LP_PALETTE[i][0]?' selected':'')+'>■ '+LP_PALETTE[i][1]+'</option>';}return o;}
 function openLpManager(){renderLpManager();show('lpModal');}
 var lpColorOpen=-1;
