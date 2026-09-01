@@ -79,9 +79,6 @@
     "rakutenMain": "",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-2.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-5.webp",
@@ -112,8 +109,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001181/"
     ],
+    "yahooRank": [],
     "variation": "",
-    "buttonElem": ""
+    "buttonElem": "",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1781749202241",
