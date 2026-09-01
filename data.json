@@ -55,7 +55,7 @@
     "date": "2026-06-18",
     "rating": "4.45",
     "listingType": "cat_b",
-    "pagePlan": "2",
+    "pagePlan": "3",
     "status": "st_todo",
     "name": "フックシール",
     "code": "ih-22-03-12set",
@@ -71,7 +71,10 @@
     "variation": "",
     "buttonElem": "■個数：10個/20個",
     "lpType": "",
-    "memo": ""
+    "memo": "",
+    "yahooLpNames": [
+      ""
+    ]
   },
   {
     "id": "it1781746196902",
