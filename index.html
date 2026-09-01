@@ -690,6 +690,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 /* 販売設計：LPラベル列（画像一覧と同じタグを使用） */
 .belp-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .belp-row{display:flex;align-items:flex-start}
+.cn-wrap{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cn-wrap .cn-code{font-size:11.5px;color:var(--ink-3);font-weight:600}
+.cn-wrap .cn-name{font-weight:700;font-size:13px}
+.cn-wrap .bulk-inp{width:100%;box-sizing:border-box}
 .belp-tag{display:inline-flex;align-items:center;width:120px;box-sizing:border-box;border-radius:6px;color:#fff;font-size:11px;font-weight:700;line-height:1.2;padding:4px 6px}
 .belp-tag .belp-l{flex:1 1 auto;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .belp-tag .belp-sep{flex:0 0 auto;width:1px;height:14px;background:rgba(255,255,255,.6);margin:0 6px}
@@ -750,7 +754,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.86.2</span>
+        <span class="version" id="version">v0.87.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
@@ -968,7 +972,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.86.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.87.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1226,6 +1230,7 @@ var DEFAULT_COLS=[
   {key:'mainThumb',label:'画像',width:64,align:'center'},
   {key:'code',label:'商品コード',width:120,align:'left'},
   {key:'name',label:'商品名',width:220,align:'left'},
+  {key:'codeName',label:'商品コード／商品名',width:200,align:'left'},
   {key:'rating',label:'評価',width:90,align:'center'},
   {key:'searchUrl',label:'Yahoo-検索ページ',width:140,align:'left',wrap:'clip'},
   {key:'yahooUrls',label:'Yahoo-商品ページ',width:140,align:'left',wrap:'clip'},
@@ -1363,6 +1368,14 @@ function cellHtml(key,it){
   if(key==='mainThumb'){var _mt=pickMain(it);return '<td>'+(_mt?(isTextItem(_mt)?'<span class="row-thumb strip-thumb-text clk" data-edit="'+escA(it.id)+'" style="'+txtStyle(parseTextItem(_mt))+'">'+esc(parseTextItem(_mt).t)+'</span>':'<img class="row-thumb clk" data-edit="'+escA(it.id)+'" loading="lazy" src="'+escA(_mt)+'" alt="">'):md())+'</td>';}
   if(key==='code')return bulkEdit?'<td>'+bulkInp('text',it,'code')+'</td>':dcCell(it,'code','mono');
   if(key==='name')return bulkEdit?'<td>'+bulkInp('text',it,'name')+'</td>':dcCell(it,'name','cell-name');
+  if(key==='codeName'){
+    if(bulkEdit)return '<td><div class="cn-wrap">'+bulkInp('text',it,'code')+bulkInp('text',it,'name')+'</div></td>';
+    var _cd=it.code||'',_nm=it.name||'';
+    return '<td><div class="cn-wrap">'
+      +'<div class="dc-cell mono cn-code" data-id="'+escA(it.id)+'" data-field="code" data-full="'+escA(_cd)+'">'+(_cd?esc(_cd):'<span class="sm-empty">—</span>')+'</div>'
+      +'<div class="dc-cell cell-name cn-name" data-id="'+escA(it.id)+'" data-field="name" data-full="'+escA(_nm)+'">'+(_nm?esc(_nm):'<span class="sm-empty">—</span>')+'</div>'
+      +'</div></td>';
+  }
   if(key==='rating')return bulkEdit?'<td><input class="bulk-inp" type="number" step="0.1" min="0" data-id="'+it.id+'" data-field="rating" value="'+escA(it.rating!=null?it.rating:'')+'"></td>':dcCell(it,'rating');
   if(key==='searchUrl')return bulkEdit?'<td>'+bulkInp('text',it,'searchUrl')+'</td>':dcCellUrl(it,'searchUrl');
   if(key==='yahooUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'yahooUrls')+'</td>':dcCellArr(it,'yahooUrls');
@@ -1384,13 +1397,13 @@ function cellHtml(key,it){
 var VIEWMODE='yafusho_viewmode';
 var VIEW_COLS={
   images:['name','imageBlock','listSet','actions'],
-  basic:['date','rakutenMain','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
-  detail:['date','rakutenMain','code','name','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
+  basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
+  detail:['date','rakutenMain','codeName','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
 };
 var DEFAULT_VISIBLE={
   images:['name','imageBlock','listSet','actions'],
-  basic:['date','rakutenMain','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
-  detail:['date','rakutenMain','code','name','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
+  basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
+  detail:['date','rakutenMain','codeName','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
 };
 function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic'||m==='detail')?m:'images';}catch(e){return 'images';}}
 function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic'||m==='detail'||m==='images')?m:'images');}catch(e){}}
