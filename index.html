@@ -654,18 +654,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 #gridBody td:hover .dc-hres::after{opacity:.5}
 .dc-hres:hover::after{opacity:1;height:4px}
 .dc-cell.dc-fill{word-break:break-all;overflow-wrap:anywhere}
-/* 販売設計：LP別ボタン要素 */
-.belp-wrap{display:flex;flex-direction:column;gap:4px}
-.belp-row{display:flex;align-items:flex-start;gap:6px}
-.belp-btn{flex:0 0 auto;width:72px;box-sizing:border-box;display:inline-flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;font-weight:700;padding:4px 6px;border:0;border-radius:6px;color:#fff;line-height:1.2;cursor:pointer;text-align:center}
-.belp-btn:hover{filter:brightness(1.08)}
-.belp-btn .itag-l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px}
-.belp-btn .belp-dot{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.9;display:none}
-.belp-btn.has .belp-dot{display:block}
-.belp-txt{flex:1 1 auto;min-width:0;font-size:12px;line-height:1.45;white-space:normal;word-break:break-word;overflow-wrap:anywhere;padding-top:2px;cursor:pointer}
-.belp-txt.empty{color:#b8b2a8;min-height:18px}
-.belp-inp{flex:1 1 auto;min-width:0;width:100%;box-sizing:border-box;font:inherit;font-size:12px;line-height:1.45;padding:1px 4px;margin:0;border:1px solid var(--red,#c0392b);border-radius:4px;background:#fff;color:#222}
-.belp-inp:focus{outline:2px solid rgba(192,57,43,.25)}
+/* 販売設計：LPラベル列（画像一覧と同じタグを使用） */
+.belp-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.belp-row{display:flex;align-items:flex-start}
 .dc-url{color:#1f5bd8;text-decoration:underline;cursor:pointer;word-break:break-all}
 .dc-url:hover{color:#d8331f}
 #grid td[data-col-key="listingType"],#grid th[data-col-key="listingType"],#grid td[data-col-key="status"],#grid th[data-col-key="status"],#grid td[data-col-key="lpType"],#grid th[data-col-key="lpType"]{padding-left:6px;padding-right:6px}
@@ -722,7 +713,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.76.0</span>
+        <span class="version" id="version">v0.77.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -939,7 +930,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.76.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.77.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1137,7 +1128,7 @@ var DEFAULT_COLS=[
   {key:'variation',label:'バリエーション',width:null,align:'left'},
   {key:'salesMethod',label:'販売手法',width:null,align:'left'},
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
-  {key:'buttonElemLp',label:'ボタン要素',width:280,align:'left'},
+  {key:'buttonElemLp',label:'ボタン要素',width:120,align:'left'},
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
@@ -1232,39 +1223,13 @@ function imgBlockHtml(it){
 }
 /* ===== 販売設計：LP別ボタン要素 ===== */
 function findItemById(id){for(var i=0;i<items.length;i++){if(items[i].id===id)return items[i];}return null;}
-function beLpGet(it,k){var m=it.buttonElemLps||{};return m[k]||'';}
-function beLpSet(it,k,v){if(!it.buttonElemLps)it.buttonElemLps={};it.buttonElemLps[k]=v;}
-function beLpList(it){
-  var out=[{k:'r',label:'楽天',cls:'tb-r'}];
-  var lps=itemYahooLps(it,ppShowCount(it));
-  for(var g=0;g<lps.length;g++)out.push({k:'y'+g,label:lpDispName(it,g,lps.length),cls:'tb-y'});
-  return out;
-}
 function beLpCellHtml(it){
-  var rows=beLpList(it);var h='<td><div class="belp-wrap">';
-  for(var i=0;i<rows.length;i++){
-    var r=rows[i];var v=beLpGet(it,r.k);
-    h+='<div class="belp-row" data-bek="'+escA(r.k)+'">'
-      +'<button type="button" class="belp-btn '+r.cls+(v?' has':'')+'" data-belp="'+escA(it.id)+'" data-bek="'+escA(r.k)+'" title="クリックでボタン要素を編集"><span class="itag-l">'+esc(r.label)+'</span><span class="belp-dot"></span></button>'
-      +'<div class="belp-txt'+(v?'':' empty')+'" data-belp="'+escA(it.id)+'" data-bek="'+escA(r.k)+'">'+(v?esc(v).replace(/\n/g,'<br>'):'')+'</div>'
-      +'</div>';
-  }
+  var h='<td><div class="belp-wrap">';
+  var rk=imgArr(it,'rakuten');
+  h+='<div class="belp-row">'+tagLbl('楽天','tb-r',rk.length)+'</div>';
+  var lps=itemYahooLps(it,ppShowCount(it));
+  for(var g=0;g<lps.length;g++){h+='<div class="belp-row">'+tagLblY(it,g,lps.length,lps[g].length)+'</div>';}
   return h+'</div></td>';
-}
-function startBeLpEdit(el){
-  var id=el.getAttribute('data-belp'),k=el.getAttribute('data-bek');
-  var it=findItemById(id);if(!it)return;
-  var row=(el.closest?el.closest('.belp-row'):null);if(!row)return;
-  if(row.querySelector('.belp-inp'))return;
-  var txt=row.querySelector('.belp-txt');if(!txt)return;
-  var cur=beLpGet(it,k);
-  var inp=document.createElement('input');inp.type='text';inp.className='belp-inp';inp.value=cur;inp.placeholder='ボタン要素';
-  row.replaceChild(inp,txt);inp.focus();inp.select();
-  var done=false;
-  function save(){if(done)return;done=true;beLpSet(it,k,inp.value.trim());persist();render();scheduleSync();}
-  inp.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();inp.blur();}else if(ev.key==='Escape'){ev.preventDefault();done=true;render();}});
-  inp.addEventListener('blur',save);
-  inp.addEventListener('click',function(ev){ev.stopPropagation();});
 }
 function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
 function cellHtml(key,it){
@@ -1781,7 +1746,6 @@ document.addEventListener('click',function(e){
   if(t&&t.classList&&t.classList.contains('mv')){var row=t.closest('.col-edit-row');if(row){var bx=row.parentNode;if(t.classList.contains('up')&&row.previousElementSibling){bx.insertBefore(row,row.previousElementSibling);}else if(t.classList.contains('down')&&row.nextElementSibling){bx.insertBefore(row.nextElementSibling,row);}}return;}
   if(t&&t.classList&&t.classList.contains('url-del')){var row=t.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}return;}
   if(t&&t.getAttribute){
-    var beEl=(t.closest?t.closest('[data-belp]'):null);if(beEl){startBeLpEdit(beEl);return;}
     var mmEl=(t.closest?t.closest('[data-memo]'):null);if(mmEl){openMemo(mmEl.getAttribute('data-memo'),mmEl);return;}
     if(getViewMode()==='images'&&t.tagName==='IMG'&&t.classList&&t.classList.contains('strip-thumb')&&t.closest&&t.closest('#gridBody')){openLightboxFromThumb(t);return;}
     var edEl=(t.closest?t.closest('[data-edit]'):null);if(edEl){var wantImg=(t.tagName==='IMG')||(t.classList&&(t.classList.contains('strip-thumb')||t.classList.contains('tbl-thumb')||t.classList.contains('strip-more')))||getViewMode()==='images';openEdit(edEl.getAttribute('data-edit'),wantImg?'images':'basic');return;}
