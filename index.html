@@ -386,21 +386,22 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cvt-btn:hover{border-color:var(--ink-3)}
 .cvt-btn.on{background:#1f3a63;color:#fff;border-color:#1f3a63}
 .cvt-hint{font-size:11.5px;color:var(--ink-3);margin-left:4px;flex:1;min-width:0}
-.col-hstrip{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 14px;flex:1;min-height:0;align-items:flex-start}
-.col-hcard{flex:0 0 auto;width:188px;box-sizing:border-box;border:1px solid var(--line-2);border-radius:12px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:8px}
+.col-hstrip{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 14px;flex:1;min-height:0;align-items:flex-start}
+.col-hcard{flex:0 0 auto;width:126px;box-sizing:border-box;border:1px solid var(--line-2);border-radius:10px;padding:7px;background:#fff;display:flex;flex-direction:column;gap:6px}
 .col-hcard.off{opacity:.6;background:#f6f7f9}
-.col-hcard .chc-head{display:flex;align-items:center;gap:6px}
-.col-hcard .chc-ord{display:flex;gap:3px;flex:0 0 auto}
-.col-hcard .chc-name{font-weight:800;font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-1)}
-.col-hcard .chc-vis{appearance:none;border:1px solid var(--line-2);border-radius:8px;padding:5px 0;font:inherit;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink-2)}
+.col-hcard .chc-head{display:flex;align-items:center;gap:4px}
+.col-hcard .chc-ord{display:flex;gap:2px;flex:0 0 auto}
+.col-hcard .chc-ord .col-ord{padding:2px 4px;font-size:10px;line-height:1;border-radius:5px}
+.col-hcard .chc-name{font-weight:800;font-size:11.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-1)}
+.col-hcard .chc-vis{appearance:none;border:1px solid var(--line-2);border-radius:7px;padding:3px 0;font:inherit;font-size:11px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink-2)}
 .col-hcard .chc-vis.on{background:#eef3fb;border-color:#1f3a63;color:#1f3a63}
-.col-hcard .chc-body{display:flex;flex-direction:column;gap:7px;border-top:1px dashed var(--line-2);padding-top:8px}
-.col-hcard .chc-field{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink-3);font-weight:700;margin:0}
-.col-hcard .chc-field>span{font-size:11px}
-.col-hcard .chc-field .col-width-input,.col-hcard .chc-field .col-wrap-sel{width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid var(--line-2);border-radius:6px;font:inherit;font-size:12px;background:#fff}
-.col-hcard .chc-field .col-align-group{width:100%;min-width:0;gap:6px;margin:0}
-.col-hcard .chc-field .col-align-group .col-align-sel{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--line-2);border-radius:6px;font:inherit;font-size:12px;background:#fff}
-.col-hcard .chc-field .col-align-group .col-ctrl-label{font-size:11px;color:var(--ink-3);font-weight:700;white-space:nowrap;flex:0 0 auto}
+.col-hcard .chc-body{display:flex;flex-direction:column;gap:5px;border-top:1px dashed var(--line-2);padding-top:6px}
+.col-hcard .chc-field{display:flex;flex-direction:column;gap:2px;font-size:10px;color:var(--ink-3);font-weight:700;margin:0}
+.col-hcard .chc-field>span{font-size:10px}
+.col-hcard .chc-field .col-width-input,.col-hcard .chc-field .col-wrap-sel{width:100%;box-sizing:border-box;padding:3px 5px;border:1px solid var(--line-2);border-radius:5px;font:inherit;font-size:11px;background:#fff}
+.col-hcard .chc-field .col-align-group{width:100%;min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:2px;margin:0}
+.col-hcard .chc-field .col-align-group .col-align-sel{width:100%;min-width:0;padding:3px 5px;border:1px solid var(--line-2);border-radius:5px;font:inherit;font-size:11px;background:#fff}
+.col-hcard .chc-field .col-align-group .col-ctrl-label{font-size:10px;color:var(--ink-3);font-weight:700;white-space:nowrap;flex:0 0 auto}
 .col-move-btn{padding:6px 10px;border:1px solid var(--line-2);border-radius:6px;background:#fff;font:inherit;font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;align-self:flex-end}
 .col-move-btn:hover{border-color:var(--red);color:var(--red)}
 .col-move-btn.col-move-back{align-self:flex-start;color:var(--green-strong)}
@@ -749,7 +750,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.86.0</span>
+        <span class="version" id="version">v0.86.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
@@ -967,7 +968,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.86.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.86.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
