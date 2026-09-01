@@ -335,6 +335,9 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 /* ===== 独自ドロップダウン（一覧内もマーク表示） ===== */
 .cdd{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;justify-content:flex-start;background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:5px 8px;font:inherit;font-size:12.5px;cursor:pointer;text-align:left;color:var(--ink-1);font-family:"Zen Kaku Gothic New",sans-serif}
 .cdd:hover{border-color:#b9c0cb}
+.cdd-form{width:100%;margin-top:6px;padding:10px 12px;font-size:14px;border-radius:10px;justify-content:space-between;min-height:44px;box-sizing:border-box}
+.cdd-form:focus{border-color:var(--red);outline:0}
+.cdd-form .cdd-cur{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cdd-cur{display:flex;align-items:center;gap:6px;flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cdd-cur .cdd-lbl{overflow:hidden;text-overflow:ellipsis}
 .cdd-arrow{color:var(--ink-3);font-size:10px;flex:none;margin-left:2px}
@@ -698,7 +701,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.71.1</span>
+        <span class="version" id="version">v0.72.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -792,28 +795,18 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
             </div>
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px">
               <label class="fld">制作LP本数
-                <select id="fPagePlan"></select>
+                <button type="button" id="fPagePlan" class="cdd cdd-form" data-field="pagePlan" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
               </label>
               <label class="fld">LP方針
-                <select id="fLp"></select>
+                <button type="button" id="fLp" class="cdd cdd-form cdd-lp" data-field="lpType" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
               </label>
             </div>
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
               <label class="fld">出品内容
-                <select id="fListing">
-                  <option>新規出品</option>
-                  <option>リニューアル-同一ページ</option>
-                  <option>リニューアル-新規ページ</option>
-                  <option>再登録</option>
-                </select>
+                <button type="button" id="fListing" class="cdd cdd-form" data-field="listingType" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
               </label>
               <label class="fld">状態
-                <select id="fStatus">
-                  <option>未着手</option>
-                  <option>作成中</option>
-                  <option>確認待ち</option>
-                  <option>完了</option>
-                </select>
+                <button type="button" id="fStatus" class="cdd cdd-form" data-field="status" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
               </label>
             </div>
           </div>
@@ -925,7 +918,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.71.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.72.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1172,12 +1165,13 @@ function openCdd(btn){
   var mh=m.offsetHeight;var top=r.bottom+4;if(top+mh>window.innerHeight-8)top=Math.max(8,r.top-mh-4);m.style.top=top+'px';
 }
 function cddSelect(v){
-  if(!cddState.btn)return;var btn=cddState.btn;
-  stageEdit(cddState.id,cddState.field,v);
+  if(!cddState.btn)return;var btn=cddState.btn;var fld=cddState.field;var fid=cddState.id;
+  if(fid!=='__form')stageEdit(fid,fld,v);
   btn.setAttribute('data-value',v);
-  btn.setAttribute('style',cddColorStyle(cddState.field,v));
-  var cur=btn.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(cddState.field,v);
+  btn.setAttribute('style',cddColorStyle(fld,v));
+  var cur=btn.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(fld,v);
   closeCdd();
+  if(fid==='__form'&&fld==='pagePlan')syncYahooLps();
 }
 var bulkEdit=false;
 function bulkInp(type,it,field){var v=(it[field]!=null?it[field]:'');return '<input class="bulk-inp" type="'+type+'" data-id="'+it.id+'" data-field="'+field+'" value="'+escA(v)+'"'+(type==='number'?' min="0" step="1"':'')+'>';}
@@ -1317,8 +1311,8 @@ function render(){var _g=$('grid');if(_g)_g.classList.toggle('imgfix',getViewMod
 }
 
 /* ===== フォーム ===== */
-function val(id){var e=$(id);return e?e.value:'';}
-function setVal(id,v){var e=$(id);if(e)e.value=v;}
+function val(id){var e=$(id);if(!e)return '';if(e.classList&&e.classList.contains('cdd-form'))return e.getAttribute('data-value')||'';return e.value;}
+function setVal(id,v){var e=$(id);if(!e)return;if(e.classList&&e.classList.contains('cdd-form')){v=v||'';var fld=e.getAttribute('data-field');e.setAttribute('data-value',v);e.setAttribute('style',cddColorStyle(fld,v));var cur=e.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(fld,v);return;}e.value=v;}
 function collectUrls(listId){var ins=document.querySelectorAll('#'+listId+' .url-row input');var a=[];for(var i=0;i<ins.length;i++){if(ins[i].value.trim())a.push(ins[i].value.trim());}return a;}
 function resetUrls(id,ph){$(id).innerHTML='<div class="url-row"><input type="text" autocomplete="off" placeholder="'+ph+'"><button class="url-del">×</button></div>';}
 function fillUrls(id,arr,ph){arr=(arr||[]).filter(function(u){return u;});if(!arr.length){resetUrls(id,ph);return;}var h='';for(var i=0;i<arr.length;i++){h+='<div class="url-row"><input type="text" autocomplete="off" value="'+escA(arr[i])+'" placeholder="'+ph+'"><button class="url-del">×</button></div>';}$(id).innerHTML=h;}
@@ -1329,7 +1323,8 @@ var PH_RANK='https://shopping.yahoo.co.jp/ranking/…';
 function todayStr(){var d=new Date();var m=('0'+(d.getMonth()+1)).slice(-2);var day=('0'+d.getDate()).slice(-2);return d.getFullYear()+'-'+m+'-'+day;}
 function fillSel(id,field,blank){var sel=$(id);if(!sel)return;var opts=getOpts(field);var cur=sel.value;var h=blank?'<option value="">未設定</option>':'';for(var i=0;i<opts.length;i++)h+='<option>'+esc(opts[i].l)+'</option>';sel.innerHTML=h;if(cur)sel.value=cur;}
 function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var h='<option value="">未設定</option>';for(var i=0;i<arr.length;i++)h+='<option value="'+escA(arr[i].v)+'">'+esc(arr[i].label)+'</option>';sel.innerHTML=h;sel.value=cur;}
-function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);fillSelItems('fLp',getLpOpts().map(function(o){return {v:o.v,label:o.label};}));}
+function refreshFormCdd(id){var e=$(id);if(!e||!e.classList||!e.classList.contains('cdd-form'))return;var fld=e.getAttribute('data-field');var v=e.getAttribute('data-value')||'';if(v&&!cddFind(fld,v))v='';e.setAttribute('data-value',v);e.setAttribute('style',cddColorStyle(fld,v));var cur=e.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(fld,v);}
+function populateFormSelects(){refreshFormCdd('fStatus');refreshFormCdd('fListing');refreshFormCdd('fPagePlan');refreshFormCdd('fLp');}
 function populateListing(){populateFormSelects();}
 function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahooLps=[[]];galRakuten=[];stripExpanded={};renderYahooLpBlocks(1);renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fMemo','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlYahooRank',PH_RANK);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
