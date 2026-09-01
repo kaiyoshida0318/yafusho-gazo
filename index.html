@@ -633,6 +633,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .overlay>.mini.modal-cat{max-width:820px!important}
 .overlay>.mini.modal-status{max-width:880px!important}
 .overlay>.mini.modal-col{max-width:1200px!important}
+/* 項目管理は下半分にドッキング（上の表を見ながら調整） */
+#colsModal{background:transparent!important;place-items:end center!important;padding:0!important;pointer-events:none}
+#colsModal .mini.modal-col{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:52vh!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 16px!important}
+#colsModal .mini.modal-col h2{margin-top:0}
+#colsModal .mini.modal-col .hint{margin:4px 0 10px}
 </style>
 </head>
 <body>
@@ -643,9 +648,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.62.0</span>
+        <span class="version" id="version">v0.63.0</span>
         <button class="btn btn-ghost" id="btnSetEdit">🛠 出品設定編集</button>
-        <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
+        <button class="btn btn-ghost" id="btnManageStatus">📋 出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -871,7 +876,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.62.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.63.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -916,6 +921,17 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <button class="btn btn-red btn-sm" id="btnResizeDone">完了</button>
 </div>
 
+<div class="overlay" id="topMgrModal" hidden>
+  <div class="mini">
+    <h2>📋 出品内容・状態管理</h2>
+    <p class="hint">上部の絞り込みタブ「出品内容」「状態」を編集します。</p>
+    <div class="setedit-btns">
+      <button type="button" class="setedit-item" id="tmCat"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリ（A/B/C…）の追加・名前・アイコン・並び替え</small></span></button>
+      <button type="button" class="setedit-item" id="tmStatus"><span class="se-ico">📋</span><span class="se-txt"><b>状態</b><small>状態（制作前／完了 等）の追加・名前・番号・並び替え</small></span></button>
+    </div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="topMgrModal">閉じる</button></div>
+  </div>
+</div>
 <div class="overlay" id="setEditModal" hidden>
   <div class="mini">
     <h2>🛠 出品設定編集</h2>
@@ -1432,7 +1448,9 @@ function renderStatusManager(){
 }
 function addStatus(){var inp=$('newStatusLabel');var v=(inp.value||'').trim();if(!v)return;var a=getStatuses();a.push({id:'st_'+Date.now().toString(36),label:v,icon:''});saveStatuses(a);inp.value='';renderStatusManager();render();}
 if($('btnManageCats'))$('btnManageCats').onclick=openCatManager;
-if($('btnManageStatus'))$('btnManageStatus').onclick=openStatusManager;
+if($('btnManageStatus'))$('btnManageStatus').onclick=function(){show('topMgrModal');};
+if($('tmCat'))$('tmCat').onclick=function(){hide('topMgrModal');openCatManager();};
+if($('tmStatus'))$('tmStatus').onclick=function(){hide('topMgrModal');openStatusManager();};
 if($('btnAddCat'))$('btnAddCat').onclick=addCategory;
 if($('btnAddStatus'))$('btnAddStatus').onclick=addStatus;
 if($('newCatLabel'))$('newCatLabel').addEventListener('keydown',function(e){if(e.key==='Enter')addCategory();});
