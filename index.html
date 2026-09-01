@@ -328,6 +328,12 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cdd-cur .cdd-lbl{overflow:hidden;text-overflow:ellipsis}
 .cdd-arrow{color:var(--ink-3);font-size:10px;flex:none;margin-left:2px}
 .cdd-empty{color:var(--ink-3)}
+/* 出品設定（3ドロップダウンをまとめた列） */
+.col-listset{vertical-align:top;padding-top:8px!important;padding-bottom:8px!important}
+.col-listset .ls-row{display:flex;align-items:center;gap:7px;margin:3px 0}
+.col-listset .ls-lbl{flex:0 0 auto;width:50px;font-size:10.5px;font-weight:700;color:var(--ink-3);text-align:right;line-height:1.15}
+.col-listset .cdd{flex:1 1 auto;min-width:0;width:auto;justify-content:flex-start}
+.cdd.cdd-lp{font-weight:700}
 .cdd-menu{position:fixed;z-index:200;background:#fff;border:1px solid #cfd4db;border-radius:10px;box-shadow:0 16px 42px rgba(20,26,40,.24),0 4px 12px rgba(20,26,40,.14);padding:5px;max-height:300px;overflow:auto}
 .cdd-item{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-radius:7px;padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;text-align:left;color:var(--ink-1);font-family:"Zen Kaku Gothic New",sans-serif;white-space:nowrap}
 .cdd-item:hover{background:#f4f5f7}
@@ -607,7 +613,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.55.0</span>
+        <span class="version" id="version">v0.56.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -841,7 +847,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.55.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.56.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1010,6 +1016,7 @@ var DEFAULT_COLS=[
   {key:'yahooUrls',label:'Yahoo-商品ページ',width:140,align:'left',wrap:'clip'},
   {key:'yahooRank',label:'Yahoo-ランキング',width:140,align:'left',wrap:'clip'},
   {key:'rakutenUrls',label:'楽天-商品ページ',width:140,align:'left',wrap:'clip'},
+  {key:'listSet',label:'出品設定',width:184,align:'left'},
   {key:'listingType',label:'出品内容',width:210,align:'left'},
   {key:'pagePlan',label:'制作LP本数',width:66,align:'center'},
   {key:'lpType',label:'LP方針',width:130,align:'left'},
@@ -1039,17 +1046,22 @@ function mainImg(it,side){return it[side+'Main']||firstImg(it,side);}
 function stKey(st){return ({'未着手':'s-gray','作成中':'s-orange','確認待ち':'s-blue','完了':'s-green'})[st]||'s-none';}
 function statusBadge(st){var map={'未着手':['1','n-gray'],'作成中':['2','n-orange'],'確認待ち':['3','n-blue'],'完了':['4','n-green']};var m=map[st];if(!m)return md();return '<span class="status-badge"><span class="num '+m[1]+'">'+m[0]+'</span>'+esc(st)+'</span>';}
 var LP_OPTS=[{v:'lp_new_sq',label:'新規-正方形'},{v:'lp_reuse_rect',label:'流用-長方形'},{v:'lp_edit_rect',label:'編集-長方形'}];
+var LP_COLORS={lp_new_sq:'#2f6fb0',lp_reuse_rect:'#1f9d63',lp_edit_rect:'#c0392b'};
+var PP_COLORS={'1':'#1f9d63','2':'#2f6fb0','3':'#d98324','4':'#c0392b','5':'#8257c9'};
+function cddColorStyle(field,value){if(field==='lpType'&&value&&LP_COLORS[value]){var c=LP_COLORS[value];return 'border-color:'+c+';color:'+c+';background:'+c+'14;';}return '';}
+function cddItemLblStyle(field,v){if(field==='lpType'&&LP_COLORS[v])return ' style="color:'+LP_COLORS[v]+';font-weight:700"';if(field==='pagePlan'&&PP_COLORS[v])return ' style="color:'+PP_COLORS[v]+';font-weight:800"';return '';}
 function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){for(var i=0;i<LP_OPTS.length;i++)arr.push({v:LP_OPTS[i].v,label:LP_OPTS[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
 function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)if(a[i].v===value)return a[i];return null;}
-function cddCell(field,id,value){return '<td><button type="button" class="cdd" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button></td>';}
+function cddBtn(field,id,value){return '<button type="button" class="cdd'+(field==='lpType'?' cdd-lp':'')+'" style="'+cddColorStyle(field,value)+'" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button>';}
+function cddCell(field,id,value){return '<td>'+cddBtn(field,id,value)+'</td>';}
 var cddState={field:null,id:null,btn:null};
 function closeCdd(){var m=document.getElementById('cddMenu');if(m)m.hidden=true;cddState.btn=null;}
-function cddInner(field,value){var it=cddFind(field,value);if(value&&it){var lbl=it.label;if(field==='listingType'&&getViewMode()==='images'&&lbl.length>4)lbl=lbl.slice(0,4)+'…';return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+'<span class="cdd-lbl">'+esc(lbl)+'</span>';}return '<span class="cdd-empty">未設定</span>';}
+function cddInner(field,value){var it=cddFind(field,value);if(value&&it){var lbl=it.label;if(field==='listingType'&&getViewMode()==='images'&&lbl.length>4)lbl=lbl.slice(0,4)+'…';return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+'<span class="cdd-lbl"'+cddItemLblStyle(field,value)+'>'+esc(lbl)+'</span>';}return '<span class="cdd-empty">未設定</span>';}
 function openCdd(btn){
   var field=btn.getAttribute('data-field');var id=btn.getAttribute('data-id');var cur=btn.getAttribute('data-value')||'';
   var m=document.getElementById('cddMenu');if(!m){m=document.createElement('div');m.id='cddMenu';m.className='cdd-menu';document.body.appendChild(m);}
   var its=cddItems(field);var h='';
-  for(var i=0;i<its.length;i++){var it=its[i];h+='<button type="button" class="cdd-item'+(cur===it.v?' on':'')+'" data-v="'+escA(it.v)+'">'+(it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+(it.v?'<span class="cdd-lbl">'+esc(it.label)+'</span>':'<span class="cdd-empty">'+esc(it.label)+'</span>')+'</button>';}
+  for(var i=0;i<its.length;i++){var it=its[i];h+='<button type="button" class="cdd-item'+(cur===it.v?' on':'')+'" data-v="'+escA(it.v)+'">'+(it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+(it.v?'<span class="cdd-lbl"'+cddItemLblStyle(field,it.v)+'>'+esc(it.label)+'</span>':'<span class="cdd-empty">'+esc(it.label)+'</span>')+'</button>';}
   m.innerHTML=h;cddState={field:field,id:id,btn:btn};
   var r=btn.getBoundingClientRect();m.hidden=false;
   var mw=Math.max(r.width,150);m.style.minWidth=mw+'px';
@@ -1060,6 +1072,7 @@ function cddSelect(v){
   if(!cddState.btn)return;var btn=cddState.btn;
   stageEdit(cddState.id,cddState.field,v);
   btn.setAttribute('data-value',v);
+  btn.setAttribute('style',cddColorStyle(cddState.field,v));
   var cur=btn.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(cddState.field,v);
   closeCdd();
 }
@@ -1111,6 +1124,7 @@ function cellHtml(key,it){
   if(key==='rakutenUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'rakutenUrls')+'</td>':dcCellArr(it,'rakutenUrls');
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='lpType')return cddCell('lpType',it.id,it.lpType);
+  if(key==='listSet')return '<td class="col-listset"><div class="ls-row"><span class="ls-lbl">出品内容</span>'+cddBtn('listingType',it.id,it.listingType)+'</div><div class="ls-row"><span class="ls-lbl">LP本数</span>'+cddBtn('pagePlan',it.id,it.pagePlan)+'</div><div class="ls-row"><span class="ls-lbl">LP方針</span>'+cddBtn('lpType',it.id,it.lpType)+'</div></td>';
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
   if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':dcCell(it,'salesMethod');
@@ -1122,12 +1136,12 @@ function cellHtml(key,it){
 }
 var VIEWMODE='yafusho_viewmode';
 var VIEW_COLS={
-  images:['name','imageBlock','listingType','pagePlan','lpType','memo','actions'],
+  images:['name','imageBlock','listSet','memo','actions'],
   basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
   detail:['date','mainThumb','code','name','variation','salesMethod','buttonElem','actions']
 };
 var DEFAULT_VISIBLE={
-  images:['name','imageBlock','listingType','pagePlan','lpType','memo','actions'],
+  images:['name','imageBlock','listSet','memo','actions'],
   basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
   detail:['date','mainThumb','code','name','variation','salesMethod','buttonElem','actions']
 };
