@@ -242,14 +242,19 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 /* 画像ライトボックス（拡大表示） */
 .lb-overlay{position:fixed;inset:0;z-index:500;background:rgba(15,18,24,.86);display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;box-sizing:border-box}
 .lb-stage{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
-.lb-img{max-width:calc(100vw - 170px);max-height:calc(100vh - 120px);object-fit:contain;background:#fff;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:grab;-webkit-user-drag:element}
+.lb-img{max-width:min(calc(100vw - 380px),1200px);max-height:calc(100vh - 120px);object-fit:contain;background:#fff;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:grab;-webkit-user-drag:element}
 .lb-img:active{cursor:grabbing}
 .lb-info{display:flex;align-items:center;gap:16px;color:#e6e9ef;font-size:13px;font-weight:700}
 .lb-info .lb-hint{color:#aab2c0;font-weight:400;font-size:12px}
 .lb-nav{position:fixed;top:50%;transform:translateY(-50%);appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:52px;height:52px;border-radius:50%;font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;z-index:3}
 .lb-nav:hover{background:rgba(255,255,255,.3)}
-.lb-prev{left:calc(50vw - min(100vw - 170px, 100vh - 120px) / 2 - 60px)}
-.lb-next{right:calc(50vw - min(100vw - 170px, 100vh - 120px) / 2 - 60px)}
+.lb-prev{left:14vw}
+.lb-next{right:14vw}
+.lb-side{position:fixed;top:50%;transform:translateY(-50%);width:15vw;max-width:230px;max-height:64vh;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.08);filter:blur(3px) brightness(.6);opacity:.85;cursor:pointer;z-index:2;transition:filter .15s,opacity .15s,transform .15s}
+.lb-side:hover{filter:blur(0) brightness(.9);opacity:1}
+.lb-side-l{left:10px;transform:translateY(-50%)}
+.lb-side-r{right:10px;transform:translateY(-50%)}
+@media(max-width:1000px){.lb-side{display:none}.lb-img{max-width:calc(100vw - 170px)}.lb-prev{left:14px}.lb-next{right:14px}}
 .lb-close{position:fixed;top:18px;right:22px;appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:44px;height:44px;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
 .lb-close:hover{background:rgba(255,255,255,.3)}
 .memo-resize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;z-index:3}
@@ -754,7 +759,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.89.0</span>
+        <span class="version" id="version">v0.91.2</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
@@ -946,12 +951,14 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 
 <div class="lb-overlay" id="imgLightbox" hidden>
   <button type="button" class="lb-close" id="lbClose" title="閉じる">×</button>
+  <img class="lb-side lb-side-l" id="lbSideL" alt="" title="前の画像へ" hidden>
   <button type="button" class="lb-nav lb-prev" id="lbPrev" title="前へ">‹</button>
   <div class="lb-stage">
     <img id="lbImg" class="lb-img" alt="" draggable="true">
     <div class="lb-info"><span id="lbCount"></span><span class="lb-hint">画像をデスクトップにドラッグして保存できます</span></div>
   </div>
   <button type="button" class="lb-nav lb-next" id="lbNext" title="次へ">›</button>
+  <img class="lb-side lb-side-r" id="lbSideR" alt="" title="次の画像へ" hidden>
 </div>
 
 <div class="overlay" id="settingsModal" hidden>
@@ -972,7 +979,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.89.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.91.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1267,7 +1274,10 @@ function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},c
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
-function saveSettings(s){try{localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}}
+var _applyingRemoteSettings=false,_booted=false;
+function saveSettings(s){try{if(!_applyingRemoteSettings)s.updatedAt=Date.now();localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}
+  if(!_applyingRemoteSettings&&_booted){try{scheduleSync();}catch(e2){}}}
+function settingsUpdatedAt(){try{var c=JSON.parse(localStorage.getItem(SETTINGS));return (c&&c.updatedAt)||0;}catch(e){return 0;}}
 function getListing(){return getOpts('listingType').map(function(o){return o.l;});}
 function getCols(){
   var s=getSettings();var saved=s.cols;
@@ -1901,12 +1911,17 @@ function bulkDlFromModal(el){
 function setDownloadDrag(e,src,fn){if(!src)return;try{var mime=dataUrlMime(src)||'image/jpeg';e.dataTransfer.setData('DownloadURL',mime+':'+(fn||'image.jpg')+':'+src);e.dataTransfer.setData('text/uri-list',src);e.dataTransfer.effectAllowed='copy';}catch(_e){}}
 var lbList=[],lbIdx=0,lbItem=null;
 function openLightbox(list,idx,it){if(!list||!list.length)return;lbList=list;lbIdx=idx||0;lbItem=it||null;renderLightbox();var o=$('imgLightbox');if(o)o.hidden=false;}
-function renderLightbox(){var img=$('lbImg');if(!img)return;img.src=lbList[lbIdx]||'';var c=$('lbCount');if(c)c.textContent=(lbIdx+1)+' / '+lbList.length;var nav=lbList.length>1;var pv=$('lbPrev'),nx=$('lbNext');if(pv)pv.style.visibility=nav?'':'hidden';if(nx)nx.style.visibility=nav?'':'hidden';}
+function renderLightbox(){var img=$('lbImg');if(!img)return;img.src=lbList[lbIdx]||'';var c=$('lbCount');if(c)c.textContent=(lbIdx+1)+' / '+lbList.length;var nav=lbList.length>1;var pv=$('lbPrev'),nx=$('lbNext');if(pv)pv.style.visibility=nav?'':'hidden';if(nx)nx.style.visibility=nav?'':'hidden';
+  var n=lbList.length;var sl=$('lbSideL'),sr=$('lbSideR');
+  if(sl){if(nav){sl.src=lbList[(lbIdx-1+n)%n]||'';sl.hidden=false;}else{sl.hidden=true;sl.removeAttribute('src');}}
+  if(sr){if(nav){sr.src=lbList[(lbIdx+1)%n]||'';sr.hidden=false;}else{sr.hidden=true;sr.removeAttribute('src');}}}
 function lbGo(d){if(!lbList.length)return;lbIdx=(lbIdx+d+lbList.length)%lbList.length;renderLightbox();}
 function closeLightbox(){var o=$('imgLightbox');if(o)o.hidden=true;lbList=[];lbItem=null;}
 function openLightboxFromThumb(imgEl){var id=imgEl.getAttribute('data-edit');var src=imgEl.getAttribute('src');var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it){openLightbox([src],0,null);return;}var ym=it.yahooMain||'',rm=it.rakutenMain||'';var yg=imgArr(it,'yahoo')||[],rg=imgArr(it,'rakuten')||[];var side=(src===ym||yg.indexOf(src)>=0)?'yahoo':((src===rm||rg.indexOf(src)>=0)?'rakuten':'yahoo');var main=(side==='yahoo')?ym:rm;var gal=(side==='yahoo')?yg:rg;var list=[],seen={};function add(s){if(s&&!isTextItem(s)&&!seen[s]){seen[s]=1;list.push(s);}}add(main);for(var j=0;j<gal.length;j++)add(gal[j]);var idx=list.indexOf(src);if(idx<0)idx=0;openLightbox(list,idx,it);}
 if($('lbClose'))$('lbClose').onclick=closeLightbox;
 if($('lbPrev'))$('lbPrev').onclick=function(){lbGo(-1);};
+if($('lbSideL'))$('lbSideL').onclick=function(e){e.stopPropagation();lbGo(-1);};
+if($('lbSideR'))$('lbSideR').onclick=function(e){e.stopPropagation();lbGo(1);};
 if($('lbNext'))$('lbNext').onclick=function(){lbGo(1);};
 if($('imgLightbox'))$('imgLightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox();});
 if($('lbImg'))$('lbImg').addEventListener('dragstart',function(e){setDownloadDrag(e,lbList[lbIdx],dlName(lbItem,lbIdx,lbList[lbIdx]));});
@@ -2129,6 +2144,11 @@ async function saveToGitHub(silent){
     var json=JSON.stringify(items,null,2);
     log('data.json 書込み: '+json.length+'文字 / 画像アップ'+_imgUp+'枚');
     await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
+    try{
+      var sj=localStorage.getItem(SETTINGS)||'{}';
+      await ghPutRetry(c.owner,c.repo,c.branch,'settings.json',utf8b64(sj),'update settings',c.pat);
+      log('settings.json 書込み: '+sj.length+'文字（列幅・色などを全端末で共有）');
+    }catch(_se){log('settings.json 書込み失敗: '+(_se&&_se.message));}
     persist();
     if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
     setPending(false);
@@ -2147,6 +2167,32 @@ function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)c
 async function triggerSync(silent){if(ghBusy){ghPending=true;return;}ghBusy=true;try{await saveToGitHub(silent);}catch(e){}ghBusy=false;if(ghPending){ghPending=false;triggerSync(true);}}
 $('btnSave').onclick=function(){triggerSync(false);};
 
+async function loadSettingsFromGitHub(){
+  var c=getCfg();
+  try{
+    var rs=null;
+    if(c.pat){
+      try{var r=await fetch('https://api.github.com/repos/'+c.owner+'/'+c.repo+'/contents/settings.json?ref='+encodeURIComponent(c.branch)+'&t='+Date.now(),{headers:ghHeaders(c.pat),cache:'no-store'});
+        if(r.status===200){var jj=await r.json();ghShaCache['settings.json']=jj.sha;rs=JSON.parse(b64utf8(jj.content));}
+        else if(r.status===404){log('settings.json 未作成（初回）');return;}}catch(e){}
+    }
+    if(rs===null){
+      var r2=await fetch('https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/settings.json?t='+Date.now(),{cache:'no-store'});
+      if(r2.status===404){log('settings.json 未作成（初回）');return;}
+      if(r2.ok)rs=await r2.json();
+    }
+    if(!rs||typeof rs!=='object')return;
+    var remote=rs.updatedAt||0,local=settingsUpdatedAt();
+    if(remote===local)return;
+    if(getPending()){log('表示設定：未同期のローカル変更があるためGitHub側は適用せず');return;}
+    _applyingRemoteSettings=true;
+    try{localStorage.setItem(SETTINGS,JSON.stringify(rs));}catch(e){}
+    _applyingRemoteSettings=false;
+    renderHead();render();renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();populateFormSelects();updateStickyH();
+    log('表示設定をGitHubから適用（列幅・列順・色など）');
+    toast('🖥️ 表示設定を他の端末と同期しました');
+  }catch(e){log('settings.json 読込スキップ: '+(e&&e.message));}
+}
 /* ===== 起動時に GitHub から読み込み（公開リポジトリはPAT不要） ===== */
 async function loadFromGitHub(){
   var c=getCfg();
@@ -2181,7 +2227,7 @@ renderHead();
 render();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
-loadFromGitHub();
+loadFromGitHub().then(function(){return loadSettingsFromGitHub();}).catch(function(){}).then(function(){_booted=true;});
 
 </script>
 </body>
