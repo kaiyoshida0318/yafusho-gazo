@@ -701,7 +701,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.72.2</span>
+        <span class="version" id="version">v0.72.3</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -716,8 +716,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="console">
   <!-- 1段目：カテゴリ系 ＋ 右側アクション -->
   <div class="frow frow-cat" id="catRow">
-    <span class="frow-label">出品内容</span>
-    <div class="pill-group" id="catPills"></div>
+    <span class="frow-label">状態</span>
+    <div class="pill-group" id="statusRow"></div>
     <span class="spacer"></span>
     <div class="view-toggle" id="viewToggle">
       <button type="button" class="vt-btn" data-view="basic" id="vtBasic">📋 基礎情報</button>
@@ -731,8 +731,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 
   <!-- 2段目：ステータス ＋ 変更を保存（右上） -->
   <div class="frow frow-status">
-    <span class="frow-label">状態</span>
-    <div class="pill-group" id="statusRow"></div>
+    <span class="frow-label">出品内容</span>
+    <div class="pill-group" id="catPills"></div>
     <span class="spacer"></span>
     <button class="btn btn-line btn-sm" id="btnBulkEdit">✏️ 一括編集</button>
     <button class="btn btn-ghost btn-sm" id="btnDiscardEdits" hidden>取り消し</button>
@@ -918,7 +918,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.72.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.72.3</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
