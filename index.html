@@ -331,6 +331,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cdd-cur .cdd-lbl{overflow:hidden;text-overflow:ellipsis}
 .cdd-arrow{color:var(--ink-3);font-size:10px;flex:none;margin-left:2px}
 .cdd-empty{color:var(--ink-3)}
+.pp-badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:5px;color:#fff;font-weight:800;font-size:12px;font-family:"Roboto Mono",monospace;line-height:1;box-sizing:border-box}
 /* 出品設定（3ドロップダウンをまとめた列） */
 .col-listset{vertical-align:top;padding-top:8px!important;padding-bottom:8px!important}
 .col-listset .ls-row{display:flex;align-items:center;gap:7px;margin:3px 0}
@@ -620,7 +621,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.57.1</span>
+        <span class="version" id="version">v0.58.0</span>
         <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
         <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
@@ -700,8 +701,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <div class="tab-panel" id="panel-basic">
         <div class="basic-top">
           <div class="mini-imgs">
-            <div class="mini-wrap"><div class="mini-img" id="miniYahoo"></div><div class="mini-cap">Yahooメイン</div></div>
             <div class="mini-wrap"><div class="mini-img" id="miniRakuten"></div><div class="mini-cap">楽天メイン</div></div>
+            <div class="mini-wrap"><div class="mini-img" id="miniYahoo"></div><div class="mini-cap">Yahooメイン</div></div>
           </div>
           <input type="file" id="fileMiniYahoo" accept="image/*" hidden>
           <input type="file" id="fileMiniRakuten" accept="image/*" hidden>
@@ -792,16 +793,16 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <!-- 画像タブ -->
       <div class="tab-panel" id="panel-images" hidden>
         <div class="gallery-sec">
-          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahoo画像<span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div>
-          <div class="dropzone" id="dzYahoo">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
-          <input type="file" id="fileYahoo" accept="image/*" multiple hidden>
-          <div class="img-strip" id="stripYahoo"></div>
-        </div>
-        <div class="gallery-sec gal-sec-r">
           <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天画像<span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div>
           <div class="dropzone" id="dzRakuten">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
           <input type="file" id="fileRakuten" accept="image/*" multiple hidden>
           <div class="img-strip" id="stripRakuten"></div>
+        </div>
+        <div class="gallery-sec gal-sec-r">
+          <div class="fld-label"><span class="tag-badge tb-y">Y</span>Yahoo画像<span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div>
+          <div class="dropzone" id="dzYahoo">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
+          <input type="file" id="fileYahoo" accept="image/*" multiple hidden>
+          <div class="img-strip" id="stripYahoo"></div>
         </div>
         <div class="gallery-sec gal-sec-r">
           <div class="fld-label">📝 メモ</div>
@@ -854,7 +855,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.57.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.58.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1056,19 +1057,20 @@ var LP_OPTS=[{v:'lp_new_sq',label:'新規-正方形'},{v:'lp_reuse_rect',label:'
 var LP_COLORS={lp_new_sq:'#2f6fb0',lp_reuse_rect:'#1f9d63',lp_edit_rect:'#c0392b'};
 var PP_COLORS={'1':'#1f9d63','2':'#2f6fb0','3':'#d98324','4':'#c0392b','5':'#8257c9'};
 function cddColorStyle(field,value){if(field==='lpType'&&value&&LP_COLORS[value]){var c=LP_COLORS[value];return 'border-color:'+c+';color:'+c+';background:'+c+'14;';}return '';}
-function cddItemLblStyle(field,v){if(field==='lpType'&&LP_COLORS[v])return ' style="color:'+LP_COLORS[v]+';font-weight:700"';if(field==='pagePlan'&&PP_COLORS[v])return ' style="color:'+PP_COLORS[v]+';font-weight:800"';return '';}
+function cddItemLblStyle(field,v){if(field==='lpType'&&LP_COLORS[v])return ' style="color:'+LP_COLORS[v]+';font-weight:700"';return '';}
+function cddValHtml(field,v,label){if(field==='pagePlan')return '<span class="pp-badge" style="background:'+(PP_COLORS[v]||'#7a756d')+'">'+esc(label)+'</span>';return '<span class="cdd-lbl"'+cddItemLblStyle(field,v)+'>'+esc(label)+'</span>';}
 function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){for(var i=0;i<LP_OPTS.length;i++)arr.push({v:LP_OPTS[i].v,label:LP_OPTS[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
 function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)if(a[i].v===value)return a[i];return null;}
 function cddBtn(field,id,value){return '<button type="button" class="cdd'+(field==='lpType'?' cdd-lp':'')+'" style="'+cddColorStyle(field,value)+'" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button>';}
 function cddCell(field,id,value){return '<td>'+cddBtn(field,id,value)+'</td>';}
 var cddState={field:null,id:null,btn:null};
 function closeCdd(){var m=document.getElementById('cddMenu');if(m)m.hidden=true;cddState.btn=null;}
-function cddInner(field,value){var it=cddFind(field,value);if(value&&it){var lbl=it.label;return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+'<span class="cdd-lbl"'+cddItemLblStyle(field,value)+'>'+esc(lbl)+'</span>';}return '<span class="cdd-empty">未設定</span>';}
+function cddInner(field,value){var it=cddFind(field,value);if(value&&it){return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+cddValHtml(field,value,it.label);}return '<span class="cdd-empty">未設定</span>';}
 function openCdd(btn){
   var field=btn.getAttribute('data-field');var id=btn.getAttribute('data-id');var cur=btn.getAttribute('data-value')||'';
   var m=document.getElementById('cddMenu');if(!m){m=document.createElement('div');m.id='cddMenu';m.className='cdd-menu';document.body.appendChild(m);}
   var its=cddItems(field);var h='';
-  for(var i=0;i<its.length;i++){var it=its[i];h+='<button type="button" class="cdd-item'+(cur===it.v?' on':'')+'" data-v="'+escA(it.v)+'">'+(it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+(it.v?'<span class="cdd-lbl"'+cddItemLblStyle(field,it.v)+'>'+esc(it.label)+'</span>':'<span class="cdd-empty">'+esc(it.label)+'</span>')+'</button>';}
+  for(var i=0;i<its.length;i++){var it=its[i];h+='<button type="button" class="cdd-item'+(cur===it.v?' on':'')+'" data-v="'+escA(it.v)+'">'+(it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+(it.v?cddValHtml(field,it.v,it.label):'<span class="cdd-empty">'+esc(it.label)+'</span>')+'</button>';}
   m.innerHTML=h;cddState={field:field,id:id,btn:btn};
   var r=btn.getBoundingClientRect();m.hidden=false;
   var mw=Math.max(r.width,150);m.style.minWidth=mw+'px';
@@ -1479,7 +1481,7 @@ function renderStrip(side){
          '<button type="button" class="sbtn mv-r" data-side="'+side+'" data-idx="'+i+'" title="右へ">→</button>'+
          '<button type="button" class="sbtn strip-del" data-side="'+side+'" data-idx="'+i+'" title="削除">×</button>'+
          '<button type="button" class="sbtn strip-move" data-side="'+side+'" data-idx="'+i+'" title="位置を選んで移動">移動</button>'+
-         '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↓コピー↓':'↑コピー↑')+'</button>'+
+         '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="もう片方へコピー">'+(side==='yahoo'?'↑コピー↑':'↓コピー↓')+'</button>'+
        '</div></div>';
   }
   if(!_exp&&_n>STRIP_CAP){h+='<div class="strip-more-tile" data-expand="'+side+'" title="残り'+(_n-STRIP_CAP)+'枚を表示"><span class="smt-n">+'+(_n-STRIP_CAP)+'</span><span class="smt-sub">もっと見る</span></div>';}
