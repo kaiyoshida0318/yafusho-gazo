@@ -417,6 +417,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cat-add-row input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;font:inherit}
 .cat-add-row input:focus{outline:0;border-color:var(--red)}
 .cat-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow:auto;margin-bottom:8px}
+.btn-arrow{color:var(--red);font-weight:900;margin-right:6px;font-size:15px;line-height:1;display:inline-block}
 .setedit-btns{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px}
 .setedit-item{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;cursor:pointer;font:inherit;transition:.12s}
 .setedit-item:hover{border-color:var(--red);background:var(--red-soft)}
@@ -650,10 +651,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.63.1</span>
-        <button class="btn btn-ghost" id="btnSetEdit">🛠 出品設定編集</button>
-        <button class="btn btn-ghost" id="btnManageStatus">📋 出品内容・状態管理</button>
-        <button class="btn btn-ghost" id="btnCols2">📐 項目管理</button>
+        <span class="version" id="version">v0.63.2</span>
+        <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
+        <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
+        <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
         <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
@@ -878,7 +879,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.63.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.63.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -898,7 +899,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 </div>
 <div class="overlay" id="colsModal" hidden>
   <div class="mini modal-col">
-    <h2>📐 項目管理 <span id="colViewLabel" class="col-view-label"></span></h2>
+    <h2>📐 列名・列幅・列順管理 <span id="colViewLabel" class="col-view-label"></span></h2>
     <p class="hint">左が「表示中」、右が「非表示」の項目です。「非表示にする →」「← 表示する」で切り替え、▲▼で表示順を入れ替えできます。幅(px)・折り返し・タイトル/データの揃えも設定可能。この設定はこの端末にのみ保存されます。</p>
     <div class="col-cols">
       <div class="col-col col-col-visible">
