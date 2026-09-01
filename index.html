@@ -351,7 +351,10 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .col-listset .cdd .cdd-cur{white-space:normal;overflow:visible;text-overflow:clip}
 .col-listset .cdd .cdd-lbl{white-space:normal;overflow:visible;text-overflow:clip;word-break:break-word;line-height:1.25}
 .col-listset .ls-row{align-items:flex-start}
-.cdd.cdd-lp{font-weight:700}
+.cdd.cdd-lp{font-weight:600}
+.cdd-ico .lp-tile{width:16px;height:16px;font-size:11px;border-radius:4px}
+.cdd-item .cdd-ico .lp-tile{width:18px;height:18px;font-size:12px;border-radius:4px}
+.ltab .lp-tile{width:18px;height:18px;font-size:11px;border-radius:4px;flex:0 0 auto}
 .cdd-menu{position:fixed;z-index:200;background:#fff;border:1px solid #cfd4db;border-radius:10px;box-shadow:0 16px 42px rgba(20,26,40,.24),0 4px 12px rgba(20,26,40,.14);padding:5px;max-height:300px;overflow:auto}
 .cdd-item{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-radius:7px;padding:8px 11px;font:inherit;font-size:13px;cursor:pointer;text-align:left;color:var(--ink-1);font-family:"Zen Kaku Gothic New",sans-serif;white-space:nowrap}
 .cdd-item:hover{background:#f4f5f7}
@@ -719,7 +722,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.75.2</span>
+        <span class="version" id="version">v0.76.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -936,7 +939,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.75.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.76.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1162,10 +1165,12 @@ function statusBadge(st){var map={'未着手':['1','n-gray'],'作成中':['2','n
 var LP_OPTS=[{v:'lp_new_sq',label:'新規-正方形'},{v:'lp_reuse_rect',label:'流用-長方形'},{v:'lp_edit_rect',label:'編集-長方形'}];
 var LP_COLORS={lp_new_sq:'#2f6fb0',lp_reuse_rect:'#1f9d63',lp_edit_rect:'#c0392b'};
 var PP_COLORS={'1':'#1f9d63','2':'#2f6fb0','3':'#d98324','4':'#c0392b','5':'#8257c9'};
-function cddColorStyle(field,value){if(field==='lpType'&&value){var c=lpColor(value);if(c)return 'border-color:'+c+';color:'+c+';background:'+c+'14;';}return '';}
-function cddItemLblStyle(field,v){if(field==='lpType'){var c=lpColor(v);if(c)return ' style="color:'+c+';font-weight:700"';}return '';}
+function lpIndexOf(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return i;return -1;}
+function lpTileHtml(v){var i=lpIndexOf(v);if(i<0)return '';var c=lpColor(v)||'#7a756d';return '<span class="lp-tile" style="background:'+esc(c)+'">'+(i+1)+'</span>';}
+function cddColorStyle(field,value){return '';}
+function cddItemLblStyle(field,v){return '';}
 function cddValHtml(field,v,label){if(field==='pagePlan')return '<span class="pp-badge" style="background:'+(PP_COLORS[v]||'#7a756d')+'">'+esc(label)+'</span>';return '<span class="cdd-lbl"'+cddItemLblStyle(field,v)+'>'+esc(label)+'</span>';}
-function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){var lo=getLpOpts();for(var i=0;i<lo.length;i++)arr.push({v:lo[i].v,label:lo[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
+function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){var lo=getLpOpts();for(var i=0;i<lo.length;i++)arr.push({v:lo[i].v,label:lo[i].label,ico:lpTileHtml(lo[i].v)});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
 function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)if(a[i].v===value)return a[i];return null;}
 function cddBtn(field,id,value){return '<button type="button" class="cdd'+(field==='lpType'?' cdd-lp':'')+'" style="'+cddColorStyle(field,value)+'" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button>';}
 function cddCell(field,id,value){return '<td>'+cddBtn(field,id,value)+'</td>';}
@@ -1813,7 +1818,7 @@ function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+p
 function countPagePlanF(v){var _d=doneStatusId();var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;if(v===''||(v==='__none__'?!x.pagePlan:x.pagePlan===v))n++;}return n;}
 function renderLpCountTabs(){var el=$('lpCountRow');if(!el)return;var opts=getOpts('pagePlan');var h='<button class="ltab'+(lpCountFilter===''?' on':'')+'" data-lpc="">全体<span class="cnt">'+countPagePlanF('')+'</span></button>';for(var i=0;i<opts.length;i++){var v=opts[i].l;h+='<button class="ltab'+(lpCountFilter===v?' on':'')+'" data-lpc="'+escA(v)+'"><span class="pp-badge lt-badge" style="background:'+(PP_COLORS[v]||'#7a756d')+'">'+esc(v)+'</span><span class="cnt">'+countPagePlanF(v)+'</span></button>';}h+='<button class="ltab ltab-none'+(lpCountFilter==='__none__'?' on':'')+'" data-lpc="__none__">未設定<span class="cnt">'+countPagePlanF('__none__')+'</span></button>';el.innerHTML=h;}
 function countLpTypeF(v){var _d=doneStatusId();var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;if(v===''||(v==='__none__'?!x.lpType:x.lpType===v))n++;}return n;}
-function renderLpTypeTabs(){var el=$('lpTypeRow');if(!el)return;var opts=getLpOpts();var h='<button class="ltab'+(lpTypeFilter===''?' on':'')+'" data-lpt="">全体<span class="cnt">'+countLpTypeF('')+'</span></button>';for(var i=0;i<opts.length;i++){var o=opts[i];h+='<button class="ltab'+(lpTypeFilter===o.v?' on':'')+'" data-lpt="'+escA(o.v)+'"><span class="lp-dot" style="background:'+esc(o.c)+'"></span>'+esc(o.label)+'<span class="cnt">'+countLpTypeF(o.v)+'</span></button>';}h+='<button class="ltab ltab-none'+(lpTypeFilter==='__none__'?' on':'')+'" data-lpt="__none__">未設定<span class="cnt">'+countLpTypeF('__none__')+'</span></button>';el.innerHTML=h;}
+function renderLpTypeTabs(){var el=$('lpTypeRow');if(!el)return;var opts=getLpOpts();var h='<button class="ltab'+(lpTypeFilter===''?' on':'')+'" data-lpt="">全体<span class="cnt">'+countLpTypeF('')+'</span></button>';for(var i=0;i<opts.length;i++){var o=opts[i];h+='<button class="ltab'+(lpTypeFilter===o.v?' on':'')+'" data-lpt="'+escA(o.v)+'"><span class="lp-tile" style="background:'+esc(o.c)+'">'+(i+1)+'</span>'+esc(o.label)+'<span class="cnt">'+countLpTypeF(o.v)+'</span></button>';}h+='<button class="ltab ltab-none'+(lpTypeFilter==='__none__'?' on':'')+'" data-lpt="__none__">未設定<span class="cnt">'+countLpTypeF('__none__')+'</span></button>';el.innerHTML=h;}
 renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();
 if($('lpCountRow'))$('lpCountRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpc')||'';lpCountFilter=(nv&&nv===lpCountFilter)?'':nv;render();});
 if($('lpTypeRow'))$('lpTypeRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpt')||'';lpTypeFilter=(nv&&nv===lpTypeFilter)?'':nv;render();});
