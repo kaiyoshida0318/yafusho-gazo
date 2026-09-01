@@ -417,6 +417,19 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cat-add-row input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;font:inherit}
 .cat-add-row input:focus{outline:0;border-color:var(--red)}
 .cat-list{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow:auto;margin-bottom:8px}
+.setedit-btns{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px}
+.setedit-item{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;cursor:pointer;font:inherit;transition:.12s}
+.setedit-item:hover{border-color:var(--red);background:var(--red-soft)}
+.setedit-item .se-ico{font-size:24px;flex:0 0 auto}
+.setedit-item .se-txt{display:flex;flex-direction:column;gap:2px}
+.setedit-item .se-txt b{font-size:15px;color:var(--ink-1)}
+.setedit-item .se-txt small{font-size:12px;color:var(--ink-3)}
+.lp-row{display:grid;grid-template-columns:22px 118px 1fr auto auto;gap:10px;align-items:center;padding:8px 2px;border-bottom:1px solid #eef0f3}
+.lp-row .lp-sw{width:20px;height:20px;border-radius:5px;border:1px solid rgba(0,0,0,.12)}
+.lp-row .lp-color{font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:8px;padding:6px 8px;background:#f4f5f7;min-width:0}
+.lp-row .lp-label{font:inherit;font-size:13px;border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;outline:0;min-width:0}
+.lp-row .lp-label:focus{border-color:var(--red);background:#fff}
+.lp-row .mv-btns{display:flex;gap:3px}
 .cat-row{display:flex;align-items:center;gap:6px;padding:8px;background:#faf9f7;border-radius:8px}
 .cat-icon-btn{background:#fff;border:1px solid var(--line-2);border-radius:8px;width:42px;height:38px;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .cat-icon-btn .cat-logo{width:22px;height:22px;border-radius:4px}
@@ -630,9 +643,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.61.0</span>
-        <button class="btn btn-ghost" id="btnManage">📄 制作LP本数管理</button>
-        <button class="btn btn-ghost" id="btnManageCats">📂 出品内容管理</button>
+        <span class="version" id="version">v0.62.0</span>
+        <button class="btn btn-ghost" id="btnSetEdit">🛠 出品設定編集</button>
         <button class="btn btn-ghost" id="btnManageStatus">📋 状態管理</button>
         <button class="btn btn-ghost" id="btnCols2">📐 項目管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -859,7 +871,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.61.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.62.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -904,6 +916,30 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <button class="btn btn-red btn-sm" id="btnResizeDone">完了</button>
 </div>
 
+<div class="overlay" id="setEditModal" hidden>
+  <div class="mini">
+    <h2>🛠 出品設定編集</h2>
+    <p class="hint">一覧の「出品設定」3項目の選択肢を編集します。</p>
+    <div class="setedit-btns">
+      <button type="button" class="setedit-item" id="seCat"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリの追加・名前・アイコン・並び替え</small></span></button>
+      <button type="button" class="setedit-item" id="seLp"><span class="se-ico">📄</span><span class="se-txt"><b>LP本数</b><small>本数の選択肢（数字）を編集</small></span></button>
+      <button type="button" class="setedit-item" id="seLpType"><span class="se-ico">🎯</span><span class="se-txt"><b>LP方針</b><small>方針の追加・名前・色を編集</small></span></button>
+    </div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="setEditModal">閉じる</button></div>
+  </div>
+</div>
+<div class="overlay" id="lpModal" hidden>
+  <div class="mini modal-cat">
+    <h2>🎯 LP方針管理</h2>
+    <p class="hint">LP方針の選択肢・色を編集します。並び替え・名前変更・色変更・追加・削除ができます。</p>
+    <div class="cat-add-row">
+      <input type="text" id="newLpLabel" placeholder="新しいLP方針名" autocomplete="off">
+      <button class="btn btn-red" id="btnAddLp">追加</button>
+    </div>
+    <div id="lpList" class="cat-list"></div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="lpModal">閉じる</button></div>
+  </div>
+</div>
 <div class="overlay" id="catModal" hidden>
   <div class="mini modal-cat">
     <h2>📂 出品内容管理</h2>
@@ -1039,7 +1075,10 @@ var DEFAULT_COLS=[
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
-function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,colcfgV:{},colorderV:{}};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;}}catch(e){}return d;}
+function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{}};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;}}catch(e){}return d;}
+function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
+function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
+function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
 function saveSettings(s){try{localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}}
 function getListing(){return getOpts('listingType').map(function(o){return o.l;});}
 function getCols(){
@@ -1060,10 +1099,10 @@ function statusBadge(st){var map={'未着手':['1','n-gray'],'作成中':['2','n
 var LP_OPTS=[{v:'lp_new_sq',label:'新規-正方形'},{v:'lp_reuse_rect',label:'流用-長方形'},{v:'lp_edit_rect',label:'編集-長方形'}];
 var LP_COLORS={lp_new_sq:'#2f6fb0',lp_reuse_rect:'#1f9d63',lp_edit_rect:'#c0392b'};
 var PP_COLORS={'1':'#1f9d63','2':'#2f6fb0','3':'#d98324','4':'#c0392b','5':'#8257c9'};
-function cddColorStyle(field,value){if(field==='lpType'&&value&&LP_COLORS[value]){var c=LP_COLORS[value];return 'border-color:'+c+';color:'+c+';background:'+c+'14;';}return '';}
-function cddItemLblStyle(field,v){if(field==='lpType'&&LP_COLORS[v])return ' style="color:'+LP_COLORS[v]+';font-weight:700"';return '';}
+function cddColorStyle(field,value){if(field==='lpType'&&value){var c=lpColor(value);if(c)return 'border-color:'+c+';color:'+c+';background:'+c+'14;';}return '';}
+function cddItemLblStyle(field,v){if(field==='lpType'){var c=lpColor(v);if(c)return ' style="color:'+c+';font-weight:700"';}return '';}
 function cddValHtml(field,v,label){if(field==='pagePlan')return '<span class="pp-badge" style="background:'+(PP_COLORS[v]||'#7a756d')+'">'+esc(label)+'</span>';return '<span class="cdd-lbl"'+cddItemLblStyle(field,v)+'>'+esc(label)+'</span>';}
-function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){for(var i=0;i<LP_OPTS.length;i++)arr.push({v:LP_OPTS[i].v,label:LP_OPTS[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
+function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){var lo=getLpOpts();for(var i=0;i<lo.length;i++)arr.push({v:lo[i].v,label:lo[i].label,ico:''});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
 function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)if(a[i].v===value)return a[i];return null;}
 function cddBtn(field,id,value){return '<button type="button" class="cdd'+(field==='lpType'?' cdd-lp':'')+'" style="'+cddColorStyle(field,value)+'" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button>';}
 function cddCell(field,id,value){return '<td>'+cddBtn(field,id,value)+'</td>';}
@@ -1236,7 +1275,7 @@ var PH_RANK='https://shopping.yahoo.co.jp/ranking/…';
 function todayStr(){var d=new Date();var m=('0'+(d.getMonth()+1)).slice(-2);var day=('0'+d.getDate()).slice(-2);return d.getFullYear()+'-'+m+'-'+day;}
 function fillSel(id,field,blank){var sel=$(id);if(!sel)return;var opts=getOpts(field);var cur=sel.value;var h=blank?'<option value="">未設定</option>':'';for(var i=0;i<opts.length;i++)h+='<option>'+esc(opts[i].l)+'</option>';sel.innerHTML=h;if(cur)sel.value=cur;}
 function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var h='<option value="">未設定</option>';for(var i=0;i<arr.length;i++)h+='<option value="'+escA(arr[i].v)+'">'+esc(arr[i].label)+'</option>';sel.innerHTML=h;sel.value=cur;}
-function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);fillSelItems('fLp',LP_OPTS);}
+function populateFormSelects(){fillSelItems('fStatus',getStatuses().map(function(s){return {v:s.id,label:s.label};}));fillSelItems('fListing',getCategories().map(function(c){return {v:c.id,label:c.label};}));fillSel('fPagePlan','pagePlan',true);fillSelItems('fLp',getLpOpts().map(function(o){return {v:o.v,label:o.label};}));}
 function populateListing(){populateFormSelects();}
 function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahooLps=[[]];galRakuten=[];stripExpanded={};renderYahooLpBlocks(1);renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fMemo','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlYahooRank',PH_RANK);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
@@ -1319,7 +1358,26 @@ function optRow(field,opt){opt=opt||{l:'',c:'gray',t:''};var d=document.createEl
 function contOf(field){return 'optPage';}
 function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=getOpts('pagePlan');for(var i=0;i<opts.length;i++)box.appendChild(optRow('pagePlan',opts[i]));}show('manageModal');}
 function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:'gray',t:''});}return arr;}
-$('btnManage').onclick=openManage;
+if($('btnManage'))$('btnManage').onclick=openManage;
+if($('btnSetEdit'))$('btnSetEdit').onclick=function(){show('setEditModal');};
+if($('seCat'))$('seCat').onclick=function(){hide('setEditModal');openCatManager();};
+if($('seLp'))$('seLp').onclick=function(){hide('setEditModal');openManage();};
+if($('seLpType'))$('seLpType').onclick=function(){hide('setEditModal');openLpManager();};
+var LP_PALETTE=[['#2f6fb0','青'],['#1f9d63','緑'],['#c0392b','赤'],['#d98324','オレンジ'],['#8257c9','紫'],['#0e9aa7','ティール'],['#e84393','ピンク'],['#2c3e50','ネイビー'],['#7a756d','グレー']];
+function lpColorSel(c){var o='';for(var i=0;i<LP_PALETTE.length;i++){o+='<option value="'+LP_PALETTE[i][0]+'"'+(c===LP_PALETTE[i][0]?' selected':'')+'>■ '+LP_PALETTE[i][1]+'</option>';}return o;}
+function openLpManager(){renderLpManager();show('lpModal');}
+function renderLpManager(){var box=$('lpList');if(!box)return;var opts=getLpOpts();var h='';for(var i=0;i<opts.length;i++){var o=opts[i];h+='<div class="lp-row" data-i="'+i+'"><span class="lp-sw" style="background:'+esc(o.c)+'"></span><select class="lp-color">'+lpColorSel(o.c)+'</select><input class="lp-label" value="'+escA(o.label)+'"><span class="mv-btns"><button type="button" class="mv up" title="上へ">▲</button><button type="button" class="mv down" title="下へ">▼</button></span><button type="button" class="opt-del" title="削除">×</button></div>';}box.innerHTML=h;}
+function addLp(){var inp=$('newLpLabel');var v=(inp.value||'').trim();if(!v)return;var a=getLpOpts();a.push({v:'lp_'+Date.now().toString(36),label:v,c:'#2f6fb0'});saveLpOpts(a);inp.value='';renderLpManager();populateFormSelects();render();}
+if($('btnAddLp'))$('btnAddLp').onclick=addLp;
+if($('newLpLabel'))$('newLpLabel').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addLp();}});
+(function(){var box=$('lpList');if(!box)return;
+  function rowIdx(t){var r=t;while(r&&r!==box&&!(r.classList&&r.classList.contains('lp-row')))r=r.parentNode;return (r&&r.classList&&r.classList.contains('lp-row'))?parseInt(r.getAttribute('data-i'),10):-1;}
+  box.addEventListener('change',function(e){var t=e.target;if(!t.classList)return;var i=rowIdx(t);if(i<0)return;var a=getLpOpts();if(t.classList.contains('lp-label')){a[i].label=t.value;saveLpOpts(a);populateFormSelects();render();}else if(t.classList.contains('lp-color')){a[i].c=t.value;saveLpOpts(a);renderLpManager();populateFormSelects();render();}});
+  box.addEventListener('click',function(e){var t=e.target;if(!t.classList)return;var i=rowIdx(t);if(i<0)return;var a=getLpOpts();
+    if(t.classList.contains('opt-del')){if(!confirm('LP方針「'+a[i].label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;var v=a[i].v;for(var k=0;k<items.length;k++){if(items[k].lpType===v)items[k].lpType='';}a.splice(i,1);saveLpOpts(a);persist();renderLpManager();populateFormSelects();render();return;}
+    if(t.classList.contains('mv')){if(t.classList.contains('up')&&i>0){var x=a[i-1];a[i-1]=a[i];a[i]=x;}else if(t.classList.contains('down')&&i<a.length-1){var y=a[i+1];a[i+1]=a[i];a[i]=y;}saveLpOpts(a);renderLpManager();populateFormSelects();render();}
+  });
+})();
 var _addBtns=document.querySelectorAll('[data-addopt]');for(var _a=0;_a<_addBtns.length;_a++){_addBtns[_a].addEventListener('click',function(){var f=this.getAttribute('data-addopt');$(contOf(f)).appendChild(optRow(f,{}));});}
 (function(){var os=$('optScroll');if(!os)return;
   function rowOf(t){var r=t;while(r&&r!==os&&!(r.classList&&r.classList.contains('opt-row')))r=r.parentNode;return (r&&r.classList&&r.classList.contains('opt-row'))?r:null;}
