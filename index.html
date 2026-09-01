@@ -723,7 +723,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.80.3</span>
+        <span class="version" id="version">v0.80.4</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -940,7 +940,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.80.3</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.80.4</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1602,7 +1602,7 @@ for(var mt=0;mt<mtabs.length;mt++){mtabs[mt].addEventListener('click',function()
 /* ===== 画像ギャラリー（複数・並び替え） ===== */
 var galYahooLps=[[]],galYahooLpNames=[],galRakuten=[],mainYahoo='',mainRakuten='';
 function lpDefName(g,total){return (g===0)?'Yahoo元々':((g===1)?'Yahoo新規':'Yahoo新規'+g);}
-function lpTagColor(g){var a=['#ff9800','#2f6fb0','#1f9d63','#8257c9','#0e9aa7','#e84393'];return a[g%a.length];}
+function lpTagColor(g){return (g===0)?'#ff9800':'#2f6fb0';}
 function lpDispName(it,g,total){if(g===0)return lpDefName(0,total);if(it.yahooLpNames&&it.yahooLpNames[g]!=null){var _n=String(it.yahooLpNames[g]).trim();if(_n)return _n;}return lpDefName(g,total);}
 function ppCount(pp){var n=parseInt(pp,10);return (isFinite(n)&&n>0)?n:1;}
 function itemYahooLps(it,n){var lps=(it.yahooLps&&it.yahooLps.length)?it.yahooLps.map(function(a){return (a||[]).slice();}):[(it.yahooImgs||[]).slice()];n=n||1;while(lps.length<n)lps.push([]);return lps;}
