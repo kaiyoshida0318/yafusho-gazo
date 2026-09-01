@@ -698,10 +698,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.70.0</span>
+        <span class="version" id="version">v0.71.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
-        <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
         <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
@@ -926,7 +925,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.70.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.71.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -970,24 +969,14 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 <div class="overlay" id="topMgrModal" hidden>
   <div class="mini">
     <h2>📋 出品内容・状態管理</h2>
-    <p class="hint">上部の絞り込みタブ「出品内容」「状態」を編集します。</p>
+    <p class="hint">絞り込みタブ「出品内容」「状態」と、一覧「出品設定」の選択肢をまとめて編集します。</p>
     <div class="setedit-btns">
       <button type="button" class="setedit-item" id="tmCat"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリ（A/B/C…）の追加・名前・アイコン・並び替え</small></span></button>
       <button type="button" class="setedit-item" id="tmStatus"><span class="se-ico">📋</span><span class="se-txt"><b>状態</b><small>状態（制作前／完了 等）の追加・名前・番号・並び替え</small></span></button>
+      <button type="button" class="setedit-item" id="tmLp"><span class="se-ico">📄</span><span class="se-txt"><b>LP本数</b><small>本数の選択肢（数字）を編集</small></span></button>
+      <button type="button" class="setedit-item" id="tmLpType"><span class="se-ico">🎯</span><span class="se-txt"><b>LP方針</b><small>方針の追加・名前・色を編集</small></span></button>
     </div>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="topMgrModal">閉じる</button></div>
-  </div>
-</div>
-<div class="overlay" id="setEditModal" hidden>
-  <div class="mini">
-    <h2>🛠 出品設定編集</h2>
-    <p class="hint">一覧の「出品設定」3項目の選択肢を編集します。</p>
-    <div class="setedit-btns">
-      <button type="button" class="setedit-item" id="seCat"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリの追加・名前・アイコン・並び替え</small></span></button>
-      <button type="button" class="setedit-item" id="seLp"><span class="se-ico">📄</span><span class="se-txt"><b>LP本数</b><small>本数の選択肢（数字）を編集</small></span></button>
-      <button type="button" class="setedit-item" id="seLpType"><span class="se-ico">🎯</span><span class="se-txt"><b>LP方針</b><small>方針の追加・名前・色を編集</small></span></button>
-    </div>
-    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="setEditModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="lpModal" hidden>
@@ -1425,10 +1414,8 @@ function contOf(field){return 'optPage';}
 function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=getOpts('pagePlan');for(var i=0;i<opts.length;i++)box.appendChild(optRow('pagePlan',opts[i]));}show('manageModal');}
 function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:'gray',t:''});}return arr;}
 if($('btnManage'))$('btnManage').onclick=openManage;
-if($('btnSetEdit'))$('btnSetEdit').onclick=function(){show('setEditModal');};
-if($('seCat'))$('seCat').onclick=function(){hide('setEditModal');openCatManager();};
-if($('seLp'))$('seLp').onclick=function(){hide('setEditModal');openManage();};
-if($('seLpType'))$('seLpType').onclick=function(){hide('setEditModal');openLpManager();};
+if($('tmLp'))$('tmLp').onclick=function(){hide('topMgrModal');openManage();};
+if($('tmLpType'))$('tmLpType').onclick=function(){hide('topMgrModal');openLpManager();};
 var LP_PALETTE=[['#2f6fb0','青'],['#1f9d63','緑'],['#c0392b','赤'],['#d98324','オレンジ'],['#8257c9','紫'],['#0e9aa7','ティール'],['#e84393','ピンク'],['#2c3e50','ネイビー'],['#7a756d','グレー']];
 function lpColorSel(c){var o='';for(var i=0;i<LP_PALETTE.length;i++){o+='<option value="'+LP_PALETTE[i][0]+'"'+(c===LP_PALETTE[i][0]?' selected':'')+'>■ '+LP_PALETTE[i][1]+'</option>';}return o;}
 function openLpManager(){renderLpManager();show('lpModal');}
