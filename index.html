@@ -701,7 +701,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.72.0</span>
+        <span class="version" id="version">v0.72.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -918,7 +918,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.72.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.72.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1742,8 +1742,8 @@ function renderStatusTabs(){
   var h='<button class="stab'+(statusFilter===''?' on':'')+'" data-status="">全体<span class="cnt">'+countStatus('')+'</span></button>';
   var done=null;var _d=doneStatusId();
   for(var i=0;i<ss.length;i++){if(ss[i].id===_d){done=ss[i];continue;}h+='<button class="stab'+(statusFilter===ss[i].id?' on':'')+'" data-status="'+escA(ss[i].id)+'"><span class="stab-ico">'+statusIconHtml(ss[i].icon)+'</span>'+esc(ss[i].label)+'<span class="cnt">'+countStatus(ss[i].id)+'</span></button>';}
-  h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   if(done){h+='<span class="stab-sep" title="完了は全体に表示されません"></span>';h+='<button class="stab stab-done'+(statusFilter===done.id?' on':'')+'" data-status="'+escA(done.id)+'"><span class="stab-ico">'+statusIconHtml(done.icon)+'</span>'+esc(done.label)+'<span class="cnt">'+countStatus(done.id)+'</span></button>';}
+  h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   el.innerHTML=h;
 }
 function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;var d=$('btnDiscardEdits');if(d)d.hidden=!!bulkEdit;}
