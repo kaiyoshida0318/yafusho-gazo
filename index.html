@@ -600,7 +600,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 #gridBody td{height:var(--row-h,58px);vertical-align:top;position:relative}
 .sm-cell,.dc-cell{position:relative;display:-webkit-box;-webkit-line-clamp:var(--dc-lines,2);-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;white-space:normal;word-break:break-word;overflow-wrap:anywhere;cursor:help}
 /* 販売手法は省略せず全文を表示（行が下に伸びる） */
-#gridBody td .dc-cell[data-field="salesMethod"]{display:block;-webkit-line-clamp:unset;overflow:visible;cursor:default}
+#gridBody td .dc-cell[data-field="salesMethod"],#gridBody td .dc-cell[data-field="buttonElem"]{display:block;-webkit-line-clamp:unset;overflow:visible;cursor:default}
 .sm-pop{position:fixed;z-index:400;display:none;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 16px 44px rgba(20,24,32,.22);padding:16px 18px;font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-width:440px}
 
 .row-thumb{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--line-2);background:#f2f3f5;display:inline-block;cursor:pointer}
@@ -672,7 +672,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.64.1</span>
+        <span class="version" id="version">v0.64.2</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
@@ -900,7 +900,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.64.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.64.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1012,7 +1012,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 </div>
 <script>
 function show(id){document.getElementById(id).hidden=false;}
-function hide(id){document.getElementById(id).hidden=true;}
+function hide(id){document.getElementById(id).hidden=true;if(id==='colsModal'&&colsModalOpen){colsModalOpen=false;renderHead();render();}}
 function $(id){return document.getElementById(id);}
 
 /* ===== データ ===== */
@@ -1046,7 +1046,7 @@ function stripInner(side,i,v){if(isTextItem(v)){var o=parseTextItem(v);return '<
 function urlCell(arr){arr=(arr||[]).filter(function(u){return u;});if(!arr.length)return '<span class="muted">—</span>';var h='';for(var i=0;i<arr.length;i++){h+='<a href="'+escA(arr[i])+'" target="_blank" rel="noopener">'+esc(arr[i])+'</a>';}return '<div class="url-cell">'+h+'</div>';}
 function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'</span>';}
 
-var statusFilter='',listingFilter='',colResizeMode=false;
+var statusFilter='',listingFilter='',colResizeMode=false,colsModalOpen=false;
 var dirty=false;
 
 /* ===== 設定（出品内容の選択肢 / 列） — 端末ローカル ===== */
@@ -1249,7 +1249,7 @@ function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var
 function setColOrder(arr){var vm=getViewMode();var s=getSettings();if(!s.colorderV)s.colorderV={};s.colorderV[vm]=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
 function headLabelHtml(key,def){if(key==='pagePlan')return '制作LP<br>本数';return esc(def.label);}
-function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+((colResizeMode||key==='searchUrl'||key==='yahooUrls'||key==='yahooRank'||key==='rakutenUrls'||key==='variation'||key==='salesMethod'||key==='buttonElem'||key==='name')?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
+function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+((colResizeMode||colsModalOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
 
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
@@ -1512,7 +1512,7 @@ function renderColManager(){
   })(shown[i]);}
   if(!strip.children.length){var e=document.createElement('div');e.className='col-empty';e.textContent='このビューに列がありません';strip.appendChild(e);}
 }
-function openCols(){renderColManager();show('colsModal');}
+function openCols(){colsModalOpen=true;renderHead();render();renderColManager();show('colsModal');}
 $('btnCols2').onclick=openCols;
 if($('colViewTabs'))$('colViewTabs').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('cvt-btn')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('cvt-btn'))return;applyView(b.getAttribute('data-cv'));renderColManager();});
 $('btnResetCols').onclick=function(){if(!confirm('この端末の項目表示設定（基礎情報・画像一覧の両ビュー）をデフォルトに戻します。よろしいですか？'))return;var s=getSettings();s.colcfg={};s.colorder=null;s.colcfgV={};s.colorderV={};saveSettings(s);renderHead();render();renderColManager();log('項目をデフォルトに戻しました（全ビュー）');};
