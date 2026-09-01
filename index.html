@@ -726,7 +726,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.82.0</span>
+        <span class="version" id="version">v0.82.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -943,7 +943,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.82.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.82.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1640,10 +1640,11 @@ document.addEventListener('dragover',function(e){var it=(e.target.closest)?e.tar
 document.addEventListener('drop',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();var to=parseInt(it.getAttribute('data-idx'),10);var from=_dragIdx;var arr=galOf(_dragSide);if(arr&&from>=0&&to>=0&&from!==to){var x=arr.splice(from,1)[0];arr.splice(to,0,x);renderStrip(_dragSide);}it.classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
 var STRIP_CAP=20;
 var stripExpanded={yahoo:false,rakuten:false};
+function stripAddTile(side){return '<div class="strip-add" data-add="'+side+'" title="クリックで追加メニュー / 画像はドロップでも追加"><span class="strip-add-l">📤 ドラッグ＆ドロップ<br><span class="strip-add-or">or</span><br>情報追加</span></div>';}
 function renderStrip(side){
   var arr=galOf(side);var el=stripEl(side);if(!el)return;
   var dz=dzEl(side);
-  if(!arr.length){if(dz)dz.style.display='';el.innerHTML='';return;}
+  if(!arr.length){if(dz)dz.style.display='';el.innerHTML=stripAddTile(side);return;}
   if(dz)dz.style.display='none';
   var _n=arr.length,_exp=!!stripExpanded[side],_lim=(!_exp&&_n>STRIP_CAP)?STRIP_CAP:_n;
   var h='';
@@ -1660,7 +1661,7 @@ function renderStrip(side){
        '</div></div>';
   }
   if(!_exp&&_n>STRIP_CAP){h+='<div class="strip-more-tile" data-expand="'+side+'" title="残り'+(_n-STRIP_CAP)+'枚を表示"><span class="smt-n">+'+(_n-STRIP_CAP)+'</span><span class="smt-sub">もっと見る</span></div>';}
-  h+='<div class="strip-add" data-add="'+side+'" title="クリックで追加メニュー / 画像はドロップでも追加"><span class="strip-add-l">📤 ドラッグ＆ドロップ<br><span class="strip-add-or">or</span><br>情報追加</span></div>';
+  h+=stripAddTile(side);
   el.innerHTML=h;
 }
 function isImageFile(f){return !!(f&&(/^image\//.test(f.type||'')||/\.(png|jpe?g|webp|gif|bmp)$/i.test(f.name||'')));}
