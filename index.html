@@ -661,8 +661,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .belp-btn.has .belp-dot{display:block}
 .belp-txt{flex:1 1 auto;min-width:0;font-size:12px;line-height:1.45;white-space:normal;word-break:break-word;overflow-wrap:anywhere;padding-top:2px;cursor:pointer}
 .belp-txt.empty{color:#b8b2a8;min-height:18px}
-.belp-editwrap{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px}
-.belp-edit{width:100%;box-sizing:border-box;min-height:64px;font:inherit;font-size:12px;line-height:1.45;padding:5px 6px;border:1px solid var(--red,#c0392b);border-radius:6px;resize:vertical}
+.belp-inp{flex:1 1 auto;min-width:0;width:100%;box-sizing:border-box;font:inherit;font-size:12px;line-height:1.45;padding:1px 4px;margin:0;border:1px solid var(--red,#c0392b);border-radius:4px;background:#fff;color:#222}
+.belp-inp:focus{outline:2px solid rgba(192,57,43,.25)}
 .dc-url{color:#1f5bd8;text-decoration:underline;cursor:pointer;word-break:break-all}
 .dc-url:hover{color:#d8331f}
 #grid td[data-col-key="listingType"],#grid th[data-col-key="listingType"],#grid td[data-col-key="status"],#grid th[data-col-key="status"],#grid td[data-col-key="lpType"],#grid th[data-col-key="lpType"]{padding-left:6px;padding-right:6px}
@@ -719,7 +719,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.75.1</span>
+        <span class="version" id="version">v0.75.2</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -936,7 +936,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.75.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.75.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1250,17 +1250,16 @@ function startBeLpEdit(el){
   var id=el.getAttribute('data-belp'),k=el.getAttribute('data-bek');
   var it=findItemById(id);if(!it)return;
   var row=(el.closest?el.closest('.belp-row'):null);if(!row)return;
-  if(row.querySelector('.belp-edit'))return;
+  if(row.querySelector('.belp-inp'))return;
   var txt=row.querySelector('.belp-txt');if(!txt)return;
-  var wrap=document.createElement('div');wrap.className='belp-editwrap';
-  wrap.innerHTML='<textarea class="belp-edit" placeholder="このLPのボタン要素（改行OK）"></textarea><div class="sm-edit-btns"><button type="button" class="btn btn-line btn-sm belp-cancel">キャンセル</button><button type="button" class="btn btn-red btn-sm belp-save">保存</button></div>';
-  row.replaceChild(wrap,txt);
-  var ta=wrap.querySelector('.belp-edit');ta.value=beLpGet(it,k);ta.focus();
-  function save(){beLpSet(it,k,ta.value.trim());persist();render();scheduleSync();toast('保存しました');}
-  wrap.querySelector('.belp-save').addEventListener('click',function(ev){ev.stopPropagation();save();});
-  wrap.querySelector('.belp-cancel').addEventListener('click',function(ev){ev.stopPropagation();render();});
-  ta.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Escape'){ev.preventDefault();render();}else if(ev.key==='Enter'&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();save();}});
-  ta.addEventListener('click',function(ev){ev.stopPropagation();});
+  var cur=beLpGet(it,k);
+  var inp=document.createElement('input');inp.type='text';inp.className='belp-inp';inp.value=cur;inp.placeholder='ボタン要素';
+  row.replaceChild(inp,txt);inp.focus();inp.select();
+  var done=false;
+  function save(){if(done)return;done=true;beLpSet(it,k,inp.value.trim());persist();render();scheduleSync();}
+  inp.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();inp.blur();}else if(ev.key==='Escape'){ev.preventDefault();done=true;render();}});
+  inp.addEventListener('blur',save);
+  inp.addEventListener('click',function(ev){ev.stopPropagation();});
 }
 function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
 function cellHtml(key,it){
