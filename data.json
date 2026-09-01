@@ -610,10 +610,6 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-main.webp",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782281410150-rakuten-6.jpg",
@@ -636,8 +632,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001326/"
     ],
+    "yahooRank": [],
     "variation": "Aタイプ/Bタイプ\n\n-Aタイプ-シルバー\n-Aタイプ-ゴールド\n-Bタイプ-シルバー\n-Bタイプ-ゴールド\n\n-10個セット\n-20個セット\n-30個セット",
-    "buttonElem": "■種類：Aタイプ-シルバー/Aタイプ-ゴールド/\nBタイプ-シルバー/Bタイプ-ゴールド\n■個数：10個/20個/30個"
+    "buttonElem": "■種類：Aタイプ-シルバー/Aタイプ-ゴールド/\nBタイプ-シルバー/Bタイプ-ゴールド\n■個数：10個/20個/30個",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1782725437861",
