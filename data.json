@@ -276,8 +276,14 @@
   {
     "id": "it1781762608550",
     "yahooMain": "",
-    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-main.webp",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-4.webp",
     "yahooImgs": [],
+    "yahooLps": [
+      []
+    ],
+    "yahooLpNames": [
+      null
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-5.webp",
@@ -292,8 +298,7 @@
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-14.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-15.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-16.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-17.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-18.webp"
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-17.webp"
     ],
     "date": "2026-06-18",
     "rating": "",
@@ -312,15 +317,7 @@
     "variation": "S/L/SL-20/40/60/120/180枚　",
     "buttonElem": "■内容：S20枚/L20枚/S10枚＆L10枚\n■枚数：20枚/40・60・120・180枚から選ぶ",
     "lpType": "",
-    "memo": "",
-    "yahooLpNames": [
-      null,
-      "20枚",
-      "40枚",
-      "60枚",
-      "120枚",
-      "180枚"
-    ]
+    "memo": ""
   },
   {
     "id": "it1781762654651",
