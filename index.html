@@ -368,6 +368,27 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .col-align-group{display:flex;align-items:center;gap:4px;flex:1;min-width:132px;margin:0}
 .col-ctrl-label{font-size:11px;color:var(--ink-3);flex:0 0 auto}
 .col-align-group .col-align-sel{flex:1;min-width:56px}
+/* 列管理：ビュータブ＋横スクロールのカード */
+.col-view-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cvt-btn{appearance:none;border:1px solid var(--line-2);background:#fff;border-radius:10px;padding:7px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:var(--ink-2)}
+.cvt-btn:hover{border-color:var(--ink-3)}
+.cvt-btn.on{background:#1f3a63;color:#fff;border-color:#1f3a63}
+.cvt-hint{font-size:11.5px;color:var(--ink-3);margin-left:4px;flex:1;min-width:0}
+.col-hstrip{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 14px;flex:1;min-height:0;align-items:flex-start}
+.col-hcard{flex:0 0 auto;width:188px;box-sizing:border-box;border:1px solid var(--line-2);border-radius:12px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:8px}
+.col-hcard.off{opacity:.6;background:#f6f7f9}
+.col-hcard .chc-head{display:flex;align-items:center;gap:6px}
+.col-hcard .chc-ord{display:flex;gap:3px;flex:0 0 auto}
+.col-hcard .chc-name{font-weight:800;font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-1)}
+.col-hcard .chc-vis{appearance:none;border:1px solid var(--line-2);border-radius:8px;padding:5px 0;font:inherit;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:var(--ink-2)}
+.col-hcard .chc-vis.on{background:#eef3fb;border-color:#1f3a63;color:#1f3a63}
+.col-hcard .chc-body{display:flex;flex-direction:column;gap:7px;border-top:1px dashed var(--line-2);padding-top:8px}
+.col-hcard .chc-field{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink-3);font-weight:700;margin:0}
+.col-hcard .chc-field>span{font-size:11px}
+.col-hcard .chc-field .col-width-input,.col-hcard .chc-field .col-wrap-sel{width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid var(--line-2);border-radius:6px;font:inherit;font-size:12px;background:#fff}
+.col-hcard .chc-field .col-align-group{width:100%;min-width:0;gap:6px;margin:0}
+.col-hcard .chc-field .col-align-group .col-align-sel{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--line-2);border-radius:6px;font:inherit;font-size:12px;background:#fff}
+.col-hcard .chc-field .col-align-group .col-ctrl-label{font-size:11px;color:var(--ink-3);font-weight:700;white-space:nowrap;flex:0 0 auto}
 .col-move-btn{padding:6px 10px;border:1px solid var(--line-2);border-radius:6px;background:#fff;font:inherit;font-size:12px;font-weight:600;color:var(--ink-3);cursor:pointer;align-self:flex-end}
 .col-move-btn:hover{border-color:var(--red);color:var(--red)}
 .col-move-btn.col-move-back{align-self:flex-start;color:var(--green-strong)}
@@ -651,7 +672,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.63.2</span>
+        <span class="version" id="version">v0.64.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -879,7 +900,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.63.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.64.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -899,18 +920,14 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 </div>
 <div class="overlay" id="colsModal" hidden>
   <div class="mini modal-col">
-    <h2>📐 列名・列幅・列順管理 <span id="colViewLabel" class="col-view-label"></span></h2>
-    <p class="hint">左が「表示中」、右が「非表示」の項目です。「非表示にする →」「← 表示する」で切り替え、▲▼で表示順を入れ替えできます。幅(px)・折り返し・タイトル/データの揃えも設定可能。この設定はこの端末にのみ保存されます。</p>
-    <div class="col-cols">
-      <div class="col-col col-col-visible">
-        <div class="col-col-head">✅ 表示中</div>
-        <div id="colListVisible" class="col-list"></div>
-      </div>
-      <div class="col-col col-col-hidden">
-        <div class="col-col-head">🚫 非表示</div>
-        <div id="colListHidden" class="col-list"></div>
-      </div>
+    <h2>📐 列名・列幅・列順管理</h2>
+    <div class="col-view-tabs" id="colViewTabs">
+      <button type="button" class="cvt-btn" data-cv="basic">📋 基礎情報</button>
+      <button type="button" class="cvt-btn" data-cv="detail">📑 販売設計</button>
+      <button type="button" class="cvt-btn" data-cv="images">🖼️ 画像一覧</button>
+      <span class="cvt-hint">タブでビューを選び、各列カードで表示・順序（◀▶）・幅・揃え・折り返しを設定。上の表に即反映されます。</span>
     </div>
+    <div class="col-hstrip" id="colHStrip"></div>
     <div class="acts">
       <button class="btn btn-ghost" id="btnResetCols">🔄 デフォルトに戻す</button>
       <button class="btn btn-ghost" id="btnDragResize">↔ ドラッグで幅調整</button>
@@ -1463,50 +1480,41 @@ if($('newStatusLabel'))$('newStatusLabel').addEventListener('keydown',function(e
 /* ===== 項目管理（表示中／非表示・幅・折り返し・揃え・ドラッグ幅調整） ===== */
 function getRenderedColWidth(key){var th=document.querySelector('#gridHead th[data-col-key="'+key+'"]');if(!th)return null;var w=th.getBoundingClientRect().width;return w>0?Math.round(w):null;}
 function makeColAlignGroup(labelText,value,onChange){var g=document.createElement('label');g.className='col-align-group';var sp=document.createElement('span');sp.className='col-ctrl-label';sp.textContent=labelText;var s=document.createElement('select');s.className='col-align-sel';[['left','左'],['center','中央'],['right','右']].forEach(function(p){var o=document.createElement('option');o.value=p[0];o.textContent=p[1];s.appendChild(o);});s.value=value||'left';s.onchange=function(){onChange(s.value);};g.appendChild(sp);g.appendChild(s);return g;}
-function renderColManager(){var _vl=document.getElementById('colViewLabel');if(_vl)_vl.textContent='（'+({images:'画像一覧',basic:'基礎情報',detail:'販売設計'}[getViewMode()]||'')+'ビューの列）';
-  var visWrap=$('colListVisible'),hidWrap=$('colListHidden');if(!visWrap||!hidWrap)return;
-  visWrap.innerHTML='';hidWrap.innerHTML='';
-  var order=getColOrder();
-  var visKeys=[];for(var q=0;q<order.length;q++){if(getColCfg(order[q]).visible!==false)visKeys.push(order[q]);}
-  for(var i=0;i<order.length;i++){(function(key){
-    var c=colDef(key);if(!c)return;
-    var cc=getColCfg(key);var isVis=cc.visible!==false;
-    var card=document.createElement('div');card.className='col-card';
-    var name=document.createElement('div');name.className='col-card-name';
-    if(isVis){
-      var vi=visKeys.indexOf(key);
-      var ordWrap=document.createElement('span');ordWrap.className='col-ord-wrap';
-      var up=document.createElement('button');up.type='button';up.className='col-ord';up.textContent='▲';up.title='上へ';up.disabled=vi<=0;up.onclick=function(){moveCol(key,-1);};
-      var dn=document.createElement('button');dn.type='button';dn.className='col-ord';dn.textContent='▼';dn.title='下へ';dn.disabled=vi>=visKeys.length-1;dn.onclick=function(){moveCol(key,1);};
-      ordWrap.appendChild(up);ordWrap.appendChild(dn);
-      var nm=document.createElement('span');nm.textContent=c.label;
-      name.appendChild(ordWrap);name.appendChild(nm);
-    }else{name.textContent=c.label;}
-    card.appendChild(name);
-    if(isVis){
-      var controls=document.createElement('div');controls.className='col-card-controls';
-      var w=document.createElement('input');w.type='number';w.min='0';w.step='10';w.className='col-width-input';w.title='幅(px)。空欄で自動';
-      if(cc.width){w.value=String(cc.width);w.placeholder='自動';}else{w.value='';var m=getRenderedColWidth(c.key);w.placeholder=(m!=null)?(m+'（自動）'):'自動';}
-      w.onchange=function(){var v=parseInt((w.value||'').trim(),10);setColCfg(c.key,{width:(isFinite(v)&&v>0)?v:null});renderHead();render();renderColManager();};
-      var headAlignG=makeColAlignGroup('タイトル',cc.headAlign||'left',function(val){setColCfg(c.key,{headAlign:val});renderHead();render();});
-      var bodyAlignG=makeColAlignGroup('データ',cc.align||'left',function(val){setColCfg(c.key,{align:val});render();});
-      var sel=document.createElement('select');sel.className='col-wrap-sel';var o1=document.createElement('option');o1.value='wrap';o1.textContent='折り返す';var o2=document.createElement('option');o2.value='clip';o2.textContent='以降を非表示';sel.appendChild(o1);sel.appendChild(o2);sel.value=cc.wrap||'wrap';
-      sel.onchange=function(){setColCfg(c.key,{wrap:sel.value});render();};
-      controls.appendChild(w);controls.appendChild(headAlignG);controls.appendChild(bodyAlignG);controls.appendChild(sel);card.appendChild(controls);
-      var mv=document.createElement('button');mv.type='button';mv.className='col-move-btn';mv.textContent='非表示にする →';
-      mv.onclick=function(){setColCfg(c.key,{visible:false});renderHead();render();renderColManager();};card.appendChild(mv);
-      visWrap.appendChild(card);
-    }else{
-      var mb=document.createElement('button');mb.type='button';mb.className='col-move-btn col-move-back';mb.textContent='← 表示する';
-      mb.onclick=function(){setColCfg(c.key,{visible:true});renderHead();render();renderColManager();};card.appendChild(mb);
-      hidWrap.appendChild(card);
-    }
-  })(order[i]);}
-  if(!visWrap.children.length){var e1=document.createElement('div');e1.className='col-empty';e1.textContent='表示中の項目がありません';visWrap.appendChild(e1);}
-  if(!hidWrap.children.length){var e2=document.createElement('div');e2.className='col-empty';e2.textContent='（すべて表示中）';hidWrap.appendChild(e2);}
+function renderColManager(){
+  var vm=getViewMode();
+  var tabs=$('colViewTabs');if(tabs){var tb=tabs.querySelectorAll('.cvt-btn');for(var t=0;t<tb.length;t++){tb[t].classList.toggle('on',tb[t].getAttribute('data-cv')===vm);}}
+  var strip=$('colHStrip');if(!strip)return;strip.innerHTML='';
+  var order=getColOrder();var avail=VIEW_COLS[vm]||order;
+  var visKeys=[];for(var q=0;q<order.length;q++){if(avail.indexOf(order[q])>=0&&getColCfg(order[q]).visible!==false)visKeys.push(order[q]);}
+  var shown=[];for(var s0=0;s0<order.length;s0++){if(avail.indexOf(order[s0])>=0)shown.push(order[s0]);}
+  for(var i=0;i<shown.length;i++){(function(key){
+    var c=colDef(key);if(!c)return;var cc=getColCfg(key);var isVis=cc.visible!==false;
+    var card=document.createElement('div');card.className='col-hcard'+(isVis?'':' off');
+    var head=document.createElement('div');head.className='chc-head';
+    var ord=document.createElement('span');ord.className='chc-ord';var vi=visKeys.indexOf(key);
+    var lf=document.createElement('button');lf.type='button';lf.className='col-ord';lf.textContent='◀';lf.title='左へ';lf.disabled=(!isVis)||vi<=0;lf.onclick=function(){moveCol(key,-1);};
+    var rt=document.createElement('button');rt.type='button';rt.className='col-ord';rt.textContent='▶';rt.title='右へ';rt.disabled=(!isVis)||vi<0||vi>=visKeys.length-1;rt.onclick=function(){moveCol(key,1);};
+    ord.appendChild(lf);ord.appendChild(rt);
+    var nm=document.createElement('span');nm.className='chc-name';nm.textContent=c.label;nm.title=c.label;
+    head.appendChild(ord);head.appendChild(nm);card.appendChild(head);
+    var tog=document.createElement('button');tog.type='button';tog.className='chc-vis'+(isVis?' on':'');tog.textContent=isVis?'✓ 表示中':'非表示';
+    tog.onclick=function(){setColCfg(key,{visible:!isVis});renderHead();render();renderColManager();};card.appendChild(tog);
+    var body=document.createElement('div');body.className='chc-body';
+    var wf=document.createElement('label');wf.className='chc-field';var wl=document.createElement('span');wl.textContent='幅(px)';wf.appendChild(wl);
+    var w=document.createElement('input');w.type='number';w.min='0';w.step='10';w.className='col-width-input';w.disabled=!isVis;
+    if(cc.width){w.value=String(cc.width);}else{w.value='';var m=getRenderedColWidth(key);w.placeholder=(m!=null)?(m+'（自動）'):'自動';}
+    w.onchange=function(){var v=parseInt((w.value||'').trim(),10);setColCfg(key,{width:(isFinite(v)&&v>0)?v:null});renderHead();render();renderColManager();};wf.appendChild(w);body.appendChild(wf);
+    var taf=document.createElement('div');taf.className='chc-field';taf.appendChild(makeColAlignGroup('タイトル揃え',cc.headAlign||'left',function(val){setColCfg(key,{headAlign:val});renderHead();render();}));body.appendChild(taf);
+    var daf=document.createElement('div');daf.className='chc-field';daf.appendChild(makeColAlignGroup('データ揃え',cc.align||'left',function(val){setColCfg(key,{align:val});render();}));body.appendChild(daf);
+    var sf=document.createElement('label');sf.className='chc-field';var sl=document.createElement('span');sl.textContent='折り返し';sf.appendChild(sl);
+    var sel=document.createElement('select');sel.className='col-wrap-sel';sel.innerHTML='<option value="wrap">折り返す</option><option value="clip">以降を非表示</option>';sel.value=cc.wrap||'wrap';sel.disabled=!isVis;sel.onchange=function(){setColCfg(key,{wrap:sel.value});render();};sf.appendChild(sel);body.appendChild(sf);
+    card.appendChild(body);strip.appendChild(card);
+  })(shown[i]);}
+  if(!strip.children.length){var e=document.createElement('div');e.className='col-empty';e.textContent='このビューに列がありません';strip.appendChild(e);}
 }
 function openCols(){renderColManager();show('colsModal');}
 $('btnCols2').onclick=openCols;
+if($('colViewTabs'))$('colViewTabs').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('cvt-btn')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('cvt-btn'))return;applyView(b.getAttribute('data-cv'));renderColManager();});
 $('btnResetCols').onclick=function(){if(!confirm('この端末の項目表示設定（基礎情報・画像一覧の両ビュー）をデフォルトに戻します。よろしいですか？'))return;var s=getSettings();s.colcfg={};s.colorder=null;s.colcfgV={};s.colorderV={};saveSettings(s);renderHead();render();renderColManager();log('項目をデフォルトに戻しました（全ビュー）');};
 /* ドラッグ幅調整モード */
 function enterColResizeMode(){colResizeMode=true;hide('colsModal');var bar=$('resizeBar');if(bar)bar.hidden=false;renderHead();render();}
