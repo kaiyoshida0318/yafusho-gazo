@@ -556,8 +556,8 @@
   },
   {
     "id": "it1782280573454",
-    "yahooMain": "",
-    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-main.webp",
+    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-5.webp",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-5.webp",
     "yahooImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-6.webp",
@@ -572,6 +572,25 @@
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-15.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-16.webp"
     ],
+    "yahooLps": [
+      [
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-5.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-6.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-7.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-8.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-9.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-10.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-11.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-12.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-13.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-14.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-15.webp",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-16.webp"
+      ]
+    ],
+    "yahooLpNames": [
+      null
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-6.webp",
@@ -585,9 +604,7 @@
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-14.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-15.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-16.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-17.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-18.gif",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-19.webp"
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-17.webp"
     ],
     "date": "2026-06-24",
     "rating": "",
