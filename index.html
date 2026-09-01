@@ -754,7 +754,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.88.2</span>
+        <span class="version" id="version">v0.89.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
@@ -972,7 +972,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.88.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.89.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1163,16 +1163,14 @@ function isPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){re
 /* ===== 離脱・リロード時の確認 ===== */
 function hasUnsavedWork(){
   try{
-    if(typeof dirty!=='undefined'&&dirty)return true;
-    var sb=document.getElementById('btnSaveEdits');
-    if(sb&&!sb.hidden)return true;
-    if(document.querySelector('.sm-edit,.lp-name-inp,.cat-label-input:focus'))return true;
+    if(document.querySelector('.sm-edit,.lp-name-inp'))return true;
     if(typeof ghBusy!=='undefined'&&ghBusy)return true;
     if(isPending()&&getCfg().pat)return true;
   }catch(e){}
   return false;
 }
 window.addEventListener('beforeunload',function(e){
+  try{autoSaveNow(false);}catch(_e){}
   if(!hasUnsavedWork())return;
   e.preventDefault();e.returnValue='';return '';
 });
@@ -1977,8 +1975,12 @@ function renderStatusTabs(){
   h+='<button class="stab stab-none'+(statusFilter==='__none__'?' on':'')+'" data-status="__none__">未設定<span class="cnt">'+countStatus('__none__')+'</span></button>';
   el.innerHTML=h;
 }
-function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;var d=$('btnDiscardEdits');if(d)d.hidden=!!bulkEdit;}
-function clearDirty(){dirty=false;var b=$('btnSaveEdits');if(b)b.hidden=true;var d=$('btnDiscardEdits');if(d)d.hidden=true;}
+function markDirty(){dirty=true;var b=$('btnSaveEdits');if(b)b.hidden=false;var d=$('btnDiscardEdits');if(d)d.hidden=!!bulkEdit;autoSaveSoon();}
+function clearDirty(){dirty=false;var b=$('btnSaveEdits');if(b)b.hidden=!bulkEdit;var d=$('btnDiscardEdits');if(d)d.hidden=true;}
+/* ===== 自動保存 ===== */
+var _autoSaveT=null;
+function autoSaveSoon(){if(_autoSaveT)clearTimeout(_autoSaveT);_autoSaveT=setTimeout(function(){_autoSaveT=null;autoSaveNow(true);},700);}
+function autoSaveNow(sync){if(!dirty)return;if(_autoSaveT){clearTimeout(_autoSaveT);_autoSaveT=null;}persist();clearDirty();if(sync!==false)scheduleSync();}
 window.addEventListener('beforeunload',function(e){if((bulkEdit&&dirty)||ghBusy){e.preventDefault();e.returnValue='まだGitHubへ同期中（または一括編集中）です。今更新すると未保存の変更が失われる可能性があります。よろしいですか？';return e.returnValue;}});
 function stageEdit(id,field,v){for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}markDirty();}
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
