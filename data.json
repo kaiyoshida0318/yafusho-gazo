@@ -263,10 +263,6 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-main.webp",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762608550-rakuten-6.webp",
@@ -296,8 +292,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001303/"
     ],
+    "yahooRank": [],
     "variation": "S/L/SL-20/40/60/120/180枚　",
-    "buttonElem": "■内容：S20枚/L20枚/S10枚＆L10枚\n■枚数：20枚/40・60・120・180枚から選ぶ"
+    "buttonElem": "■内容：S20枚/L20枚/S10枚＆L10枚\n■枚数：20枚/40・60・120・180枚から選ぶ",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1781762654651",
