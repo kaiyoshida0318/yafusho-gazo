@@ -604,7 +604,7 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 #gridBody td{height:var(--row-h,58px);vertical-align:top;position:relative}
 .sm-cell,.dc-cell{position:relative;display:-webkit-box;-webkit-line-clamp:var(--dc-lines,2);-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;white-space:normal;word-break:break-word;overflow-wrap:anywhere;cursor:help}
 /* 販売手法は省略せず全文を表示（行が下に伸びる） */
-#gridBody td .dc-cell[data-field="salesMethod"],#gridBody td .dc-cell[data-field="buttonElem"]{display:block;-webkit-line-clamp:unset;overflow:visible;cursor:default}
+#gridBody td .dc-cell[data-field="salesMethod"],#gridBody td .dc-cell[data-field="buttonElem"],#gridBody td .dc-cell[data-field="variation"]{display:block;-webkit-line-clamp:unset;overflow:visible;cursor:default}
 .sm-pop{position:fixed;z-index:400;display:none;background:#fff;border:1px solid var(--line-2);border-radius:12px;box-shadow:0 16px 44px rgba(20,24,32,.22);padding:16px 18px;font-size:13px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-width:440px}
 
 .row-thumb{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--line-2);background:#f2f3f5;display:inline-block;cursor:pointer}
@@ -624,6 +624,13 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .ltab .cnt{color:var(--ink-3);font-size:11px;font-family:"Roboto Mono",monospace}
 .ltab .lp-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
 .ltab .pp-badge.lt-badge{min-width:18px;height:18px;font-size:11px;padding:0 5px}
+/* 全フィルタピルの形・色を統一 */
+.ctab,.stab,.ltab{border-radius:999px!important;padding:6px 13px!important;font-size:13px!important;font-weight:600!important;gap:7px}
+.ctab:hover,.stab:hover,.ltab:hover{border-color:var(--ink-3)!important;color:var(--ink-1)!important}
+.ctab.on,.stab.on,.ltab.on{background:#1f3a63!important;border-color:#1f3a63!important;color:#fff!important}
+.ctab .cnt,.stab .cnt,.ltab .cnt{font-size:11px!important;font-weight:600!important;background:#eef0f3!important;color:var(--ink-3)!important;padding:2px 8px!important;border-radius:999px!important;min-width:20px;text-align:center;font-family:"Roboto Mono",monospace}
+.ctab.on .cnt,.stab.on .cnt,.ltab.on .cnt{background:rgba(255,255,255,.28)!important;color:#fff!important}
+.stab.stab-done.on{background:#c0392b!important;border-color:#c0392b!important}
 .ctab-ico .cat-logo{width:18px;height:18px}
 .dc-cell.cell-name{font-weight:600;min-width:0}
 .dc-cell.mono{font-family:'Roboto Mono',monospace}
@@ -688,7 +695,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.68.1</span>
+        <span class="version" id="version">v0.69.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
@@ -916,7 +923,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.68.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.69.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
