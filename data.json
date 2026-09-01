@@ -768,10 +768,6 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-main.webp",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-4.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-5.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308381446-rakuten-6.jpg",
@@ -802,8 +798,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001325/"
     ],
+    "yahooRank": [],
     "variation": "Aバネ式/Bバネなし/Cツボ押しスティック\nA/B/C\nAB/AC/BC\nABC",
-    "buttonElem": "■個数：1個/2個セット/3個セット\n内容：単体、2個、3個全組み合わせ\n"
+    "buttonElem": "■個数：1個/2個セット/3個セット\n内容：単体、2個、3個全組み合わせ\n",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1785308763473",
