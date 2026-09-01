@@ -544,7 +544,7 @@
     "status": "st_next",
     "name": "携帯トイレ",
     "code": "eq-22-05-toilet",
-    "salesMethod": "ページは2つ。1セット（4個）は単一で出してPR30。2セット（8個）以上は一つのページで、個別価格設定で段々にして出す。",
+    "salesMethod": "ページは2つ。1セット（4個）は単一で出してPR30。\n2セット（8個）以上は一つのページで、個別価格設定で段々にして出す。",
     "searchUrl": "https://shopping.yahoo.co.jp/search/%E6%90%BA%E5%B8%AF%E3%83%88%E3%82%A4%E3%83%AC/0/?first=1&ss_first=1&ts=1782281558&mcr=4efed0c58744bad53dc1af0ba42e0e52&sretry=0&sc_i=shopping-pc-web-result-suggest-h_srch-srchbtn-sgstfrom-result-item-h_srch-srchbox",
     "yahooUrls": [],
     "rakutenUrls": [
