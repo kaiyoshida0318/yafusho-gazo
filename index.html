@@ -723,7 +723,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.80.0</span>
+        <span class="version" id="version">v0.80.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -940,7 +940,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.80.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.80.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1221,7 +1221,7 @@ function stripOfArr(arr,id,badge){
 function cntCircle(cls,count,col){if(!count)return '';return '<span class="tag-cnt-o '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' title="'+count+'枚">'+count+'</span>';}
 function dlBtnHtml(id,side,cls,col){return '<button type="button" class="tag-dl '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' data-dl="'+escA(id)+'" data-dlside="'+escA(side)+'" title="この行の画像をまとめてダウンロード"><span>DL</span></button>';}
 function tagLbl(label,cls,count,id,side){return '<span class="img2-tagwrap"><span class="img2-tag '+cls+'"><span class="itag-l">'+esc(label)+'</span></span>'+cntCircle(cls,count)+((count&&id)?dlBtnHtml(id,side,cls):'')+'</span>';}
-function tagLblY(it,g,total,count){var nm=lpDispName(it,g,total);var col=lpTagColor(g);return '<span class="img2-tagwrap"><span class="img2-tag tb-y" style="background:'+col+'"><span class="itag-l lp-name-edit clk" data-id="'+escA(it.id)+'" data-lpg="'+g+'" title="クリックで名前を編集">'+esc(nm)+'</span></span>'+cntCircle('tb-y',count,col)+(count?dlBtnHtml(it.id,'y'+g,'tb-y',col):'')+'</span>';}
+function tagLblY(it,g,total,count,noDl){var nm=lpDispName(it,g,total);var col=lpTagColor(g);return '<span class="img2-tagwrap"><span class="img2-tag tb-y" style="background:'+col+'"><span class="itag-l lp-name-edit clk" data-id="'+escA(it.id)+'" data-lpg="'+g+'" title="クリックで名前を編集">'+esc(nm)+'</span></span>'+cntCircle('tb-y',count,col)+((count&&!noDl)?dlBtnHtml(it.id,'y'+g,'tb-y',col):'')+'</span>';}
 function startLpNameEdit(el){var id=el.getAttribute('data-id');var g=parseInt(el.getAttribute('data-lpg'),10);var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;var cur=(it.yahooLpNames&&it.yahooLpNames[g]!=null)?String(it.yahooLpNames[g]):'';var inp=document.createElement('input');inp.type='text';inp.className='lp-name-inp';inp.value=cur;el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();var done=false;function save(){if(done)return;done=true;var v=inp.value.trim();if(!it.yahooLpNames)it.yahooLpNames=[];it.yahooLpNames[g]=v;persist();render();markDirty();}inp.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();inp.blur();}else if(ev.key==='Escape'){done=true;render();}});inp.addEventListener('blur',save);inp.addEventListener('click',function(ev){ev.stopPropagation();});}
 function imgSideRow(tagHtml,imagesHtml){return '<div class="img2-side"><div class="img2-left img2-taglab">'+tagHtml+'</div><div class="img2-right">'+imagesHtml+'</div></div>';}
 function imgBlockHtml(it){
@@ -1238,9 +1238,9 @@ function findItemById(id){for(var i=0;i<items.length;i++){if(items[i].id===id)re
 function beLpCellHtml(it){
   var h='<td><div class="belp-wrap">';
   var rk=imgArr(it,'rakuten');
-  h+='<div class="belp-row">'+tagLbl('楽天','tb-r',rk.length,it.id,'r')+'</div>';
+  h+='<div class="belp-row">'+tagLbl('楽天','tb-r',rk.length)+'</div>';
   var lps=itemYahooLps(it,ppShowCount(it));
-  for(var g=0;g<lps.length;g++){h+='<div class="belp-row">'+tagLblY(it,g,lps.length,lps[g].length)+'</div>';}
+  for(var g=0;g<lps.length;g++){h+='<div class="belp-row">'+tagLblY(it,g,lps.length,lps[g].length,true)+'</div>';}
   return h+'</div></td>';
 }
 function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
