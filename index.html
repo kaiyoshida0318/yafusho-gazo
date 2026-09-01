@@ -471,6 +471,9 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cat-icon-opt:hover{border-color:var(--red)}
 .cat-icon-opt.selected{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
 .cat-icon-opt .cat-logo{width:20px;height:20px;border-radius:4px}
+.lp-sw-btn{border-color:rgba(0,0,0,.12)}
+.lp-sw-btn:hover{border-color:rgba(0,0,0,.28)}
+.lp-color-opt{border-color:rgba(0,0,0,.1)}
 .status-num-picker{display:inline-flex;gap:3px;align-items:center;flex-shrink:0}
 .status-num-opt{width:30px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line-2);border-radius:7px;cursor:pointer;padding:3px}
 .status-num-opt:hover{border-color:var(--red)}
@@ -695,7 +698,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.69.0</span>
+        <span class="version" id="version">v0.70.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
@@ -923,7 +926,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.69.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.70.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1429,18 +1432,26 @@ if($('seLpType'))$('seLpType').onclick=function(){hide('setEditModal');openLpMan
 var LP_PALETTE=[['#2f6fb0','青'],['#1f9d63','緑'],['#c0392b','赤'],['#d98324','オレンジ'],['#8257c9','紫'],['#0e9aa7','ティール'],['#e84393','ピンク'],['#2c3e50','ネイビー'],['#7a756d','グレー']];
 function lpColorSel(c){var o='';for(var i=0;i<LP_PALETTE.length;i++){o+='<option value="'+LP_PALETTE[i][0]+'"'+(c===LP_PALETTE[i][0]?' selected':'')+'>■ '+LP_PALETTE[i][1]+'</option>';}return o;}
 function openLpManager(){renderLpManager();show('lpModal');}
-function renderLpManager(){var box=$('lpList');if(!box)return;var opts=getLpOpts();var h='';for(var i=0;i<opts.length;i++){var o=opts[i];h+='<div class="lp-row" data-i="'+i+'"><span class="lp-sw" style="background:'+esc(o.c)+'"></span><input class="lp-label" value="'+escA(o.label)+'"><select class="lp-color">'+lpColorSel(o.c)+'</select><span class="mv-btns"><button type="button" class="mv up" title="上へ">▲</button><button type="button" class="mv down" title="下へ">▼</button></span><button type="button" class="opt-del" title="削除">×</button></div>';}box.innerHTML=h;}
+var lpColorOpen=-1;
+function renderLpManager(){var box=$('lpList');if(!box)return;box.innerHTML='';var opts=getLpOpts();
+  for(var idx=0;idx<opts.length;idx++){(function(o,idx){
+    var row=document.createElement('div');row.className='cat-row';
+    var sw=document.createElement('button');sw.type='button';sw.className='cat-icon-btn lp-sw-btn';sw.style.background=o.c;sw.title='色を選ぶ';
+    sw.onclick=function(){lpColorOpen=(lpColorOpen===idx?-1:idx);renderLpManager();};
+    var inp=document.createElement('input');inp.type='text';inp.value=o.label;inp.className='cat-label-input';
+    inp.onchange=function(){var a=getLpOpts();a[idx].label=inp.value.trim()||a[idx].label;saveLpOpts(a);populateFormSelects();render();};
+    var up=document.createElement('button');up.type='button';up.className='cat-mv';up.textContent='▲';up.disabled=idx===0;up.onclick=function(){var a=getLpOpts();var t=a[idx-1];a[idx-1]=a[idx];a[idx]=t;saveLpOpts(a);renderLpManager();populateFormSelects();render();};
+    var dn=document.createElement('button');dn.type='button';dn.className='cat-mv';dn.textContent='▼';dn.disabled=idx===opts.length-1;dn.onclick=function(){var a=getLpOpts();var t=a[idx+1];a[idx+1]=a[idx];a[idx]=t;saveLpOpts(a);renderLpManager();populateFormSelects();render();};
+    var del=document.createElement('button');del.type='button';del.className='cat-del';del.textContent='🗑';del.onclick=function(){if(!confirm('LP方針「'+o.label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;for(var i=0;i<items.length;i++){if(items[i].lpType===o.v)items[i].lpType='';}var a=getLpOpts();a.splice(idx,1);saveLpOpts(a);if(lpTypeFilter===o.v)lpTypeFilter='';lpColorOpen=-1;persist();renderLpManager();populateFormSelects();render();};
+    row.appendChild(sw);row.appendChild(inp);row.appendChild(up);row.appendChild(dn);row.appendChild(del);box.appendChild(row);
+    if(lpColorOpen===idx){var pal=document.createElement('div');pal.className='cat-icon-palette lp-color-palette';
+      LP_PALETTE.forEach(function(pc){var bb=document.createElement('button');bb.type='button';bb.className='cat-icon-opt lp-color-opt'+(pc[0]===o.c?' selected':'');bb.style.background=pc[0];bb.title=pc[1];bb.onclick=function(){var a=getLpOpts();a[idx].c=pc[0];saveLpOpts(a);lpColorOpen=-1;renderLpManager();populateFormSelects();render();};pal.appendChild(bb);});
+      box.appendChild(pal);}
+  })(opts[idx],idx);}
+}
 function addLp(){var inp=$('newLpLabel');var v=(inp.value||'').trim();if(!v)return;var a=getLpOpts();a.push({v:'lp_'+Date.now().toString(36),label:v,c:'#2f6fb0'});saveLpOpts(a);inp.value='';renderLpManager();populateFormSelects();render();}
 if($('btnAddLp'))$('btnAddLp').onclick=addLp;
 if($('newLpLabel'))$('newLpLabel').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addLp();}});
-(function(){var box=$('lpList');if(!box)return;
-  function rowIdx(t){var r=t;while(r&&r!==box&&!(r.classList&&r.classList.contains('lp-row')))r=r.parentNode;return (r&&r.classList&&r.classList.contains('lp-row'))?parseInt(r.getAttribute('data-i'),10):-1;}
-  box.addEventListener('change',function(e){var t=e.target;if(!t.classList)return;var i=rowIdx(t);if(i<0)return;var a=getLpOpts();if(t.classList.contains('lp-label')){a[i].label=t.value;saveLpOpts(a);populateFormSelects();render();}else if(t.classList.contains('lp-color')){a[i].c=t.value;saveLpOpts(a);renderLpManager();populateFormSelects();render();}});
-  box.addEventListener('click',function(e){var t=e.target;if(!t.classList)return;var i=rowIdx(t);if(i<0)return;var a=getLpOpts();
-    if(t.classList.contains('opt-del')){if(!confirm('LP方針「'+a[i].label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;var v=a[i].v;for(var k=0;k<items.length;k++){if(items[k].lpType===v)items[k].lpType='';}a.splice(i,1);saveLpOpts(a);persist();renderLpManager();populateFormSelects();render();return;}
-    if(t.classList.contains('mv')){if(t.classList.contains('up')&&i>0){var x=a[i-1];a[i-1]=a[i];a[i]=x;}else if(t.classList.contains('down')&&i<a.length-1){var y=a[i+1];a[i+1]=a[i];a[i]=y;}saveLpOpts(a);renderLpManager();populateFormSelects();render();}
-  });
-})();
 var _addBtns=document.querySelectorAll('[data-addopt]');for(var _a=0;_a<_addBtns.length;_a++){_addBtns[_a].addEventListener('click',function(){var f=this.getAttribute('data-addopt');$(contOf(f)).appendChild(optRow(f,{}));});}
 (function(){var os=$('optScroll');if(!os)return;
   function rowOf(t){var r=t;while(r&&r!==os&&!(r.classList&&r.classList.contains('opt-row')))r=r.parentNode;return (r&&r.classList&&r.classList.contains('opt-row'))?r:null;}
