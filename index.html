@@ -561,6 +561,22 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .pp-prev-btn{cursor:pointer}
 .pp-prev-btn:hover{filter:brightness(1.1);box-shadow:0 0 0 2px rgba(0,0,0,.12)}
 .pp-color-palette{margin:4px 0 8px 0}
+.cap-btn .cap-pct{margin-left:6px;font-family:"Roboto Mono",monospace;font-weight:800;font-size:12px;padding:1px 6px;border-radius:999px;background:#eef0f3;color:var(--ink-2)}
+.cap-btn.cap-warn .cap-pct{background:#fdf0dc;color:#b26a00}
+.cap-btn.cap-danger .cap-pct{background:#fdecea;color:#c0392b}
+.cap-big{display:flex;align-items:baseline;gap:12px;margin:2px 0 8px}
+.cap-big>span:first-child{font-size:34px;font-weight:800;font-family:"Roboto Mono",monospace;color:var(--ink-1)}
+.cap-big-sub{font-size:13px;color:var(--ink-3);font-family:"Roboto Mono",monospace}
+.cap-bar{height:14px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-bottom:14px}
+.cap-bar-in{height:100%;width:0;background:#1f9d63;border-radius:999px;transition:width .25s}
+.cap-bar-in.warn{background:#d98324}
+.cap-bar-in.danger{background:#c0392b}
+.cap-rows{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+.cap-row{display:flex;align-items:center;gap:8px;font-size:13px;padding:5px 8px;border:1px solid var(--line-2);border-radius:8px}
+.cap-row b{flex:1 1 auto;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cap-row .cap-v{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink-2);flex:0 0 auto}
+.cap-row .cap-p{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--ink-3);flex:0 0 auto;min-width:46px;text-align:right}
+.cap-sec-ttl{font-size:12px;font-weight:800;color:var(--ink-2);margin:10px 0 6px}
 .tag-dl{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:16px;padding:0 5px;box-sizing:border-box;border-radius:999px;border:1.5px solid currentColor;background:#fff;font:inherit;font-size:9.5px;font-weight:800;line-height:1;cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
 .tag-dl:hover{background:currentColor}
 .tag-dl:hover span{color:#fff}
@@ -729,9 +745,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.82.2</span>
+        <span class="version" id="version">v0.83.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
+        <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
         <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
@@ -946,8 +963,21 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.82.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.83.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
+  </div>
+</div>
+<div class="overlay" id="capModal" hidden>
+  <div class="mini">
+    <h2>💾 容量</h2>
+    <p class="hint">この端末のブラウザ保存領域（localStorage）の使用状況です。上限（約5MB）を超えると保存できなくなります。</p>
+    <div class="cap-big"><span id="capBigPct">--%</span><span class="cap-big-sub" id="capBigSub">-- / --</span></div>
+    <div class="cap-bar"><div class="cap-bar-in" id="capBarIn"></div></div>
+    <div class="cap-rows" id="capRows"></div>
+    <div class="cap-sec-ttl">画像が多い商品 TOP10</div>
+    <div class="cap-rows" id="capTop"></div>
+    <p class="hint">※ 上限はブラウザ標準の目安値です。90%を超えたら不要な商品や画像を削除するか、GitHubに保存してから整理してください。</p>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="capModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="manageModal" hidden>
@@ -1055,7 +1085,33 @@ function $(id){return document.getElementById(id);}
 var STORE='yafusho_items';
 var items=[];
 try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(items));}catch(e){}}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(items));}catch(e){try{toast('⚠ 保存できませんでした（容量オーバーの可能性）');log('保存失敗: '+(e&&e.name||e));}catch(_e){}}
+  try{updateCapBadge();}catch(_e2){}}
+/* ===== 容量 ===== */
+var CAP_LIMIT=5*1024*1024;
+function capBytesOf(v){return (v==null?0:String(v).length)*2;}
+function capKeyBytes(k){try{return (k.length+((localStorage.getItem(k)||'').length))*2;}catch(e){return 0;}}
+function capTotal(){var t=0;try{for(var i=0;i<localStorage.length;i++){t+=capKeyBytes(localStorage.key(i));}}catch(e){}return t;}
+function capFmt(b){return (b<1048576)?((b/1024).toFixed(0)+' KB'):((b/1048576).toFixed(2)+' MB');}
+function capPctNum(){var p=capTotal()/CAP_LIMIT*100;return Math.round(p*10)/10;}
+function updateCapBadge(){var el=$('capPct'),btn=$('btnCap');if(!el||!btn)return;var p=capPctNum();el.textContent=(p<10?p.toFixed(1):Math.round(p))+'%';btn.classList.toggle('cap-warn',p>=70&&p<90);btn.classList.toggle('cap-danger',p>=90);}
+function capRowHtml(name,bytes,total){var pc=total?Math.round(bytes/total*1000)/10:0;return '<div class="cap-row"><b>'+esc(name)+'</b><span class="cap-v">'+capFmt(bytes)+'</span><span class="cap-p">'+pc+'%</span></div>';}
+function openCapModal(){
+  var tot=capTotal();var p=capPctNum();
+  var bp=$('capBigPct');if(bp)bp.textContent=(p<10?p.toFixed(1):Math.round(p))+'%';
+  var bs=$('capBigSub');if(bs)bs.textContent=capFmt(tot)+' / 約 '+capFmt(CAP_LIMIT);
+  var bar=$('capBarIn');if(bar){bar.style.width=Math.max(1,Math.min(100,p))+'%';bar.className='cap-bar-in'+(p>=90?' danger':(p>=70?' warn':''));}
+  var known={};known[STORE]='商品データ（画像込み）';known[SETTINGS]='設定（列・カテゴリ・色など）';
+  var h='',other=0;
+  try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);var b=capKeyBytes(k);if(known[k]){h+=capRowHtml(known[k],b,tot);}else{other+=b;}}}catch(e){}
+  if(other)h+=capRowHtml('その他（表示設定など）',other,tot);
+  var cr=$('capRows');if(cr)cr.innerHTML=h||'<div class="cap-row"><b>データなし</b></div>';
+  var arr=[];for(var j=0;j<items.length;j++){var it=items[j];var b2=0;try{b2=JSON.stringify(it).length*2;}catch(e2){}var n=(imgArr(it,'rakuten').length);var lps=itemYahooLps(it,ppShowCount(it));for(var g=0;g<lps.length;g++)n+=lps[g].length;arr.push({n:(it.code||it.name||'(名称なし)')+'（'+n+'枚）',b:b2});}
+  arr.sort(function(a,b){return b.b-a.b;});
+  var h2='';for(var m=0;m<arr.length&&m<10;m++)h2+=capRowHtml(arr[m].n,arr[m].b,tot);
+  var ct=$('capTop');if(ct)ct.innerHTML=h2||'<div class="cap-row"><b>商品がありません</b></div>';
+  show('capModal');
+}
 function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}}
 var PENDING='yafusho_pending';
 function getPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
@@ -1381,6 +1437,7 @@ function dupCurrent(){if(!editingId)return;editingId='it'+Date.now();setVal('fDa
 
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
+if($('btnCap'))$('btnCap').onclick=openCapModal;
 function syncViewToggle(){var m=getViewMode();var a=$('vtImages'),b=$('vtBasic');if(a)a.classList.toggle('on',m==='images');if(b)b.classList.toggle('on',m==='basic');var c=$('vtDetail');if(c)c.classList.toggle('on',m==='detail');}
 function applyView(m){setViewMode(m);syncViewToggle();renderHead();render();updateStickyH();}
 if($('vtImages'))$('vtImages').onclick=function(){applyView('images');};
@@ -2046,6 +2103,7 @@ async function loadFromGitHub(){
 (function(){try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'}];saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}})();
 renderHead();
 render();
+try{updateCapBadge();}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
 loadFromGitHub();
 
