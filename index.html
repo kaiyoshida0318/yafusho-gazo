@@ -212,7 +212,10 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .basic-grid .span2{grid-column:1/-1}
 
 /* ===== 編集モーダル：画像ギャラリー ===== */
-.gallery-sec{margin-bottom:24px}
+.gallery-sec{margin-bottom:24px;display:flex;flex-direction:column}
+.gallery-sec>.fld-label{order:0}
+.gallery-sec>.img-strip{order:1}
+.gallery-sec>.dropzone{order:2}
 .gal-sec-r{border-top:2px solid var(--line-2);padding-top:20px;margin-top:4px}
 .gal-sub{border-top:1px dashed var(--line-2);padding-top:14px;margin-top:2px}
 .lp-tag{display:inline-block;margin-left:6px;background:#1f3a63;color:#fff;font-size:10px;font-weight:800;padding:1px 8px;border-radius:999px;vertical-align:middle}
@@ -726,7 +729,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.82.1</span>
+        <span class="version" id="version">v0.82.2</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -943,7 +946,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.82.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.82.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
