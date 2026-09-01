@@ -348,13 +348,15 @@
   {
     "id": "it1781762657761",
     "yahooMain": "",
-    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-main.webp",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-4.webp",
     "yahooImgs": [],
+    "yahooLps": [
+      []
+    ],
+    "yahooLpNames": [
+      null
+    ],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781762657761-rakuten-6.webp",
@@ -380,8 +382,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/565955/"
     ],
+    "yahooRank": [],
     "variation": "黒/白/黒白-4/8/16個",
-    "buttonElem": "■内容：ブラック4個/ホワイト4個\nブラック2個＆ホワイト2個\n■個数：4個/8個・16個から選ぶ"
+    "buttonElem": "■内容：ブラック4個/ホワイト4個\nブラック2個＆ホワイト2個\n■個数：4個/8個・16個から選ぶ",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1781762658141",
