@@ -683,10 +683,6 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725238359-rakuten-main.jpg",
     "yahooImgs": [],
     "rakutenImgs": [
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-0.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-1.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-2.webp",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-3.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-4.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-5.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785218020075-rakuten-6.jpg",
@@ -718,8 +714,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001208/"
     ],
+    "yahooRank": [],
     "variation": "",
-    "buttonElem": ""
+    "buttonElem": "",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1785303895739",
