@@ -629,6 +629,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .img2-left{display:flex;flex-direction:column;gap:8px;flex:0 0 auto;width:128px;box-sizing:border-box;border-right:0;padding-right:8px}
 .img2-side .img2-left .strip-thumb{width:66px;height:66px;max-width:66px;object-fit:contain;background:#fff}
 .img2-right{display:flex;flex-direction:column;gap:8px;flex:1 1 auto;min-width:0;padding-left:8px}
+.img2-nomain::before{display:none}
+.img2-nomain .img2-left{width:auto;border-right:0;padding-right:8px}
+.img2-taglab{align-items:flex-start;padding-top:2px}
 .img2-right .img-strip{min-height:66px;margin-top:0}
 .tag-cnt{font-weight:800;margin-left:3px;opacity:.95;font-size:11px}
 #grid.imgfix{table-layout:fixed}
@@ -672,7 +675,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.64.2</span>
+        <span class="version" id="version">v0.66.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnSetEdit"><span class="btn-arrow">↘</span>出品設定編集</button>
@@ -750,12 +753,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <!-- 基本情報タブ -->
       <div class="tab-panel" id="panel-basic">
         <div class="basic-top">
-          <div class="mini-imgs">
-            <div class="mini-wrap"><div class="mini-img" id="miniRakuten"></div><div class="mini-cap">楽天メイン</div></div>
-            <div class="mini-wrap"><div class="mini-img" id="miniYahoo"></div><div class="mini-cap">Yahooメイン</div></div>
-          </div>
-          <input type="file" id="fileMiniYahoo" accept="image/*" hidden>
-          <input type="file" id="fileMiniRakuten" accept="image/*" hidden>
           <div class="basic-fields">
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px">
               <label class="fld">商品名<input type="text" id="fName" placeholder="商品名" autocomplete="off"></label>
@@ -900,7 +897,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.64.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.66.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1188,14 +1185,14 @@ function imgSideRest(it,side){
   if(side==='yahoo'){var lps=itemYahooLps(it,ppShowCount(it));var multi=lps.length>1;var out='';for(var g=0;g<lps.length;g++){out+=stripOfArr(lps[g],it.id,multi?'<span class="lp-badge">LP'+(g+1)+'</span>':'');}return out;}
   return stripOfArr(imgArr(it,side),it.id,'');
 }
-function imgBlockHtml(it){return '<div class="img2-wrap"><div class="img2">'+
-  '<div class="img2-head"><div class="img2-hl">基礎画像</div><div class="img2-hr">出品画像</div></div>'+
+function sideTag(it,side,label,cls){var total=imgArr(it,side).length;return '<span class="img2-tag '+cls+'">'+label+(total?' <span class="tag-cnt">'+total+'枚</span>':'')+'</span>';}
+function imgBlockHtml(it){return '<div class="img2-wrap"><div class="img2 img2-nomain">'+
   '<div class="img2-side">'+
-    '<div class="img2-left">'+imgSideMain(it,'rakuten','楽天','tb-r')+'</div>'+
+    '<div class="img2-left img2-taglab">'+sideTag(it,'rakuten','楽天','tb-r')+'</div>'+
     '<div class="img2-right">'+imgSideRest(it,'rakuten')+'</div>'+
   '</div>'+
   '<div class="img2-side">'+
-    '<div class="img2-left">'+imgSideMain(it,'yahoo','Yahoo','tb-y')+'</div>'+
+    '<div class="img2-left img2-taglab">'+sideTag(it,'yahoo','Yahoo','tb-y')+'</div>'+
     '<div class="img2-right">'+imgSideRest(it,'yahoo')+'</div>'+
   '</div>'+
   '</div></div>';}
@@ -1229,13 +1226,13 @@ function cellHtml(key,it){
 var VIEWMODE='yafusho_viewmode';
 var VIEW_COLS={
   images:['name','imageBlock','listSet','actions'],
-  basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
-  detail:['date','mainThumb','code','name','listSet','variation','salesMethod','buttonElem','actions']
+  basic:['date','rakutenMain','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
+  detail:['date','rakutenMain','code','name','listSet','variation','salesMethod','buttonElem','actions']
 };
 var DEFAULT_VISIBLE={
   images:['name','imageBlock','listSet','actions'],
-  basic:['date','mainThumb','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
-  detail:['date','mainThumb','code','name','listSet','variation','salesMethod','buttonElem','actions']
+  basic:['date','rakutenMain','code','name','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
+  detail:['date','rakutenMain','code','name','listSet','variation','salesMethod','buttonElem','actions']
 };
 function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic'||m==='detail')?m:'images';}catch(e){return 'images';}}
 function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic'||m==='detail'||m==='images')?m:'images');}catch(e){}}
@@ -1317,7 +1314,8 @@ function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing(
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
 function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahooLps=itemYahooLps(it,ppShowCount(it));galRakuten=imgArr(it,'rakuten');stripExpanded={};renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlYahooRank',it.yahooRank,PH_RANK);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
-function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0)_lps.pop();var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _d={id:editingId||('it'+Date.now()),yahooMain:mainYahoo,rakutenMain:mainRakuten,yahooImgs:_yflat,yahooLps:_lps,rakutenImgs:galRakuten.slice(),date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');_d.memo=val('fMemo');return _d;}
+function firstRealImg(arr){for(var i=0;i<arr.length;i++){if(arr[i]&&!isTextItem(arr[i]))return arr[i];}return '';}
+function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0)_lps.pop();var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _rk=galRakuten.slice();var _d={id:editingId||('it'+Date.now()),yahooMain:firstRealImg(_yflat),rakutenMain:firstRealImg(_rk),yahooImgs:_yflat,yahooLps:_lps,rakutenImgs:_rk,date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');_d.memo=val('fMemo');return _d;}
 function saveForm(closeAfter){var d=gather();if(editingId){var _f=false;for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;_f=true;break;}}if(!_f){items.push(d);$('edTitle').textContent='編集';}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();scheduleSync();if(closeAfter)hide('editModal');}
 function dupCurrent(){if(!editingId)return;editingId='it'+Date.now();setVal('fDate',todayStr());$('edTitle').textContent='複製（新規として保存）';var fc=$('fCode');if(fc){setTimeout(function(){fc.focus();fc.select();},40);}toast('複製モード：商品コードを変更して保存してください');}
 
