@@ -56,6 +56,13 @@ button{font-family:inherit}
 .console{max-width:1880px;margin:0 auto;padding:8px 24px 6px}
 
 .frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.collapse-btn{flex:0 0 auto;white-space:nowrap}
+body.top-collapsed .app-header{display:none}
+body.top-collapsed .frow-status{display:none}
+body.top-collapsed .frow-cat{margin-top:0}
+body.top-collapsed .frow-lp>.frow-label,body.top-collapsed .frow-lp>.pill-group{display:none}
+body.top-collapsed .frow-lp{margin-top:6px}
+body.top-collapsed .console{padding-top:6px;padding-bottom:4px}
 .frow + .frow{margin-top:10px}
 
 /* カテゴリ ピル */
@@ -266,6 +273,11 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .memo-resize::after{content:"";position:absolute;right:3px;bottom:3px;width:0;height:0;border-style:solid;border-width:0 0 12px 12px;border-color:transparent transparent #9aa4b2 transparent}
 .memo-resize:hover::after{border-color:transparent transparent var(--red) transparent}
 .gal-hint{font-size:11px;color:var(--ink-3);font-weight:400;margin-left:8px}
+.gallery-sec>.fld-label.gal-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;width:100%;box-sizing:border-box;padding:9px 12px;border-radius:10px;border-left:5px solid var(--gh-c,#7a756d);margin-bottom:12px}
+.gal-head .gh-title{font-size:14px;font-weight:800;letter-spacing:.02em;color:var(--gh-c,#333)}
+.gal-head .gal-hint{margin-left:auto;text-align:right}
+.gal-head .lp-name-modal{margin:0 2px}
+.gal-head .tag-badge{flex:0 0 auto}
 .dropzone{border:1.5px dashed var(--line-2);border-radius:12px;background:#fafbfc;padding:26px;text-align:center;color:var(--ink-3);font-size:13px;cursor:pointer;transition:.12s}
 .dropzone:hover,.dropzone.drag{border-color:var(--red);background:var(--red-soft);color:var(--red-strong)}
 .img-strip{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
@@ -726,16 +738,20 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 /* 販売設計：LPラベル列（画像一覧と同じタグを使用） */
 .belp-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .belp-row{display:flex;align-items:flex-start}
-.strip-frames{display:flex;gap:4px;margin-top:4px}
-.fbtn{flex:1 1 0;min-width:0;appearance:none;border:1.5px solid var(--line-2);background:#fff;border-radius:6px;font:inherit;font-size:10.5px;font-weight:800;padding:3px 2px;cursor:pointer;color:var(--ink-3);white-space:nowrap}
+.strip-frames{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.fbtn{width:100%;box-sizing:border-box;appearance:none;border:1.5px solid var(--line-2);background:#fff;border-radius:6px;font:inherit;font-size:10.5px;font-weight:800;padding:3px 4px;cursor:pointer;color:var(--ink-3);white-space:nowrap}
 .fbtn-r{border-color:#f0c8c2;color:#c0392b}
 .fbtn-b{border-color:#c5d6ec;color:#2f6fb0}
+.fbtn-g{border-color:#bfe3cf;color:#1f9d63}
+.fbtn-g.on{background:#1f9d63;border-color:#1f9d63;color:#fff}
 .fbtn-r.on{background:#c0392b;border-color:#c0392b;color:#fff}
 .fbtn-b.on{background:#2f6fb0;border-color:#2f6fb0;color:#fff}
 .strip-item.sf-r img,.strip-item.sf-r .strip-text{outline:3px solid #c0392b;outline-offset:-3px;border-radius:6px}
 .strip-item.sf-b img,.strip-item.sf-b .strip-text{outline:3px solid #2f6fb0;outline-offset:-3px;border-radius:6px}
+.strip-item.sf-g img,.strip-item.sf-g .strip-text{outline:3px solid #1f9d63;outline-offset:-3px;border-radius:6px}
 .strip-thumb.fr,.big-thumb.fr,.tbl-thumb.fr,.row-thumb.fr{outline:3px solid #c0392b;outline-offset:-3px;border-radius:6px}
 .strip-thumb.fb,.big-thumb.fb,.tbl-thumb.fb,.row-thumb.fb{outline:3px solid #2f6fb0;outline-offset:-3px;border-radius:6px}
+.strip-thumb.fg,.big-thumb.fg,.tbl-thumb.fg,.row-thumb.fg{outline:3px solid #1f9d63;outline-offset:-3px;border-radius:6px}
 .apply-list{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px;max-height:46vh;overflow:auto}
 .apply-row{display:flex;align-items:center;gap:9px;border:1px solid var(--line-2);border-radius:9px;padding:8px 10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-2)}
 .apply-row:hover{border-color:var(--ink-3)}
@@ -825,7 +841,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v1.3.1</span>
+        <span class="version" id="version">v1.6.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -870,6 +886,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="pill-group" id="lpCountRow"></div>
     <span class="frow-label frow-label-2">LP方針</span>
     <div class="pill-group" id="lpTypeRow"></div>
+    <span class="spacer"></span>
+    <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseTop" title="上部の見出し・フィルタを折りたたむ">▲ 上部をたたむ</button>
   </div>
   </div>
 </div>
@@ -988,14 +1006,14 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <!-- 画像タブ -->
       <div class="tab-panel" id="panel-images" hidden>
         <div class="gallery-sec">
-          <div class="fld-label"><span class="tag-badge tb-r">R</span>楽天画像<button type="button" class="gal-dl" data-dlgal="rakuten" title="楽天画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="rakuten" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div>
+          <div class="fld-label gal-head" style="--gh-c:#f4442f;background:#f4442f14;border-left-color:#f4442f"><span class="tag-badge tb-r">R</span><span class="gh-title">楽天画像</span><button type="button" class="gal-dl" data-dlgal="rakuten" title="楽天画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="rakuten" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div>
           <div class="dropzone" id="dzRakuten">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
           <input type="file" id="fileRakuten" accept="image/*" multiple hidden>
           <div class="img-strip" id="stripRakuten"></div>
         </div>
         <div id="yahooLpWrap"></div>
         <div class="gallery-sec gal-sec-r">
-          <div class="fld-label">📝 メモ</div>
+          <div class="fld-label gal-head" style="--gh-c:#7a756d;background:#7a756d14;border-left-color:#7a756d"><span class="gh-title">📝 メモ</span></div>
           <textarea id="fMemo" class="memo-field" rows="4" placeholder="メモを入力…（改行OK）"></textarea>
         </div>
       </div>
@@ -1084,7 +1102,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v1.3.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v1.6.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1466,7 +1484,7 @@ var _frameCache={id:null,map:null};
 function frameCls(id,src){
   if(!id||!src)return '';
   if(_frameCache.id!==id){var _it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){_it=items[i];break;}}_frameCache={id:id,map:(_it&&_it.frames)||{}};}
-  var v=_frameCache.map[src];return v==='r'?' fr':(v==='b'?' fb':'');
+  var v=_frameCache.map[src];return (v==='r'||v==='b'||v==='g')?(' f'+v):'';
 }
 function thumbItem(src,id,cls,grp){var de=id?' data-edit="'+escA(id)+'"':'';var dg=grp?' data-grp="'+escA(grp)+'"':'';cls=cls+frameCls(id,src);if(isTextItem(src)){var o=parseTextItem(src);return '<span class="'+cls+' strip-thumb-text clk"'+de+dg+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="'+cls+' clk"'+de+dg+' loading="lazy" src="'+escA(src)+'" alt="">';}
 function thumb(src,id){var de=id?' data-edit="'+escA(id)+'"':'';if(!src)return '<span class="tbl-thumb empty clk"'+de+'>—</span>';if(isTextItem(src)){var o=parseTextItem(src);return '<span class="tbl-thumb strip-thumb-text clk"'+de+' style="'+txtStyle(o)+'">'+esc(o.t)+'</span>';}return '<img class="tbl-thumb clk"'+de+' src="'+escA(src)+'" alt="">';}
@@ -1775,6 +1793,15 @@ function getRowHItem(id){return rowHItemsAll()[id]||0;}
 function setRowHItem(id,px){var o=rowHItemsAll();o[id]=px;try{localStorage.setItem(ROWHI,JSON.stringify(o));}catch(e){}}
 function rowLines(h){return Math.max(2,Math.round((h-14)/19));}
 document.addEventListener('mousedown',function(e){var hd=(e.target.closest)?e.target.closest('.dc-hres'):null;if(!hd)return;e.preventDefault();e.stopPropagation();var tr=hd.closest('tr');if(!tr)return;var id=tr.getAttribute('data-id');var startY=e.clientY;var startH=getRowHItem(id)||tr.offsetHeight||58;var cur=startH;function mv(ev){cur=Math.max(40,Math.round(startH+(ev.clientY-startY)));tr.style.height=cur+'px';tr.style.setProperty('--dc-lines',String(rowLines(cur)));}function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);document.body.style.userSelect='';setRowHItem(id,cur);}document.body.style.userSelect='none';document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);});
+var TOPCOL='yafusho_topcollapsed';
+function applyTopCollapse(on){
+  document.body.classList.toggle('top-collapsed',!!on);
+  var b=$('btnCollapseTop');if(b)b.textContent=on?'▼ 上部を表示':'▲ 上部をたたむ';
+  try{if(on)localStorage.setItem(TOPCOL,'1');else localStorage.removeItem(TOPCOL);}catch(e){}
+  updateStickyH();
+}
+if($('btnCollapseTop'))$('btnCollapseTop').onclick=function(){applyTopCollapse(!document.body.classList.contains('top-collapsed'));};
+try{if(localStorage.getItem(TOPCOL)==='1')applyTopCollapse(true);}catch(e){}
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
 function render(){_frameCache={id:null,map:null};var _g=$('grid');if(_g)_g.classList.toggle('imgfix',isImgView());
   closeCdd();
@@ -2088,7 +2115,7 @@ function galOf(side){if(side==='rakuten')return galRakuten;var m=/^yahoo(\d+)$/.
 function stripEl(side){return side==='rakuten'?$('stripRakuten'):$('strip_'+side);}
 function dzEl(side){return side==='rakuten'?$('dzRakuten'):$('dz_'+side);}
 function fileEl(side){return side==='rakuten'?$('fileRakuten'):$('file_'+side);}
-function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';h+='<div class="'+cls+'"><div class="fld-label"><span class="tag-badge tb-y" style="background:'+lpTagColor(k)+'">Y</span>'+esc(lpDefName(k,n))+'画像 '+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){galYahooLpNames[k]=ni.value;markDirty();});})(k);}}
+function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){galYahooLpNames[k]=ni.value;markDirty();});})(k);}}
 function syncYahooLps(){var n=1+ppNewCount(val('fPagePlan'));for(var k=galYahooLps.length-1;k>=n;k--){if(galYahooLps[k]&&galYahooLps[k].length){n=k+1;break;}}renderYahooLpBlocks(n);}
 function updateMini(side){
   var el=$(side==='yahoo'?'miniYahoo':'miniRakuten');if(!el)return;
@@ -2114,7 +2141,7 @@ function renderStrip(side){
   var h='';
   for(var i=0;i<_lim;i++){
     var _fr=frameOfSrc(arr[i]);
-    h+='<div class="strip-item'+(_fr==='r'?' sf-r':(_fr==='b'?' sf-b':''))+'" draggable="true" data-side="'+side+'" data-idx="'+i+'">'+
+    h+='<div class="strip-item'+(_fr?' sf-'+_fr:'')+'" draggable="true" data-side="'+side+'" data-idx="'+i+'">'+
        '<span class="strip-no">'+((i+1)+'枚目')+'</span>'+
        stripInner(side,i,arr[i])+
        '<div class="strip-ctrls">'+
@@ -2127,6 +2154,7 @@ function renderStrip(side){
        '<div class="strip-frames">'+
          '<button type="button" class="fbtn fbtn-r'+(frameOfSrc(arr[i])==='r'?' on':'')+'" data-frame="r" data-side="'+side+'" data-idx="'+i+'" title="赤枠（共通）に設定／解除">赤枠 共通</button>'+
          '<button type="button" class="fbtn fbtn-b'+(frameOfSrc(arr[i])==='b'?' on':'')+'" data-frame="b" data-side="'+side+'" data-idx="'+i+'" title="青枠（独自）に設定／解除">青枠 独自</button>'+
+         '<button type="button" class="fbtn fbtn-g'+(frameOfSrc(arr[i])==='g'?' on':'')+'" data-frame="g" data-side="'+side+'" data-idx="'+i+'" title="緑枠（変更予定）に設定／解除">緑枠 変更予定</button>'+
        '</div></div>';
   }
   if(!_exp&&_n>STRIP_CAP){h+='<div class="strip-more-tile" data-expand="'+side+'" title="残り'+(_n-STRIP_CAP)+'枚を表示"><span class="smt-n">+'+(_n-STRIP_CAP)+'</span><span class="smt-sub">もっと見る</span></div>';}
