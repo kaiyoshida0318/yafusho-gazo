@@ -788,7 +788,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .gal-apply:hover{border-color:#2f6fb0!important}
 .cat-row-all{background:#f7f8fa;border:1px dashed var(--line-2);border-radius:9px;padding:8px 10px;margin-bottom:8px}
 .status-all-label{flex:1;font-size:13px;font-weight:800;color:var(--ink-2)}
-.status-view-sel{font:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line-2);border-radius:7px;background:#fff;color:var(--ink-2);cursor:pointer;min-width:150px}
+.status-view-sel{font:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line-2);border-radius:7px;background:#fff;color:var(--ink-2);cursor:pointer;min-width:130px}
+.status-alias-sel{min-width:170px}
 .status-view-sel:focus{outline:0;border-color:var(--red)}
 .big-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;width:100%;align-items:start}
 .img-strip.lp-grid{display:grid!important;gap:6px;width:100%;align-items:start}
@@ -874,7 +875,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.1.2</span>
+        <span class="version" id="version">v2.2.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1136,7 +1137,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.1.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.2.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1615,6 +1616,8 @@ function getCategories(){var s=getSettings();return (s.categories&&s.categories.
 function defaultStatusId(){var s=getStatuses();return s.length?s[0].id:'';}
 function doneStatusId(){var s=getStatuses();for(var i=0;i<s.length;i++){if(s[i].label==='完了'||s[i].icon==='num:5'||s[i].id==='st_done')return s[i].id;}return 'st_done';}
 function isDone(st){return !!st&&st===doneStatusId();}
+function statusById(id){var ss=getStatuses();for(var i=0;i<ss.length;i++)if(ss[i].id===id)return ss[i];return null;}
+function statusTarget(id){var st=statusById(id);return (st&&st.alias)?st.alias:id;}
 function getStatuses(){var s=getSettings();return (s.statuses&&s.statuses.length)?s.statuses:DEFAULT_STATUSES.map(function(c){return {id:c.id,label:c.label,icon:c.icon};});}
 function saveCategories(a){var s=getSettings();s.categories=a;saveSettings(s);}
 function saveStatuses(a){var s=getSettings();s.statuses=a;saveSettings(s);}
@@ -1696,7 +1699,7 @@ function lpTileHtml(v){var i=lpIndexOf(v);if(i<0)return '';var c=lpColor(v)||'#7
 function cddColorStyle(field,value){return '';}
 function cddItemLblStyle(field,v){return '';}
 function cddValHtml(field,v,label){if(field==='pagePlan')return '<span class="pp-badge" style="background:'+ppColor(v)+'">'+esc(label)+'</span>';return '<span class="cdd-lbl"'+cddItemLblStyle(field,v)+'>'+esc(label)+'</span>';}
-function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++)arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}else if(field==='lpType'){var lo=getLpOpts();for(var i=0;i<lo.length;i++)arr.push({v:lo[i].v,label:lo[i].label,ico:lpTileHtml(lo[i].v)});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
+function cddItems(field){var arr=[{v:'',label:'未設定',ico:''}];if(field==='listingType'){var cs=getCategories();for(var i=0;i<cs.length;i++)arr.push({v:cs[i].id,label:cs[i].label,ico:iconHtml(cs[i].icon)});}else if(field==='status'){var ss=getStatuses();for(var i=0;i<ss.length;i++){if(ss[i].alias)continue;arr.push({v:ss[i].id,label:ss[i].label,ico:statusIconHtml(ss[i].icon)});}}else if(field==='lpType'){var lo=getLpOpts();for(var i=0;i<lo.length;i++)arr.push({v:lo[i].v,label:lo[i].label,ico:lpTileHtml(lo[i].v)});}else{var op=getOpts('pagePlan');for(var i=0;i<op.length;i++)arr.push({v:op[i].l,label:op[i].l,ico:''});}return arr;}
 function cddFind(field,value){var a=cddItems(field);for(var i=0;i<a.length;i++)if(a[i].v===value)return a[i];return null;}
 function cddBtn(field,id,value){return '<button type="button" class="cdd'+(field==='lpType'?' cdd-lp':'')+'" style="'+cddColorStyle(field,value)+'" title="'+escA((cddFind(field,value)||{}).label||'')+'" data-field="'+field+'" data-id="'+id+'" data-value="'+escA(value||'')+'"><span class="cdd-cur">'+cddInner(field,value)+'</span><span class="cdd-arrow">\u25be</span></button>';}
 function cddCell(field,id,value){return '<td>'+cddBtn(field,id,value)+'</td>';}
@@ -1871,7 +1874,7 @@ function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<
 function headLabelHtml(key,def){if(key==='pagePlan')return '制作LP<br>本数';return esc(def.label);}
 function renderHead(){var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+((colResizeMode||colsModalOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
 
-function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;return items.filter(function(x){return x.status===st;}).length;}
+function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;var _t=statusTarget(st);return items.filter(function(x){return x.status===_t;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
 
 var _smTimer=null;
@@ -1910,7 +1913,7 @@ function render(){_frameCache={id:null,map:null};var _g=$('grid');if(_g)_g.class
   var list=items.filter(function(x){
     if(statusFilter!==doneStatusId()&&isDone(x.status))return false;
     if(listingFilter==='__none__'){if(x.listingType)return false;}else if(listingFilter){if(x.listingType!==listingFilter)return false;}
-    if(statusFilter==='__none__'){if(x.status)return false;}else if(statusFilter){if(x.status!==statusFilter)return false;}
+    if(statusFilter==='__none__'){if(x.status)return false;}else if(statusFilter){if(x.status!==statusTarget(statusFilter))return false;}
     if(lpCountFilter==='__none__'){if(x.pagePlan)return false;}else if(lpCountFilter){if(x.pagePlan!==lpCountFilter)return false;}
     if(lpTypeFilter==='__none__'){if(x.lpType)return false;}else if(lpTypeFilter){if(x.lpType!==lpTypeFilter)return false;}
     return true;
@@ -2116,11 +2119,16 @@ function renderStatusManager(){
     var up=document.createElement('button');up.type='button';up.className='cat-mv';up.textContent='▲';up.disabled=idx===0;up.onclick=function(){var a=getStatuses();var t=a[idx-1];a[idx-1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
     var dn=document.createElement('button');dn.type='button';dn.className='cat-mv';dn.textContent='▼';dn.disabled=idx===sts.length-1;dn.onclick=function(){var a=getStatuses();var t=a[idx+1];a[idx+1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
     var del=document.createElement('button');del.type='button';del.className='cat-del';del.textContent='🗑';del.onclick=function(){if(!confirm('ステータス「'+s.label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;for(var i=0;i<items.length;i++){if(items[i].status===s.id)items[i].status='';}var a=getStatuses();a.splice(idx,1);saveStatuses(a);if(statusFilter===s.id)statusFilter='';persist();renderStatusManager();render();};
+    var asel=document.createElement('select');asel.className='status-view-sel status-alias-sel';asel.title='別の状態と同じ商品を表示するタブにする（選択肢からは除外されます）';
+    var o0=document.createElement('option');o0.value='';o0.textContent='通常（選択肢に出す）';asel.appendChild(o0);
+    for(var ai=0;ai<sts.length;ai++){if(sts[ai].id===s.id||sts[ai].alias)continue;var oa=document.createElement('option');oa.value=sts[ai].id;oa.textContent='＝'+sts[ai].label+'と同じ商品';asel.appendChild(oa);}
+    asel.value=s.alias||'';
+    asel.onchange=function(){var a=getStatuses();a[idx].alias=asel.value||'';saveStatuses(a);renderStatusManager();render();populateFormSelects();};
     var vsel=document.createElement('select');vsel.className='status-view-sel';vsel.title='このタブを選んだときに切り替わる表示';
     for(var vi=0;vi<VIEW_LABELS.length;vi++){var o=document.createElement('option');o.value=VIEW_LABELS[vi][0];o.textContent=VIEW_LABELS[vi][1];vsel.appendChild(o);}
     vsel.value=s.view||'';
     vsel.onchange=function(){var a=getStatuses();a[idx].view=vsel.value;saveStatuses(a);};
-    row.appendChild(numWrap);row.appendChild(labelInp);row.appendChild(vsel);row.appendChild(up);row.appendChild(dn);row.appendChild(del);list.appendChild(row);
+    row.appendChild(numWrap);row.appendChild(labelInp);row.appendChild(asel);row.appendChild(vsel);row.appendChild(up);row.appendChild(dn);row.appendChild(del);list.appendChild(row);
   })(sts[idx],idx);}
 }
 var VIEW_LABELS=[['','（変更しない）'],['basic','📋 基礎情報'],['detail','📑 販売設計'],['images','🖼️ 画像一覧'],['ybig','🔍 Y画像大表示']];
@@ -2551,9 +2559,9 @@ document.addEventListener('click',function(e){
 
 /* ピル */
 function catMatchF(rc,sel){if(sel==='')return true;if(sel==='__none__')return !rc;return rc===sel;}
-function statusMatchF(rs,sel){if(sel==='')return true;if(sel==='__none__')return !rs;return rs===sel;}
+function statusMatchF(rs,sel){if(sel==='')return true;if(sel==='__none__')return !rs;return rs===statusTarget(sel);}
 function countCat(id){var _d=doneStatusId();var sf=(statusFilter===_d)?'':statusFilter;var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;if(catMatchF(x.listingType,id)&&statusMatchF(x.status,sf))n++;}return n;}
-function countStatus(id){var _d=doneStatusId();var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(id!==_d&&x.status===_d)continue;if(statusMatchF(x.status,id)&&catMatchF(x.listingType,listingFilter))n++;}return n;}
+function countStatus(id){var _d=doneStatusId();var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(statusTarget(id)!==_d&&x.status===_d)continue;if(statusMatchF(x.status,id)&&catMatchF(x.listingType,listingFilter))n++;}return n;}
 function renderCatTabs(){
   var el=$('catPills');if(!el)return;var cs=getCategories();var _catOn=(statusFilter!==doneStatusId());
   var h='<button class="ctab'+((_catOn&&listingFilter==='')?' on':'')+'" data-listing="">全体<span class="cnt">'+countCat('')+'</span></button>';
