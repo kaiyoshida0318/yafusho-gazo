@@ -728,8 +728,14 @@
   {
     "id": "it1782725437861",
     "yahooMain": "",
-    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-main.jpg",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-0.jpg",
     "yahooImgs": [],
+    "yahooLps": [
+      []
+    ],
+    "yahooLpNames": [
+      null
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-0.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-1.webp",
@@ -744,8 +750,7 @@
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-10.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-11.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-12.jpg",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-13.jpg",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-14.webp"
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782725437861-rakuten-13.jpg"
     ],
     "date": "2026-06-29",
     "rating": "",
@@ -760,8 +765,11 @@
     "rakutenUrls": [
       "https://item.rakuten.co.jp/yukaiya/10001331/"
     ],
+    "yahooRank": [],
     "variation": "ベルト/ベルト+無料工具\n1280　1280",
-    "buttonElem": "■内容：ベルトのみ/ベルト+無料工具"
+    "buttonElem": "■内容：ベルトのみ/ベルト+無料工具",
+    "lpType": "",
+    "memo": ""
   },
   {
     "id": "it1785218020075",
