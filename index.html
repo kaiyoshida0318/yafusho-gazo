@@ -783,6 +783,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .apply-row input{width:16px;height:16px;accent-color:#c0392b}
 .apply-row .ap-cnt{margin-left:auto;font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink-3)}
 .gal-apply{border-color:#c5d6ec!important;color:#2f6fb0!important}
+#panel-images:not(.show-new) .sec-new{display:none}
+#panel-images.show-new .sec-old{display:none}
+.gal-nav{appearance:none;border:1px solid var(--line-2);background:#fff;border-radius:999px;padding:3px 11px;margin-left:6px;font:inherit;font-size:11.5px;font-weight:700;color:var(--ink-2);cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
+.gal-nav:hover{border-color:var(--ink-3);color:var(--ink-1)}
 .gal-apply:hover{border-color:#2f6fb0!important}
 .cat-row-all{background:#f7f8fa;border:1px dashed var(--line-2);border-radius:9px;padding:8px 10px;margin-bottom:8px}
 .status-all-label{flex:1;font-size:13px;font-weight:800;color:var(--ink-2)}
@@ -873,7 +877,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.2.2</span>
+        <span class="version" id="version">v2.3.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -954,8 +958,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="modal-tabs">
       <button type="button" class="mtab on" data-tab="basic">📋 基礎情報</button>
       <button type="button" class="mtab" data-tab="detail">📑 販売設計</button>
-      <button type="button" class="mtab" data-tab="images">🖼️ 画像一覧（左側）</button>
-      <button type="button" class="mtab" data-tab="images2">🖼️ 画像一覧（右側）</button>
+      <button type="button" class="mtab" data-tab="images">🖼️ 既存画像</button>
+      <button type="button" class="mtab" data-tab="images2">🆕 Yahoo新規画像</button>
     </div>
 
     <div class="form-body">
@@ -1038,8 +1042,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 
       <!-- 画像タブ -->
       <div class="tab-panel" id="panel-images" hidden>
-        <div class="gallery-sec">
-          <div class="fld-label gal-head" style="--gh-c:#f4442f;background:#f4442f14;border-left-color:#f4442f"><span class="tag-badge tb-r">R</span><span class="gh-title">楽天画像</span><button type="button" class="gal-dl" data-dlgal="rakuten" title="楽天画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="rakuten" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div>
+        <div class="gallery-sec sec-old">
+          <div class="fld-label gal-head" style="--gh-c:#f4442f;background:#f4442f14;border-left-color:#f4442f"><span class="tag-badge tb-r">R</span><span class="gh-title">楽天画像</span><button type="button" class="gal-dl" data-dlgal="rakuten" title="楽天画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="rakuten" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint"><button type="button" class="gal-nav" data-scroll="rakuten" data-dir="start" title="先頭へ">⇤ 先頭</button><button type="button" class="gal-nav" data-scroll="rakuten" data-dir="end" title="末尾へ">末尾 ⇥</button></span></div>
           <div class="dropzone" id="dzRakuten">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
           <input type="file" id="fileRakuten" accept="image/*" multiple hidden>
           <div class="img-strip" id="stripRakuten"></div>
@@ -1135,7 +1139,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.2.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.3.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2213,20 +2217,17 @@ for(var j=0;j<closers.length;j++){closers[j].addEventListener('click',function()
 
 /* 画像カラム（楽天/Yahoo） */
 /* ===== タブ切り替え ===== */
-var stripAlign='start';
-function alignStrips(){
-  var pn=$('panel-images');if(!pn)return;
-  var st=pn.querySelectorAll('.img-strip');
-  for(var i=0;i<st.length;i++){try{st[i].scrollLeft=(stripAlign==='end')?st[i].scrollWidth:0;}catch(e){}}
+function scrollStrip(side,dir){
+  var el=stripEl(side);if(!el)return;
+  try{el.scrollTo({left:(dir==='end')?el.scrollWidth:0,behavior:'smooth'});}catch(e){el.scrollLeft=(dir==='end')?el.scrollWidth:0;}
 }
 function switchTab(name){
   var isImg=(name==='images'||name==='images2');
-  if(isImg)stripAlign=(name==='images2')?'end':'start';
   var ts=document.querySelectorAll('.mtab');for(var i=0;i<ts.length;i++){ts[i].classList.toggle('on',ts[i].getAttribute('data-tab')===name);}
   if($('panel-basic'))$('panel-basic').hidden=(name!=='basic');
   if($('panel-detail'))$('panel-detail').hidden=(name!=='detail');
-  if($('panel-images'))$('panel-images').hidden=!isImg;
-  if(isImg)setTimeout(alignStrips,30);
+  var pn=$('panel-images');
+  if(pn){pn.hidden=!isImg;pn.classList.toggle('show-new',name==='images2');}
 }
 var mtabs=document.querySelectorAll('.mtab');
 for(var mt=0;mt<mtabs.length;mt++){mtabs[mt].addEventListener('click',function(){switchTab(this.getAttribute('data-tab'));});}
@@ -2247,7 +2248,7 @@ function galOf(side){if(side==='rakuten')return galRakuten;var m=/^yahoo(\d+)$/.
 function stripEl(side){return side==='rakuten'?$('stripRakuten'):$('strip_'+side);}
 function dzEl(side){return side==='rakuten'?$('dzRakuten'):$('dz_'+side);}
 function fileEl(side){return side==='rakuten'?$('fileRakuten'):$('file_'+side);}
-function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint">複数まとめて登録OK／←→で並び替え</span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){galYahooLpNames[k]=ni.value;markDirty();});})(k);}}
+function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+(k===0?' sec-old':' sec-new')+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint"><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="start" title="先頭へ">⇤ 先頭</button><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="end" title="末尾へ">末尾 ⇥</button></span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){galYahooLpNames[k]=ni.value;markDirty();});})(k);}}
 function syncYahooLps(){var n=1+ppNewCount(val('fPagePlan'));for(var k=galYahooLps.length-1;k>=n;k--){if(galYahooLps[k]&&galYahooLps[k].length){n=k+1;break;}}renderYahooLpBlocks(n);}
 function updateMini(side){
   var el=$(side==='yahoo'?'miniYahoo':'miniRakuten');if(!el)return;
@@ -2297,8 +2298,9 @@ function renderStrip(side){
   }
   if(!_exp&&_n>STRIP_CAP){h+='<div class="strip-more-tile" data-expand="'+side+'" title="残り'+(_n-STRIP_CAP)+'枚を表示"><span class="smt-n">+'+(_n-STRIP_CAP)+'</span><span class="smt-sub">もっと見る</span></div>';}
   h+=stripAddTile(side);
+  var _sl=el.scrollLeft||0;
   el.innerHTML=h;
-  try{el.scrollLeft=(stripAlign==='end')?el.scrollWidth:0;}catch(e){}
+  try{el.scrollLeft=_sl;}catch(e){}
 }
 function isImageFile(f){return !!(f&&(/^image\//.test(f.type||'')||/\.(png|jpe?g|webp|gif|bmp)$/i.test(f.name||'')));}
 /* webpはjpgへ変換。大きすぎる画像は自動で縮小・圧縮（保存容量オーバー対策） */
@@ -2508,6 +2510,8 @@ var adders=document.querySelectorAll('[data-addurl]');
 for(var a=0;a<adders.length;a++){adders[a].addEventListener('click',function(){var id=this.getAttribute('data-addurl');var list=$(id);list.appendChild(makeUrlRow(id==='urlYahoo'?PH_Y:(id==='urlYahooRank'?PH_RANK:PH_R)));});}
 document.addEventListener('click',function(e){
   var t=e.target;
+  var _scr=(t&&t.closest)?t.closest('[data-scroll]'):null;
+  if(_scr){e.stopPropagation();scrollStrip(_scr.getAttribute('data-scroll'),_scr.getAttribute('data-dir'));return;}
   var _apg=(t&&t.closest)?t.closest('[data-applygal]'):null;
   if(_apg){e.stopPropagation();openApplyModal(_apg.getAttribute('data-applygal'));return;}
   var _dlg=(t&&t.closest)?t.closest('[data-dlgal]'):null;
