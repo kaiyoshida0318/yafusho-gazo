@@ -146,7 +146,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 #editModal .img-strip::-webkit-scrollbar-thumb{background:#c8ccd2;border-radius:999px}
 #editModal .img-strip::-webkit-scrollbar-track{background:#f1f2f5;border-radius:999px}
 #editModal .strip-item{flex:0 0 calc((100% - 112px)/15);width:auto;min-width:0}
-#editModal .strip-item img{width:100%;height:auto;aspect-ratio:1/1}
+#editModal .strip-item img{width:100%;height:auto;aspect-ratio:1/1;cursor:zoom-in}
+#editModal .strip-item{cursor:default}
 #editModal .strip-item .strip-text{width:100%;box-sizing:border-box;aspect-ratio:1/1;height:auto}
 #editModal .strip-add,#editModal .strip-more-tile{flex:0 0 calc((100% - 112px)/15)!important;width:auto!important;box-sizing:border-box;aspect-ratio:1/1;height:auto!important}
 #editModal .sbtn{height:22px;font-size:10px}
@@ -877,7 +878,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.3.0</span>
+        <span class="version" id="version">v2.4.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1139,7 +1140,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.3.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.4.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2441,8 +2442,18 @@ function bulkDlFromModal(el){
 }
 function setDownloadDrag(e,src,fn){if(!src)return;try{var mime=dataUrlMime(src)||'image/jpeg';e.dataTransfer.setData('DownloadURL',mime+':'+(fn||'image.jpg')+':'+src);e.dataTransfer.setData('text/uri-list',src);e.dataTransfer.effectAllowed='copy';}catch(_e){}}
 var lbList=[],lbIdx=0,lbItem=null;
-function openLightbox(list,idx,it){if(!list||!list.length)return;lbList=list;lbIdx=idx||0;lbItem=it||null;if(lbItem)migrateItemFrames(lbItem);renderLightbox();var o=$('imgLightbox');if(o)o.hidden=false;}
-var lbGrp='';
+function openLightbox(list,idx,it){if(!list||!list.length)return;if(!it)lbModalSide=lbModalSide||'';lbList=list;lbIdx=idx||0;lbItem=it||null;if(lbItem)migrateItemFrames(lbItem);renderLightbox();var o=$('imgLightbox');if(o)o.hidden=false;}
+var lbGrp='',lbModalSide='';
+function openLightboxFromStrip(side,idx){
+  var arr=galOf(side)||[];
+  var list=[];
+  for(var i=0;i<arr.length;i++){if(arr[i]&&!isTextItem(arr[i]))list.push(arr[i]);}
+  if(!list.length)return;
+  var src=arr[idx];var ix=list.indexOf(src);if(ix<0)ix=0;
+  lbModalSide=side;lbGrp='';lbItem=null;
+  openLightbox(list,ix,null);
+  lbModalSide=side;renderLightbox();
+}
 function lbGrpOf(){
   if(lbGrp)return lbGrp;
   if(!lbItem)return '';
@@ -2450,10 +2461,17 @@ function lbGrpOf(){
   for(var i=0;i<gs.length;i++)if((gs[i].a||[]).indexOf(src)>=0)return gs[i].g;
   return '';
 }
-function lbFrameOf(){if(!lbItem||!lbItem.frames)return '';var g=lbGrpOf();if(!g)return '';return lbItem.frames[fKey(g,lbList[lbIdx])]||'';}
+function lbFrameOf(){
+  if(lbModalSide)return galFrames[fKey(lbModalSide,lbList[lbIdx])]||'';
+  if(!lbItem||!lbItem.frames)return '';var g=lbGrpOf();if(!g)return '';return lbItem.frames[fKey(g,lbList[lbIdx])]||'';}
 function lbSetFrame(v){
-  if(!lbItem){toast('この画像は枠を設定できません');return;}
   var src=lbList[lbIdx];if(!src)return;
+  if(lbModalSide){
+    var mk=fKey(lbModalSide,src);
+    if(galFrames[mk]===v)delete galFrames[mk];else galFrames[mk]=v;
+    markDirty();renderStrip(lbModalSide);renderLightbox();return;
+  }
+  if(!lbItem){toast('この画像は枠を設定できません');return;}
   migrateItemFrames(lbItem);
   if(!lbItem.frames)lbItem.frames={};
   var g=lbGrpOf();if(!g){toast('この画像は枠を設定できません');return;}
@@ -2463,7 +2481,7 @@ function lbSetFrame(v){
 }
 function renderLbFrames(){
   var box=$('lbFrames');if(!box)return;
-  if(!lbItem){box.innerHTML='';return;}
+  if(!lbItem&&!lbModalSide){box.innerHTML='';return;}
   var cur=lbFrameOf();
   var defs=[['r','赤枠 共通'],['b','青枠 独自'],['g','緑枠 変更予定']];
   var h='';
@@ -2478,7 +2496,7 @@ function renderLightbox(){var img=$('lbImg');if(!img)return;img.src=lbList[lbIdx
   setSide('lbSideL',-1,n>=2);setSide('lbSideR',1,n>=2);
   setSide('lbSideL2',-2,n>=5);setSide('lbSideR2',2,n>=5);}
 function lbGo(d){if(!lbList.length)return;lbIdx=(lbIdx+d+lbList.length)%lbList.length;renderLightbox();}
-function closeLightbox(){var o=$('imgLightbox');if(o)o.hidden=true;lbList=[];lbItem=null;lbGrp='';}
+function closeLightbox(){var o=$('imgLightbox');if(o)o.hidden=true;lbList=[];lbItem=null;lbGrp='';lbModalSide='';}
 function openLightboxFromThumb(imgEl){var id=imgEl.getAttribute('data-edit');var src=imgEl.getAttribute('src');var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it){openLightbox([src],0,null);return;}
   var grp=imgEl.getAttribute('data-grp');
   lbGrp=grp||'';
@@ -2510,6 +2528,8 @@ var adders=document.querySelectorAll('[data-addurl]');
 for(var a=0;a<adders.length;a++){adders[a].addEventListener('click',function(){var id=this.getAttribute('data-addurl');var list=$(id);list.appendChild(makeUrlRow(id==='urlYahoo'?PH_Y:(id==='urlYahooRank'?PH_RANK:PH_R)));});}
 document.addEventListener('click',function(e){
   var t=e.target;
+  var _sti=(t&&t.tagName==='IMG'&&t.closest)?t.closest('.strip-item'):null;
+  if(_sti&&_sti.closest('#panel-images')){e.stopPropagation();openLightboxFromStrip(_sti.getAttribute('data-side'),parseInt(_sti.getAttribute('data-idx'),10));return;}
   var _scr=(t&&t.closest)?t.closest('[data-scroll]'):null;
   if(_scr){e.stopPropagation();scrollStrip(_scr.getAttribute('data-scroll'),_scr.getAttribute('data-dir'));return;}
   var _apg=(t&&t.closest)?t.closest('[data-applygal]'):null;
