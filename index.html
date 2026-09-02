@@ -652,7 +652,9 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .col-view-label{font-size:13px;font-weight:600;color:var(--red);margin-left:6px}
 
 /* 画像ギャラリー：もう片方へコピー */
-.strip-ctrls{flex-wrap:wrap}
+.strip-ctrls{flex-wrap:wrap;gap:3px}
+.strip-ctrls+.strip-ctrls{margin-top:3px}
+.strip-ctrls>.sbtn:not(.strip-move):not(.strip-copy){flex:1 1 0;width:auto;min-width:0;padding:0 1px;font-size:11px;letter-spacing:-.5px}
 .sbtn.strip-copy{flex-basis:100%;width:100%;margin-top:3px;font-size:11px;font-weight:700;color:var(--red-strong);border:1px solid #f1c7c0;background:#fff;border-radius:6px;padding:3px 0;cursor:pointer;white-space:nowrap}
 .sbtn.strip-copy:hover{background:var(--red-soft)}
 
@@ -850,7 +852,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v1.7.1</span>
+        <span class="version" id="version">v1.8.3</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1111,7 +1113,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v1.7.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v1.8.3</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1359,6 +1361,38 @@ function openCopyOneModal(side,idx){
   applyModalUi(true);
   var f=$('applyFrom');if(f)f.textContent='「'+galLabel(side)+'」の'+(idx+1)+'枚目を、選んだグループの末尾にコピーします。';
   renderApplyList();show('applyModal');
+}
+function stripPerRow(side){
+  var el=stripEl(side);if(!el)return 1;
+  var its=el.querySelectorAll('.strip-item');if(!its.length)return 1;
+  var top=its[0].offsetTop,n=0;
+  for(var i=0;i<its.length;i++){if(its[i].offsetTop===top)n++;else break;}
+  return n||1;
+}
+function moveByRow(side,idx,dir){
+  var arr=galOf(side)||[];
+  if(idx<0||idx>=arr.length)return;
+  var per=stripPerRow(side)||1;
+  var t=idx+dir*per;
+  if(t<0)t=0;
+  if(t>arr.length-1)t=arr.length-1;
+  if(t===idx){toast(dir<0?'これ以上、上の行へは動かせません':'これ以上、下の行へは動かせません');return;}
+  var v=arr.splice(idx,1)[0];arr.splice(t,0,v);
+  renderStrip(side);markDirty();
+}
+function sideListAll(){var a=['rakuten'];for(var k=0;k<galYahooLps.length;k++)a.push('yahoo'+k);return a;}
+function moveToSide(side,idx,dir){
+  var l=sideListAll();var i=l.indexOf(side);
+  if(i<0)return;
+  var t=i+dir;
+  if(t<0||t>=l.length){toast(dir<0?'これより上のグループはありません':'これより下のグループはありません');return;}
+  var arr=galOf(side)||[];var src=arr[idx];if(!src)return;
+  arr.splice(idx,1);
+  var tgt=galOf(l[t]);tgt.push(src);
+  var fv=galFrames[fKey(side,src)];
+  if(fv){galFrames[fKey(l[t],src)]=fv;delete galFrames[fKey(side,src)];}
+  renderStrip(side);renderStrip(l[t]);markDirty();
+  toast(galLabel(l[t])+'へ移動しました');
 }
 function openApplyModal(side){
   applyOne=null;applySrcSide=side;applySel=[];
@@ -2179,8 +2213,14 @@ function renderStrip(side){
        '<span class="strip-no">'+((i+1)+'枚目')+'</span>'+
        stripInner(side,i,arr[i])+
        '<div class="strip-ctrls">'+
+         '<button type="button" class="sbtn mv-first" data-side="'+side+'" data-idx="'+i+'" title="先頭へ">←←</button>'+
          '<button type="button" class="sbtn mv-l" data-side="'+side+'" data-idx="'+i+'" title="左へ">←</button>'+
          '<button type="button" class="sbtn mv-r" data-side="'+side+'" data-idx="'+i+'" title="右へ">→</button>'+
+         '<button type="button" class="sbtn mv-last" data-side="'+side+'" data-idx="'+i+'" title="最後へ">→→</button>'+
+       '</div>'+
+       '<div class="strip-ctrls">'+
+         '<button type="button" class="sbtn mv-up" data-side="'+side+'" data-idx="'+i+'" title="1行上へ移動（同じグループ内）">↑</button>'+
+         '<button type="button" class="sbtn mv-dn" data-side="'+side+'" data-idx="'+i+'" title="1行下へ移動（同じグループ内）">↓</button>'+
          '<button type="button" class="sbtn strip-del" data-side="'+side+'" data-idx="'+i+'" title="削除">×</button>'+
          '<button type="button" class="sbtn strip-move" data-side="'+side+'" data-idx="'+i+'" title="位置を選んで移動">移動</button>'+
          '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="コピー先を選んでコピー">⧉ 対象へコピー</button>'+
@@ -2425,12 +2465,18 @@ document.addEventListener('click',function(e){
   }
   var _exEl=(t&&t.closest)?t.closest('[data-expand]'):null;if(_exEl){var _es=_exEl.getAttribute('data-expand');stripExpanded[_es]=true;renderStrip(_es);return;}
   var _addEl=(t&&t.closest)?t.closest('.strip-add'):null;if(_addEl){openAddMenu(_addEl.getAttribute('data-add'),e.clientX,e.clientY);return;}
-  if(t&&t.classList&&(t.classList.contains('mv-l')||t.classList.contains('mv-r')||t.classList.contains('strip-del'))){
+  if(t&&t.classList&&(t.classList.contains('mv-up')||t.classList.contains('mv-dn'))){
+    moveByRow(t.getAttribute('data-side'),parseInt(t.getAttribute('data-idx'),10),t.classList.contains('mv-up')?-1:1);
+    return;
+  }
+  if(t&&t.classList&&(t.classList.contains('mv-l')||t.classList.contains('mv-r')||t.classList.contains('mv-first')||t.classList.contains('mv-last')||t.classList.contains('strip-del'))){
     var sd=t.getAttribute('data-side');var ix=parseInt(t.getAttribute('data-idx'),10);var ar=galOf(sd);
     if(t.classList.contains('strip-del'))ar.splice(ix,1);
     else if(t.classList.contains('mv-l')&&ix>0){var a0=ar[ix-1];ar[ix-1]=ar[ix];ar[ix]=a0;}
     else if(t.classList.contains('mv-r')&&ix<ar.length-1){var a1=ar[ix+1];ar[ix+1]=ar[ix];ar[ix]=a1;}
-    renderStrip(sd);return;
+    else if(t.classList.contains('mv-first')&&ix>0){var af=ar.splice(ix,1)[0];ar.unshift(af);}
+    else if(t.classList.contains('mv-last')&&ix<ar.length-1){var al=ar.splice(ix,1)[0];ar.push(al);}
+    markDirty();renderStrip(sd);return;
   }
   if(t&&t.classList&&t.classList.contains('row-del')){var r0=t.closest('.edit-row');if(r0)r0.remove();return;}
   if(t&&t.classList&&t.classList.contains('mv')){var row=t.closest('.col-edit-row');if(row){var bx=row.parentNode;if(t.classList.contains('up')&&row.previousElementSibling){bx.insertBefore(row,row.previousElementSibling);}else if(t.classList.contains('down')&&row.nextElementSibling){bx.insertBefore(row.nextElementSibling,row);}}return;}
