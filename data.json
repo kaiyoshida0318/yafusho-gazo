@@ -1081,8 +1081,8 @@
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-6.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-7.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-8.jpg",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-10.jpg",
-      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-11.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo2-9.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo2-10.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-12.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/templates/tplmtjff76y0.jpg",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/templates/tplmtjtj8nv0.jpg"
@@ -1126,8 +1126,8 @@
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-6.jpg",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-7.jpg",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-8.jpg",
-        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-10.jpg",
-        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-11.jpg",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo2-9.jpg",
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo2-10.jpg",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-12.jpg",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/templates/tplmtjff76y0.jpg",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/templates/tplmtjtj8nv0.jpg"
@@ -1201,7 +1201,9 @@
       "y1|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-11.jpg": "b",
       "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-11.jpg": "g",
       "y1|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-12.jpg": "r",
-      "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-12.jpg": "r"
+      "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-12.jpg": "r",
+      "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo2-9.jpg": "b",
+      "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo2-10.jpg": "b"
     },
     "framesV": 2
   },
