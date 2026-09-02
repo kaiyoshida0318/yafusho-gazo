@@ -253,6 +253,15 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .lb-img:active{cursor:grabbing}
 .lb-info{display:flex;align-items:center;gap:16px;color:#e6e9ef;font-size:13px;font-weight:700}
 .lb-info .lb-hint{color:#aab2c0;font-weight:400;font-size:12px}
+.lb-frames{display:inline-flex;gap:6px}
+.lb-frames .lbf{appearance:none;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#e6e9ef;border-radius:8px;font:inherit;font-size:12px;font-weight:800;padding:5px 12px;cursor:pointer}
+.lb-frames .lbf:hover{background:rgba(255,255,255,.2)}
+.lb-frames .lbf.on.lbf-r{background:#c0392b;border-color:#c0392b;color:#fff}
+.lb-frames .lbf.on.lbf-b{background:#2f6fb0;border-color:#2f6fb0;color:#fff}
+.lb-frames .lbf.on.lbf-g{background:#1f9d63;border-color:#1f9d63;color:#fff}
+.lb-img.lf-r{outline:6px solid #c0392b;outline-offset:-6px}
+.lb-img.lf-b{outline:6px solid #2f6fb0;outline-offset:-6px}
+.lb-img.lf-g{outline:6px solid #1f9d63;outline-offset:-6px}
 .lb-nav{position:fixed;top:50%;transform:translateY(-50%);appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:52px;height:52px;border-radius:50%;font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;z-index:3}
 .lb-nav:hover{background:rgba(255,255,255,.3)}
 .lb-prev{left:calc(26vw + 8px)}
@@ -841,7 +850,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v1.6.1</span>
+        <span class="version" id="version">v1.6.2</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1042,7 +1051,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <button type="button" class="lb-nav lb-prev" id="lbPrev" title="前へ">‹</button>
   <div class="lb-stage">
     <img id="lbImg" class="lb-img" alt="" draggable="true">
-    <div class="lb-info"><span id="lbCount"></span><span class="lb-hint">画像をデスクトップにドラッグして保存できます</span></div>
+    <div class="lb-info"><span id="lbCount"></span><span class="lb-frames" id="lbFrames"></span><span class="lb-hint">画像をデスクトップにドラッグして保存できます</span></div>
   </div>
   <button type="button" class="lb-nav lb-next" id="lbNext" title="次へ">›</button>
   <img class="lb-side lb-side-1 lb-side-r" id="lbSideR" alt="" title="次の画像へ" hidden>
@@ -1102,7 +1111,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v1.6.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v1.6.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2301,7 +2310,26 @@ function bulkDlFromModal(el){
 function setDownloadDrag(e,src,fn){if(!src)return;try{var mime=dataUrlMime(src)||'image/jpeg';e.dataTransfer.setData('DownloadURL',mime+':'+(fn||'image.jpg')+':'+src);e.dataTransfer.setData('text/uri-list',src);e.dataTransfer.effectAllowed='copy';}catch(_e){}}
 var lbList=[],lbIdx=0,lbItem=null;
 function openLightbox(list,idx,it){if(!list||!list.length)return;lbList=list;lbIdx=idx||0;lbItem=it||null;renderLightbox();var o=$('imgLightbox');if(o)o.hidden=false;}
-function renderLightbox(){var img=$('lbImg');if(!img)return;img.src=lbList[lbIdx]||'';var c=$('lbCount');if(c)c.textContent=(lbIdx+1)+' / '+lbList.length;var nav=lbList.length>1;var pv=$('lbPrev'),nx=$('lbNext');if(pv)pv.style.visibility=nav?'':'hidden';if(nx)nx.style.visibility=nav?'':'hidden';
+function lbFrameOf(){if(!lbItem||!lbItem.frames)return '';return lbItem.frames[lbList[lbIdx]]||'';}
+function lbSetFrame(v){
+  if(!lbItem){toast('この画像は枠を設定できません');return;}
+  var src=lbList[lbIdx];if(!src)return;
+  if(!lbItem.frames)lbItem.frames={};
+  if(lbItem.frames[src]===v)delete lbItem.frames[src];else lbItem.frames[src]=v;
+  persist();markDirty();renderLightbox();render();
+}
+function renderLbFrames(){
+  var box=$('lbFrames');if(!box)return;
+  if(!lbItem){box.innerHTML='';return;}
+  var cur=lbFrameOf();
+  var defs=[['r','赤枠 共通'],['b','青枠 独自'],['g','緑枠 変更予定']];
+  var h='';
+  for(var i=0;i<defs.length;i++)h+='<button type="button" class="lbf lbf-'+defs[i][0]+(cur===defs[i][0]?' on':'')+'" data-lbframe="'+defs[i][0]+'">'+defs[i][1]+'</button>';
+  box.innerHTML=h;
+}
+function renderLightbox(){var img=$('lbImg');if(!img)return;img.src=lbList[lbIdx]||'';
+  var _lf=lbFrameOf();img.className='lb-img'+(_lf?' lf-'+_lf:'');
+  renderLbFrames();var c=$('lbCount');if(c)c.textContent=(lbIdx+1)+' / '+lbList.length;var nav=lbList.length>1;var pv=$('lbPrev'),nx=$('lbNext');if(pv)pv.style.visibility=nav?'':'hidden';if(nx)nx.style.visibility=nav?'':'hidden';
   var n=lbList.length;
   function setSide(id,off,cond){var el=$(id);if(!el)return;if(cond){el.src=lbList[((lbIdx+off)%n+n)%n]||'';el.hidden=false;}else{el.hidden=true;el.removeAttribute('src');}}
   setSide('lbSideL',-1,n>=2);setSide('lbSideR',1,n>=2);
@@ -2322,6 +2350,7 @@ if($('lbClose'))$('lbClose').onclick=closeLightbox;
 if($('lbPrev'))$('lbPrev').onclick=function(){lbGo(-1);};
 if($('lbSideL'))$('lbSideL').onclick=function(e){e.stopPropagation();lbGo(-1);};
 if($('lbSideR'))$('lbSideR').onclick=function(e){e.stopPropagation();lbGo(1);};
+if($('lbFrames'))$('lbFrames').addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('[data-lbframe]'):null;if(!b)return;e.stopPropagation();lbSetFrame(b.getAttribute('data-lbframe'));});
 if($('lbSideL2'))$('lbSideL2').onclick=function(e){e.stopPropagation();lbGo(-2);};
 if($('lbSideR2'))$('lbSideR2').onclick=function(e){e.stopPropagation();lbGo(2);};
 if($('lbNext'))$('lbNext').onclick=function(){lbGo(1);};
