@@ -880,7 +880,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.5.0</span>
+        <span class="version" id="version">v2.5.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1142,7 +1142,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.5.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.5.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2028,7 +2028,14 @@ if($('memoSaveBtn'))$('memoSaveBtn').onclick=saveMemo;
   document.addEventListener('mouseup',function(){if(!rz)return;rz=false;document.body.style.userSelect='';var pop=$('memoPop');if(memoEditId!=null)setMemoSize(memoEditId,pop.offsetWidth,pop.offsetHeight);});
 })();
 $('btnSaveStay').onclick=function(){saveForm(false);};
-$('btnSaveClose').onclick=function(){saveForm(true);};
+$('btnSaveClose').onclick=function(){
+  saveForm(true);
+  try{
+    if(_syncTimer){clearTimeout(_syncTimer);_syncTimer=null;}
+    ghDeferred=false;
+    if(getCfg().pat){setPending(true);setTimeout(function(){triggerSync(false);},60);}
+  }catch(e){}
+};
 
 /* 各種管理（出品内容の選択肢） */
 var MK_COLORS=[['gray','グレー'],['red','赤'],['orange','オレンジ'],['green','緑'],['blue','青'],['purple','紫'],['teal','ティール']];
