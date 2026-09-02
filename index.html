@@ -567,6 +567,20 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .pp-prev-btn{cursor:pointer}
 .pp-prev-btn:hover{filter:brightness(1.1);box-shadow:0 0 0 2px rgba(0,0,0,.12)}
 .pp-color-palette{margin:4px 0 8px 0}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;max-height:52vh;overflow:auto;padding:4px 2px 8px}
+.tpl-card{border:1px solid var(--line-2);border-radius:10px;padding:6px;background:#fff;display:flex;flex-direction:column;gap:5px;position:relative}
+.tpl-card img{width:100%;height:110px;object-fit:contain;background:#faf9f7;border-radius:6px}
+.tpl-card .tpl-name{width:100%;box-sizing:border-box;font:inherit;font-size:11.5px;font-weight:700;padding:3px 5px;border:1px solid var(--line-2);border-radius:5px;background:#fff}
+.tpl-card .tpl-btns{display:flex;gap:4px;align-items:center}
+.tpl-card .tpl-btns button{appearance:none;border:1px solid var(--line-2);background:#fff;border-radius:5px;font:inherit;font-size:11px;padding:2px 6px;cursor:pointer;color:var(--ink-2)}
+.tpl-card .tpl-btns .tpl-del{margin-left:auto;color:var(--red);border-color:#f3c7c1}
+.tpl-pick{cursor:pointer;transition:.12s}
+.tpl-pick:hover{border-color:var(--ink-3)}
+.tpl-pick.on{border-color:var(--red);box-shadow:0 0 0 2px rgba(192,57,43,.18)}
+.tpl-pick .tpl-cap{font-size:11px;font-weight:700;color:var(--ink-2);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpl-pick .tpl-badge{position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:50%;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center}
+.tpl-pick.on .tpl-badge{display:flex}
+.tpl-empty{grid-column:1/-1;color:var(--ink-3);font-size:12.5px;padding:14px;text-align:center}
 .cap-btn .cap-pct{margin-left:6px;font-family:"Roboto Mono",monospace;font-weight:800;font-size:12px;padding:1px 6px;border-radius:999px;background:#eef0f3;color:var(--ink-2)}
 .cap-btn.cap-warn .cap-pct{background:#fdf0dc;color:#b26a00}
 .cap-btn.cap-danger .cap-pct{background:#fdecea;color:#c0392b}
@@ -759,9 +773,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.91.2</span>
+        <span class="version" id="version">v0.93.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
+        <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
@@ -961,6 +976,24 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <img class="lb-side lb-side-r" id="lbSideR" alt="" title="次の画像へ" hidden>
 </div>
 
+<div class="overlay" id="tplModal" hidden>
+  <div class="mini modal-cat">
+    <h2>🖼️ テンプレ画像登録</h2>
+    <p class="hint">よく使う画像（保証・配送バナーなど）を登録しておくと、画像一覧の「＋テンプレ画像を追加」からワンクリックで差し込めます。全端末で共有されます。</p>
+    <div class="dropzone" id="tplDrop">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div>
+    <input type="file" id="tplFile" accept="image/*" multiple hidden>
+    <div class="tpl-grid" id="tplList"></div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="tplModal">閉じる</button></div>
+  </div>
+</div>
+<div class="overlay" id="tplPickModal" hidden>
+  <div class="mini modal-cat">
+    <h2>🖼️ テンプレ画像を追加</h2>
+    <p class="hint">追加したい画像をクリックで選択（複数可）→「追加」を押してください。</p>
+    <div class="tpl-grid" id="tplPickList"></div>
+    <div class="acts"><button class="btn btn-line" id="btnTplManage">＋ テンプレ画像を登録・編集</button><span class="sp"></span><button class="btn btn-ghost" data-close="tplPickModal">キャンセル</button><button class="btn btn-red" id="btnTplPickAdd">追加</button></div>
+  </div>
+</div>
 <div class="overlay" id="settingsModal" hidden>
   <div class="mini">
     <h2>GitHub設定</h2>
@@ -979,7 +1012,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.91.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.93.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1103,8 +1136,110 @@ function $(id){return document.getElementById(id);}
 var STORE='yafusho_items';
 var items=[];
 try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(items));}catch(e){try{toast('⚠ 保存できませんでした（容量オーバーの可能性）');log('保存失敗: '+(e&&e.name||e));}catch(_e){}}
-  try{updateCapBadge();}catch(_e2){}}
+var _quotaWarned=false;
+function stripDataImgs(a){var o=[];for(var i=0;i<(a||[]).length;i++){var v=a[i];if(v&&String(v).indexOf('data:')===0)continue;o.push(v);}return o;}
+function lightItems(){
+  return items.map(function(it){
+    var o={};for(var k in it)if(Object.prototype.hasOwnProperty.call(it,k))o[k]=it[k];
+    o.yahooLps=(it.yahooLps||[]).map(stripDataImgs);
+    o.yahooImgs=stripDataImgs(it.yahooImgs);
+    o.rakutenImgs=stripDataImgs(it.rakutenImgs);
+    if(o.yahooMain&&String(o.yahooMain).indexOf('data:')===0)o.yahooMain='';
+    if(o.rakutenMain&&String(o.rakutenMain).indexOf('data:')===0)o.rakutenMain='';
+    return o;
+  });
+}
+function persist(){
+  try{localStorage.setItem(STORE,JSON.stringify(items));_quotaWarned=false;}
+  catch(e){
+    var ok=false;
+    try{localStorage.setItem(STORE,JSON.stringify(lightItems()));ok=true;}catch(_e1){}
+    try{
+      log('ローカル保存が容量オーバー: '+((e&&e.name)||e)+(ok?' → 画像を除いて一時保存':' → 一時保存も失敗'));
+      if(!_quotaWarned){
+        _quotaWarned=true;
+        if(getCfg().pat){toast('📤 画像が多いためGitHubへ退避します（そのままお待ちください）');}
+        else{toast('⚠ 画像が多すぎてこの端末に保存できません。設定でGitHub保存を有効にしてください');}
+      }
+      if(getCfg().pat){setPending(true);triggerSync(true);}
+    }catch(_e2){}
+  }
+  try{updateCapBadge();}catch(_e3){}
+}
+/* ===== テンプレ画像 ===== */
+var TPLKEY='yafusho_templates';
+function getTplData(){try{var o=JSON.parse(localStorage.getItem(TPLKEY));if(o&&Array.isArray(o.list))return o;}catch(e){}return {updatedAt:0,list:[]};}
+function getTpls(){return getTplData().list;}
+function saveTpls(list,silent){
+  var o={updatedAt:(silent?getTplData().updatedAt:Date.now()),list:list};
+  try{localStorage.setItem(TPLKEY,JSON.stringify(o));}catch(e){toast('⚠ テンプレ画像を保存できませんでした（容量オーバー）');}
+  if(!silent&&_booted){try{setPending(true);scheduleSync();}catch(e2){}}
+  try{updateCapBadge();}catch(e3){}
+}
+function tplAddFiles(files){
+  if(!files||!files.length)return;
+  var list=Array.prototype.slice.call(files).sort(function(a,b){return (a.name||'').localeCompare((b.name||''),undefined,{numeric:true,sensitivity:'base'});});
+  var slots=[],pending=list.length;
+  for(var i=0;i<list.length;i++)slots.push(null);
+  for(var i=0;i<list.length;i++){(function(f,pos){
+    if(!isImageFile(f)){slots[pos]='';if(--pending===0)flush();return;}
+    readImageFile(f,function(url){slots[pos]={n:(f.name||'').replace(/\.[^.]+$/,''),u:url||''};if(--pending===0)flush();});
+  })(list[i],i);}
+  function flush(){
+    var a=getTpls();
+    for(var k=0;k<slots.length;k++){if(slots[k]&&slots[k].u)a.push({id:'tpl'+Date.now().toString(36)+k,name:slots[k].n||('テンプレ'+(a.length+1)),src:slots[k].u});}
+    saveTpls(a);renderTplManager();toast('テンプレ画像を追加しました');
+  }
+}
+function renderTplManager(){
+  var box=$('tplList');if(!box)return;box.innerHTML='';
+  var a=getTpls();
+  if(!a.length){box.innerHTML='<div class="tpl-empty">まだ登録がありません。上のエリアから画像を追加してください。</div>';return;}
+  for(var i=0;i<a.length;i++){(function(t,idx){
+    var c=document.createElement('div');c.className='tpl-card';
+    var im=document.createElement('img');im.src=t.src;im.alt='';c.appendChild(im);
+    var nm=document.createElement('input');nm.type='text';nm.className='tpl-name';nm.value=t.name||'';
+    nm.onchange=function(){var b=getTpls();b[idx].name=nm.value.trim()||b[idx].name;saveTpls(b);};
+    c.appendChild(nm);
+    var bt=document.createElement('div');bt.className='tpl-btns';
+    var lf=document.createElement('button');lf.type='button';lf.textContent='◀';lf.title='左へ';lf.disabled=idx===0;lf.onclick=function(){var b=getTpls();var x=b[idx-1];b[idx-1]=b[idx];b[idx]=x;saveTpls(b);renderTplManager();};
+    var rt=document.createElement('button');rt.type='button';rt.textContent='▶';rt.title='右へ';rt.disabled=idx===a.length-1;rt.onclick=function(){var b=getTpls();var x=b[idx+1];b[idx+1]=b[idx];b[idx]=x;saveTpls(b);renderTplManager();};
+    var dl=document.createElement('button');dl.type='button';dl.className='tpl-del';dl.textContent='🗑 削除';dl.onclick=function(){if(!confirm('「'+(t.name||'')+'」を削除しますか？'))return;var b=getTpls();b.splice(idx,1);saveTpls(b);renderTplManager();};
+    bt.appendChild(lf);bt.appendChild(rt);bt.appendChild(dl);c.appendChild(bt);
+    box.appendChild(c);
+  })(a[i],i);}
+}
+function openTplManager(){renderTplManager();show('tplModal');}
+var tplPickSide=null,tplPickSel=[];
+function renderTplPicker(){
+  var box=$('tplPickList');if(!box)return;box.innerHTML='';
+  var a=getTpls();
+  if(!a.length){box.innerHTML='<div class="tpl-empty">テンプレ画像が未登録です。「＋ テンプレ画像を登録・編集」から追加してください。</div>';return;}
+  for(var i=0;i<a.length;i++){(function(t){
+    var c=document.createElement('div');c.className='tpl-card tpl-pick'+((tplPickSel.indexOf(t.id)>=0)?' on':'');
+    var bd=document.createElement('span');bd.className='tpl-badge';bd.textContent=String(tplPickSel.indexOf(t.id)+1);c.appendChild(bd);
+    var im=document.createElement('img');im.src=t.src;im.alt='';c.appendChild(im);
+    var cap=document.createElement('div');cap.className='tpl-cap';cap.textContent=t.name||'';cap.title=t.name||'';c.appendChild(cap);
+    c.onclick=function(){var k=tplPickSel.indexOf(t.id);if(k>=0)tplPickSel.splice(k,1);else tplPickSel.push(t.id);renderTplPicker();};
+    box.appendChild(c);
+  })(a[i]);}
+}
+function openTplPicker(side){tplPickSide=side;tplPickSel=[];renderTplPicker();show('tplPickModal');}
+if($('btnTpl'))$('btnTpl').onclick=openTplManager;
+if($('btnTplManage'))$('btnTplManage').onclick=function(){hide('tplPickModal');openTplManager();};
+if($('btnTplPickAdd'))$('btnTplPickAdd').onclick=function(){
+  if(!tplPickSel.length){toast('画像を選んでください');return;}
+  var a=getTpls(),arr=galOf(tplPickSide),n=0;
+  for(var i=0;i<tplPickSel.length;i++){for(var j=0;j<a.length;j++){if(a[j].id===tplPickSel[i]&&a[j].src){arr.push(a[j].src);n++;}}}
+  renderStrip(tplPickSide);hide('tplPickModal');markDirty();toast('テンプレ画像を'+n+'枚追加しました');
+};
+(function(){var dz=$('tplDrop'),fi=$('tplFile');if(!dz||!fi)return;
+  dz.addEventListener('click',function(){fi.click();});
+  fi.addEventListener('change',function(e){tplAddFiles(e.target.files);fi.value='';});
+  dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('drag');});
+  dz.addEventListener('dragleave',function(){dz.classList.remove('drag');});
+  dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('drag');tplAddFiles(e.dataTransfer.files);});
+})();
 /* ===== 容量（GitHubベース） ===== */
 var CAP_LIMIT=1073741824; /* GitHub Pages 推奨上限 1GB */
 var capData=null,capLoading=false;
@@ -1806,16 +1941,35 @@ function renderStrip(side){
   el.innerHTML=h;
 }
 function isImageFile(f){return !!(f&&(/^image\//.test(f.type||'')||/\.(png|jpe?g|webp|gif|bmp)$/i.test(f.name||'')));}
-/* webp（と拡張子.webp）はjpgへ変換して取り込む */
+/* webpはjpgへ変換。大きすぎる画像は自動で縮小・圧縮（保存容量オーバー対策） */
+var IMG_MAX_SIDE=2000, IMG_MAX_BYTES=1200000;
+function shrinkDataUrl(src,cb){
+  var im=new Image();
+  im.onload=function(){
+    try{
+      var w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;
+      var big=Math.max(w,h);var sc=(big>IMG_MAX_SIDE)?(IMG_MAX_SIDE/big):1;
+      var c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
+      var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
+      var out=c.toDataURL('image/jpeg',0.9);
+      if(out.length>IMG_MAX_BYTES*1.4)out=c.toDataURL('image/jpeg',0.8);
+      if(out.length>IMG_MAX_BYTES*1.8)out=c.toDataURL('image/jpeg',0.7);
+      cb((out&&out.length<src.length)?out:src);
+    }catch(_e){cb(src);}
+  };
+  im.onerror=function(){cb(src);};
+  im.src=src;
+}
 function readImageFile(f,cb){
   var isWebp=/image\/webp/i.test(f.type||'')||/\.webp$/i.test(f.name||'');
   var r=new FileReader();
   r.onload=function(){
-    if(!isWebp){cb(r.result);return;}
+    var src=r.result||'';
+    if(isWebp||src.length>IMG_MAX_BYTES){shrinkDataUrl(src,cb);return;}
     var im=new Image();
-    im.onload=function(){try{var c=document.createElement('canvas');c.width=im.naturalWidth||im.width;c.height=im.naturalHeight||im.height;var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);cb(c.toDataURL('image/jpeg',0.92));}catch(_e){cb(r.result);}};
-    im.onerror=function(){cb(r.result);};
-    im.src=r.result;
+    im.onload=function(){if(Math.max(im.naturalWidth||0,im.naturalHeight||0)>IMG_MAX_SIDE){shrinkDataUrl(src,cb);}else{cb(src);}};
+    im.onerror=function(){cb(src);};
+    im.src=src;
   };
   r.onerror=function(){cb('');};
   r.readAsDataURL(f);
@@ -1843,7 +1997,7 @@ if($('fPagePlan'))$('fPagePlan').addEventListener('change',syncYahooLps);
 var pendingAddSide=null;
 function closeAddMenu(){var m=document.getElementById('addMenu');if(m)m.parentNode.removeChild(m);}
 function openMoveMenu(side,idx,x,y){closeAddMenu();var ar=galOf(side);var m=document.createElement('div');m.id='addMenu';m.className='add-menu move-menu';var h='';for(var p=0;p<ar.length;p++){h+='<button type="button" class="add-menu-item" data-mv="'+p+'">'+(p+1)+'枚目'+(p===idx?'（現在）':'')+'</button>';}m.innerHTML=h;document.body.appendChild(m);var mw=m.offsetWidth||160;m.style.left=Math.max(8,Math.min(x,window.innerWidth-mw-8))+'px';m.style.top=Math.max(8,Math.min(y,window.innerHeight-Math.min(250,m.offsetHeight)-8))+'px';m.addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.add-menu-item'):null;if(!b)return;var to=parseInt(b.getAttribute('data-mv'),10);closeAddMenu();if(to===idx)return;var a=galOf(side);var x2=a.splice(idx,1)[0];a.splice(to,0,x2);renderStrip(side);});}
-function openAddMenu(side,x,y){closeAddMenu();pendingAddSide=side;var m=document.createElement('div');m.id='addMenu';m.className='add-menu';m.innerHTML='<button type="button" class="add-menu-item" data-act="img">📷 画像を追加</button><button type="button" class="add-menu-item" data-act="text">📝 文章を追加</button>';document.body.appendChild(m);var mw=m.offsetWidth||180;m.style.left=Math.max(8,Math.min(x,window.innerWidth-mw-8))+'px';m.style.top=Math.min(y,window.innerHeight-110)+'px';m.addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.add-menu-item'):null;if(!b)return;var act=b.getAttribute('data-act');closeAddMenu();if(act==='img'){var fi=fileEl(side);if(fi)fi.click();}else{openTextAdd(side);}});}
+function openAddMenu(side,x,y){closeAddMenu();pendingAddSide=side;var m=document.createElement('div');m.id='addMenu';m.className='add-menu';m.innerHTML='<button type="button" class="add-menu-item" data-act="img">📷 画像を追加</button><button type="button" class="add-menu-item" data-act="tpl">🖼️ テンプレ画像を追加</button><button type="button" class="add-menu-item" data-act="text">📝 文章を追加</button>';document.body.appendChild(m);var mw=m.offsetWidth||180;m.style.left=Math.max(8,Math.min(x,window.innerWidth-mw-8))+'px';m.style.top=Math.min(y,window.innerHeight-110)+'px';m.addEventListener('click',function(e){var b=(e.target.closest)?e.target.closest('.add-menu-item'):null;if(!b)return;var act=b.getAttribute('data-act');closeAddMenu();if(act==='img'){var fi=fileEl(side);if(fi)fi.click();}else if(act==='tpl'){openTplPicker(side);}else{openTextAdd(side);}});}
 document.addEventListener('mousedown',function(e){var m=document.getElementById('addMenu');if(!m)return;if(!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.strip-add')))closeAddMenu();},true);
 var pendingEditIdx=null,pendingTextColor='';
 function renderTextColors(){var r=$('textColorRow');if(!r)return;var h='';for(var i=0;i<TEXT_COLORS.length;i++){var c=TEXT_COLORS[i];h+='<button type="button" class="tcsw'+(c.k===pendingTextColor?' on':'')+'" data-ck="'+c.k+'" style="background:'+c.bg+';color:'+c.fg+'" title="'+c.label+'">あ</button>';}r.innerHTML=h;}
@@ -2139,6 +2293,23 @@ async function saveToGitHub(silent){
       if(it.yahooImg)delete it.yahooImg;
       if(it.rakutenImg)delete it.rakutenImg;
     }
+    // 1.5) テンプレ画像をアップロード
+    var _tl=getTpls(),_tplUp=0;
+    for(var ti=0;ti<_tl.length;ti++){
+      var _t=_tl[ti];
+      if(_t.src&&_t.src.indexOf('data:')===0){
+        prog(true,'テンプレ画像をアップロード中… ('+(ti+1)+'/'+_tl.length+')');
+        var _tx=mimeExt(_t.src);var _tp='templates/'+_t.id+'.'+_tx;
+        await ghPutRetry(c.owner,c.repo,c.branch,_tp,_t.src.split(',')[1],'template '+_t.id,c.pat);_tplUp++;
+        _t.src='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+_tp;
+        saveTpls(_tl,true);
+      }
+    }
+    try{
+      var _tj=JSON.stringify(getTplData());
+      await ghPutRetry(c.owner,c.repo,c.branch,'templates.json',utf8b64(_tj),'update templates',c.pat);
+      if(_tplUp)log('テンプレ画像アップ'+_tplUp+'枚');
+    }catch(_te){log('templates.json 書込み失敗: '+(_te&&_te.message));}
     // 2) data.json を保存
     prog(true,'データを保存中…');
     var json=JSON.stringify(items,null,2);
@@ -2167,6 +2338,29 @@ function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)c
 async function triggerSync(silent){if(ghBusy){ghPending=true;return;}ghBusy=true;try{await saveToGitHub(silent);}catch(e){}ghBusy=false;if(ghPending){ghPending=false;triggerSync(true);}}
 $('btnSave').onclick=function(){triggerSync(false);};
 
+async function loadTemplatesFromGitHub(){
+  var c=getCfg();
+  try{
+    var rs=null;
+    if(c.pat){
+      try{var r=await fetch('https://api.github.com/repos/'+c.owner+'/'+c.repo+'/contents/templates.json?ref='+encodeURIComponent(c.branch)+'&t='+Date.now(),{headers:ghHeaders(c.pat),cache:'no-store'});
+        if(r.status===200){var jj=await r.json();ghShaCache['templates.json']=jj.sha;rs=JSON.parse(b64utf8(jj.content));}
+        else if(r.status===404){return;}}catch(e){}
+    }
+    if(rs===null){
+      var r2=await fetch('https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/templates.json?t='+Date.now(),{cache:'no-store'});
+      if(r2.status===404)return;
+      if(r2.ok)rs=await r2.json();
+    }
+    if(!rs||!Array.isArray(rs.list))return;
+    var local=getTplData();
+    if((rs.updatedAt||0)===(local.updatedAt||0))return;
+    if(getPending()){log('テンプレ画像：未同期のローカル変更があるため適用せず');return;}
+    try{localStorage.setItem(TPLKEY,JSON.stringify(rs));}catch(e){}
+    renderTplManager();
+    log('テンプレ画像をGitHubから適用（'+rs.list.length+'件）');
+  }catch(e){log('templates.json 読込スキップ: '+(e&&e.message));}
+}
 async function loadSettingsFromGitHub(){
   var c=getCfg();
   try{
@@ -2227,7 +2421,7 @@ renderHead();
 render();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
-loadFromGitHub().then(function(){return loadSettingsFromGitHub();}).catch(function(){}).then(function(){_booted=true;});
+loadFromGitHub().then(function(){return loadSettingsFromGitHub();}).then(function(){return loadTemplatesFromGitHub();}).catch(function(){}).then(function(){_booted=true;});
 
 </script>
 </body>
