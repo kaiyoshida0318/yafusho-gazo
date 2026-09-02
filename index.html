@@ -798,6 +798,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .big-grid .strip-thumb-text.big-thumb{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;padding:6px;box-sizing:border-box;word-break:break-word;line-height:1.3}
 .big-more{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;border:1px dashed var(--line-2);border-radius:8px;color:var(--ink-3);font-weight:800;font-size:13px;cursor:pointer;background:#faf9f7}
 .big-empty{color:var(--ink-3);font-size:12.5px;padding:10px 4px}
+.big-group{border:2px solid var(--line-2);border-radius:12px;padding:10px 12px;margin-bottom:10px;box-sizing:border-box}
+.big-group:last-child{margin-bottom:0}
+.big-group>.img2-side{align-items:stretch}
+.big-group .img2-left{justify-content:center;align-items:center;align-self:stretch;padding-top:0;text-align:center}
+.big-group .img2-tagwrap{align-items:center}
 .cn-wrap{display:flex;flex-direction:column;gap:2px;min-width:0}
 .cn-wrap .cn-code{font-size:11.5px;color:var(--ink-3);font-weight:600}
 .cn-wrap .cn-name{font-weight:700;font-size:13px}
@@ -869,7 +874,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.1.0</span>
+        <span class="version" id="version">v2.1.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1131,7 +1136,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.1.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.1.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1760,7 +1765,7 @@ function imgBlockBigHtml(it){
     for(var n=0;n<lim;n++)gh+=thumbItem(arr[n],it.id,'big-thumb','y'+g);
     if(arr.length>BIG_CAP)gh+='<span class="big-more clk" data-edit="'+escA(it.id)+'" title="残り'+(arr.length-lim)+'枚">+'+(arr.length-lim)+'</span>';
     gh+='</div>';
-    h+='<div class="img2-side"><div class="img2-left img2-taglab">'+tagLblY(it,g,lps.length,arr.length)+'</div><div class="img2-right">'+gh+'</div></div>';
+    h+='<div class="big-group" style="border-color:'+lpTagColor(g)+'66;background:'+lpTagColor(g)+'0a"><div class="img2-side"><div class="img2-left img2-taglab">'+tagLblY(it,g,lps.length,arr.length)+'</div><div class="img2-right">'+gh+'</div></div></div>';
   }
   if(!any)h+='<div class="big-empty">Yahoo新規の画像がありません</div>';
   return h+'</div></div>';
