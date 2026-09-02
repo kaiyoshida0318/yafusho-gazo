@@ -771,6 +771,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .apply-row .ap-cnt{margin-left:auto;font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--ink-3)}
 .gal-apply{border-color:#c5d6ec!important;color:#2f6fb0!important}
 .gal-apply:hover{border-color:#2f6fb0!important}
+.cat-row-all{background:#f7f8fa;border:1px dashed var(--line-2);border-radius:9px;padding:8px 10px;margin-bottom:8px}
+.status-all-label{flex:1;font-size:13px;font-weight:800;color:var(--ink-2)}
 .status-view-sel{font:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line-2);border-radius:7px;background:#fff;color:var(--ink-2);cursor:pointer;min-width:150px}
 .status-view-sel:focus{outline:0;border-color:var(--red)}
 .big-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;width:100%;align-items:start}
@@ -852,7 +854,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v1.8.4</span>
+        <span class="version" id="version">v1.9.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1113,7 +1115,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v1.8.4</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v1.9.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1627,7 +1629,7 @@ var DEFAULT_COLS=[
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
-function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},ppColor:''};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.ppColor)d.ppColor=c.ppColor;}}catch(e){}return d;}
+function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},ppColor:'',allView:''};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;}}catch(e){}return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -2065,6 +2067,15 @@ function addCategory(){var inp=$('newCatLabel');var v=(inp.value||'').trim();if(
 function openStatusManager(){renderStatusManager();show('statusModal');}
 function renderStatusManager(){
   var list=$('statusList');if(!list)return;list.innerHTML='';var sts=getStatuses();
+  (function(){
+    var row=document.createElement('div');row.className='cat-row cat-row-all';
+    var lb=document.createElement('span');lb.className='status-all-label';lb.textContent='全体（絞り込みなし）';
+    var vs=document.createElement('select');vs.className='status-view-sel';vs.title='「全体」タブを選んだときに切り替わる表示';
+    for(var vi=0;vi<VIEW_LABELS.length;vi++){var o=document.createElement('option');o.value=(VIEW_LABELS[vi][0]||'none');o.textContent=VIEW_LABELS[vi][1];vs.appendChild(o);}
+    vs.value=(getSettings().allView||'basic');
+    vs.onchange=function(){allViewSet(vs.value);};
+    row.appendChild(lb);row.appendChild(vs);list.appendChild(row);
+  })();
   for(var idx=0;idx<sts.length;idx++){(function(s,idx){
     var row=document.createElement('div');row.className='cat-row';
     var numWrap=document.createElement('div');numWrap.className='status-num-picker';
@@ -2082,6 +2093,8 @@ function renderStatusManager(){
   })(sts[idx],idx);}
 }
 var VIEW_LABELS=[['','（変更しない）'],['basic','📋 基礎情報'],['detail','📑 販売設計'],['images','🖼️ 画像一覧'],['ybig','🔍 Y画像大表示']];
+function allViewGet(){var v=getSettings().allView||'basic';return (v==='none')?'':v;}
+function allViewSet(v){var s=getSettings();s.allView=v||'none';saveSettings(s);}
 function statusView(id){var ss=getStatuses();for(var i=0;i<ss.length;i++){if(ss[i].id===id)return ss[i].view||'';}return '';}
 function addStatus(){var inp=$('newStatusLabel');var v=(inp.value||'').trim();if(!v)return;var a=getStatuses();a.push({id:'st_'+Date.now().toString(36),label:v,icon:''});saveStatuses(a);inp.value='';renderStatusManager();render();}
 if($('btnManageCats'))$('btnManageCats').onclick=openCatManager;
@@ -2529,7 +2542,7 @@ if($('lpCountRow'))$('lpCountRow').addEventListener('click',function(e){var b=e.
 if($('lpTypeRow'))$('lpTypeRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpt')||'';lpTypeFilter=(nv&&nv===lpTypeFilter)?'':nv;render();});
 if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;var nv=b.getAttribute('data-listing')||'';listingFilter=(nv&&nv===listingFilter)?'':nv;render();});
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;var nv=b.getAttribute('data-status')||'';statusFilter=(nv&&nv===statusFilter)?'':nv;
-  var _sv=statusFilter?statusView(statusFilter):'basic';
+  var _sv=statusFilter?statusView(statusFilter):allViewGet();
   if(_sv&&_sv!==getViewMode()){applyView(_sv);}else{render();}});
 function setBulkBtn(){var b=$('btnBulkEdit');if(b){b.classList.toggle('on',bulkEdit);b.textContent=bulkEdit?'キャンセル':'✏️ 一括編集';}}
 function enterBulk(){bulkEdit=true;setBulkBtn();var s=$('btnSaveEdits');if(s)s.hidden=false;render();}
