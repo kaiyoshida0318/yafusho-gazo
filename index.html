@@ -846,6 +846,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 #grid.imgfix th[data-col-key="listingType"],#grid.imgfix td[data-col-key="listingType"]{width:120px!important}
 #grid.imgfix th[data-col-key="actions"],#grid.imgfix td[data-col-key="actions"]{width:124px!important;min-width:124px!important;max-width:124px!important}
 .strip-item{cursor:grab}
+.strip-item.drop-file{outline:3px dashed var(--red);outline-offset:2px;border-radius:10px;background:var(--red-soft,#fdecea)}
+.strip-item.drop-file::after{content:"ここに差し替え";position:absolute;left:50%;top:8px;transform:translateX(-50%);background:var(--red);color:#fff;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;pointer-events:none;z-index:3;white-space:nowrap}
 .strip-item:active{cursor:grabbing}
 .strip-item.dragging{opacity:.4}
 .strip-item.drop-target{outline:2px dashed var(--red);outline-offset:2px;border-radius:8px}
@@ -878,7 +880,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.4.2</span>
+        <span class="version" id="version">v2.5.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1140,7 +1142,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.4.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.5.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2369,7 +2371,52 @@ function wireDrop(dzId,fileId,side){
   dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('drag');addFiles(side,e.dataTransfer.files);});
 }
 wireDrop('dzRakuten','fileRakuten','rakuten');
-function wireStripDrop(stripId,side){var el=$(stripId);if(!el)return;el.addEventListener('dragover',function(e){e.preventDefault();var a=el.querySelector('.strip-add');if(a)a.classList.add('drag');});el.addEventListener('dragleave',function(){var a=el.querySelector('.strip-add');if(a)a.classList.remove('drag');});el.addEventListener('drop',function(e){e.preventDefault();var a=el.querySelector('.strip-add');if(a)a.classList.remove('drag');addFiles(side,e.dataTransfer.files);});}
+function hasFileDrag(e){try{var dt=e.dataTransfer;if(!dt)return false;if(dt.files&&dt.files.length)return true;if(dt.types){for(var i=0;i<dt.types.length;i++)if(dt.types[i]==='Files')return true;}}catch(_e){}return false;}
+function clearDropFileMark(el){var m=el.querySelectorAll('.strip-item.drop-file');for(var i=0;i<m.length;i++)m[i].classList.remove('drop-file');}
+function replaceFiles(side,idx,files){
+  if(!files||!files.length)return;
+  var arr=galOf(side);if(!arr||idx<0||idx>=arr.length){addFiles(side,files);return;}
+  var list=Array.prototype.slice.call(files).sort(function(a,b){return (a.name||'').localeCompare((b.name||''),undefined,{numeric:true,sensitivity:'base'});});
+  var prof=sideProfile(side);
+  var slots=[],pending=list.length;
+  for(var i=0;i<list.length;i++)slots.push(null);
+  for(var i=0;i<list.length;i++){(function(f,pos){
+    if(!isImageFile(f)){slots[pos]='';if(--pending===0)flush();return;}
+    readImageFile(f,function(url){slots[pos]=url||'';if(--pending===0)flush();},prof);
+  })(list[i],i);}
+  function flush(){
+    var news=[];for(var k=0;k<slots.length;k++){if(slots[k])news.push(slots[k]);}
+    if(!news.length)return;
+    var oldSrc=arr[idx];
+    var args=[idx,1].concat(news);
+    Array.prototype.splice.apply(arr,args);
+    var fk=fKey(side,oldSrc);
+    if(galFrames[fk]){galFrames[fKey(side,news[0])]=galFrames[fk];delete galFrames[fk];}
+    renderStrip(side);markDirty();
+    toast(news.length>1?('画像を差し替えて'+(news.length-1)+'枚追加しました'):'画像を差し替えました');
+  }
+}
+function wireStripDrop(stripId,side){
+  var el=$(stripId);if(!el)return;
+  el.addEventListener('dragover',function(e){
+    e.preventDefault();
+    var a=el.querySelector('.strip-add');
+    var tile=(e.target.closest)?e.target.closest('.strip-item'):null;
+    if(hasFileDrag(e)&&tile){clearDropFileMark(el);tile.classList.add('drop-file');if(a)a.classList.remove('drag');}
+    else{clearDropFileMark(el);if(a)a.classList.add('drag');}
+  });
+  el.addEventListener('dragleave',function(e){var a=el.querySelector('.strip-add');if(a)a.classList.remove('drag');if(!el.contains(e.relatedTarget))clearDropFileMark(el);});
+  el.addEventListener('drop',function(e){
+    e.preventDefault();
+    var a=el.querySelector('.strip-add');if(a)a.classList.remove('drag');
+    clearDropFileMark(el);
+    var files=e.dataTransfer&&e.dataTransfer.files;
+    if(!files||!files.length)return;
+    var tile=(e.target.closest)?e.target.closest('.strip-item'):null;
+    if(tile&&tile.getAttribute('data-side')===side){replaceFiles(side,parseInt(tile.getAttribute('data-idx'),10),files);return;}
+    addFiles(side,files);
+  });
+}
 wireStripDrop('stripRakuten','rakuten');
 if($('fPagePlan'))$('fPagePlan').addEventListener('change',syncYahooLps);
 var pendingAddSide=null;
