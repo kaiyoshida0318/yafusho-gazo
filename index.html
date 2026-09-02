@@ -142,18 +142,21 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 
 /* ===== 新規作成/編集フォーム ===== */
 .sheet-form{max-width:none;width:calc(100vw - 32px);max-height:94vh}
-/* 編集モーダルの画像は横15個グリッド */
-#editModal .img-strip{display:grid!important;grid-template-columns:repeat(15,minmax(0,1fr));gap:8px;align-items:start;overflow:visible;max-width:100%}
-#editModal .strip-item{width:100%}
+/* 編集モーダルの画像：横15個ぶん表示＋横スクロール */
+#editModal .img-strip{display:flex!important;flex-wrap:nowrap!important;gap:8px;align-items:flex-start;overflow-x:auto;overflow-y:hidden;max-width:100%;padding-bottom:8px}
+#editModal .img-strip::-webkit-scrollbar{height:12px}
+#editModal .img-strip::-webkit-scrollbar-thumb{background:#c8ccd2;border-radius:999px}
+#editModal .img-strip::-webkit-scrollbar-track{background:#f1f2f5;border-radius:999px}
+#editModal .strip-item{flex:0 0 calc((100% - 112px)/15);width:auto;min-width:0}
 #editModal .strip-item img{width:100%;height:auto;aspect-ratio:1/1}
 #editModal .strip-item .strip-text{width:100%;box-sizing:border-box;aspect-ratio:1/1;height:auto}
-#editModal .strip-add,#editModal .strip-more-tile{width:100%!important;box-sizing:border-box;aspect-ratio:1/1;height:auto!important}
+#editModal .strip-add,#editModal .strip-more-tile{flex:0 0 calc((100% - 112px)/15)!important;width:auto!important;box-sizing:border-box;aspect-ratio:1/1;height:auto!important}
 #editModal .sbtn{height:22px;font-size:10px}
 #editModal .strip-ctrls{gap:2px}
 #editModal .fbtn{font-size:9.5px;padding:2px 2px}
 #editModal .sbtn.strip-move,#editModal .sbtn.strip-copy{font-size:10px;padding:2px 0}
-@media(max-width:1500px){#editModal .img-strip{grid-template-columns:repeat(10,minmax(0,1fr))}}
-@media(max-width:1100px){#editModal .img-strip{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:1500px){#editModal .strip-item,#editModal .strip-add,#editModal .strip-more-tile{flex-basis:calc((100% - 72px)/10)!important}}
+@media(max-width:1100px){#editModal .strip-item,#editModal .strip-add,#editModal .strip-more-tile{flex-basis:calc((100% - 40px)/6)!important}}
 .form-topbar{display:flex;align-items:center;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
 .form-topbar h2{margin:0;font-size:20px}
 .topbar-actions{margin-left:auto;display:flex;gap:8px}
@@ -866,7 +869,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.0.0</span>
+        <span class="version" id="version">v2.1.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -947,7 +950,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="modal-tabs">
       <button type="button" class="mtab on" data-tab="basic">📋 基礎情報</button>
       <button type="button" class="mtab" data-tab="detail">📑 販売設計</button>
-      <button type="button" class="mtab" data-tab="images">🖼️ 画像一覧</button>
+      <button type="button" class="mtab" data-tab="images">🖼️ 画像一覧（左側）</button>
+      <button type="button" class="mtab" data-tab="images2">🖼️ 画像一覧（右側）</button>
     </div>
 
     <div class="form-body">
@@ -1127,7 +1131,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.0.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.1.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1382,6 +1386,16 @@ function stripPerRow(side){
   var top=its[0].offsetTop,n=0;
   for(var i=0;i<its.length;i++){if(its[i].offsetTop===top)n++;else break;}
   return n||1;
+}
+function moveBySteps(side,idx,delta){
+  var arr=galOf(side)||[];
+  if(idx<0||idx>=arr.length)return;
+  var t=idx+delta;
+  if(t<0)t=0;
+  if(t>arr.length-1)t=arr.length-1;
+  if(t===idx){toast(delta<0?'これ以上、前へは動かせません':'これ以上、後ろへは動かせません');return;}
+  var v=arr.splice(idx,1)[0];arr.splice(t,0,v);
+  renderStrip(side);markDirty();
 }
 function moveByRow(side,idx,dir){
   var arr=galOf(side)||[];
@@ -2188,7 +2202,21 @@ for(var j=0;j<closers.length;j++){closers[j].addEventListener('click',function()
 
 /* 画像カラム（楽天/Yahoo） */
 /* ===== タブ切り替え ===== */
-function switchTab(name){var ts=document.querySelectorAll('.mtab');for(var i=0;i<ts.length;i++){ts[i].classList.toggle('on',ts[i].getAttribute('data-tab')===name);}if($('panel-basic'))$('panel-basic').hidden=(name!=='basic');if($('panel-detail'))$('panel-detail').hidden=(name!=='detail');if($('panel-images'))$('panel-images').hidden=(name!=='images');}
+var stripAlign='start';
+function alignStrips(){
+  var pn=$('panel-images');if(!pn)return;
+  var st=pn.querySelectorAll('.img-strip');
+  for(var i=0;i<st.length;i++){try{st[i].scrollLeft=(stripAlign==='end')?st[i].scrollWidth:0;}catch(e){}}
+}
+function switchTab(name){
+  var isImg=(name==='images'||name==='images2');
+  if(isImg)stripAlign=(name==='images2')?'end':'start';
+  var ts=document.querySelectorAll('.mtab');for(var i=0;i<ts.length;i++){ts[i].classList.toggle('on',ts[i].getAttribute('data-tab')===name);}
+  if($('panel-basic'))$('panel-basic').hidden=(name!=='basic');
+  if($('panel-detail'))$('panel-detail').hidden=(name!=='detail');
+  if($('panel-images'))$('panel-images').hidden=!isImg;
+  if(isImg)setTimeout(alignStrips,30);
+}
 var mtabs=document.querySelectorAll('.mtab');
 for(var mt=0;mt<mtabs.length;mt++){mtabs[mt].addEventListener('click',function(){switchTab(this.getAttribute('data-tab'));});}
 
@@ -2222,7 +2250,7 @@ document.addEventListener('dragstart',function(e){var it=(e.target.closest)?e.ta
 document.addEventListener('dragend',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(it)it.classList.remove('dragging');var ts=document.querySelectorAll('.strip-item.drop-target');for(var k=0;k<ts.length;k++)ts[k].classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
 document.addEventListener('dragover',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();try{e.dataTransfer.dropEffect='move';}catch(_e){}var ts=document.querySelectorAll('.strip-item.drop-target');for(var k=0;k<ts.length;k++)ts[k].classList.remove('drop-target');it.classList.add('drop-target');});
 document.addEventListener('drop',function(e){var it=(e.target.closest)?e.target.closest('.strip-item'):null;if(!it||_dragSide===null)return;if(it.getAttribute('data-side')!==_dragSide)return;e.preventDefault();var to=parseInt(it.getAttribute('data-idx'),10);var from=_dragIdx;var arr=galOf(_dragSide);if(arr&&from>=0&&to>=0&&from!==to){var x=arr.splice(from,1)[0];arr.splice(to,0,x);renderStrip(_dragSide);}it.classList.remove('drop-target');_dragSide=null;_dragIdx=-1;});
-var STRIP_CAP=20;
+var STRIP_CAP=100000;
 var stripExpanded={yahoo:false,rakuten:false};
 function stripAddTile(side){return '<div class="strip-add" data-add="'+side+'" title="クリックで追加メニュー / 画像はドロップでも追加"><span class="strip-add-l">📤 ドラッグ＆ドロップ<br><span class="strip-add-or">or</span><br>情報追加</span></div>';}
 function renderStrip(side){
@@ -2244,8 +2272,8 @@ function renderStrip(side){
          '<button type="button" class="sbtn mv-last" data-side="'+side+'" data-idx="'+i+'" title="最後へ">→→</button>'+
        '</div>'+
        '<div class="strip-ctrls">'+
-         '<button type="button" class="sbtn mv-up" data-side="'+side+'" data-idx="'+i+'" title="1行上へ移動（同じグループ内）">↑</button>'+
-         '<button type="button" class="sbtn mv-dn" data-side="'+side+'" data-idx="'+i+'" title="1行下へ移動（同じグループ内）">↓</button>'+
+         '<button type="button" class="sbtn mv-b10" data-side="'+side+'" data-idx="'+i+'" title="10個前へ移動">←10</button>'+
+         '<button type="button" class="sbtn mv-f10" data-side="'+side+'" data-idx="'+i+'" title="10個後ろへ移動">10→</button>'+
          '<button type="button" class="sbtn strip-del" data-side="'+side+'" data-idx="'+i+'" title="削除">×</button>'+
          '<button type="button" class="sbtn strip-move" data-side="'+side+'" data-idx="'+i+'" title="位置を選んで移動">移動</button>'+
          '<button type="button" class="sbtn strip-copy" data-side="'+side+'" data-idx="'+i+'" title="コピー先を選んでコピー">⧉ 対象へコピー</button>'+
@@ -2259,6 +2287,7 @@ function renderStrip(side){
   if(!_exp&&_n>STRIP_CAP){h+='<div class="strip-more-tile" data-expand="'+side+'" title="残り'+(_n-STRIP_CAP)+'枚を表示"><span class="smt-n">+'+(_n-STRIP_CAP)+'</span><span class="smt-sub">もっと見る</span></div>';}
   h+=stripAddTile(side);
   el.innerHTML=h;
+  try{el.scrollLeft=(stripAlign==='end')?el.scrollWidth:0;}catch(e){}
 }
 function isImageFile(f){return !!(f&&(/^image\//.test(f.type||'')||/\.(png|jpe?g|webp|gif|bmp)$/i.test(f.name||'')));}
 /* webpはjpgへ変換。大きすぎる画像は自動で縮小・圧縮（保存容量オーバー対策） */
@@ -2490,8 +2519,8 @@ document.addEventListener('click',function(e){
   }
   var _exEl=(t&&t.closest)?t.closest('[data-expand]'):null;if(_exEl){var _es=_exEl.getAttribute('data-expand');stripExpanded[_es]=true;renderStrip(_es);return;}
   var _addEl=(t&&t.closest)?t.closest('.strip-add'):null;if(_addEl){openAddMenu(_addEl.getAttribute('data-add'),e.clientX,e.clientY);return;}
-  if(t&&t.classList&&(t.classList.contains('mv-up')||t.classList.contains('mv-dn'))){
-    moveByRow(t.getAttribute('data-side'),parseInt(t.getAttribute('data-idx'),10),t.classList.contains('mv-up')?-1:1);
+  if(t&&t.classList&&(t.classList.contains('mv-b10')||t.classList.contains('mv-f10'))){
+    moveBySteps(t.getAttribute('data-side'),parseInt(t.getAttribute('data-idx'),10),t.classList.contains('mv-b10')?-10:10);
     return;
   }
   if(t&&t.classList&&(t.classList.contains('mv-l')||t.classList.contains('mv-r')||t.classList.contains('mv-first')||t.classList.contains('mv-last')||t.classList.contains('strip-del'))){
