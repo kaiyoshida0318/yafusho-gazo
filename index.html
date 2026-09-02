@@ -242,18 +242,23 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 /* 画像ライトボックス（拡大表示） */
 .lb-overlay{position:fixed;inset:0;z-index:500;background:rgba(15,18,24,.86);display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;box-sizing:border-box}
 .lb-stage{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
-.lb-img{max-width:min(calc(100vw - 380px),1200px);max-height:calc(100vh - 120px);object-fit:contain;background:#fff;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:grab;-webkit-user-drag:element}
+.lb-img{max-width:min(calc(48vw - 40px),1100px);max-height:calc(100vh - 120px);object-fit:contain;background:#fff;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);cursor:grab;-webkit-user-drag:element}
 .lb-img:active{cursor:grabbing}
 .lb-info{display:flex;align-items:center;gap:16px;color:#e6e9ef;font-size:13px;font-weight:700}
 .lb-info .lb-hint{color:#aab2c0;font-weight:400;font-size:12px}
 .lb-nav{position:fixed;top:50%;transform:translateY(-50%);appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:52px;height:52px;border-radius:50%;font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;z-index:3}
 .lb-nav:hover{background:rgba(255,255,255,.3)}
-.lb-prev{left:14vw}
-.lb-next{right:14vw}
-.lb-side{position:fixed;top:50%;transform:translateY(-50%);width:15vw;max-width:230px;max-height:64vh;object-fit:contain;border-radius:8px;background:rgba(255,255,255,.08);filter:blur(3px) brightness(.6);opacity:.85;cursor:pointer;z-index:2;transition:filter .15s,opacity .15s,transform .15s}
-.lb-side:hover{filter:blur(0) brightness(.9);opacity:1}
-.lb-side-l{left:10px;transform:translateY(-50%)}
-.lb-side-r{right:10px;transform:translateY(-50%)}
+.lb-prev{left:calc(26vw + 8px)}
+.lb-next{right:calc(26vw + 8px)}
+.lb-side{position:fixed;top:50%;transform:translateY(-50%);object-fit:contain;border-radius:8px;background:rgba(255,255,255,.08);cursor:pointer;z-index:2;transition:filter .15s,opacity .15s}
+.lb-side:hover{filter:blur(0) brightness(.95)!important;opacity:1}
+.lb-side-1{width:15vw;max-width:260px;max-height:62vh;filter:blur(2px) brightness(.68);opacity:.9}
+.lb-side-2{width:11vw;max-width:190px;max-height:46vh;filter:blur(4px) brightness(.5);opacity:.75}
+.lb-side-l2{left:8px}
+.lb-side-l{left:calc(11vw + 16px)}
+.lb-side-r{right:calc(11vw + 16px)}
+.lb-side-r2{right:8px}
+@media(max-width:1400px){.lb-side-2{display:none}.lb-side-l{left:8px}.lb-side-r{right:8px}.lb-img{max-width:calc(100vw - 380px)}.lb-prev{left:16vw}.lb-next{right:16vw}}
 @media(max-width:1000px){.lb-side{display:none}.lb-img{max-width:calc(100vw - 170px)}.lb-prev{left:14px}.lb-next{right:14px}}
 .lb-close{position:fixed;top:18px;right:22px;appearance:none;border:0;background:rgba(255,255,255,.14);color:#fff;width:44px;height:44px;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center}
 .lb-close:hover{background:rgba(255,255,255,.3)}
@@ -567,6 +572,16 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .pp-prev-btn{cursor:pointer}
 .pp-prev-btn:hover{filter:brightness(1.1);box-shadow:0 0 0 2px rgba(0,0,0,.12)}
 .pp-color-palette{margin:4px 0 8px 0}
+.sync-lock{position:fixed;inset:0;z-index:900;background:rgba(15,18,24,.78);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;cursor:progress}
+.sync-lock[hidden]{display:none}
+.sync-box{width:min(460px,92vw);background:#fff;border-radius:16px;padding:26px 26px 22px;box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center}
+.sync-box h3{margin:12px 0 14px;font-size:17px;font-weight:800;color:var(--ink-1)}
+.sync-spin{width:34px;height:34px;margin:0 auto;border-radius:50%;border:3px solid #e6e9ef;border-top-color:var(--red);animation:syncspin .8s linear infinite}
+@keyframes syncspin{to{transform:rotate(360deg)}}
+.sync-bar{height:12px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-bottom:10px}
+.sync-bar-in{height:100%;width:0;background:var(--red);border-radius:999px;transition:width .25s}
+.sync-txt{font-size:13px;font-weight:700;color:var(--ink-2);font-family:"Roboto Mono",monospace}
+.sync-note{margin-top:12px;font-size:11.5px;line-height:1.6;color:var(--ink-3)}
 .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;max-height:52vh;overflow:auto;padding:4px 2px 8px}
 .tpl-card{border:1px solid var(--line-2);border-radius:10px;padding:6px;background:#fff;display:flex;flex-direction:column;gap:5px;position:relative}
 .tpl-card img{width:100%;height:110px;object-fit:contain;background:#faf9f7;border-radius:6px}
@@ -778,7 +793,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.95.2</span>
+        <span class="version" id="version">v0.97.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -971,16 +986,27 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 
 <div class="lb-overlay" id="imgLightbox" hidden>
   <button type="button" class="lb-close" id="lbClose" title="閉じる">×</button>
-  <img class="lb-side lb-side-l" id="lbSideL" alt="" title="前の画像へ" hidden>
+  <img class="lb-side lb-side-2 lb-side-l2" id="lbSideL2" alt="" title="2つ前の画像へ" hidden>
+  <img class="lb-side lb-side-1 lb-side-l" id="lbSideL" alt="" title="前の画像へ" hidden>
   <button type="button" class="lb-nav lb-prev" id="lbPrev" title="前へ">‹</button>
   <div class="lb-stage">
     <img id="lbImg" class="lb-img" alt="" draggable="true">
     <div class="lb-info"><span id="lbCount"></span><span class="lb-hint">画像をデスクトップにドラッグして保存できます</span></div>
   </div>
   <button type="button" class="lb-nav lb-next" id="lbNext" title="次へ">›</button>
-  <img class="lb-side lb-side-r" id="lbSideR" alt="" title="次の画像へ" hidden>
+  <img class="lb-side lb-side-1 lb-side-r" id="lbSideR" alt="" title="次の画像へ" hidden>
+  <img class="lb-side lb-side-2 lb-side-r2" id="lbSideR2" alt="" title="2つ先の画像へ" hidden>
 </div>
 
+<div class="sync-lock" id="syncLock" hidden>
+  <div class="sync-box">
+    <div class="sync-spin"></div>
+    <h3 id="syncTtl">画像をアップロード中…</h3>
+    <div class="sync-bar"><div class="sync-bar-in" id="syncBarIn"></div></div>
+    <div class="sync-txt" id="syncTxt">準備中…</div>
+    <div class="sync-note">完了までこのタブを閉じたり、操作したりしないでください。<br>途中で止まっても、次回の保存で自動的に続きからアップロードされます。</div>
+  </div>
+</div>
 <div class="overlay" id="tplModal" hidden>
   <div class="mini modal-cat">
     <h2>🖼️ テンプレ画像登録</h2>
@@ -1017,7 +1043,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.95.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.97.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2097,9 +2123,10 @@ function setDownloadDrag(e,src,fn){if(!src)return;try{var mime=dataUrlMime(src)|
 var lbList=[],lbIdx=0,lbItem=null;
 function openLightbox(list,idx,it){if(!list||!list.length)return;lbList=list;lbIdx=idx||0;lbItem=it||null;renderLightbox();var o=$('imgLightbox');if(o)o.hidden=false;}
 function renderLightbox(){var img=$('lbImg');if(!img)return;img.src=lbList[lbIdx]||'';var c=$('lbCount');if(c)c.textContent=(lbIdx+1)+' / '+lbList.length;var nav=lbList.length>1;var pv=$('lbPrev'),nx=$('lbNext');if(pv)pv.style.visibility=nav?'':'hidden';if(nx)nx.style.visibility=nav?'':'hidden';
-  var n=lbList.length;var sl=$('lbSideL'),sr=$('lbSideR');
-  if(sl){if(nav){sl.src=lbList[(lbIdx-1+n)%n]||'';sl.hidden=false;}else{sl.hidden=true;sl.removeAttribute('src');}}
-  if(sr){if(nav){sr.src=lbList[(lbIdx+1)%n]||'';sr.hidden=false;}else{sr.hidden=true;sr.removeAttribute('src');}}}
+  var n=lbList.length;
+  function setSide(id,off,cond){var el=$(id);if(!el)return;if(cond){el.src=lbList[((lbIdx+off)%n+n)%n]||'';el.hidden=false;}else{el.hidden=true;el.removeAttribute('src');}}
+  setSide('lbSideL',-1,n>=2);setSide('lbSideR',1,n>=2);
+  setSide('lbSideL2',-2,n>=5);setSide('lbSideR2',2,n>=5);}
 function lbGo(d){if(!lbList.length)return;lbIdx=(lbIdx+d+lbList.length)%lbList.length;renderLightbox();}
 function closeLightbox(){var o=$('imgLightbox');if(o)o.hidden=true;lbList=[];lbItem=null;}
 function openLightboxFromThumb(imgEl){var id=imgEl.getAttribute('data-edit');var src=imgEl.getAttribute('src');var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it){openLightbox([src],0,null);return;}var ym=it.yahooMain||'',rm=it.rakutenMain||'';var yg=imgArr(it,'yahoo')||[],rg=imgArr(it,'rakuten')||[];var side=(src===ym||yg.indexOf(src)>=0)?'yahoo':((src===rm||rg.indexOf(src)>=0)?'rakuten':'yahoo');var main=(side==='yahoo')?ym:rm;var gal=(side==='yahoo')?yg:rg;var list=[],seen={};function add(s){if(s&&!isTextItem(s)&&!seen[s]){seen[s]=1;list.push(s);}}add(main);for(var j=0;j<gal.length;j++)add(gal[j]);var idx=list.indexOf(src);if(idx<0)idx=0;openLightbox(list,idx,it);}
@@ -2107,6 +2134,8 @@ if($('lbClose'))$('lbClose').onclick=closeLightbox;
 if($('lbPrev'))$('lbPrev').onclick=function(){lbGo(-1);};
 if($('lbSideL'))$('lbSideL').onclick=function(e){e.stopPropagation();lbGo(-1);};
 if($('lbSideR'))$('lbSideR').onclick=function(e){e.stopPropagation();lbGo(1);};
+if($('lbSideL2'))$('lbSideL2').onclick=function(e){e.stopPropagation();lbGo(-2);};
+if($('lbSideR2'))$('lbSideR2').onclick=function(e){e.stopPropagation();lbGo(2);};
 if($('lbNext'))$('lbNext').onclick=function(){lbGo(1);};
 if($('imgLightbox'))$('imgLightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox();});
 if($('lbImg'))$('lbImg').addEventListener('dragstart',function(e){setDownloadDrag(e,lbList[lbIdx],dlName(lbItem,lbIdx,lbList[lbIdx]));});
@@ -2231,6 +2260,34 @@ function toast(msg){var t=$('toast');if(!t)return;t.textContent=msg;t.hidden=fal
 function log(msg){var t=new Date().toLocaleTimeString('ja-JP');LOGS.unshift('['+t+'] '+msg);if(LOGS.length>500)LOGS.pop();var a=document.querySelector('#logModal textarea');if(a)a.value=LOGS.join('\n');}
 
 /* ===== 進捗表示 ===== */
+var _lockTotal=0,_lockDone=0;
+function syncLockShow(total,ttl){
+  _lockTotal=total||0;_lockDone=0;
+  var el=$('syncLock');if(!el)return;
+  var t=$('syncTtl');if(t)t.textContent=ttl||'画像をアップロード中…';
+  syncLockStep(0);el.hidden=false;
+}
+function syncLockStep(done,label){
+  if(done!=null)_lockDone=done;
+  var bar=$('syncBarIn'),tx=$('syncTxt');
+  var pc=_lockTotal?Math.min(100,Math.round(_lockDone/_lockTotal*100)):0;
+  if(bar)bar.style.width=pc+'%';
+  if(tx)tx.textContent=(label||('画像 '+_lockDone+' / '+_lockTotal+' 枚'))+'  （'+pc+'%）';
+}
+function syncLockHide(){var el=$('syncLock');if(el)el.hidden=true;_lockTotal=0;_lockDone=0;}
+function countPendingUploads(){
+  var n=0;
+  for(var i=0;i<items.length;i++){
+    var it=items[i];var sides=['yahoo','rakuten'];
+    for(var s2=0;s2<sides.length;s2++){
+      var a=imgArr(it,sides[s2]);
+      for(var k=0;k<a.length;k++){if(a[k]&&String(a[k]).indexOf('data:')===0)n++;}
+      var m=it[sides[s2]+'Main'];if(m&&String(m).indexOf('data:')===0)n++;
+    }
+  }
+  var tl=getTpls();for(var t2=0;t2<tl.length;t2++){if(tl[t2].src&&String(tl[t2].src).indexOf('data:')===0)n++;}
+  return n;
+}
 function prog(on,text){var p=$('ghProgress');if(on){p.hidden=false;p.classList.remove('gh-done');$('ghText').textContent=text||'処理中…';}else{p.hidden=true;}}
 function progDone(text){var p=$('ghProgress');p.hidden=false;p.classList.add('gh-done');$('ghText').textContent=text||'✓ 完了';setTimeout(function(){p.hidden=true;p.classList.remove('gh-done');},2500);}
 
@@ -2292,6 +2349,8 @@ async function saveToGitHub(silent){
   $('btnSave').disabled=true;
   log('=== GitHub保存 開始 ['+(silent?'自動':'手動')+'] '+c.owner+'/'+c.repo+'@'+c.branch+' / 商品'+items.length+'件 / PAT'+(c.pat?('あり('+c.pat.length+'字)'):'なし')+' ===');
   var _imgUp=0;
+  var _pend=countPendingUploads();
+  if(_pend>0)syncLockShow(_pend,'画像をアップロード中…');
   try{
     // 1) 画像（data:のものだけ）をアップロード → rawURLに置換（複数対応）
     var sides=['yahoo','rakuten'];
@@ -2304,9 +2363,10 @@ async function saveToGitHub(silent){
           var src=arr[n];
           if(src&&src.indexOf('data:')===0){
             prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
+            syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
             var ext=mimeExt(src);var path='images/'+it.id+'-'+side+'-'+n+'.'+ext;
             var b64=src.split(',')[1];
-            await ghPutRetry(c.owner,c.repo,c.branch,path,b64,'image '+it.id+' '+side+' '+n,c.pat);_imgUp++;
+            await ghPutRetry(c.owner,c.repo,c.branch,path,b64,'image '+it.id+' '+side+' '+n,c.pat);_imgUp++;syncLockStep(_imgUp);
             arr[n]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+path;
             persist();render();
           }
@@ -2315,8 +2375,9 @@ async function saveToGitHub(silent){
         var mkey=side+'Main';var msrc=it[mkey];
         if(msrc&&msrc.indexOf('data:')===0){
           prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
+          syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：メイン画像');
           var mext=mimeExt(msrc);var mpath='images/'+it.id+'-'+side+'-main.'+mext;
-          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+side+' main',c.pat);_imgUp++;
+          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+side+' main',c.pat);_imgUp++;syncLockStep(_imgUp);
           it[mkey]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+mpath;
           persist();render();
         }
@@ -2330,10 +2391,11 @@ async function saveToGitHub(silent){
       var _t=_tl[ti];
       if(_t.src&&_t.src.indexOf('data:')===0){
         prog(true,'テンプレ画像をアップロード中… ('+(ti+1)+'/'+_tl.length+')');
+        syncLockStep(_imgUp+_tplUp,'テンプレ画像 '+(ti+1)+'/'+_tl.length);
         var _tx=mimeExt(_t.src);var _tp='templates/'+_t.id+'.'+_tx;
         await ghPutRetry(c.owner,c.repo,c.branch,_tp,_t.src.split(',')[1],'template '+_t.id,c.pat);_tplUp++;
         _t.src='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+_tp;
-        saveTpls(_tl,true);
+        saveTpls(_tl,true);syncLockStep(_imgUp+_tplUp);
       }
     }
     try{
@@ -2354,6 +2416,7 @@ async function saveToGitHub(silent){
     persist();
     if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
     setPending(false);
+    if(_pend>0)syncLockStep(_pend,'仕上げ中…');
     log('=== GitHub保存 完了（商品'+items.length+'件 / 画像'+_imgUp+'枚）上記commitリンクで反映確認 ===');
     try{setTimeout(function(){capLoad(true);},1200);}catch(_ce){}
   }catch(e){
@@ -2361,6 +2424,7 @@ async function saveToGitHub(silent){
     if(silent){toast('⚠️ GitHub同期に失敗');}else{alert('GitHub保存に失敗しました:\n'+e.message);}
     log('GitHub保存 失敗: '+e.message);
   }finally{
+    syncLockHide();
     $('btnSave').disabled=false;
   }
 }
