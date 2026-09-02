@@ -713,8 +713,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .cn-wrap .cn-code{font-size:11.5px;color:var(--ink-3);font-weight:600}
 .cn-wrap .cn-name{font-weight:700;font-size:13px}
 .cn-wrap .bulk-inp{width:100%;box-sizing:border-box}
-.cn-links{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px}
-.cn-link{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:19px;padding:0 5px;box-sizing:border-box;border-radius:5px;color:#fff!important;font-size:10.5px;font-weight:800;line-height:1;text-decoration:none!important;font-family:"Roboto Mono",monospace;cursor:pointer}
+.cn-links{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:5px}
+.cn-link{display:inline-flex;align-items:center;justify-content:center;gap:3px;min-width:64px;height:26px;padding:0 10px;box-sizing:border-box;border-radius:7px;color:#fff!important;font-size:12px;font-weight:800;line-height:1;text-decoration:none!important;font-family:"Zen Kaku Gothic New",sans-serif;letter-spacing:.02em;cursor:pointer;box-shadow:0 1px 2px rgba(20,24,32,.16)}
 .cn-link:hover{filter:brightness(1.12)}
 .cn-link.cl-y{background:#ff9800}
 .cn-link.cl-r{background:var(--red)}
@@ -778,7 +778,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.95.0</span>
+        <span class="version" id="version">v0.95.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1017,7 +1017,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.95.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.95.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1529,8 +1529,8 @@ function cnLinksHtml(it){
   var yu=ok(it.yahooUrls),ru=ok(it.rakutenUrls);
   if(!yu.length&&!ru.length)return '';
   var h='<div class="cn-links">';
-  for(var i=0;i<yu.length&&i<3;i++)h+='<a class="cn-link cl-y" href="'+escA(yu[i])+'" target="_blank" rel="noopener" title="Yahoo商品ページを開く&#10;'+escA(yu[i])+'">Y'+(i?String(i+1):'')+'</a>';
-  for(var j=0;j<ru.length&&j<3;j++)h+='<a class="cn-link cl-r" href="'+escA(ru[j])+'" target="_blank" rel="noopener" title="楽天商品ページを開く&#10;'+escA(ru[j])+'">R'+(j?String(j+1):'')+'</a>';
+  for(var i=0;i<yu.length&&i<3;i++)h+='<a class="cn-link cl-y" href="'+escA(yu[i])+'" target="_blank" rel="noopener" title="Yahoo商品ページを開く&#10;'+escA(yu[i])+'">Yahoo'+(i?String(i+1):'')+'</a>';
+  for(var j=0;j<ru.length&&j<3;j++)h+='<a class="cn-link cl-r" href="'+escA(ru[j])+'" target="_blank" rel="noopener" title="楽天商品ページを開く&#10;'+escA(ru[j])+'">Rakuten'+(j?String(j+1):'')+'</a>';
   return h+'</div>';
 }
 function cellHtml(key,it){
