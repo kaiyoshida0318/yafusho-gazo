@@ -850,7 +850,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v1.7.0</span>
+        <span class="version" id="version">v1.7.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1111,7 +1111,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v1.7.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v1.7.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1229,7 +1229,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 </div>
 <script>
 function show(id){document.getElementById(id).hidden=false;}
-function hide(id){document.getElementById(id).hidden=true;if(id==='colsModal'&&colsModalOpen){colsModalOpen=false;renderHead();render();}}
+function hide(id){document.getElementById(id).hidden=true;if(id==='colsModal'&&colsModalOpen){colsModalOpen=false;renderHead();render();}
+  if(id==='editModal'&&typeof ghDeferred!=='undefined'&&ghDeferred){ghDeferred=false;setTimeout(function(){try{triggerSync(true);}catch(e){}},400);}}
 function $(id){return document.getElementById(id);}
 
 /* ===== データ ===== */
@@ -2626,6 +2627,22 @@ async function saveToGitHub(silent){
   try{
     // 1) 画像（data:のものだけ）をアップロード → rawURLに置換（LPグループ・楽天・メイン）
     var RAW='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/';
+    var upMap={};
+    async function putImg(path,src,msg){
+      if(upMap[src])return upMap[src];
+      await ghPutRetry(c.owner,c.repo,c.branch,path,src.split(',')[1],msg,c.pat);_imgUp++;syncLockStep(_imgUp);
+      upMap[src]=RAW+path;return upMap[src];
+    }
+    function syncGalSrc(it,oldS,newS){
+      if(!editingId||!it||it.id!==editingId)return;
+      var ch=false;
+      for(var g=0;g<galYahooLps.length;g++){var a=galYahooLps[g]||[];for(var n=0;n<a.length;n++)if(a[n]===oldS){a[n]=newS;ch=true;}}
+      for(var r=0;r<galRakuten.length;r++)if(galRakuten[r]===oldS){galRakuten[r]=newS;ch=true;}
+      if(mainYahoo===oldS)mainYahoo=newS;
+      if(mainRakuten===oldS)mainRakuten=newS;
+      for(var k in galFrames){if(!Object.prototype.hasOwnProperty.call(galFrames,k))continue;var p=k.indexOf('|');var sp=(p>=0?k.slice(p+1):k);if(sp===oldS){var nk=(p>=0?(k.slice(0,p)+'|'+newS):newS);galFrames[nk]=galFrames[k];delete galFrames[k];}}
+      if(ch&&editModalOpen()){try{renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');}catch(e){}}
+    }
     function remapFrame(it,oldS,newS){try{if(!it||!it.frames)return;var f=it.frames;for(var k in f){if(!Object.prototype.hasOwnProperty.call(f,k))continue;var p=k.indexOf('|');if(p>=0?(k.slice(p+1)===oldS):(k===oldS)){var nk=(p>=0?(k.slice(0,p)+'|'+newS):newS);f[nk]=f[k];delete f[k];}}}catch(e){}}
     for(var i=0;i<items.length;i++){
       var it=items[i];
@@ -2641,8 +2658,8 @@ async function saveToGitHub(silent){
               prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
               syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
               var ext=mimeExt(src);var path='images/'+it.id+'-yahoo'+g+'-'+n+'.'+ext;
-              await ghPutRetry(c.owner,c.repo,c.branch,path,src.split(',')[1],'image '+it.id+' yahoo'+g+' '+n,c.pat);_imgUp++;syncLockStep(_imgUp);
-              remapFrame(it,src,RAW+path);ga[n]=RAW+path;pflush();
+              var _u=await putImg(path,src,'image '+it.id+' yahoo'+g+' '+n);
+              remapFrame(it,src,_u);syncGalSrc(it,src,_u);ga[n]=_u;pflush();
             }
           }
           lps[g]=ga;
@@ -2657,8 +2674,8 @@ async function saveToGitHub(silent){
             prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
             syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
             var e3=mimeExt(s3);var p3='images/'+it.id+'-yahoo-'+n3+'.'+e3;
-            await ghPutRetry(c.owner,c.repo,c.branch,p3,s3.split(',')[1],'image '+it.id+' yahoo '+n3,c.pat);_imgUp++;syncLockStep(_imgUp);
-            remapFrame(it,s3,RAW+p3);ya[n3]=RAW+p3;it.yahooImgs=ya;pflush();
+            var _u3=await putImg(p3,s3,'image '+it.id+' yahoo '+n3);
+            remapFrame(it,s3,_u3);syncGalSrc(it,s3,_u3);ya[n3]=_u3;it.yahooImgs=ya;pflush();
           }
         }
         it.yahooImgs=ya;
@@ -2671,8 +2688,8 @@ async function saveToGitHub(silent){
           prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
           syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
           var e4=mimeExt(s4);var p4='images/'+it.id+'-rakuten-'+n4+'.'+e4;
-          await ghPutRetry(c.owner,c.repo,c.branch,p4,s4.split(',')[1],'image '+it.id+' rakuten '+n4,c.pat);_imgUp++;syncLockStep(_imgUp);
-          remapFrame(it,s4,RAW+p4);ra[n4]=RAW+p4;it.rakutenImgs=ra;pflush();
+          var _u4=await putImg(p4,s4,'image '+it.id+' rakuten '+n4);
+          remapFrame(it,s4,_u4);syncGalSrc(it,s4,_u4);ra[n4]=_u4;it.rakutenImgs=ra;pflush();
         }
       }
       it.rakutenImgs=ra;
@@ -2684,8 +2701,8 @@ async function saveToGitHub(silent){
           prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
           syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：メイン画像');
           var mext=mimeExt(msrc);var mpath='images/'+it.id+'-'+msides[ms]+'-main.'+mext;
-          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+msides[ms]+' main',c.pat);_imgUp++;syncLockStep(_imgUp);
-          remapFrame(it,msrc,RAW+mpath);it[mkey]=RAW+mpath;pflush();
+          var _um=await putImg(mpath,msrc,'image '+it.id+' '+msides[ms]+' main');
+          remapFrame(it,msrc,_um);syncGalSrc(it,msrc,_um);it[mkey]=_um;pflush();
         }
       }
       if(it.yahooImg)delete it.yahooImg;
@@ -2742,9 +2759,11 @@ async function saveToGitHub(silent){
     $('btnSave').disabled=false;
   }
 }
-var _syncTimer=null,ghBusy=false,ghPending=false;
+var _syncTimer=null,ghBusy=false,ghPending=false,ghDeferred=false;
 function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
+function editModalOpen(){var m=document.getElementById('editModal');return !!(m&&!m.hidden);}
 async function triggerSync(silent){
+  if(silent&&editModalOpen()){ghDeferred=true;setPending(true);try{log('編集中のため自動同期を保留（編集を閉じたら実行します）');}catch(e){}return;}
   if(ghBusy){ghPending=true;try{syncQueueTxt(true);log('保存要求を受付：現在の処理の後に続けて実行します');}catch(e){}return;}
   ghBusy=true;
   try{await saveToGitHub(silent);}catch(e){}
