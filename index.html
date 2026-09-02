@@ -572,16 +572,18 @@ span.tbl-thumb.clk:hover{outline:0;color:var(--red)}
 .pp-prev-btn{cursor:pointer}
 .pp-prev-btn:hover{filter:brightness(1.1);box-shadow:0 0 0 2px rgba(0,0,0,.12)}
 .pp-color-palette{margin:4px 0 8px 0}
-.sync-lock{position:fixed;inset:0;z-index:900;background:rgba(15,18,24,.78);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;cursor:progress}
+.sync-lock{position:fixed;right:16px;bottom:16px;z-index:700;width:min(330px,92vw)}
 .sync-lock[hidden]{display:none}
-.sync-box{width:min(460px,92vw);background:#fff;border-radius:16px;padding:26px 26px 22px;box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center}
-.sync-box h3{margin:12px 0 14px;font-size:17px;font-weight:800;color:var(--ink-1)}
-.sync-spin{width:34px;height:34px;margin:0 auto;border-radius:50%;border:3px solid #e6e9ef;border-top-color:var(--red);animation:syncspin .8s linear infinite}
+.sync-box{background:#fff;border:1px solid var(--line-2);border-left:5px solid var(--red);border-radius:12px;padding:12px 14px 11px;box-shadow:0 12px 34px rgba(20,24,32,.28)}
+.sync-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sync-box h3{margin:0;font-size:13.5px;font-weight:800;color:var(--ink-1)}
+.sync-spin{width:16px;height:16px;flex:0 0 auto;border-radius:50%;border:2.5px solid #e6e9ef;border-top-color:var(--red);animation:syncspin .8s linear infinite}
 @keyframes syncspin{to{transform:rotate(360deg)}}
-.sync-bar{height:12px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-bottom:10px}
+.sync-bar{height:9px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-bottom:7px}
 .sync-bar-in{height:100%;width:0;background:var(--red);border-radius:999px;transition:width .25s}
-.sync-txt{font-size:13px;font-weight:700;color:var(--ink-2);font-family:"Roboto Mono",monospace}
-.sync-note{margin-top:12px;font-size:11.5px;line-height:1.6;color:var(--ink-3)}
+.sync-txt{font-size:11.5px;font-weight:700;color:var(--ink-2);font-family:"Roboto Mono",monospace}
+.sync-note{margin-top:6px;font-size:10.5px;line-height:1.5;color:var(--ink-3)}
+#syncQueue{color:var(--red);font-weight:700}
 .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;max-height:52vh;overflow:auto;padding:4px 2px 8px}
 .tpl-card{border:1px solid var(--line-2);border-radius:10px;padding:6px;background:#fff;display:flex;flex-direction:column;gap:5px;position:relative}
 .tpl-card img{width:100%;height:110px;object-fit:contain;background:#faf9f7;border-radius:6px}
@@ -793,7 +795,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.97.0</span>
+        <span class="version" id="version">v0.99.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1000,11 +1002,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 
 <div class="sync-lock" id="syncLock" hidden>
   <div class="sync-box">
-    <div class="sync-spin"></div>
-    <h3 id="syncTtl">画像をアップロード中…</h3>
+    <div class="sync-head"><div class="sync-spin"></div><h3 id="syncTtl">画像をアップロード中…</h3></div>
     <div class="sync-bar"><div class="sync-bar-in" id="syncBarIn"></div></div>
     <div class="sync-txt" id="syncTxt">準備中…</div>
-    <div class="sync-note">完了までこのタブを閉じたり、操作したりしないでください。<br>途中で止まっても、次回の保存で自動的に続きからアップロードされます。</div>
+    <div class="sync-note" id="syncQueue" hidden>＋ 追加の保存が1件待機中</div>
+    <div class="sync-note">⚠ 完了までタブを閉じないでください（編集は続けてOK）</div>
   </div>
 </div>
 <div class="overlay" id="tplModal" hidden>
@@ -1043,7 +1045,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.97.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.99.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1167,7 +1169,7 @@ function $(id){return document.getElementById(id);}
 var STORE='yafusho_items';
 var items=[];
 try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
-var _quotaWarned=false;
+var _quotaWarned=false,_quotaLogAt=0;
 function stripDataImgs(a){var o=[];for(var i=0;i<(a||[]).length;i++){var v=a[i];if(v&&String(v).indexOf('data:')===0)continue;o.push(v);}return o;}
 function lightItems(){
   return items.map(function(it){
@@ -1186,13 +1188,14 @@ function persist(){
     var ok=false;
     try{localStorage.setItem(STORE,JSON.stringify(lightItems()));ok=true;}catch(_e1){}
     try{
-      log('ローカル保存が容量オーバー: '+((e&&e.name)||e)+(ok?' → 画像を除いて一時保存':' → 一時保存も失敗'));
+      var _now=Date.now();
+      if(!_quotaLogAt||(_now-_quotaLogAt)>60000){_quotaLogAt=_now;log('ローカル保存が容量オーバー: '+((e&&e.name)||e)+(ok?' → 画像を除いて一時保存（GitHubには保存されます）':' → 一時保存も失敗'));}
       if(!_quotaWarned){
         _quotaWarned=true;
         if(getCfg().pat){toast('📤 画像が多いためGitHubへ退避します（そのままお待ちください）');}
         else{toast('⚠ 画像が多すぎてこの端末に保存できません。設定でGitHub保存を有効にしてください');}
       }
-      if(getCfg().pat){setPending(true);triggerSync(true);}
+      if(getCfg().pat&&!ghBusy&&!ghPending&&countPendingUploads()>0){setPending(true);triggerSync(true);}
     }catch(_e2){}
   }
   try{updateCapBadge();}catch(_e3){}
@@ -1337,7 +1340,7 @@ function isPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){re
 function hasUnsavedWork(){
   try{
     if(document.querySelector('.sm-edit,.lp-name-inp'))return true;
-    if(typeof ghBusy!=='undefined'&&ghBusy)return true;
+    if(typeof ghBusy!=='undefined'&&(ghBusy||ghPending))return true;
     if(isPending()&&getCfg().pat)return true;
   }catch(e){}
   return false;
@@ -2274,16 +2277,21 @@ function syncLockStep(done,label){
   if(bar)bar.style.width=pc+'%';
   if(tx)tx.textContent=(label||('画像 '+_lockDone+' / '+_lockTotal+' 枚'))+'  （'+pc+'%）';
 }
-function syncLockHide(){var el=$('syncLock');if(el)el.hidden=true;_lockTotal=0;_lockDone=0;}
+function syncLockHide(){var el=$('syncLock');if(el)el.hidden=true;_lockTotal=0;_lockDone=0;syncQueueTxt(false);}
+function syncQueueTxt(on){var q=$('syncQueue');if(q)q.hidden=!on;}
+function isData(v){return !!(v&&String(v).indexOf('data:')===0);}
 function countPendingUploads(){
   var n=0;
   for(var i=0;i<items.length;i++){
-    var it=items[i];var sides=['yahoo','rakuten'];
-    for(var s2=0;s2<sides.length;s2++){
-      var a=imgArr(it,sides[s2]);
-      for(var k=0;k<a.length;k++){if(a[k]&&String(a[k]).indexOf('data:')===0)n++;}
-      var m=it[sides[s2]+'Main'];if(m&&String(m).indexOf('data:')===0)n++;
+    var it=items[i];if(!it)continue;
+    if(it.yahooLps&&it.yahooLps.length){
+      for(var g=0;g<it.yahooLps.length;g++){var ga=it.yahooLps[g]||[];for(var q=0;q<ga.length;q++)if(isData(ga[q]))n++;}
+    }else{
+      var ya=imgArr(it,'yahoo');for(var k1=0;k1<ya.length;k1++)if(isData(ya[k1]))n++;
     }
+    var ra=imgArr(it,'rakuten');for(var k2=0;k2<ra.length;k2++)if(isData(ra[k2]))n++;
+    if(isData(it.yahooMain))n++;
+    if(isData(it.rakutenMain))n++;
   }
   var tl=getTpls();for(var t2=0;t2<tl.length;t2++){if(tl[t2].src&&String(tl[t2].src).indexOf('data:')===0)n++;}
   return n;
@@ -2313,6 +2321,9 @@ async function ghPut(owner,repo,branch,path,b64,sha,msg,pat){
 }
 function ghSleep(ms){return new Promise(function(res){setTimeout(res,ms);});}
 var ghShaCache={};
+var ghLastHash={};
+function ghHash(str){var h=5381,i=str.length;while(i)h=(h*33^str.charCodeAt(--i))>>>0;return h+'-'+str.length;}
+function ghUnchanged(path,str){var hv=ghHash(str);if(ghLastHash[path]===hv)return true;ghLastHash[path]=hv;return false;}
 async function ghCurrentSha(owner,repo,branch,path,pat){
   try{
     var rr=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/commits/'+encodeURIComponent(branch)+'?t='+Date.now(),{headers:ghHeaders(pat),cache:'no-store'});
@@ -2349,42 +2360,78 @@ async function saveToGitHub(silent){
   $('btnSave').disabled=true;
   log('=== GitHub保存 開始 ['+(silent?'自動':'手動')+'] '+c.owner+'/'+c.repo+'@'+c.branch+' / 商品'+items.length+'件 / PAT'+(c.pat?('あり('+c.pat.length+'字)'):'なし')+' ===');
   var _imgUp=0;
+  var _lastFlush=0;
+  function pflush(force){var t=Date.now();if(force||(t-_lastFlush)>2500){_lastFlush=t;persist();render();}}
   var _pend=countPendingUploads();
   if(_pend>0)syncLockShow(_pend,'画像をアップロード中…');
   try{
-    // 1) 画像（data:のものだけ）をアップロード → rawURLに置換（複数対応）
-    var sides=['yahoo','rakuten'];
+    // 1) 画像（data:のものだけ）をアップロード → rawURLに置換（LPグループ・楽天・メイン）
+    var RAW='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/';
     for(var i=0;i<items.length;i++){
       var it=items[i];
-      for(var sdi=0;sdi<sides.length;sdi++){
-        var side=sides[sdi];var key=side+'Imgs';
-        var arr=imgArr(it,side);
-        for(var n=0;n<arr.length;n++){
-          var src=arr[n];
-          if(src&&src.indexOf('data:')===0){
+      if(!it)continue;
+      // --- Yahoo：LPグループ ---
+      var lps=(it.yahooLps&&it.yahooLps.length)?it.yahooLps:null;
+      if(lps){
+        for(var g=0;g<lps.length;g++){
+          var ga=lps[g]||[];
+          for(var n=0;n<ga.length;n++){
+            var src=ga[n];
+            if(src&&String(src).indexOf('data:')===0){
+              prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
+              syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
+              var ext=mimeExt(src);var path='images/'+it.id+'-yahoo'+g+'-'+n+'.'+ext;
+              await ghPutRetry(c.owner,c.repo,c.branch,path,src.split(',')[1],'image '+it.id+' yahoo'+g+' '+n,c.pat);_imgUp++;syncLockStep(_imgUp);
+              ga[n]=RAW+path;pflush();
+            }
+          }
+          lps[g]=ga;
+        }
+        var _flat=[];for(var g2=0;g2<lps.length;g2++)for(var n2=0;n2<lps[g2].length;n2++)_flat.push(lps[g2][n2]);
+        it.yahooLps=lps;it.yahooImgs=_flat;
+      }else{
+        var ya=imgArr(it,'yahoo');
+        for(var n3=0;n3<ya.length;n3++){
+          var s3=ya[n3];
+          if(s3&&String(s3).indexOf('data:')===0){
             prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
             syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
-            var ext=mimeExt(src);var path='images/'+it.id+'-'+side+'-'+n+'.'+ext;
-            var b64=src.split(',')[1];
-            await ghPutRetry(c.owner,c.repo,c.branch,path,b64,'image '+it.id+' '+side+' '+n,c.pat);_imgUp++;syncLockStep(_imgUp);
-            arr[n]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+path;
-            persist();render();
+            var e3=mimeExt(s3);var p3='images/'+it.id+'-yahoo-'+n3+'.'+e3;
+            await ghPutRetry(c.owner,c.repo,c.branch,p3,s3.split(',')[1],'image '+it.id+' yahoo '+n3,c.pat);_imgUp++;syncLockStep(_imgUp);
+            ya[n3]=RAW+p3;it.yahooImgs=ya;pflush();
           }
         }
-        it[key]=arr;
-        var mkey=side+'Main';var msrc=it[mkey];
-        if(msrc&&msrc.indexOf('data:')===0){
+        it.yahooImgs=ya;
+      }
+      // --- 楽天 ---
+      var ra=imgArr(it,'rakuten');
+      for(var n4=0;n4<ra.length;n4++){
+        var s4=ra[n4];
+        if(s4&&String(s4).indexOf('data:')===0){
+          prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
+          syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：画像 '+(_imgUp+1)+' / '+_lockTotal+' 枚');
+          var e4=mimeExt(s4);var p4='images/'+it.id+'-rakuten-'+n4+'.'+e4;
+          await ghPutRetry(c.owner,c.repo,c.branch,p4,s4.split(',')[1],'image '+it.id+' rakuten '+n4,c.pat);_imgUp++;syncLockStep(_imgUp);
+          ra[n4]=RAW+p4;it.rakutenImgs=ra;pflush();
+        }
+      }
+      it.rakutenImgs=ra;
+      // --- メイン画像 ---
+      var msides=['yahoo','rakuten'];
+      for(var ms=0;ms<msides.length;ms++){
+        var mkey=msides[ms]+'Main';var msrc=it[mkey];
+        if(msrc&&String(msrc).indexOf('data:')===0){
           prog(true,'画像をアップロード中… ('+(i+1)+'/'+items.length+')');
           syncLockStep(_imgUp,'商品 '+(i+1)+'/'+items.length+'：メイン画像');
-          var mext=mimeExt(msrc);var mpath='images/'+it.id+'-'+side+'-main.'+mext;
-          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+side+' main',c.pat);_imgUp++;syncLockStep(_imgUp);
-          it[mkey]='https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/'+mpath;
-          persist();render();
+          var mext=mimeExt(msrc);var mpath='images/'+it.id+'-'+msides[ms]+'-main.'+mext;
+          await ghPutRetry(c.owner,c.repo,c.branch,mpath,msrc.split(',')[1],'image '+it.id+' '+msides[ms]+' main',c.pat);_imgUp++;syncLockStep(_imgUp);
+          it[mkey]=RAW+mpath;pflush();
         }
       }
       if(it.yahooImg)delete it.yahooImg;
       if(it.rakutenImg)delete it.rakutenImg;
     }
+    pflush(true);
     // 1.5) テンプレ画像をアップロード
     var _tl=getTpls(),_tplUp=0;
     for(var ti=0;ti<_tl.length;ti++){
@@ -2400,21 +2447,28 @@ async function saveToGitHub(silent){
     }
     try{
       var _tj=JSON.stringify(getTplData());
-      await ghPutRetry(c.owner,c.repo,c.branch,'templates.json',utf8b64(_tj),'update templates',c.pat);
-      if(_tplUp)log('テンプレ画像アップ'+_tplUp+'枚');
+      if(!ghUnchanged('templates.json',_tj)){
+        await ghPutRetry(c.owner,c.repo,c.branch,'templates.json',utf8b64(_tj),'update templates',c.pat);
+        if(_tplUp)log('テンプレ画像アップ'+_tplUp+'枚');
+      }
     }catch(_te){log('templates.json 書込み失敗: '+(_te&&_te.message));}
     // 2) data.json を保存
     prog(true,'データを保存中…');
     var json=JSON.stringify(items,null,2);
-    log('data.json 書込み: '+json.length+'文字 / 画像アップ'+_imgUp+'枚');
-    await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
+    var _dataChanged=!ghUnchanged('data.json',json);
+    if(_dataChanged){
+      log('data.json 書込み: '+json.length+'文字 / 画像アップ'+_imgUp+'枚');
+      await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
+    }else{log('data.json 変更なし → スキップ');}
     try{
       var sj=localStorage.getItem(SETTINGS)||'{}';
-      await ghPutRetry(c.owner,c.repo,c.branch,'settings.json',utf8b64(sj),'update settings',c.pat);
-      log('settings.json 書込み: '+sj.length+'文字（列幅・色などを全端末で共有）');
+      if(!ghUnchanged('settings.json',sj)){
+        await ghPutRetry(c.owner,c.repo,c.branch,'settings.json',utf8b64(sj),'update settings',c.pat);
+        log('settings.json 書込み: '+sj.length+'文字（列幅・色などを全端末で共有）');
+      }
     }catch(_se){log('settings.json 書込み失敗: '+(_se&&_se.message));}
     persist();
-    if(silent){prog(false);toast('☁️ GitHubに同期しました');}else{progDone('✓ 保存しました');}
+    if(silent){prog(false);if(_imgUp||_tplUp)toast('☁️ 画像'+(_imgUp+_tplUp)+'枚を含めて同期しました');}else{progDone('✓ 保存しました');}
     setPending(false);
     if(_pend>0)syncLockStep(_pend,'仕上げ中…');
     log('=== GitHub保存 完了（商品'+items.length+'件 / 画像'+_imgUp+'枚）上記commitリンクで反映確認 ===');
@@ -2430,7 +2484,13 @@ async function saveToGitHub(silent){
 }
 var _syncTimer=null,ghBusy=false,ghPending=false;
 function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
-async function triggerSync(silent){if(ghBusy){ghPending=true;return;}ghBusy=true;try{await saveToGitHub(silent);}catch(e){}ghBusy=false;if(ghPending){ghPending=false;triggerSync(true);}}
+async function triggerSync(silent){
+  if(ghBusy){ghPending=true;try{syncQueueTxt(true);log('保存要求を受付：現在の処理の後に続けて実行します');}catch(e){}return;}
+  ghBusy=true;
+  try{await saveToGitHub(silent);}catch(e){}
+  ghBusy=false;
+  if(ghPending){ghPending=false;try{syncQueueTxt(false);}catch(e2){}triggerSync(true);}
+}
 $('btnSave').onclick=function(){triggerSync(false);};
 
 async function loadTemplatesFromGitHub(){
