@@ -713,6 +713,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .cn-wrap .cn-code{font-size:11.5px;color:var(--ink-3);font-weight:600}
 .cn-wrap .cn-name{font-weight:700;font-size:13px}
 .cn-wrap .bulk-inp{width:100%;box-sizing:border-box}
+.cn-links{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px}
+.cn-link{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:19px;padding:0 5px;box-sizing:border-box;border-radius:5px;color:#fff!important;font-size:10.5px;font-weight:800;line-height:1;text-decoration:none!important;font-family:"Roboto Mono",monospace;cursor:pointer}
+.cn-link:hover{filter:brightness(1.12)}
+.cn-link.cl-y{background:#ff9800}
+.cn-link.cl-r{background:var(--red)}
 .belp-tag{display:inline-flex;align-items:center;width:120px;box-sizing:border-box;border-radius:6px;color:#fff;font-size:11px;font-weight:700;line-height:1.2;padding:4px 6px}
 .belp-tag .belp-l{flex:1 1 auto;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .belp-tag .belp-sep{flex:0 0 auto;width:1px;height:14px;background:rgba(255,255,255,.6);margin:0 6px}
@@ -773,7 +778,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v0.94.0</span>
+        <span class="version" id="version">v0.95.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1012,7 +1017,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v0.94.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v0.95.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1518,6 +1523,16 @@ function beLpCellHtml(it){
   return h+'</div></td>';
 }
 function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
+function cnLinksHtml(it){
+  if(getViewMode()==='basic')return '';
+  function ok(a){return (a||[]).filter(function(u){return u&&/^https?:/i.test(u);});}
+  var yu=ok(it.yahooUrls),ru=ok(it.rakutenUrls);
+  if(!yu.length&&!ru.length)return '';
+  var h='<div class="cn-links">';
+  for(var i=0;i<yu.length&&i<3;i++)h+='<a class="cn-link cl-y" href="'+escA(yu[i])+'" target="_blank" rel="noopener" title="Yahoo商品ページを開く&#10;'+escA(yu[i])+'">Y'+(i?String(i+1):'')+'</a>';
+  for(var j=0;j<ru.length&&j<3;j++)h+='<a class="cn-link cl-r" href="'+escA(ru[j])+'" target="_blank" rel="noopener" title="楽天商品ページを開く&#10;'+escA(ru[j])+'">R'+(j?String(j+1):'')+'</a>';
+  return h+'</div>';
+}
 function cellHtml(key,it){
   if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?fmtDate(it.date):md())+'</td>';
   if(key==='imageBlock')return '<td>'+imgBlockHtml(it)+'</td>';
@@ -1531,7 +1546,7 @@ function cellHtml(key,it){
   if(key==='codeName'){
     if(bulkEdit)return '<td><div class="cn-wrap">'+bulkInp('text',it,'code')+bulkInp('text',it,'name')+'</div></td>';
     var _cd=it.code||'',_nm=it.name||'';
-    return '<td><div class="cn-wrap">'
+    return '<td><div class="cn-wrap">'+cnLinksHtml(it)
       +'<div class="dc-cell mono cn-code" data-id="'+escA(it.id)+'" data-field="code" data-full="'+escA(_cd)+'">'+(_cd?esc(_cd):'<span class="sm-empty">—</span>')+'</div>'
       +'<div class="dc-cell cell-name cn-name" data-id="'+escA(it.id)+'" data-field="name" data-full="'+escA(_nm)+'">'+(_nm?esc(_nm):'<span class="sm-empty">—</span>')+'</div>'
       +'</div></td>';
