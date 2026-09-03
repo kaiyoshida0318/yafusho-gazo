@@ -760,6 +760,8 @@
       [],
       [],
       [],
+      [],
+      [],
       []
     ],
     "yahooLpNames": [
@@ -807,7 +809,53 @@
     "memo": "",
     "frames": {},
     "framesV": 2,
-    "salesTable": []
+    "salesTable": [
+      {
+        "name": "30",
+        "rows": [
+          {
+            "pr": "780",
+            "price": "1set",
+            "variation": ""
+          }
+        ]
+      },
+      {
+        "name": "7",
+        "rows": [
+          {
+            "pr": "1000",
+            "price": "2set",
+            "variation": ""
+          },
+          {
+            "pr": "1880",
+            "price": "4set",
+            "variation": ""
+          },
+          {
+            "pr": "2280",
+            "price": "5set",
+            "variation": ""
+          },
+          {
+            "pr": "4280",
+            "price": "10set",
+            "variation": ""
+          },
+          {
+            "pr": "6200",
+            "price": "15set",
+            "variation": ""
+          },
+          {
+            "pr": "9800",
+            "price": "25set",
+            "variation": ""
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "it1782280896016",
