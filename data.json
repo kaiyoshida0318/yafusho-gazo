@@ -95,7 +95,9 @@
       ]
     ],
     "yahooLpNames": [
-      ""
+      "",
+      "10個",
+      "20個"
     ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746183669-rakuten-3.webp",
@@ -132,7 +134,30 @@
     "memo": "",
     "buttonElemLps": {
       "y0": ""
-    }
+    },
+    "framesV": 2,
+    "salesTable": [
+      {
+        "name": "30",
+        "rows": [
+          {
+            "pr": "",
+            "price": "10個",
+            "variation": ""
+          }
+        ]
+      },
+      {
+        "name": "7",
+        "rows": [
+          {
+            "pr": "",
+            "price": "20個",
+            "variation": ""
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "it1781746196902",
