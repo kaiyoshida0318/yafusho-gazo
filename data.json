@@ -1111,7 +1111,33 @@
     "memo": "",
     "frames": {},
     "framesV": 2,
-    "salesTable": []
+    "salesTable": [
+      {
+        "name": "30",
+        "rows": [
+          {
+            "pr": "",
+            "price": "単品",
+            "variation": ""
+          }
+        ]
+      },
+      {
+        "name": "7",
+        "rows": [
+          {
+            "pr": "",
+            "price": "２個セット",
+            "variation": ""
+          },
+          {
+            "pr": "",
+            "price": "３個セット",
+            "variation": ""
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "it1785308381446",
