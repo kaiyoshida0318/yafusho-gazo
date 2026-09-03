@@ -929,7 +929,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.2.1</span>
+        <span class="version" id="version">v3.3.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1204,7 +1204,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.2.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.3.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2850,9 +2850,11 @@ if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.ta
   var _sv=statusFilter?statusView(statusFilter):allViewGet();
   if(_sv&&_sv!==getViewMode()){applyView(_sv);}else{render();}});
 function setBulkBtn(){var b=$('btnBulkEdit');if(b){b.classList.toggle('on',bulkEdit);b.textContent=bulkEdit?'キャンセル':'✏️ 一括編集';}}
-function enterBulk(){bulkEdit=true;setBulkBtn();var s=$('btnSaveEdits');if(s)s.hidden=false;render();}
-function cancelBulk(){bulkEdit=false;setBulkBtn();reloadItems();clearDirty();render();toast('一括編集をキャンセルしました');}
-if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();if(bulkEdit){bulkEdit=false;setBulkBtn();}clearDirty();render();scheduleSync();log('変更を保存しました');toast('✅ 変更を保存しました');};
+var _bulkPrevF=null;
+function enterBulk(){bulkEdit=true;_bulkPrevF={s:statusFilter,l:listingFilter,p:lpCountFilter,t:lpTypeFilter};statusFilter='';listingFilter='';lpCountFilter='';lpTypeFilter='';setBulkBtn();var s=$('btnSaveEdits');if(s)s.hidden=false;render();}
+function restoreBulkF(){if(_bulkPrevF){statusFilter=_bulkPrevF.s;listingFilter=_bulkPrevF.l;lpCountFilter=_bulkPrevF.p;lpTypeFilter=_bulkPrevF.t;_bulkPrevF=null;}}
+function cancelBulk(){bulkEdit=false;restoreBulkF();setBulkBtn();reloadItems();clearDirty();render();toast('一括編集をキャンセルしました');}
+if($('btnSaveEdits'))$('btnSaveEdits').onclick=function(){persist();if(bulkEdit){bulkEdit=false;restoreBulkF();setBulkBtn();}clearDirty();render();scheduleSync();log('変更を保存しました');toast('✅ 変更を保存しました');};
 if($('btnDiscardEdits'))$('btnDiscardEdits').onclick=function(){reloadItems();clearDirty();render();toast('変更を取り消しました');};
 if($('btnDup'))$('btnDup').onclick=function(){dupCurrent();};
 if($('btnBulkEdit'))$('btnBulkEdit').onclick=function(){if(bulkEdit)cancelBulk();else enterBulk();};
