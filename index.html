@@ -913,7 +913,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.7.2</span>
+        <span class="version" id="version">v2.8.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -938,6 +938,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <button type="button" class="vt-btn" data-view="detail" id="vtDetail">📑 販売設計</button>
       <button type="button" class="vt-btn on" data-view="images" id="vtImages">🖼️ 画像一覧</button>
       <button type="button" class="vt-btn" data-view="ybig" id="vtYBig">🔍 Y画像大表示</button>
+      <button type="button" class="vt-btn" data-view="plan" id="vtPlan">📐 販売設計＋画像</button>
     </div>
     <button class="btn btn-danger btn-sm" id="btnBulkDel">🗑 一括削除</button>
     <button class="btn btn-green-line btn-sm" id="btnAddRow">＋ 行だけ</button>
@@ -1190,7 +1191,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.7.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.8.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1231,6 +1232,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <button type="button" class="cvt-btn" data-cv="detail">📑 販売設計</button>
       <button type="button" class="cvt-btn" data-cv="images">🖼️ 画像一覧</button>
       <button type="button" class="cvt-btn" data-cv="ybig">🔍 Y画像大表示</button>
+      <button type="button" class="cvt-btn" data-cv="plan">📐 販売設計＋画像</button>
       <span class="cvt-hint">タブでビューを選び、各列カードで表示・順序（◀▶）・幅・揃え・折り返しを設定。上の表に即反映されます。</span>
     </div>
     <div class="col-hstrip" id="colHStrip"></div>
@@ -1903,25 +1905,32 @@ var VIEWMODE='yafusho_viewmode';
 var VIEW_COLS={
   images:['codeName','imageBlock','listSet','actions'],
   ybig:['codeName','imageBlock','listSet','actions'],
+  plan:['codeName','imageBlock','salesMethod','actions'],
   basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
   detail:['date','rakutenMain','codeName','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
 };
 var DEFAULT_VISIBLE={
   images:['codeName','imageBlock','listSet','actions'],
   ybig:['codeName','imageBlock','listSet','actions'],
+  plan:['codeName','imageBlock','salesMethod','actions'],
   basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
   detail:['date','rakutenMain','codeName','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
 };
-function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic'||m==='detail'||m==='ybig')?m:'images';}catch(e){return 'images';}}
-function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic'||m==='detail'||m==='images'||m==='ybig')?m:'images');}catch(e){}}
-function isImgView(){var m=getViewMode();return m==='images'||m==='ybig';}
+function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic'||m==='detail'||m==='ybig'||m==='plan')?m:'images';}catch(e){return 'images';}}
+function setViewMode(m){try{localStorage.setItem(VIEWMODE,(m==='basic'||m==='detail'||m==='images'||m==='ybig'||m==='plan')?m:'images');}catch(e){}}
+function isImgView(){var m=getViewMode();return m==='images'||m==='ybig'||m==='plan';}
 function inViewMode(key){var s=VIEW_COLS[getViewMode()]||VIEW_COLS.images;return s.indexOf(key)>=0;}
 function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].key===key)return DEFAULT_COLS[i];}return null;}
 function getColCfg(key){var def=colDef(key);var vm=getViewMode();var defVis=(DEFAULT_VISIBLE[vm]||[]).indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left'),perRow:((key==='imageBlock'&&vm==='ybig')?10:null)};var s=getSettings();var cc=((s.colcfgV[vm]||{})[key])||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign,perRow:(cc.perRow!=null?cc.perRow:base.perRow)};}
 function setColCfg(key,patch){var vm=getViewMode();var s=getSettings();if(!s.colcfgV)s.colcfgV={};if(!s.colcfgV[vm])s.colcfgV[vm]={};var cur=s.colcfgV[vm][key]||{};for(var k in patch)cur[k]=patch[k];s.colcfgV[vm][key]=cur;saveSettings(s);}
 function effCfg(key,cc){if(isImgView()&&(key==='yahooImg'||key==='rakutenImg')){var o={};for(var k in cc)o[k]=cc[k];o.width=Math.max(cc.width||0,360);o.wrap='wrap';return o;}return cc;}
 function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+cc.width+'px;min-width:'+cc.width+'px;max-width:'+cc.width+'px;';if(cc.wrap==='clip')s+='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';var a=isHeader?cc.headAlign:cc.align;if(a==='left'||a==='center'||a==='right')s+='text-align:'+a+';';return s;}
-function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var saved=(getSettings().colorderV||{})[getViewMode()];if(!saved||!saved.length)return keys.slice();var out=[],seen={};for(var i=0;i<saved.length;i++){if(keys.indexOf(saved[i])>=0&&!seen[saved[i]]){out.push(saved[i]);seen[saved[i]]=1;}}var missing=[];for(var k=0;k<keys.length;k++){if(!seen[keys[k]])missing.push(keys[k]);}if(missing.length){var ai=out.indexOf('actions');if(ai>=0){out=out.slice(0,ai).concat(missing).concat(out.slice(ai));}else{out=out.concat(missing);}}return out;}
+function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var _vm=getViewMode();var saved=(getSettings().colorderV||{})[_vm];
+  if(!saved||!saved.length){
+    var pref=VIEW_COLS[_vm];
+    if(_vm==='plan'&&pref){var out0=pref.slice();for(var q0=0;q0<keys.length;q0++){if(out0.indexOf(keys[q0])<0)out0.push(keys[q0]);}return out0;}
+    return keys.slice();
+  }var out=[],seen={};for(var i=0;i<saved.length;i++){if(keys.indexOf(saved[i])>=0&&!seen[saved[i]]){out.push(saved[i]);seen[saved[i]]=1;}}var missing=[];for(var k=0;k<keys.length;k++){if(!seen[keys[k]])missing.push(keys[k]);}if(missing.length){var ai=out.indexOf('actions');if(ai>=0){out=out.slice(0,ai).concat(missing).concat(out.slice(ai));}else{out=out.concat(missing);}}return out;}
 function setColOrder(arr){var vm=getViewMode();var s=getSettings();if(!s.colorderV)s.colorderV={};s.colorderV[vm]=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
 function headLabelHtml(key,def){if(key==='pagePlan')return '制作LP<br>本数';return esc(def.label);}
@@ -2013,12 +2022,13 @@ function dupCurrent(){if(!editingId)return;editingId='it'+Date.now();setVal('fDa
 /* ===== ヘッダー/モーダルのボタン ===== */
 $('btnLog').onclick=function(){show('logModal');};
 if($('btnCap'))$('btnCap').onclick=openCapModal;
-function syncViewToggle(){var m=getViewMode();var a=$('vtImages'),b=$('vtBasic');if(a)a.classList.toggle('on',m==='images');if(b)b.classList.toggle('on',m==='basic');var c=$('vtDetail');if(c)c.classList.toggle('on',m==='detail');var d=$('vtYBig');if(d)d.classList.toggle('on',m==='ybig');}
+function syncViewToggle(){var m=getViewMode();var a=$('vtImages'),b=$('vtBasic');if(a)a.classList.toggle('on',m==='images');if(b)b.classList.toggle('on',m==='basic');var c=$('vtDetail');if(c)c.classList.toggle('on',m==='detail');var d=$('vtYBig');if(d)d.classList.toggle('on',m==='ybig');var pl=$('vtPlan');if(pl)pl.classList.toggle('on',m==='plan');}
 function applyView(m){setViewMode(m);syncViewToggle();renderHead();render();updateStickyH();}
 if($('vtImages'))$('vtImages').onclick=function(){applyView('images');};
 if($('vtBasic'))$('vtBasic').onclick=function(){applyView('basic');};
 if($('vtDetail'))$('vtDetail').onclick=function(){applyView('detail');};
 if($('vtYBig'))$('vtYBig').onclick=function(){applyView('ybig');};
+if($('vtPlan'))$('vtPlan').onclick=function(){applyView('plan');};
 function goHome(){listingFilter='';statusFilter='';lpCountFilter='';lpTypeFilter='';setViewMode('basic');syncViewToggle();renderHead();render();updateStickyH();try{window.scrollTo(0,0);}catch(e){}}
 if($('btnNewTab'))$('btnNewTab').onclick=function(){try{window.open(location.pathname+'?home=1','_blank');}catch(e){window.open(location.href,'_blank');}};
 document.addEventListener('click',function(e){var t=e.target;if(t&&t.classList&&(t.classList.contains('logo-img')||t.classList.contains('logo-text'))){goHome();}});
@@ -2191,7 +2201,7 @@ function renderStatusManager(){
     row.appendChild(numWrap);row.appendChild(labelInp);row.appendChild(asel);row.appendChild(vsel);row.appendChild(up);row.appendChild(dn);row.appendChild(del);list.appendChild(row);
   })(sts[idx],idx);}
 }
-var VIEW_LABELS=[['','（変更しない）'],['basic','📋 基礎情報'],['detail','📑 販売設計'],['images','🖼️ 画像一覧'],['ybig','🔍 Y画像大表示']];
+var VIEW_LABELS=[['','（変更しない）'],['basic','📋 基礎情報'],['detail','📑 販売設計'],['images','🖼️ 画像一覧'],['ybig','🔍 Y画像大表示'],['plan','📐 販売設計＋画像']];
 function allViewGet(){var v=getSettings().allView||'basic';return (v==='none')?'':v;}
 function allViewSet(v){var s=getSettings();s.allView=v||'none';saveSettings(s);}
 function statusView(id){var ss=getStatuses();for(var i=0;i<ss.length;i++){if(ss[i].id===id)return ss[i].view||'';}return '';}
@@ -3153,6 +3163,18 @@ async function loadFromGitHub(){
 
 (function(){try{if(!localStorage.getItem('yafusho_statmig2')){var s=getSettings();s.statuses=DEFAULT_STATUSES.map(function(x){return {id:x.id,label:x.label,icon:x.icon};});saveSettings(s);localStorage.setItem('yafusho_statmig2','1');}}catch(e){}})();
 (function(){try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'}];saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}})();
+(function(){try{
+  if(localStorage.getItem('yafusho_nextplan1'))return;
+  var st=getStatuses(),exists=false,idx=-1;
+  for(var i=0;i<st.length;i++){if((st[i].label||'')==='次やる候補-販売設計')exists=true;if(st[i].id==='st_next'||(st[i].label||'')==='次やる候補')idx=i;}
+  if(!exists){
+    var base=(idx>=0)?st[idx]:null;
+    var ns={id:'st_next_plan',label:'次やる候補-販売設計',icon:(base&&base.icon)||'num:2',alias:(base?base.id:'st_next'),view:'plan'};
+    if(idx>=0)st.splice(idx+1,0,ns);else st.push(ns);
+    saveStatuses(st);
+  }
+  localStorage.setItem('yafusho_nextplan1','1');
+}catch(e){}})();
 renderHead();
 render();
 function applyInitialView(){try{var v=statusFilter?statusView(statusFilter):allViewGet();if(v&&v!==getViewMode())applyView(v);}catch(e){}}
