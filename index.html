@@ -923,7 +923,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.0.2</span>
+        <span class="version" id="version">v3.1.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -956,8 +956,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="frow frow-lp">
     <span class="frow-label">LP本数</span>
     <div class="pill-group" id="lpCountRow"></div>
-    <span class="frow-label frow-label-2">LP方針</span>
-    <div class="pill-group" id="lpTypeRow"></div>
     <div class="view-toggle" id="viewToggle">
       <button type="button" class="vt-btn" data-view="basic" id="vtBasic">📋 基礎情報</button>
       <button type="button" class="vt-btn" data-view="detail" id="vtDetail">📑 販売設計</button>
@@ -1024,9 +1022,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px">
               <label class="fld">制作LP本数
                 <button type="button" id="fPagePlan" class="cdd cdd-form" data-field="pagePlan" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
-              </label>
-              <label class="fld">LP方針
-                <button type="button" id="fLp" class="cdd cdd-form cdd-lp" data-field="lpType" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
               </label>
             </div>
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
@@ -1200,7 +1195,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.0.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.1.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1266,7 +1261,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <button type="button" class="setedit-item" id="tmCat"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリ（A/B/C…）の追加・名前・アイコン・並び替え</small></span></button>
       <button type="button" class="setedit-item" id="tmStatus"><span class="se-ico">📋</span><span class="se-txt"><b>状態</b><small>状態（制作前／完了 等）の追加・名前・番号・並び替え</small></span></button>
       <button type="button" class="setedit-item" id="tmLp"><span class="se-ico">📄</span><span class="se-txt"><b>LP本数</b><small>本数の選択肢（数字）を編集</small></span></button>
-      <button type="button" class="setedit-item" id="tmLpType"><span class="se-ico">🎯</span><span class="se-txt"><b>LP方針</b><small>方針の追加・名前・色を編集</small></span></button>
     </div>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="topMgrModal">閉じる</button></div>
   </div>
@@ -1919,7 +1913,7 @@ function cellHtml(key,it){
   if(key==='rakutenUrls')return bulkEdit?'<td>'+bulkUrlArea(it,'rakutenUrls')+'</td>':dcCellArr(it,'rakutenUrls');
   if(key==='pagePlan')return cddCell('pagePlan',it.id,it.pagePlan);
   if(key==='lpType')return cddCell('lpType',it.id,it.lpType);
-  if(key==='listSet')return '<td class="col-listset"><div class="ls-row"><span class="ls-lbl">状態</span>'+cddBtn('status',it.id,it.status)+'</div><div class="ls-row"><span class="ls-lbl">出品内容</span>'+cddBtn('listingType',it.id,it.listingType)+'</div><div class="ls-row"><span class="ls-lbl">LP本数</span>'+cddBtn('pagePlan',it.id,it.pagePlan)+'</div><div class="ls-row"><span class="ls-lbl">LP方針</span>'+cddBtn('lpType',it.id,it.lpType)+'</div></td>';
+  if(key==='listSet')return '<td class="col-listset"><div class="ls-row"><span class="ls-lbl">状態</span>'+cddBtn('status',it.id,it.status)+'</div><div class="ls-row"><span class="ls-lbl">出品内容</span>'+cddBtn('listingType',it.id,it.listingType)+'</div><div class="ls-row"><span class="ls-lbl">LP本数</span>'+cddBtn('pagePlan',it.id,it.pagePlan)+'</div></td>';
   if(key==='listingType')return cddCell('listingType',it.id,it.listingType);
   if(key==='status')return cddCell('status',it.id,it.status);
   if(key==='salesMethod')return bulkEdit?'<td>'+bulkArea(it,'salesMethod')+'</td>':dcCell(it,'salesMethod');
@@ -1936,14 +1930,14 @@ var VIEW_COLS={
   images:['codeName','imageBlock','listSet','actions'],
   ybig:['codeName','imageBlock','listSet','actions'],
   plan:['codeName','salesMethod','salesTable','actions'],
-  basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
+  basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','listingType','status','actions'],
   detail:['date','rakutenMain','codeName','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
 };
 var DEFAULT_VISIBLE={
   images:['codeName','imageBlock','listSet','actions'],
   ybig:['codeName','imageBlock','listSet','actions'],
   plan:['codeName','salesMethod','salesTable','actions'],
-  basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','lpType','listingType','status','actions'],
+  basic:['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','listingType','status','actions'],
   detail:['date','rakutenMain','codeName','listSet','variation','salesMethod','buttonElem','buttonElemLp','actions']
 };
 function getViewMode(){try{var m=localStorage.getItem(VIEWMODE);return (m==='basic'||m==='detail'||m==='ybig'||m==='plan')?m:'images';}catch(e){return 'images';}}
@@ -2040,12 +2034,12 @@ function fillSelItems(id,arr){var sel=$(id);if(!sel)return;var cur=sel.value;var
 function refreshFormCdd(id){var e=$(id);if(!e||!e.classList||!e.classList.contains('cdd-form'))return;var fld=e.getAttribute('data-field');var v=e.getAttribute('data-value')||'';if(v&&!cddFind(fld,v))v='';e.setAttribute('data-value',v);e.setAttribute('style',cddColorStyle(fld,v));var cur=e.querySelector('.cdd-cur');if(cur)cur.innerHTML=cddInner(fld,v);}
 function populateFormSelects(){refreshFormCdd('fStatus');refreshFormCdd('fListing');refreshFormCdd('fPagePlan');refreshFormCdd('fLp');}
 function populateListing(){populateFormSelects();}
-function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahooLps=[[]];galYahooLpNames=[];galRakuten=[];galFrames={};salesTbl=[stEmptyRow()];renderSalesTable();stripExpanded={};renderYahooLpBlocks(1);renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fLp','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fMemo','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlYahooRank',PH_RANK);resetUrls('urlRakuten',PH_R);}
+function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahooLps=[[]];galYahooLpNames=[];galRakuten=[];galFrames={};salesTbl=[stEmptyRow()];renderSalesTable();stripExpanded={};renderYahooLpBlocks(1);renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fMemo','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlYahooRank',PH_RANK);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
-function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahooLps=itemYahooLps(it,ppShowCount(it));galYahooLpNames=(it.yahooLpNames||[]).slice();salesTbl=stEnsure(it.salesTable);renderSalesTable();migrateItemFrames(it);galFrames={};if(it.frames)for(var _fk in it.frames)galFrames[_fk]=it.frames[_fk];galRakuten=imgArr(it,'rakuten');stripExpanded={};renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fLp',it.lpType||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlYahooRank',it.yahooRank,PH_RANK);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahooLps=itemYahooLps(it,ppShowCount(it));galYahooLpNames=(it.yahooLpNames||[]).slice();salesTbl=stEnsure(it.salesTable);renderSalesTable();migrateItemFrames(it);galFrames={};if(it.frames)for(var _fk in it.frames)galFrames[_fk]=it.frames[_fk];galRakuten=imgArr(it,'rakuten');stripExpanded={};renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlYahooRank',it.yahooRank,PH_RANK);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
 function firstRealImg(arr){for(var i=0;i<arr.length;i++){if(arr[i]&&!isTextItem(arr[i]))return arr[i];}return '';}
-function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0)_lps.pop();var _names=[];for(var _n=0;_n<_lps.length;_n++){_names.push(galYahooLpNames[_n]!=null?String(galYahooLpNames[_n]).trim():null);}var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _rk=galRakuten.slice();var _d={id:editingId||('it'+Date.now()),yahooMain:firstRealImg(_yflat),rakutenMain:firstRealImg(_rk),yahooImgs:_yflat,yahooLps:_lps,yahooLpNames:_names,rakutenImgs:_rk,date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=val('fLp');_d.memo=val('fMemo');_d.frames=galFrames;_d.framesV=2;_d.salesTable=stTrim(salesTbl);if(editingId){var _old=findItemById(editingId);if(_old&&_old.buttonElemLps)_d.buttonElemLps=_old.buttonElemLps;}return _d;}
+function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0)_lps.pop();var _names=[];for(var _n=0;_n<_lps.length;_n++){_names.push(galYahooLpNames[_n]!=null?String(galYahooLpNames[_n]).trim():null);}var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _rk=galRakuten.slice();var _d={id:editingId||('it'+Date.now()),yahooMain:firstRealImg(_yflat),rakutenMain:firstRealImg(_rk),yahooImgs:_yflat,yahooLps:_lps,yahooLpNames:_names,rakutenImgs:_rk,date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=(document.getElementById('fLp')?val('fLp'):(editingId&&findItemById(editingId)?(findItemById(editingId).lpType||''):''));_d.memo=val('fMemo');_d.frames=galFrames;_d.framesV=2;_d.salesTable=stTrim(salesTbl);if(editingId){var _old=findItemById(editingId);if(_old&&_old.buttonElemLps)_d.buttonElemLps=_old.buttonElemLps;}return _d;}
 function saveForm(closeAfter){var d=gather();if(editingId){var _f=false;for(var i=0;i<items.length;i++){if(items[i].id===editingId){items[i]=d;_f=true;break;}}if(!_f){items.push(d);$('edTitle').textContent='編集';}}else{items.push(d);editingId=d.id;$('edTitle').textContent='編集';}persist();render();scheduleSync();if(closeAfter)hide('editModal');}
 function dupCurrent(){if(!editingId)return;editingId='it'+Date.now();setVal('fDate',todayStr());$('edTitle').textContent='複製（新規として保存）';var fc=$('fCode');if(fc){setTimeout(function(){fc.focus();fc.select();},40);}toast('複製モード：商品コードを変更して保存してください');}
 
