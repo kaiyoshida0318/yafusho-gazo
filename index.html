@@ -458,7 +458,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .btn-scols{font:inherit;font-size:12px;padding:5px 10px;border:1px solid var(--line-2);border-radius:7px;background:#fff;color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .btn-scols:hover{border-color:#9aa3ae}
 .btn-scols.on{background:#1f3a63;border-color:#1f3a63;color:#fff;font-weight:700}
-.col-hstrip{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 14px;flex:1;min-height:0;align-items:flex-start}
+.col-hstrip{display:flex;gap:8px;overflow-x:auto;overflow-y:auto;padding:2px 2px 14px;flex:1;min-height:0;align-items:flex-start}
 .col-hcard{flex:0 0 auto;width:126px;box-sizing:border-box;border:1px solid var(--line-2);border-radius:10px;padding:7px;background:#fff;display:flex;flex-direction:column;gap:6px}
 .col-hcard.off{opacity:.6;background:#f6f7f9}
 .col-hcard .chc-head{display:flex;align-items:flex-start;gap:4px;min-height:20px}
@@ -937,7 +937,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .overlay>.mini.modal-col{max-width:1200px!important}
 /* 項目管理は下半分にドッキング（上の表を見ながら調整） */
 #colsModal{background:transparent!important;place-items:end center!important;padding:0!important;pointer-events:none}
-#colsModal .mini.modal-col{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:52vh!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 16px!important}
+#colsModal .mini.modal-col{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:62vh!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 16px!important}
 #colsModal .mini.modal-col h2{margin-top:0}
 #colsModal .mini.modal-col .hint{margin:4px 0 10px}
 /* 状態管理も下にドッキング（上の表を見ながら調整）＋状態カードを左右に並べる */
@@ -992,7 +992,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.20.0</span>
+        <span class="version" id="version">v3.22.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1153,16 +1153,16 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
               <span class="lpn-hd">Yahoo新規の名称<button type="button" class="btn btn-line btn-sm" id="btnLpToSales" title="名称を下の表の「内容」に入れる（PRは30／7）">↧ 表に反映</button></span>
               <div class="lpnames" id="lpNamesBox2"></div>
             </div>
-            <div class="fld-label gal-head" style="--gh-c:#2c3e50;background:#2c3e5014;border-left-color:#2c3e50"><span class="gh-title">📊 PR・価格・内容・備考</span></div>
+            <div class="fld-label gal-head" style="--gh-c:#2c3e50;background:#2c3e5014;border-left-color:#2c3e50"><span class="gh-title">📊 PR・価格・内容</span></div>
             <div class="st-wrap">
               <table class="stbl">
-                <thead><tr><th class="st-c1">PR</th><th class="st-c3">価格</th><th>内容</th><th>備考</th><th class="st-c5"></th></tr></thead>
+                <thead><tr><th class="st-c1">PR</th><th class="st-c3">価格</th><th>内容</th><th class="st-c5"></th></tr></thead>
                 <tbody id="stBody"></tbody>
               </table>
             </div>
             <div class="st-adds">
               <button type="button" class="btn btn-line btn-sm" id="btnStAddAll">＋ PRから追加</button>
-              <button type="button" class="btn btn-line btn-sm" id="btnStAddRight">＋ 価格・内容・備考を追加</button>
+              <button type="button" class="btn btn-line btn-sm" id="btnStAddRight">＋ 価格・内容を追加</button>
             </div>
           </div>
         </div>
@@ -1267,7 +1267,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.20.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.22.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1786,7 +1786,7 @@ var DEFAULT_COLS=[
   {key:'salesMethod',label:'販売手法',width:null,align:'left'},
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
   {key:'buttonElemLp',label:'Yahoo新規の名称',width:140,align:'left'},
-  {key:'salesTable',label:'PR・価格・内容・備考',width:null,align:'left'},
+  {key:'salesTable',label:'PR・価格・内容',width:null,align:'left'},
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
@@ -1871,9 +1871,10 @@ var IMG_CAP=20;
 function stripOfArr(arr,id,badge,grp){
   var _pr=imgPerRow();
   var s='<div class="img-strip lp-strip'+(_pr?' lp-grid':'')+'"'+(_pr?' style="grid-template-columns:repeat('+_pr+',minmax(0,1fr))"':'')+'>'+(badge||'');
-  var n=arr.length,lim=(n>IMG_CAP)?IMG_CAP:n;
+  var _cap=imgMaxShow();
+  var n=arr.length,lim=(n>_cap)?_cap:n;
   for(var i=0;i<lim;i++){if(!arr[i])continue;s+=thumbItem(arr[i],id,'strip-thumb',grp);}
-  if(n>IMG_CAP){s+='<span class="strip-more clk" data-edit="'+escA(id)+'" title="残り'+(n-IMG_CAP)+'枚（クリックで全画像を編集）">+'+(n-IMG_CAP)+'</span>';}
+  if(n>_cap){s+='<span class="strip-more clk" data-edit="'+escA(id)+'" title="残り'+(n-_cap)+'枚（クリックで全画像を編集）">+'+(n-_cap)+'</span>';}
   return s+'</div>';
 }
 function cntCircle(cls,count,col){if(!count)return '';return '<span class="tag-cnt-o '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' title="'+count+'枚">'+count+'</span>';}
@@ -1885,7 +1886,7 @@ function imgSideRow(tagHtml,imagesHtml){return '<div class="img2-side"><div clas
 /* 状態タブが「…大表示」のときは、Yahoo新規以降だけを大きく（横10×2行） */
 function bigViewOn(){return scopeBig();}
 function imgBlockBigHtml(it){
-  var _n=imgPerRow()||10;var BIG_CAP=_n*2;
+  var _n=imgPerRow()||10;var BIG_CAP=imgMaxShowRaw()||(_n*2);
   var lps=itemYahooLps(it,ppShowCount(it));
   var h='<div class="img2-wrap"><div class="img2 img2-nomain">';
   var any=false;
@@ -1903,6 +1904,8 @@ function imgBlockBigHtml(it){
   return h+'</div></div>';
 }
 function imgPerRow(){try{var cc=getColCfg('imageBlock');return (cc.perRow&&cc.perRow>0)?cc.perRow:0;}catch(e){return 0;}}
+function imgMaxShowRaw(){try{var cc=getColCfg('imageBlock');return (cc.maxShow&&cc.maxShow>0)?cc.maxShow:0;}catch(e){return 0;}}
+function imgMaxShow(){return imgMaxShowRaw()||IMG_CAP;}
 function imgBlockHtml(it){
   if(bigViewOn())return imgBlockBigHtml(it);
   var h='<div class="img2-wrap"><div class="img2 img2-nomain">';
@@ -1932,7 +1935,7 @@ function salesTableCell(it){
   var has=false;
   for(var i=0;i<t.length;i++){if((t[i].name||'').trim()){has=true;break;}var rs=t[i].rows||[];for(var j=0;j<rs.length;j++){if((rs[j].pr||'').trim()||(rs[j].price||'').trim()||(rs[j].variation||'').trim()){has=true;break;}}if(has)break;}
   if(!has)return '<td><span class="sm-empty">—</span></td>';
-  var h='<td><div class="mst-wrap"><table class="mini-st"><thead><tr><th>PR</th><th>価格</th><th>内容</th><th>備考</th></tr></thead><tbody>';
+  var h='<td><div class="mst-wrap"><table class="mini-st"><thead><tr><th>PR</th><th>価格</th><th>内容</th></tr></thead><tbody>';
   for(var g=0;g<t.length;g++){
     var rows=(t[g].rows&&t[g].rows.length)?t[g].rows:[{pr:'',price:'',variation:''}];
     for(var r=0;r<rows.length;r++){
@@ -1940,7 +1943,6 @@ function salesTableCell(it){
       if(r===0)h+='<td class="mst-pr" rowspan="'+rows.length+'">'+esc(t[g].name||'').replace(/\n/g,'<br>')+'</td>';
       h+='<td class="mst-price">'+esc(rows[r].pr||'')+'</td>';
       h+='<td>'+esc(rows[r].price||'').replace(/\n/g,'<br>')+'</td>';
-      h+='<td>'+esc(rows[r].variation||'').replace(/\n/g,'<br>')+'</td>';
       h+='</tr>';
     }
   }
@@ -2029,7 +2031,7 @@ function isDetailish(){if(_dvCache===null)_dvCache=!!(getColCfg('variation').vis
 function hasUrlCols(){if(_urlColCache===null)_urlColCache=!!(getColCfg('yahooUrls').visible||getColCfg('rakutenUrls').visible);return _urlColCache;}
 function inViewMode(key){return true;}
 function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].key===key)return DEFAULT_COLS[i];}return null;}
-function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=SCOPE_DEFAULT_VISIBLE.indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left'),perRow:((key==='imageBlock'&&scopeBig(sc))?10:null)};var cc=scopeMap(sc)[key]||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign,perRow:(cc.perRow!=null?cc.perRow:base.perRow)};}
+function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=SCOPE_DEFAULT_VISIBLE.indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left'),perRow:((key==='imageBlock'&&scopeBig(sc))?10:null),maxShow:null};var cc=scopeMap(sc)[key]||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign,perRow:(cc.perRow!=null?cc.perRow:base.perRow),maxShow:(cc.maxShow!=null?cc.maxShow:base.maxShow)};}
 function setColCfg(key,patch){setScopeCol(curScope(),key,patch);}
 function effCfg(key,cc){if(isImgView()&&(key==='yahooImg'||key==='rakutenImg')){var o={};for(var k in cc)o[k]=cc[k];o.width=Math.max(cc.width||0,360);o.wrap='wrap';return o;}return cc;}
 function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+cc.width+'px;min-width:'+cc.width+'px;max-width:'+cc.width+'px;';if(cc.wrap==='clip')s+='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';var a=isHeader?cc.headAlign:cc.align;if(a==='left'||a==='center'||a==='right')s+='text-align:'+a+';';return s;}
@@ -2515,6 +2517,11 @@ function renderColManager(){
       var pin=document.createElement('input');pin.type='number';pin.min='1';pin.max='30';pin.step='1';pin.className='col-width-input';pin.value=cc.perRow?String(cc.perRow):'';pin.placeholder='自動';pin.disabled=!isVis;
       pin.onchange=function(){var v=parseInt((pin.value||'').trim(),10);setColCfg(key,{perRow:(isFinite(v)&&v>0)?v:null});renderHead();render();renderColManager();};
       pf.appendChild(pin);body.appendChild(pf);
+      var mf=document.createElement('label');mf.className='chc-field';var ml2=document.createElement('span');ml2.textContent='合計表示枚数';mf.appendChild(ml2);
+      var min2=document.createElement('input');min2.type='number';min2.min='1';min2.max='200';min2.step='1';min2.className='col-width-input';min2.value=cc.maxShow?String(cc.maxShow):'';min2.placeholder='既定'+IMG_CAP;min2.disabled=!isVis;
+      min2.title='1グループあたり、表に出す画像の最大枚数。超えた分は「+N」でまとめます（空欄で既定）';
+      min2.onchange=function(){var v=parseInt((min2.value||'').trim(),10);setColCfg(key,{maxShow:(isFinite(v)&&v>0)?v:null});renderHead();render();renderColManager();};
+      mf.appendChild(min2);body.appendChild(mf);
     }
     var sf=document.createElement('label');sf.className='chc-field';var sl=document.createElement('span');sl.textContent='折り返し';sf.appendChild(sl);
     var sel=document.createElement('select');sel.className='col-wrap-sel';sel.innerHTML='<option value="wrap">折り返す</option><option value="clip">以降を非表示</option>';sel.value=cc.wrap||'wrap';sel.disabled=!isVis;sel.onchange=function(){setColCfg(key,{wrap:sel.value});render();};sf.appendChild(sel);body.appendChild(sf);
@@ -2582,7 +2589,7 @@ function stTrim(t){
 function renderSalesTable(){
   var tb=$('stBody');if(!tb)return;
   var h='';
-  if(!salesTbl.length){h='<tr class="st-empty"><td colspan="5">下の「＋ PRから追加」で行を作成してください</td></tr>';}
+  if(!salesTbl.length){h='<tr class="st-empty"><td colspan="4">下の「＋ PRから追加」で行を作成してください</td></tr>';}
   for(var g=0;g<salesTbl.length;g++){
     var grp=salesTbl[g];var rows=grp.rows&&grp.rows.length?grp.rows:[{pr:'',price:'',variation:''}];
     for(var r=0;r<rows.length;r++){
@@ -2590,7 +2597,6 @@ function renderSalesTable(){
       if(r===0)h+='<td class="st-name" rowspan="'+rows.length+'"><textarea class="st-in" rows="2" data-g="'+g+'" data-f="name" placeholder="PR">'+esc(grp.name||'')+'</textarea><button type="button" class="st-del st-del-g" data-delg="'+g+'" title="このPRごと削除">×</button></td>';
       h+='<td><input class="st-in" type="text" data-g="'+g+'" data-r="'+r+'" data-f="pr" value="'+escA(rows[r].pr||'')+'" placeholder="価格"></td>';
       h+='<td><textarea class="st-in" rows="2" data-g="'+g+'" data-r="'+r+'" data-f="price" placeholder="内容">'+esc(rows[r].price||'')+'</textarea></td>';
-      h+='<td><textarea class="st-in" rows="2" data-g="'+g+'" data-r="'+r+'" data-f="variation" placeholder="備考">'+esc(rows[r].variation||'')+'</textarea></td>';
       h+='<td class="st-act"><button type="button" class="st-del" data-delr="'+g+'_'+r+'" title="この行を削除">×</button></td>';
       h+='</tr>';
     }
@@ -2637,7 +2643,7 @@ function galOf(side){if(side==='rakuten')return galRakuten;var m=/^yahoo(\d+)$/.
 function stripEl(side){return side==='rakuten'?$('stripRakuten'):$('strip_'+side);}
 function dzEl(side){return side==='rakuten'?$('dzRakuten'):$('dz_'+side);}
 function fileEl(side){return side==='rakuten'?$('fileRakuten'):$('file_'+side);}
-/* Yahoo新規の名称 → PR・価格・内容・備考の表へ反映（内容＝名称／PRは1つ目が30・以降は7） */
+/* Yahoo新規の名称 → PR・価格・内容の表へ反映（内容＝名称／PRは1つ目が30・以降は7） */
 function itemApplyLpName(it,k,ov,nv){
   try{
     if(k<1)return;
@@ -3558,6 +3564,7 @@ function migrateScopes(){
         if(c.align)o.align=c.align;
         if(c.headAlign)o.headAlign=c.headAlign;
         if(c.perRow!=null)o.perRow=c.perRow;
+        if(c.maxShow!=null)o.maxShow=c.maxShow;
         if(k==='imageBlock'&&v==='ybig'&&o.perRow==null)o.perRow=10;
         m[k]=o;
       }
