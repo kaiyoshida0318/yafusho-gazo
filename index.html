@@ -941,7 +941,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.4.0</span>
+        <span class="version" id="version">v3.5.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1209,7 +1209,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.4.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.5.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1308,7 +1308,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <button class="btn btn-red" id="btnAddStatus">追加</button>
     </div>
     <div id="statusList" class="cat-list"></div>
-    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="statusModal">閉じる</button></div>
+    <div class="acts"><button class="btn btn-line" id="btnStatusBack"><span class="btn-arrow">←</span>戻る</button><span class="sp"></span></div>
   </div>
 </div>
 <div id="toast" class="toast" hidden></div>
@@ -2229,12 +2229,7 @@ function renderStatusManager(){
     var up=document.createElement('button');up.type='button';up.className='cat-mv';up.textContent='▲';up.disabled=idx===0;up.onclick=function(){var a=getStatuses();var t=a[idx-1];a[idx-1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
     var dn=document.createElement('button');dn.type='button';dn.className='cat-mv';dn.textContent='▼';dn.disabled=idx===sts.length-1;dn.onclick=function(){var a=getStatuses();var t=a[idx+1];a[idx+1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
     var del=document.createElement('button');del.type='button';del.className='cat-del';del.textContent='🗑';del.onclick=function(){if(!confirm('ステータス「'+s.label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;for(var i=0;i<items.length;i++){if(items[i].status===s.id)items[i].status='';}var a=getStatuses();a.splice(idx,1);saveStatuses(a);if(statusFilter===s.id)statusFilter='';persist();renderStatusManager();render();};
-    var asel=document.createElement('select');asel.className='status-view-sel status-alias-sel';asel.title='別の状態と同じ商品を表示するタブにする（選択肢からは除外されます）';
-    var o0=document.createElement('option');o0.value='';o0.textContent='通常（選択肢に出す）';asel.appendChild(o0);
-    for(var ai=0;ai<sts.length;ai++){if(sts[ai].id===s.id||sts[ai].alias)continue;var oa=document.createElement('option');oa.value=sts[ai].id;oa.textContent='＝'+sts[ai].label+'と同じ商品';asel.appendChild(oa);}
-    asel.value=s.alias||'';
-    asel.onchange=function(){var a=getStatuses();a[idx].alias=asel.value||'';saveStatuses(a);renderStatusManager();render();populateFormSelects();};
-    row.appendChild(numWrap);row.appendChild(labelInp);row.appendChild(asel);row.appendChild(scopeColsBtn(s.id));row.appendChild(up);row.appendChild(dn);row.appendChild(del);list.appendChild(row);
+    row.appendChild(numWrap);row.appendChild(labelInp);row.appendChild(scopeColsBtn(s.id));row.appendChild(up);row.appendChild(dn);row.appendChild(del);list.appendChild(row);
     if(stColsOpen===s.id)list.appendChild(scopeColsPanel(s.id));
   })(sts[idx],idx);}
   (function(){
@@ -2283,6 +2278,7 @@ if($('btnManageCats'))$('btnManageCats').onclick=openCatManager;
 if($('btnManageStatus'))$('btnManageStatus').onclick=function(){show('topMgrModal');};
 if($('tmCat'))$('tmCat').onclick=function(){hide('topMgrModal');openCatManager();};
 if($('tmStatus'))$('tmStatus').onclick=function(){hide('topMgrModal');openStatusManager();};
+if($('btnStatusBack'))$('btnStatusBack').onclick=function(){hide('statusModal');show('topMgrModal');};
 if($('btnAddCat'))$('btnAddCat').onclick=addCategory;
 if($('btnAddStatus'))$('btnAddStatus').onclick=addStatus;
 if($('newCatLabel'))$('newCatLabel').addEventListener('keydown',function(e){if(e.key==='Enter')addCategory();});
