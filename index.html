@@ -988,7 +988,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.15.0</span>
+        <span class="version" id="version">v3.16.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1262,7 +1262,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.15.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.16.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1724,7 +1724,7 @@ var DEFAULT_LISTING=['新規出品','リニューアル-同一ページ','リニ
 var DEFAULT_OPTS={
   status:[{l:'未着手',c:'gray',t:'1'},{l:'作成中',c:'orange',t:'2'},{l:'確認待ち',c:'blue',t:'3'},{l:'完了',c:'green',t:'4'}],
   listingType:[{l:'新規出品',c:'green',t:'新'},{l:'リニューアル-同一ページ',c:'blue',t:'同'},{l:'リニューアル-新規ページ',c:'orange',t:'新'},{l:'再登録',c:'gray',t:'再'}],
-  pagePlan:[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'}]
+  pagePlan:[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'},{l:'5',c:'gray',t:'5'},{l:'6',c:'gray',t:'6'},{l:'7',c:'gray',t:'7'},{l:'8',c:'gray',t:'8'},{l:'9',c:'gray',t:'9'}]
 };
 function cloneOpts(o){var r={};for(var k in o){r[k]=o[k].map(function(x){return {l:x.l,c:x.c,t:x.t};});}return r;}
 function mergeOpts(c){var r=cloneOpts(DEFAULT_OPTS);for(var k in r){if(c&&c[k]&&c[k].length){r[k]=c[k].map(function(x){return {l:(x.l||''),c:(x.c||'gray'),t:(x.t!=null?x.t:'')};});}}return r;}
@@ -3423,7 +3423,17 @@ async function loadFromGitHub(){
 
 
 (function(){try{if(!localStorage.getItem('yafusho_statmig2')){var s=getSettings();s.statuses=DEFAULT_STATUSES.map(function(x){return {id:x.id,label:x.label,icon:x.icon};});saveSettings(s);localStorage.setItem('yafusho_statmig2','1');}}catch(e){}})();
-(function(){try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'}];saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}})();
+(function(){try{
+  if(!localStorage.getItem('yafusho_pp9mig1')){
+    var s9=getSettings();var cur=(s9.opts&&s9.opts.pagePlan)?s9.opts.pagePlan:[];
+    var have={};for(var i9=0;i9<cur.length;i9++)have[String(cur[i9].l)]=1;
+    var add=false;
+    for(var n9=1;n9<=9;n9++){if(!have[String(n9)]){cur.push({l:String(n9),c:'gray',t:String(n9)});add=true;}}
+    if(add){cur.sort(function(a9,b9){var x=parseInt(a9.l,10),y=parseInt(b9.l,10);if(isFinite(x)&&isFinite(y))return x-y;return 0;});s9.opts.pagePlan=cur;saveSettings(s9);}
+    localStorage.setItem('yafusho_pp9mig1','1');
+  }
+}catch(e){}})();
+(function(){try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=cloneOpts(DEFAULT_OPTS).pagePlan;saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}})();
 (function(){try{
   if(localStorage.getItem('yafusho_nextplan1'))return;
   var st=getStatuses(),exists=false,idx=-1;
