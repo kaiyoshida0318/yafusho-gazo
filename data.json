@@ -1098,7 +1098,11 @@
     "lpType": "",
     "memo": "",
     "yahooLps": [],
-    "framesV": 2
+    "framesV": 2,
+    "yahooLpNames": [
+      null,
+      "単品"
+    ]
   },
   {
     "id": "it1785308381446",
