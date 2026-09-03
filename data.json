@@ -1221,7 +1221,39 @@
       "y1|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-2.jpg": "r",
       "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-2.jpg": "r"
     },
-    "framesV": 2
+    "framesV": 2,
+    "salesTable": [
+      {
+        "name": "30",
+        "rows": [
+          {
+            "pr": "1380",
+            "price": "Sサイズ5種類",
+            "variation": ""
+          }
+        ]
+      },
+      {
+        "name": "7",
+        "rows": [
+          {
+            "pr": "1480",
+            "price": "Sサイズ+ケース",
+            "variation": ""
+          },
+          {
+            "pr": "1680",
+            "price": "Lサイズ5種類",
+            "variation": ""
+          },
+          {
+            "pr": "1780",
+            "price": "Lサイズ+ケース",
+            "variation": ""
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "it1785388413626",
