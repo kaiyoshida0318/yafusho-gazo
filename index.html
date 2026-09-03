@@ -999,7 +999,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.26.0</span>
+        <span class="version" id="version">v3.26.1</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1276,7 +1276,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.26.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.26.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1801,14 +1801,27 @@ var DEFAULT_COLS=[
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
-function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:''};try{var c=JSON.parse(localStorage.getItem(SETTINGS));if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;}}catch(e){}return d;}
+var _setMem=null,_setQuotaLogAt=0;
+function setRaw(){if(_setMem!=null)return _setMem;try{return localStorage.getItem(SETTINGS);}catch(e){return null;}}
+function writeSettingsRaw(js){
+  _setMem=js;
+  try{localStorage.setItem(SETTINGS,js);_setMem=null;return true;}
+  catch(e){
+    try{localStorage.setItem(STORE,JSON.stringify(lightItems()));}catch(_e){}
+    try{localStorage.setItem(SETTINGS,js);_setMem=null;return true;}catch(_e2){}
+    var n=Date.now();
+    if(!_setQuotaLogAt||(n-_setQuotaLogAt)>60000){_setQuotaLogAt=n;try{log('表示設定はメモリ上で保持中（この端末の保存領域が満杯です。表示は最新の共有設定です）');}catch(_e3){}}
+    return false;
+  }
+}
+function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:''};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;}}catch(e){}return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
 var _applyingRemoteSettings=false,_booted=false,_stQuiet=false,_migrating=false;
-function saveSettings(s){try{if(!_applyingRemoteSettings&&!_migrating)s.updatedAt=Date.now();localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}
+function saveSettings(s){try{if(!_applyingRemoteSettings&&!_migrating)s.updatedAt=Date.now();}catch(e){}writeSettingsRaw(JSON.stringify(s));
   if(!_applyingRemoteSettings&&_booted&&!_stQuiet){try{scheduleSync();}catch(e2){}}}
-function settingsUpdatedAt(){try{var c=JSON.parse(localStorage.getItem(SETTINGS));return (c&&c.updatedAt)||0;}catch(e){return 0;}}
+function settingsUpdatedAt(){try{var c=JSON.parse(setRaw());return (c&&c.updatedAt)||0;}catch(e){return 0;}}
 function getListing(){return getOpts('listingType').map(function(o){return o.l;});}
 function getCols(){
   var s=getSettings();var saved=s.cols;
@@ -3422,7 +3435,7 @@ async function saveToGitHub(silent){
       await ghPutRetry(c.owner,c.repo,c.branch,'data.json',utf8b64(json),'update data ('+items.length+'件)',c.pat);
     }else{log('data.json 変更なし → スキップ');}
     try{
-      var sj=localStorage.getItem(SETTINGS)||'{}';
+      var sj=setRaw()||'{}';
       if(!ghUnchanged('settings.json',sj)){
         await ghPutRetry(c.owner,c.repo,c.branch,'settings.json',utf8b64(sj),'update settings',c.pat);
         log('settings.json 書込み: '+sj.length+'文字（列幅・色などを全端末で共有）');
@@ -3527,8 +3540,9 @@ async function loadSettingsFromGitHub(){
     }
     log('表示設定：GitHub側を適用（remote='+remote+' / local='+local+'）');
     _applyingRemoteSettings=true;
-    try{localStorage.setItem(SETTINGS,JSON.stringify(rs));}catch(e){}
+    var _okw=writeSettingsRaw(JSON.stringify(rs));
     _applyingRemoteSettings=false;
+    if(!_okw)log('※ 保存領域が満杯のため、表示設定はこのタブのメモリ上で反映しています');
     renderHead();render();renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();populateFormSelects();updateStickyH();
     log('表示設定をGitHubから適用（列幅・列順・色など）');
     toast('🖥️ 表示設定を他の端末と同期しました');
