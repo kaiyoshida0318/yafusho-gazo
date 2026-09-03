@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>ヤフショ画像くん</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -446,6 +449,7 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .belp-tag.belp-nameonly{padding-right:9px}
 .col-scope-pills{width:100%;max-height:80px;overflow-y:auto}
 .col-scope-pills .stab{padding:6px 11px;font-size:12.5px}
+.view-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:#eef3fb;border:1px solid #b9cae6;color:#1f3a63;font-size:11.5px;font-weight:800;white-space:nowrap}
 .cvt-scope{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;background:#1f3a63;color:#fff;font-size:13px;font-weight:700;white-space:nowrap}
 .scope-cols{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px 10px;margin:2px 0 8px;background:#f7f8fa;border:1px solid var(--line-2);border-radius:9px}
 .scope-cols .sc-head{width:100%;font-size:11.5px;color:var(--ink-3);margin-bottom:2px}
@@ -995,7 +999,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.23.0</span>
+        <span class="version" id="version">v3.25.1</span>
+        <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1003,6 +1008,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
         <button class="btn btn-ghost" id="btnLog">📜 ログ</button>
         <span class="gh-progress" id="ghProgress" hidden><span class="gh-spin"></span><span id="ghText"></span></span>
+        <button class="btn btn-ghost" id="btnPull" title="GitHubの内容をこの端末に取り込み直します（この端末の未保存の変更は破棄されます）">🔄 取り込み</button>
         <button class="btn btn-dark" id="btnSave">💾 GitHubに保存</button>
       </div>
     </div>
@@ -1270,7 +1276,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.23.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.25.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1659,9 +1665,10 @@ function capRowHtml(name,bytes,total){var pc=total?Math.round(bytes/total*1000)/
 
 function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}}
 var PENDING='yafusho_pending';
-function getPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
-function setPending(b){try{if(b){localStorage.setItem(PENDING,'1');}else{localStorage.removeItem(PENDING);}}catch(e){}}
-function isPending(){try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
+function isViewerMode(){try{return !getCfg().pat;}catch(e){return true;}}
+function getPending(){if(isViewerMode())return false;try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
+function setPending(b){try{if(b&&isViewerMode()){localStorage.removeItem(PENDING);return;}if(b){localStorage.setItem(PENDING,'1');}else{localStorage.removeItem(PENDING);}}catch(e){}}
+function isPending(){if(isViewerMode())return false;try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
 /* ===== 離脱・リロード時の確認 ===== */
 function hasUnsavedWork(){
   try{
@@ -1798,8 +1805,8 @@ function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},c
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
-var _applyingRemoteSettings=false,_booted=false,_stQuiet=false;
-function saveSettings(s){try{if(!_applyingRemoteSettings)s.updatedAt=Date.now();localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}
+var _applyingRemoteSettings=false,_booted=false,_stQuiet=false,_migrating=false;
+function saveSettings(s){try{if(!_applyingRemoteSettings&&!_migrating)s.updatedAt=Date.now();localStorage.setItem(SETTINGS,JSON.stringify(s));}catch(e){}
   if(!_applyingRemoteSettings&&_booted&&!_stQuiet){try{scheduleSync();}catch(e2){}}}
 function settingsUpdatedAt(){try{var c=JSON.parse(localStorage.getItem(SETTINGS));return (c&&c.updatedAt)||0;}catch(e){return 0;}}
 function getListing(){return getOpts('listingType').map(function(o){return o.l;});}
@@ -3184,7 +3191,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCdd();}
 /* ===== GitHub 設定 ===== */
 var CFG='yafusho_cfg';
 function getCfg(){var d={owner:'kaiyoshida0318',repo:'yafusho-gazo',branch:'main',pat:''};try{var c=JSON.parse(localStorage.getItem(CFG));if(c)for(var k in c){if(c[k])d[k]=c[k];}}catch(e){}return d;}
-function saveCfg(c){try{localStorage.setItem(CFG,JSON.stringify(c));}catch(e){}}
+function saveCfg(c){try{localStorage.setItem(CFG,JSON.stringify(c));}catch(e){}try{markViewerUi();}catch(e){}}
 
 $('btnAdv').onclick=function(){var b=$('advBox');b.hidden=!b.hidden;this.textContent=(b.hidden?'▶':'▼')+' 詳細設定（オーナー／リポジトリ／ブランチ）';};
 function openSettings(){var c=getCfg();$('cfgPat').value=c.pat||'';$('cfgOwner').value=c.owner;$('cfgRepo').value=c.repo;$('cfgBranch').value=c.branch;show('settingsModal');}
@@ -3436,7 +3443,7 @@ async function saveToGitHub(silent){
     $('btnSave').disabled=false;
   }
 }
-var _syncTimer=null,ghBusy=false,ghPending=false,ghDeferred=false;
+var _syncTimer=null,ghBusy=false,ghPending=false,ghDeferred=false,_viewerFirstLoad=false;
 function flushDeferredSync(){if(ghDeferred&&!editModalOpen()&&!gridEditingNow()){ghDeferred=false;setTimeout(function(){try{triggerSync(true);}catch(e){}},400);}}
 function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
 function editModalOpen(){var m=document.getElementById('editModal');return !!(m&&!m.hidden);}
@@ -3448,7 +3455,30 @@ async function triggerSync(silent){
   ghBusy=false;
   if(ghPending){ghPending=false;try{syncQueueTxt(false);}catch(e2){}triggerSync(true);}
 }
-$('btnSave').onclick=function(){triggerSync(false);};
+function markViewerUi(){
+  var v=isViewerMode();
+  var vb=$('viewBadge');if(vb)vb.hidden=!v;
+  var pb=$('btnPull');if(pb)pb.hidden=v;
+  var b=$('btnSave');
+  if(b){b.textContent=v?'🔄 最新を取得':'💾 GitHubに保存';b.title=v?'GitHubの最新内容を読み直します':'GitHubへ保存します';}
+}
+async function reloadAllFromGitHub(){
+  _viewerFirstLoad=true;setPending(false);
+  try{ghShaCache={};}catch(e){}
+  try{await loadFromGitHub();}catch(e){}
+  try{await loadSettingsFromGitHub();}catch(e){}
+  try{await loadTemplatesFromGitHub();}catch(e){}
+  _viewerFirstLoad=false;
+  try{renderHead();render();updateStickyH();}catch(e){}
+  toast('🔄 GitHubの最新を読み込みました');
+}
+$('btnSave').onclick=function(){if(isViewerMode()){reloadAllFromGitHub();return;}triggerSync(false);};
+if($('btnPull'))$('btnPull').onclick=function(){
+  if(!confirm('GitHubの内容を取り込み直します。\nこの端末の未保存の変更は破棄されます。よろしいですか？'))return;
+  setPending(false);
+  reloadAllFromGitHub();
+};
+markViewerUi();
 
 async function loadTemplatesFromGitHub(){
   var c=getCfg();
@@ -3480,17 +3510,18 @@ async function loadSettingsFromGitHub(){
     if(c.pat){
       try{var r=await fetch('https://api.github.com/repos/'+c.owner+'/'+c.repo+'/contents/settings.json?ref='+encodeURIComponent(c.branch)+'&t='+Date.now(),{headers:ghHeaders(c.pat),cache:'no-store'});
         if(r.status===200){var jj=await r.json();ghShaCache['settings.json']=jj.sha;rs=JSON.parse(b64utf8(jj.content));}
-        else if(r.status===404){log('settings.json 未作成（初回）');return;}}catch(e){}
+        else if(r.status===404){log('settings.json: API 404 → raw で再取得');}
+        else{log('settings.json: API '+r.status+' → raw で再取得');}}catch(e){}
     }
     if(rs===null){
       var r2=await fetch('https://raw.githubusercontent.com/'+c.owner+'/'+c.repo+'/'+c.branch+'/settings.json?t='+Date.now(),{cache:'no-store'});
       if(r2.status===404){log('settings.json 未作成（初回）');return;}
+      if(!r2.ok){log('settings.json 取得NG('+r2.status+')');return;}
       if(r2.ok)rs=await r2.json();
     }
     if(!rs||typeof rs!=='object')return;
     var remote=rs.updatedAt||0,local=settingsUpdatedAt();
-    if(remote===local)return;
-    if(getPending()){log('表示設定：未同期のローカル変更があるためGitHub側は適用せず');return;}
+    if(!_viewerFirstLoad&&remote<=local){if(remote<local)log('表示設定：この端末の方が新しいので保持（remote='+remote+' / local='+local+'）');return;}
     _applyingRemoteSettings=true;
     try{localStorage.setItem(SETTINGS,JSON.stringify(rs));}catch(e){}
     _applyingRemoteSettings=false;
@@ -3511,7 +3542,7 @@ async function loadFromGitHub(){
         if(rr.ok){var csha=(await rr.json()).sha;
           var r=await fetch('https://api.github.com/repos/'+c.owner+'/'+c.repo+'/contents/data.json?ref='+csha,{headers:ghHeaders(c.pat),cache:'no-store'});
           if(r.status===200){var jj=await r.json();ghShaCache['data.json']=jj.sha;arr=JSON.parse(b64utf8(jj.content));log('GitHub読込(API) HEAD='+String(csha).slice(0,7)+' sha='+String(jj.sha).slice(0,7));}
-          else if(r.status===404){log('data.json 未作成（初回）。');return;}
+          else if(r.status===404){log('data.json: API 404 → raw で再取得');}
           else{log('contents取得NG('+r.status+') → rawへ');}
         }else{log('commits取得NG('+rr.status+') → rawへ');}
       }catch(e){log('API読込エラー: '+e.message+' → rawへ');}
@@ -3527,22 +3558,23 @@ async function loadFromGitHub(){
 }
 
 
-(function(){try{if(!localStorage.getItem('yafusho_statmig2')){var s=getSettings();s.statuses=DEFAULT_STATUSES.map(function(x){return {id:x.id,label:x.label,icon:x.icon};});saveSettings(s);localStorage.setItem('yafusho_statmig2','1');}}catch(e){}})();
+(function(){_migrating=true;try{try{if(!localStorage.getItem('yafusho_statmig2')){var s=getSettings();s.statuses=DEFAULT_STATUSES.map(function(x){return {id:x.id,label:x.label,icon:x.icon};});saveSettings(s);localStorage.setItem('yafusho_statmig2','1');}}catch(e){}}finally{_migrating=false;}})();
 /* 制作LP本数の選択肢を 1〜9 まで用意する（設定に済フラグを持たせ、GitHub同期後にも走らせる） */
 function ensurePagePlan9(){
-  try{
-    var s9=getSettings();if(s9.pp9mig1)return;
+  _migrating=true;
+  try{try{
+    var s9=getSettings();if(s9.pp9mig1){_migrating=false;return;}
     var cur=(s9.opts&&s9.opts.pagePlan)?s9.opts.pagePlan:[];
     var have={};for(var i9=0;i9<cur.length;i9++)have[String(cur[i9].l)]=1;
     for(var n9=1;n9<=9;n9++){if(!have[String(n9)])cur.push({l:String(n9),c:'gray',t:String(n9)});}
     cur.sort(function(a9,b9){var x=parseInt(a9.l,10),y=parseInt(b9.l,10);if(isFinite(x)&&isFinite(y))return x-y;return 0;});
     s9.opts.pagePlan=cur;s9.pp9mig1=true;saveSettings(s9);
     try{populateFormSelects();}catch(e2){}
-  }catch(e){}
+  }catch(e){}}finally{_migrating=false;}
 }
 ensurePagePlan9();
-(function(){try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=cloneOpts(DEFAULT_OPTS).pagePlan;saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}})();
-(function(){try{
+(function(){_migrating=true;try{try{if(!localStorage.getItem('yafusho_ppmig1')){var s=getSettings();s.opts.pagePlan=cloneOpts(DEFAULT_OPTS).pagePlan;saveSettings(s);localStorage.setItem('yafusho_ppmig1','1');}}catch(e){}}finally{_migrating=false;}})();
+(function(){_migrating=true;try{try{
   if(localStorage.getItem('yafusho_nextplan1'))return;
   var st=getStatuses(),exists=false,idx=-1;
   for(var i=0;i<st.length;i++){if((st[i].label||'')==='次やる候補-販売設計')exists=true;if(st[i].id==='st_next'||(st[i].label||'')==='次やる候補')idx=i;}
@@ -3553,10 +3585,11 @@ ensurePagePlan9();
     saveStatuses(st);
   }
   localStorage.setItem('yafusho_nextplan1','1');
-}catch(e){}})();
+}catch(e){}}finally{_migrating=false;}})();
 /* 旧「状態→ビュー割り当て」を「状態ごとの表示項目」へ移行 */
 function migrateScopes(){
-  try{
+  _migrating=true;
+  try{try{
     var s=getSettings();if(s.scopeMig1)return;
     var cv=s.colcfgV||{},ov=s.colorderV||{};
     var allV=(s.allView&&s.allView!=='none'&&VIEW_COLS[s.allView])?s.allView:'basic';
@@ -3589,7 +3622,7 @@ function migrateScopes(){
     var ss=getStatuses();
     for(var i=0;i<ss.length;i++)seed(ss[i].id,ss[i].view||allV);
     s.scopeMig1=true;saveSettings(s);
-  }catch(e){}
+  }catch(e){}}finally{_migrating=false;}
 }
 migrateScopes();
 renderHead();
@@ -3598,7 +3631,8 @@ function applyInitialView(){try{migrateScopes();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
-loadFromGitHub().then(function(){return loadSettingsFromGitHub();}).then(function(){return loadTemplatesFromGitHub();}).catch(function(){}).then(function(){ensurePagePlan9();applyInitialView();_booted=true;try{render();}catch(e){}});
+_viewerFirstLoad=isViewerMode();
+loadFromGitHub().then(function(){return loadSettingsFromGitHub();}).then(function(){return loadTemplatesFromGitHub();}).catch(function(){}).then(function(){_viewerFirstLoad=false;_migrating=false;ensurePagePlan9();applyInitialView();_booted=true;try{renderHead();render();}catch(e){}try{markViewerUi();}catch(e){}});
 
 </script>
 </body>
