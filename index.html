@@ -985,7 +985,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.13.0</span>
+        <span class="version" id="version">v3.14.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1256,7 +1256,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.13.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.14.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1774,7 +1774,7 @@ var DEFAULT_COLS=[
   {key:'variation',label:'バリエーション',width:null,align:'left'},
   {key:'salesMethod',label:'販売手法',width:null,align:'left'},
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
-  {key:'buttonElemLp',label:'ボタン要素',width:140,align:'left'},
+  {key:'buttonElemLp',label:'Yahoo新規の名称',width:140,align:'left'},
   {key:'salesTable',label:'PR・価格・内容・備考',width:null,align:'left'},
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
@@ -1907,12 +1907,11 @@ function beLpTagHtml(label,col,count,editId,g){
   return '<span class="belp-tag" style="background:'+col+'">'+l+'<span class="belp-sep"></span><span class="belp-n" style="color:'+col+'">'+(count||0)+'</span></span>';
 }
 function beLpCellHtml(it){
-  var h='<td><div class="belp-wrap">';
-  var rk=imgArr(it,'rakuten');
-  h+='<div class="belp-row">'+beLpTagHtml('楽天','var(--red)',rk.length,null,0)+'</div>';
   var lps=itemYahooLps(it,ppShowCount(it));
-  for(var g=0;g<lps.length;g++){h+='<div class="belp-row">'+beLpTagHtml(lpDispName(it,g,lps.length),lpTagColor(g),lps[g].length,(g>=1?it.id:null),g)+'</div>';}
-  return h+'</div></td>';
+  var h='',n=0;
+  for(var g=1;g<lps.length;g++){h+='<div class="belp-row">'+beLpTagHtml(lpDispName(it,g,lps.length),lpTagColor(g),lps[g].length,it.id,g)+'</div>';n++;}
+  if(!n)return '<td><span class="sm-empty">—</span></td>';
+  return '<td><div class="belp-wrap">'+h+'</div></td>';
 }
 function fmtDate(d){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');if(m)return '<span class="d-y">'+m[1]+'</span><span class="d-md">'+m[2]+'-'+m[3]+'</span>';return esc(d);}
 function salesTableCell(it){
@@ -2331,7 +2330,7 @@ function stEditor(sc){
   box.appendChild(stSection(sc,false));
   return box;
 }
-function scopeColLabel(key){if(key==='buttonElemLp')return 'ボタン要素（LP別）';var d=colDef(key);return d?d.label:key;}
+function scopeColLabel(key){var d=colDef(key);return d?d.label:key;}
 function stChip(sc,key,on){
   if(!on){
     var c=document.createElement('button');c.type='button';c.className='st-chip';
