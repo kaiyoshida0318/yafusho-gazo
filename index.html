@@ -947,6 +947,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-ehead .cat-label-input{flex:0 1 280px;min-width:160px}
 .st-ehead .sp{flex:1}
 .st-sec{display:flex;flex-direction:column;gap:4px;min-height:0;flex:1 1 auto}
+.st-sec-all{flex:1.35 1 auto}
 .st-sec-hd{font-size:11.5px;font-weight:800;color:var(--ink-3);flex:0 0 auto}
 .st-sec-hd em{font-style:normal;font-weight:600;color:#a8a29a;margin-left:6px}
 .st-row{display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start;padding:7px;background:#fff;border:1px solid var(--line-2);border-radius:9px;overflow-y:auto;min-height:56px;flex:1 1 auto}
@@ -955,6 +956,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-chip .sg{font-size:11px;font-weight:800;opacity:.7}
 .st-chip.on{flex-direction:column;align-items:stretch;padding:4px 6px 5px;gap:3px}
 .st-wrow{display:inline-flex;align-items:center;gap:4px;justify-content:flex-end}
+.st-mv{display:flex;gap:3px;margin-top:1px}
+.st-mvb{flex:1 1 0;appearance:none;border:1px solid #c3d0e4;background:#fff;color:#1f3a63;font:inherit;font-size:11px;font-weight:800;line-height:1;padding:3px 0;border-radius:5px;cursor:pointer}
+.st-mvb:hover:not(:disabled){background:#dbe6f7;border-color:#1f3a63}
+.st-mvb:disabled{opacity:.3;cursor:default}
 .st-tg{appearance:none;border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:inherit;cursor:pointer;padding:2px 4px;border-radius:5px;display:inline-flex;align-items:center;gap:5px}
 .st-tg:hover{background:rgba(31,58,99,.12)}
 .st-wl{font-size:10.5px;color:#6f7c90;opacity:.85}
@@ -962,6 +967,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-w:focus{outline:0;border-color:var(--red)}
 .st-chip.on{background:#eaf1fb;border-color:#1f3a63;color:#1f3a63;font-weight:700}
 .st-chip.on:hover{background:#dbe6f7}
+.st-chip.st-pick{flex-direction:row;align-items:center;padding:5px 10px;gap:5px}
+.st-chip.st-pick.on{background:#eaf1fb;border-color:#1f3a63;color:#1f3a63;font-weight:700}
+.st-chip.st-pick.on:hover{background:#dbe6f7}
 .st-chip-big{background:#fff9f0;border-color:#e6c9a0;color:#8a6a30}
 .st-chip-big.on{background:#ffe9c9;border-color:#d98324;color:#8a4b00}
 .st-chips-empty{font-size:11.5px;color:var(--ink-3);padding:4px}
@@ -975,7 +983,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.10.1</span>
+        <span class="version" id="version">v3.12.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1243,7 +1251,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.10.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.12.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2344,29 +2352,64 @@ function stChip(sc,key,on){
   wi.onchange=function(){var v=parseInt((wi.value||'').trim(),10);stPush();setScopeCol(sc,key,{width:(isFinite(v)&&v>0)?v:null});if(sc===curScope()){renderHead();render();}renderStatusManager();};
   wi.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();wi.blur();}};
   wrow.appendChild(wi);w.appendChild(wrow);
+  var vis=[];var ord=stScopeOrder(sc);for(var q=0;q<ord.length;q++){if(scopeColOn(sc,ord[q]))vis.push(ord[q]);}
+  var vi=vis.indexOf(key);
+  var mv=document.createElement('span');mv.className='st-mv';
+  var ml=document.createElement('button');ml=document.createElement('button');ml.type='button';ml.className='st-mvb';ml.textContent='←';ml.title='左へ';ml.disabled=(vi<=0);
+  ml.onclick=function(){stMoveCol(sc,key,-1);};
+  var mr=document.createElement('button');mr.type='button';mr.className='st-mvb';mr.textContent='→';mr.title='右へ';mr.disabled=(vi<0||vi>=vis.length-1);
+  mr.onclick=function(){stMoveCol(sc,key,1);};
+  mv.appendChild(ml);mv.appendChild(mr);w.appendChild(mv);
   return w;
 }
+function stMoveCol(sc,key,dir){
+  var order=stScopeOrder(sc);var i=order.indexOf(key);if(i<0)return;
+  var step=(dir<0)?-1:1;var j=i+step;
+  while(j>=0&&j<order.length){if(scopeColOn(sc,order[j]))break;j+=step;}
+  if(j<0||j>=order.length)return;
+  stPush();
+  var t=order[i];order[i]=order[j];order[j]=t;
+  var st=getSettings();if(!st.colorderS)st.colorderS={};st.colorderS[sc]=order;saveSettings(st);
+  if(sc===curScope()){renderHead();render();}
+  renderStatusManager();
+}
 function stBigChip(sc,big){
-  var b=document.createElement('button');b.type='button';b.className='st-chip st-chip-big'+(big?' on':'');
-  var g=document.createElement('span');g.className='sg';g.textContent=big?'✕':'＋';
+  var b=document.createElement('button');b.type='button';b.className='st-chip st-pick st-chip-big'+(big?' on':'');
+  var g=document.createElement('span');g.className='sg';g.textContent=big?'✓':'＋';
   b.appendChild(g);b.appendChild(document.createTextNode('🔍 出品画像を大きく表示'));
+  b.title=big?'クリックで解除':'クリックで大きく表示';
   b.onclick=function(){stPush();scopeBigSet(sc,!big);if(sc===curScope()){renderHead();render();}renderStatusManager();};
   return b;
 }
+function stPickChip(sc,key,on){
+  var c=document.createElement('button');c.type='button';c.className='st-chip st-pick'+(on?' on':'');
+  var g=document.createElement('span');g.className='sg';g.textContent=on?'✓':'＋';
+  c.appendChild(g);c.appendChild(document.createTextNode(scopeColLabel(key)));
+  c.title=on?'表示中です。クリックではずす':'クリックで表示に追加';
+  c.onclick=function(){stPush();setScopeCol(sc,key,{visible:!on});if(sc===curScope()){renderHead();render();}renderStatusManager();};
+  return c;
+}
 function stSection(sc,shown){
-  var wrap=document.createElement('div');wrap.className='st-sec';
+  var wrap=document.createElement('div');wrap.className='st-sec'+(shown?'':' st-sec-all');
   var hd=document.createElement('div');hd.className='st-sec-hd';
   var row=document.createElement('div');row.className='st-row';
-  var keys=stScopeOrder(sc),n=0;
-  for(var i=0;i<keys.length;i++){
-    var key=keys[i],on=scopeColOn(sc,key);
-    if(on!==shown)continue;
-    row.appendChild(stChip(sc,key,on));n++;
+  var big=scopeBig(sc),n=0;
+  if(shown){
+    var keys=stScopeOrder(sc);
+    for(var i=0;i<keys.length;i++){
+      if(!scopeColOn(sc,keys[i]))continue;
+      row.appendChild(stChip(sc,keys[i],true));n++;
+    }
+    hd.innerHTML='表示中の項目（'+n+'）<em>✕ ではずす／幅(px)を直接入力・表の列の境界（赤）をドラッグしても変えられます</em>';
+    if(!n){var e=document.createElement('div');e.className='st-chips-empty';e.textContent='表示項目なし（下の一覧から選んでください）';row.appendChild(e);}
+  }else{
+    for(var j=0;j<DEFAULT_COLS.length;j++){
+      var k=DEFAULT_COLS[j].key,on=scopeColOn(sc,k);
+      row.appendChild(stPickChip(sc,k,on));if(on)n++;
+    }
+    row.appendChild(stBigChip(sc,big));if(big)n++;
+    hd.innerHTML='項目の一覧（表示中 '+n+' / '+(DEFAULT_COLS.length+1)+'）<em>色つき＝表示中。クリックで出し入れ（並びは固定）</em>';
   }
-  var big=scopeBig(sc);
-  if(big===shown){row.appendChild(stBigChip(sc,big));n++;}
-  hd.innerHTML=(shown?'表示中の項目（'+n+'）<em>✕ ではずす／幅(px)を直接入力・表の列の境界（赤）をドラッグしても変えられます</em>':'追加できる項目（'+n+'）<em>クリックで表示に追加</em>');
-  if(!n){var e=document.createElement('div');e.className='st-chips-empty';e.textContent=shown?'表示項目なし（下の候補から選んでください）':'すべて表示中です';row.appendChild(e);}
   wrap.appendChild(hd);wrap.appendChild(row);
   return wrap;
 }
