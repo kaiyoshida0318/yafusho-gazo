@@ -1058,9 +1058,21 @@
   },
   {
     "id": "it1785303895739",
-    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-yahoo-main.jpg",
-    "rakutenMain": "",
+    "yahooMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-5.webp",
     "yahooImgs": [],
+    "yahooLps": [
+      [],
+      [],
+      [],
+      []
+    ],
+    "yahooLpNames": [
+      null,
+      "単品",
+      "２個セット",
+      "３個セット"
+    ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-5.webp",
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785303895739-rakuten-6.webp",
@@ -1080,7 +1092,7 @@
     "date": "2026-07-29",
     "rating": "4.53",
     "listingType": "cat_b",
-    "pagePlan": "3",
+    "pagePlan": "1",
     "status": "st_next",
     "name": "ケーブルボックス 単品/2個/3個",
     "code": "23-06",
@@ -1097,14 +1109,9 @@
     "buttonElem": "■個数\n単品/2個セット/3個セット\n　\nそれぞれの中でカラー/セット内容",
     "lpType": "",
     "memo": "",
-    "yahooLps": [],
+    "frames": {},
     "framesV": 2,
-    "yahooLpNames": [
-      null,
-      "単品",
-      "２個セット",
-      "３個セット"
-    ]
+    "salesTable": []
   },
   {
     "id": "it1785308381446",
