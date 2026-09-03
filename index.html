@@ -913,7 +913,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v2.9.0</span>
+        <span class="version" id="version">v2.9.1</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>出品内容・状態管理</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -933,7 +933,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <span class="frow-label">状態</span>
     <div class="pill-group" id="statusRow"></div>
     <span class="spacer"></span>
-    <button class="btn btn-danger btn-sm" id="btnBulkDel">🗑 一括削除</button>
   </div>
 
   <!-- 2段目：ステータス ＋ 変更を保存（右上） -->
@@ -941,7 +940,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <span class="frow-label">出品内容</span>
     <div class="pill-group" id="catPills"></div>
     <span class="spacer"></span>
-    <button class="btn btn-line btn-sm" id="btnBulkEdit">✏️ 一括編集</button>
     <button class="btn btn-ghost btn-sm" id="btnDiscardEdits" hidden>取り消し</button>
     <button class="btn btn-save-hero" id="btnSaveEdits" hidden>● 変更を保存</button>
   </div>
@@ -960,6 +958,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     </div>
     <button class="btn btn-green-line btn-sm" id="btnAddRow">＋ 行だけ</button>
     <button class="btn btn-green" id="btnAdd">＋ 新規作成</button>
+    <button class="btn btn-line btn-sm" id="btnBulkEdit">✏️ 一括編集</button>
     <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseTop" title="上部の見出し・フィルタを折りたたむ">▲ 上部をたたむ</button>
   </div>
   </div>
@@ -1191,7 +1190,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v2.9.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v2.9.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2276,7 +2275,7 @@ function startColResize(e,th,key){
 if($('btnDragResize'))$('btnDragResize').onclick=enterColResizeMode;
 if($('btnResizeDone'))$('btnResizeDone').onclick=exitColResizeMode;
 var _gh=$('gridHead');if(_gh)_gh.addEventListener('mousedown',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('col-resize-handle')){startColResize(e,t.parentNode,t.getAttribute('data-rk'));}});
-$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();scheduleSync();}};
+if($('btnBulkDel'))$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();scheduleSync();}};
 
 /* 閉じる系 */
 var closers=document.querySelectorAll('[data-close]');
