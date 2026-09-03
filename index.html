@@ -999,7 +999,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.26.1</span>
+        <span class="version" id="version">v3.27.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1276,7 +1276,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.26.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.27.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1290,7 +1290,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="cap-sec-ttl">大きいファイル TOP10</div>
     <div class="cap-rows" id="capTop"></div>
     <p class="hint">※ 上限はGitHub Pagesの推奨上限1GBを基準にしています（1ファイルは100MBまで）。「履歴込み」は過去バージョンを含むリポジトリ全体のサイズです。</p>
-    <div class="acts"><button class="btn btn-line" id="btnCapReload">🔄 再取得</button><span class="sp"></span><button class="btn btn-ghost" data-close="capModal">閉じる</button></div>
+    <div class="cap-sec-ttl">この端末のブラウザ保存（目安5MB）</div>
+    <div class="cap-rows" id="capLocalRows"></div>
+    <p class="hint">画像はGitHubに上げると自動でURLに置き換わるので、通常はここは小さいままです。大きい場合は下のボタンで掃除すると直ります（GitHubのデータは消えません）。</p>
+    <div class="acts"><button class="btn btn-line" id="btnCapReload">🔄 再取得</button><button class="btn btn-line" id="btnClearLocal">🧹 この端末のキャッシュを掃除</button><span class="sp"></span><button class="btn btn-ghost" data-close="capModal">閉じる</button></div>
   </div>
 </div>
 <div class="overlay" id="manageModal" hidden>
@@ -1659,8 +1662,30 @@ function capRenderModal(){
   else h2='<div class="cap-row"><b>ファイルなし</b></div>';
   var ct=$('capTop');if(ct)ct.innerHTML=h2;
 }
-async function openCapModal(){show('capModal');capRenderModal();await capLoad(false);capRenderModal();}
+async function openCapModal(){show('capModal');capRenderModal();capRenderLocal();await capLoad(false);capRenderModal();capRenderLocal();}
 if($('btnCapReload'))$('btnCapReload').onclick=async function(){this.disabled=true;await capLoad(true);capRenderModal();this.disabled=false;};
+function lsBytes(k){try{var v=localStorage.getItem(k);return v?(k.length+v.length)*2:0;}catch(e){return 0;}}
+function fmtKB(b){if(b>=1048576)return (b/1048576).toFixed(2)+' MB';return Math.round(b/1024)+' KB';}
+function capRenderLocal(){
+  var el=$('capLocalRows');if(!el)return;
+  var keys=[];var total=0;
+  try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);var b=lsBytes(k);total+=b;keys.push({k:k,b:b});}}catch(e){}
+  keys.sort(function(x,y){return y.b-x.b;});
+  var names={'yafusho_items':'商品データ（画像キャッシュ含む）','yafusho_templates':'テンプレ画像','yafusho_settings':'表示設定','yafusho_pending':'未同期フラグ'};
+  var h='<div class="cap-row"><span>合計</span><b>'+fmtKB(total)+' / 約5 MB</b></div>';
+  for(var j=0;j<keys.length&&j<6;j++){if(!keys[j].b)continue;h+='<div class="cap-row"><span>'+esc(names[keys[j].k]||keys[j].k)+'</span><b>'+fmtKB(keys[j].b)+'</b></div>';}
+  el.innerHTML=h;
+}
+if($('btnClearLocal'))$('btnClearLocal').onclick=async function(){
+  if(!confirm('この端末のキャッシュ（商品データ・テンプレ画像）を消して、GitHubから読み直します。\nGitHub側のデータは消えません。よろしいですか？'))return;
+  if(getPending()&&!confirm('この端末に未保存の変更があります。破棄して読み直しますか？'))return;
+  try{localStorage.removeItem(STORE);localStorage.removeItem(TPLKEY);localStorage.removeItem(PENDING);}catch(e){}
+  try{items=[];}catch(e){}
+  _setMem=null;
+  log('この端末のキャッシュを掃除しました → GitHubから読み直します');
+  await reloadAllFromGitHub();
+  capRenderLocal();
+};
 function capRowHtml(name,bytes,total){var pc=total?Math.round(bytes/total*1000)/10:0;return '<div class="cap-row"><b>'+esc(name)+'</b><span class="cap-v">'+capFmt(bytes)+'</span><span class="cap-p">'+pc+'%</span></div>';}
 
 function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}}
