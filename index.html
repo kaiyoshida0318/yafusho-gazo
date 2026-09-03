@@ -444,6 +444,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .lpn-pp .cdd-form{margin-top:6px}
 .lpn-detail .lpnames{margin-top:6px}
 .belp-tag.belp-nameonly{padding-right:9px}
+.col-scope-pills{width:100%;max-height:80px;overflow-y:auto}
+.col-scope-pills .stab{padding:6px 11px;font-size:12.5px}
 .cvt-scope{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;background:#1f3a63;color:#fff;font-size:13px;font-weight:700;white-space:nowrap}
 .scope-cols{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px 10px;margin:2px 0 8px;background:#f7f8fa;border:1px solid var(--line-2);border-radius:9px}
 .scope-cols .sc-head{width:100%;font-size:11.5px;color:var(--ink-3);margin-bottom:2px}
@@ -990,7 +992,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.19.0</span>
+        <span class="version" id="version">v3.20.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1265,7 +1267,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.19.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.20.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1302,8 +1304,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini modal-col">
     <h2>📐 列名・列幅・列順管理</h2>
     <div class="col-view-tabs" id="colViewTabs">
-      <span class="cvt-scope" id="colScopeLbl">状態：全体</span>
-      <span class="cvt-hint">いま選んでいる状態の表示です。各列カードで表示・順序（◀▶）・幅・揃え・折り返しを設定。上の表に即反映されます。</span>
+      <div class="st-pills col-scope-pills" id="colScopePills"></div>
+      <span class="cvt-hint" id="colScopeLbl">状態を選ぶと、その状態で表示中の項目だけが並びます。各カードで順序（◀▶）・幅・揃え・折り返しを設定（上の表に即反映）。項目の出し入れは「表示内容 → 状態」から。</span>
     </div>
     <div class="col-hstrip" id="colHStrip"></div>
     <div class="acts">
@@ -2135,7 +2137,7 @@ $('btnLog').onclick=function(){show('logModal');};
 if($('btnCap'))$('btnCap').onclick=openCapModal;
 function syncViewToggle(){}
 function applyView(m){renderHead();render();updateStickyH();}
-function applyScope(){renderHead();render();updateStickyH();var l=$('colScopeLbl');if(l)l.textContent='状態：'+scopeLabel(curScope());if(colsModalOpen)renderColManager();}
+function applyScope(){renderHead();render();updateStickyH();if(colsModalOpen)renderColManager();}
 function goHome(){listingFilter='';statusFilter='';lpCountFilter='';lpTypeFilter='';applyScope();try{window.scrollTo(0,0);}catch(e){}}
 if($('btnNewTab'))$('btnNewTab').onclick=function(){try{window.open(location.pathname+'?home=1','_blank');}catch(e){window.open(location.href,'_blank');}};
 document.addEventListener('click',function(e){var t=e.target;if(t&&t.classList&&(t.classList.contains('logo-img')||t.classList.contains('logo-text'))){goHome();}});
@@ -2467,13 +2469,28 @@ if($('newStatusLabel'))$('newStatusLabel').addEventListener('keydown',function(e
 /* ===== 項目管理（表示中／非表示・幅・折り返し・揃え・ドラッグ幅調整） ===== */
 function getRenderedColWidth(key){var th=document.querySelector('#gridHead th[data-col-key="'+key+'"]');if(!th)return null;var w=th.getBoundingClientRect().width;return w>0?Math.round(w):null;}
 function makeColAlignGroup(labelText,value,onChange){var g=document.createElement('label');g.className='col-align-group';var sp=document.createElement('span');sp.className='col-ctrl-label';sp.textContent=labelText;var s=document.createElement('select');s.className='col-align-sel';[['left','左'],['center','中央'],['right','右']].forEach(function(p){var o=document.createElement('option');o.value=p[0];o.textContent=p[1];s.appendChild(o);});s.value=value||'left';s.onchange=function(){onChange(s.value);};g.appendChild(sp);g.appendChild(s);return g;}
+function colScopePill(sc,label,icon,extra){
+  var b=document.createElement('button');b.type='button';b.className='stab'+(extra||'')+((curScope()===sc)?' on':'');
+  var ic=document.createElement('span');ic.className='stab-ico';ic.innerHTML=icon?statusIconHtml(icon):'';b.appendChild(ic);
+  b.appendChild(document.createTextNode(label));
+  var c=document.createElement('span');c.className='cnt';c.textContent=(sc===SCOPE_ALL?countStatus(''):countStatus(sc));b.appendChild(c);
+  b.onclick=function(){statusFilter=(sc===SCOPE_ALL)?'':sc;stEditSel=sc;applyScope();};
+  return b;
+}
+function renderColScopePills(){
+  var row=$('colScopePills');if(!row)return;row.innerHTML='';
+  row.appendChild(colScopePill(SCOPE_ALL,'全体','',''));
+  var sts=getStatuses();
+  for(var i=0;i<sts.length;i++)row.appendChild(colScopePill(sts[i].id,sts[i].label,sts[i].icon,''));
+  row.appendChild(colScopePill('__none__','未設定','',' stab-none'));
+}
 function renderColManager(){
   var sc=curScope();
-  var lbl=$('colScopeLbl');if(lbl)lbl.textContent='状態：'+scopeLabel(sc);
+  renderColScopePills();
   var strip=$('colHStrip');if(!strip)return;strip.innerHTML='';
   var order=getColOrder();
   var visKeys=[];for(var q=0;q<order.length;q++){if(getColCfg(order[q]).visible!==false)visKeys.push(order[q]);}
-  var shown=order.slice();
+  var shown=visKeys.slice();
   for(var i=0;i<shown.length;i++){(function(key){
     var c=colDef(key);if(!c)return;var cc=getColCfg(key);var isVis=cc.visible!==false;
     var card=document.createElement('div');card.className='col-hcard'+(isVis?'':' off');
@@ -2503,7 +2520,7 @@ function renderColManager(){
     var sel=document.createElement('select');sel.className='col-wrap-sel';sel.innerHTML='<option value="wrap">折り返す</option><option value="clip">以降を非表示</option>';sel.value=cc.wrap||'wrap';sel.disabled=!isVis;sel.onchange=function(){setColCfg(key,{wrap:sel.value});render();};sf.appendChild(sel);body.appendChild(sf);
     card.appendChild(body);strip.appendChild(card);
   })(shown[i]);}
-  if(!strip.children.length){var e=document.createElement('div');e.className='col-empty';e.textContent='このビューに列がありません';strip.appendChild(e);}
+  if(!strip.children.length){var e=document.createElement('div');e.className='col-empty';e.textContent='この状態で表示中の項目がありません（「表示内容 → 状態」で選んでください）';strip.appendChild(e);}
 }
 function openCols(){colsModalOpen=true;renderHead();render();renderColManager();show('colsModal');}
 document.addEventListener('mousedown',function(e){if(!colsModalOpen)return;var t=e.target;if(t&&t.closest&&(t.closest('#colsModal')||t.closest('.col-resize-handle')||t.closest('#resizeBar')||t.closest('#cddMenu')||t.closest('.add-menu')))return;hide('colsModal');},true);
