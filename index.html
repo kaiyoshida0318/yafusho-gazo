@@ -988,7 +988,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.16.1</span>
+        <span class="version" id="version">v3.16.2</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1262,7 +1262,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.16.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.16.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1875,7 +1875,7 @@ function cntCircle(cls,count,col){if(!count)return '';return '<span class="tag-c
 function dlBtnHtml(id,side,cls,col){return '<button type="button" class="tag-dl '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' data-dl="'+escA(id)+'" data-dlside="'+escA(side)+'" title="この行の画像をまとめてダウンロード"><span>DL</span></button>';}
 function tagLbl(label,cls,count,id,side){return '<span class="img2-tagwrap"><span class="img2-tag '+cls+'"><span class="itag-l">'+esc(label)+'</span></span>'+cntCircle(cls,count)+((count&&id)?dlBtnHtml(id,side,cls):'')+'</span>';}
 function tagLblY(it,g,total,count,noDl){var nm=lpDispName(it,g,total);var col=lpTagColor(g);var lbl=(g>=1)?('<span class="itag-l lp-name-edit clk" data-id="'+escA(it.id)+'" data-lpg="'+g+'" title="クリックで名前を編集">'+esc(nm)+'</span>'):('<span class="itag-l">'+esc(nm)+'</span>');return '<span class="img2-tagwrap"><span class="img2-tag tb-y" style="background:'+col+'">'+lbl+'</span>'+cntCircle('tb-y',count,col)+((count&&!noDl)?dlBtnHtml(it.id,'y'+g,'tb-y',col):'')+'</span>';}
-function startLpNameEdit(el){var id=el.getAttribute('data-id');var g=parseInt(el.getAttribute('data-lpg'),10);var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;var cur=(it.yahooLpNames&&it.yahooLpNames[g]!=null)?String(it.yahooLpNames[g]):'';var inp=document.createElement('input');inp.type='text';inp.className='lp-name-inp';inp.value=cur;el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();var done=false;function save(){if(done)return;done=true;var v=inp.value.trim();if(!it.yahooLpNames)it.yahooLpNames=[];it.yahooLpNames[g]=v;persist();render();markDirty();}inp.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();inp.blur();}else if(ev.key==='Escape'){done=true;render();}});inp.addEventListener('blur',save);inp.addEventListener('click',function(ev){ev.stopPropagation();});}
+function startLpNameEdit(el){var id=el.getAttribute('data-id');var g=parseInt(el.getAttribute('data-lpg'),10);var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;var cur=(it.yahooLpNames&&it.yahooLpNames[g]!=null)?String(it.yahooLpNames[g]):'';var inp=document.createElement('input');inp.type='text';inp.className='lp-name-inp';inp.value=cur;el.innerHTML='';el.appendChild(inp);_inlineEditing=true;inp.focus();inp.select();var done=false;function endEdit(){_inlineEditing=false;_renderQueued=false;try{el.innerHTML='';}catch(e){}}function save(){if(done)return;done=true;var v=inp.value.trim();if(!it.yahooLpNames)it.yahooLpNames=[];it.yahooLpNames[g]=v;endEdit();persist();render();markDirty();flushDeferredSync();}inp.addEventListener('keydown',function(ev){ev.stopPropagation();if(ev.key==='Enter'){ev.preventDefault();inp.blur();}else if(ev.key==='Escape'){done=true;endEdit();render();}});inp.addEventListener('blur',save);inp.addEventListener('click',function(ev){ev.stopPropagation();});}
 function imgSideRow(tagHtml,imagesHtml){return '<div class="img2-side"><div class="img2-left img2-taglab">'+tagHtml+'</div><div class="img2-right">'+imagesHtml+'</div></div>';}
 /* 状態タブが「…大表示」のときは、Yahoo新規以降だけを大きく（横10×2行） */
 function bigViewOn(){return scopeBig();}
@@ -2069,7 +2069,15 @@ function applyTopCollapse(on){
 if($('btnCollapseTop'))$('btnCollapseTop').onclick=function(){applyTopCollapse(!document.body.classList.contains('top-collapsed'));};
 try{if(localStorage.getItem(TOPCOL)==='1')applyTopCollapse(true);}catch(e){}
 function updateStickyH(){var el=document.querySelector('.sticky-top');if(!el)return;var hh=Math.ceil(el.getBoundingClientRect().height);document.documentElement.style.setProperty('--sticky-h',hh+'px');}
-function render(){resetViewCache();_frameCache={id:null,map:null};var _g=$('grid');if(_g)_g.classList.toggle('imgfix',isImgView());
+var _inlineEditing=false,_renderQueued=false;
+function gridEditingNow(){
+  if(_inlineEditing)return true;
+  try{if(document.querySelector('#gridBody input:focus, #gridBody textarea:focus'))return true;}catch(e){}
+  return false;
+}
+function flushQueuedRender(){if(_renderQueued&&!gridEditingNow()){_renderQueued=false;try{renderHead();}catch(e){}render();}}
+document.addEventListener('focusout',function(){setTimeout(function(){flushQueuedRender();try{flushDeferredSync();}catch(e){}},80);},true);
+function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache();_frameCache={id:null,map:null};var _g=$('grid');if(_g)_g.classList.toggle('imgfix',isImgView());
   closeCdd();
   var tb=$('gridBody');tb.innerHTML='';
   var list=items.filter(function(x){
@@ -3333,10 +3341,11 @@ async function saveToGitHub(silent){
   }
 }
 var _syncTimer=null,ghBusy=false,ghPending=false,ghDeferred=false;
+function flushDeferredSync(){if(ghDeferred&&!editModalOpen()&&!gridEditingNow()){ghDeferred=false;setTimeout(function(){try{triggerSync(true);}catch(e){}},400);}}
 function scheduleSync(){setPending(true);if(!getCfg().pat)return;if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(function(){triggerSync(true);},800);}
 function editModalOpen(){var m=document.getElementById('editModal');return !!(m&&!m.hidden);}
 async function triggerSync(silent){
-  if(silent&&editModalOpen()){ghDeferred=true;setPending(true);try{log('編集中のため自動同期を保留（編集を閉じたら実行します）');}catch(e){}return;}
+  if(silent&&(editModalOpen()||gridEditingNow())){ghDeferred=true;setPending(true);try{log('編集中のため自動同期を保留（編集を終えたら実行します）');}catch(e){}return;}
   if(ghBusy){ghPending=true;try{syncQueueTxt(true);log('保存要求を受付：現在の処理の後に続けて実行します');}catch(e){}return;}
   ghBusy=true;
   try{await saveToGitHub(silent);}catch(e){}
