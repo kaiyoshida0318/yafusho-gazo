@@ -937,9 +937,12 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .overlay>.mini.modal-col{max-width:1200px!important}
 /* 項目管理は下半分にドッキング（上の表を見ながら調整） */
 #colsModal{background:transparent!important;place-items:end center!important;padding:0!important;pointer-events:none}
-#colsModal .mini.modal-col{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:62vh!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 16px!important}
+#colsModal .mini.modal-col{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:52vh!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 16px!important}
 #colsModal .mini.modal-col h2{margin-top:0}
 #colsModal .mini.modal-col .hint{margin:4px 0 10px}
+#colsModal.h-third .mini.modal-col{max-height:34vh!important}
+#colsModal.h-third .col-scope-pills{max-height:44px}
+#colsModal.h-third .cvt-hint{display:none}
 /* 状態管理も下にドッキング（上の表を見ながら調整）＋状態カードを左右に並べる */
 #statusModal{background:transparent!important;place-items:end center!important;padding:0!important;pointer-events:none}
 #statusModal .mini.modal-status{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:calc(100vh - 150px)!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 14px!important;display:flex;flex-direction:column}
@@ -992,7 +995,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.22.0</span>
+        <span class="version" id="version">v3.23.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1267,7 +1270,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.22.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.23.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1311,6 +1314,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <div class="acts">
       <button class="btn btn-ghost" id="btnResetCols">🔄 デフォルトに戻す</button>
       <button class="btn btn-ghost" id="btnDragResize">↔ ドラッグで幅調整</button>
+      <button class="btn btn-ghost" id="btnColsH" title="このパネルの高さを切り替え">▤ 高さ 1/2</button>
       <span class="sp"></span>
       <button class="btn btn-ghost" data-close="colsModal">閉じる</button>
     </div>
@@ -2529,7 +2533,13 @@ function renderColManager(){
   })(shown[i]);}
   if(!strip.children.length){var e=document.createElement('div');e.className='col-empty';e.textContent='この状態で表示中の項目がありません（「表示内容 → 状態」で選んでください）';strip.appendChild(e);}
 }
-function openCols(){colsModalOpen=true;renderHead();render();renderColManager();show('colsModal');}
+var COLSH='yafusho_colsh';
+function colsHGet(){try{return (localStorage.getItem(COLSH)==='third')?'third':'half';}catch(e){return 'half';}}
+function colsHSet(v){try{localStorage.setItem(COLSH,(v==='third')?'third':'half');}catch(e){}}
+function applyColsH(){var m=$('colsModal');if(!m)return;var v=colsHGet();m.classList.toggle('h-third',v==='third');var b=$('btnColsH');if(b)b.textContent=(v==='third')?'▤ 高さ 1/3':'▤ 高さ 1/2';}
+if($('btnColsH'))$('btnColsH').onclick=function(){colsHSet(colsHGet()==='half'?'third':'half');applyColsH();};
+applyColsH();
+function openCols(){colsModalOpen=true;applyColsH();renderHead();render();renderColManager();show('colsModal');}
 document.addEventListener('mousedown',function(e){if(!colsModalOpen)return;var t=e.target;if(t&&t.closest&&(t.closest('#colsModal')||t.closest('.col-resize-handle')||t.closest('#resizeBar')||t.closest('#cddMenu')||t.closest('.add-menu')))return;hide('colsModal');},true);
 $('btnCols2').onclick=openCols;
 $('btnResetCols').onclick=function(){var sc=curScope();if(!confirm('「'+scopeLabel(sc)+'」の表示項目・幅・並びをデフォルトに戻します。よろしいですか？'))return;var s=getSettings();if(s.colcfgS)delete s.colcfgS[sc];if(s.colorderS)delete s.colorderS[sc];if(s.scopeOpt)delete s.scopeOpt[sc];saveSettings(s);renderHead();render();renderColManager();log('「'+scopeLabel(sc)+'」の項目をデフォルトに戻しました');};
