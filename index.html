@@ -988,7 +988,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.17.0</span>
+        <span class="version" id="version">v3.18.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1262,7 +1262,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.17.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.18.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2617,8 +2617,28 @@ function galOf(side){if(side==='rakuten')return galRakuten;var m=/^yahoo(\d+)$/.
 function stripEl(side){return side==='rakuten'?$('stripRakuten'):$('strip_'+side);}
 function dzEl(side){return side==='rakuten'?$('dzRakuten'):$('dz_'+side);}
 function fileEl(side){return side==='rakuten'?$('fileRakuten'):$('file_'+side);}
+/* Yahoo新規の名称 → PR・価格・内容・備考の表へ反映（内容＝名称／PRは1つ目が30・以降は7） */
+function lpSalesSlot(k){return (k===1)?{gi:0,ri:0,pr:'30'}:{gi:1,ri:k-2,pr:'7'};}
+function applyLpNameToSales(k,oldName,newName){
+  if(k<1)return;
+  var sl=lpSalesSlot(k);
+  var nm=(newName!=null)?String(newName).trim():'';
+  var ov=(oldName!=null)?String(oldName).trim():'';
+  var had=!!(salesTbl[sl.gi]&&salesTbl[sl.gi].rows&&salesTbl[sl.gi].rows[sl.ri]);
+  if(!nm&&!had)return;
+  while(salesTbl.length<=sl.gi)salesTbl.push(stEmptyRow());
+  var g=salesTbl[sl.gi];
+  if(!g.rows||!g.rows.length)g.rows=[{pr:'',price:'',variation:''}];
+  while(g.rows.length<=sl.ri)g.rows.push({pr:'',price:'',variation:''});
+  if(!String(g.name||'').trim())g.name=sl.pr;
+  var cur=String(g.rows[sl.ri].price||'');
+  if(!cur.trim()||cur.trim()===ov)g.rows[sl.ri].price=nm;
+  renderSalesTable();
+}
 function syncLpName(k,v,from){
+  var _old=(galYahooLpNames[k]!=null)?String(galYahooLpNames[k]):'';
   galYahooLpNames[k]=v;
+  applyLpNameToSales(k,_old,v);
   var ids=['lpname_'+k,'lpnbox_'+k,'lpnbox2_'+k];
   for(var i=0;i<ids.length;i++){var e=$(ids[i]);if(e&&e!==from&&e.value!==v)e.value=v;}
   markDirty();
