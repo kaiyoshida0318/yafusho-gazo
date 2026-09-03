@@ -953,6 +953,12 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--line-2);border-radius:7px;background:#fff;font-size:12px;color:var(--ink-2);cursor:pointer;user-select:none;white-space:nowrap;line-height:1.5}
 .st-chip:hover{border-color:#9aa3ae}
 .st-chip .sg{font-size:11px;font-weight:800;opacity:.7}
+.st-chip.on{padding:3px 6px 3px 4px;gap:3px}
+.st-tg{appearance:none;border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:inherit;cursor:pointer;padding:2px 4px;border-radius:5px;display:inline-flex;align-items:center;gap:5px}
+.st-tg:hover{background:rgba(31,58,99,.12)}
+.st-wl{font-size:10.5px;color:#6f7c90;opacity:.85}
+.mini .st-w,.st-w{width:52px!important;flex:0 0 52px;margin-top:0!important;font:inherit;font-size:11.5px!important;padding:2px 5px!important;border:1px solid #c3d0e4;border-radius:5px!important;background:#fff;color:var(--ink-2);text-align:right}
+.st-w:focus{outline:0;border-color:var(--red)}
 .st-chip.on{background:#eaf1fb;border-color:#1f3a63;color:#1f3a63;font-weight:700}
 .st-chip.on:hover{background:#dbe6f7}
 .st-chip-big{background:#fff9f0;border-color:#e6c9a0;color:#8a6a30}
@@ -968,7 +974,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.9.0</span>
+        <span class="version" id="version">v3.10.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1236,7 +1242,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.9.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.10.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1689,7 +1695,7 @@ function stripInner(side,i,v){if(isTextItem(v)){var o=parseTextItem(v);return '<
 function urlCell(arr){arr=(arr||[]).filter(function(u){return u;});if(!arr.length)return '<span class="muted">—</span>';var h='';for(var i=0;i<arr.length;i++){h+='<a href="'+escA(arr[i])+'" target="_blank" rel="noopener">'+esc(arr[i])+'</a>';}return '<div class="url-cell">'+h+'</div>';}
 function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'</span>';}
 
-var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeMode=false,colsModalOpen=false;
+var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeMode=false,colsModalOpen=false,statusMgrOpen=false;
 var dirty=false;
 
 /* ===== 設定（出品内容の選択肢 / 列） — 端末ローカル ===== */
@@ -2007,7 +2013,7 @@ function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var
 function setColOrder(arr){var sc=curScope();var s=getSettings();if(!s.colorderS)s.colorderS={};s.colorderS[sc]=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
 function headLabelHtml(key,def){if(key==='pagePlan')return '制作LP<br>本数';return esc(def.label);}
-function renderHead(){resetViewCache();var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+((colResizeMode||colsModalOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
+function renderHead(){resetViewCache();var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+((colResizeMode||colsModalOpen||statusMgrOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
 
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;var _t=statusTarget(st);return items.filter(function(x){return x.status===_t;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
@@ -2237,7 +2243,7 @@ function renderCatManager(){
 }
 function addCategory(){var inp=$('newCatLabel');var v=(inp.value||'').trim();if(!v)return;var a=getCategories();a.push({id:'cat_'+Date.now().toString(36),label:v,icon:'📦'});saveCategories(a);inp.value='';renderCatManager();render();}
 /* ===== ステータス管理 ===== */
-function openStatusManager(){stEditSel=null;_stOpenSnap=stSnapshot();_stUndo=[];_stQuiet=true;renderStatusManager();show('statusModal');}
+function openStatusManager(){stEditSel=null;_stOpenSnap=stSnapshot();_stUndo=[];_stQuiet=true;statusMgrOpen=true;renderStatusManager();show('statusModal');renderHead();render();}
 /* ===== 状態管理：下書き（保存を押すまで確定しない）＋1つ戻す ===== */
 var _stOpenSnap=null,_stUndo=[];
 function stSnapshot(){var s=getSettings();return JSON.stringify({statuses:getStatuses(),colcfgS:s.colcfgS||{},colorderS:s.colorderS||{},scopeOpt:s.scopeOpt||{}});}
@@ -2247,7 +2253,7 @@ function stSyncUndo(){var b=$('btnStatusUndo');if(b){b.disabled=!_stUndo.length;
 function stApplyItems(list){if(!list)return;for(var i=0;i<list.length;i++){var it=findItemById(list[i].id);if(it)it.status=list[i].status;}persist();}
 function stUndoOnce(){if(!_stUndo.length)return;var e=_stUndo.pop();stApplyItems(e.items);stRestore(e.s);if(statusFilter&&!statusExists(statusFilter))statusFilter='';renderStatusManager();renderHead();render();stSyncUndo();}
 function statusExists(id){if(id==='__none__')return true;var a=getStatuses();for(var i=0;i<a.length;i++){if(a[i].id===id)return true;}return false;}
-function stFinishDraft(){_stQuiet=false;_stUndo=[];_stOpenSnap=null;stSyncUndo();}
+function stFinishDraft(){_stQuiet=false;_stUndo=[];_stOpenSnap=null;statusMgrOpen=false;stSyncUndo();try{renderHead();render();}catch(e){}}
 function stSave(){_stQuiet=false;try{saveSettings(getSettings());}catch(e){}stFinishDraft();log('状態の設定を保存しました');toast('✅ 状態の設定を保存しました');}
 function stCancel(){for(var i=_stUndo.length-1;i>=0;i--){stApplyItems(_stUndo[i].items);}if(_stOpenSnap)stRestore(_stOpenSnap);if(statusFilter&&!statusExists(statusFilter))statusFilter='';stFinishDraft();renderHead();render();toast('変更を取り消しました');}
 function renderStatusManager(){
@@ -2313,12 +2319,30 @@ function stEditor(sc){
 }
 function scopeColLabel(key){if(key==='buttonElemLp')return 'ボタン要素（LP別）';var d=colDef(key);return d?d.label:key;}
 function stChip(sc,key,on){
-  var c=document.createElement('button');c.type='button';c.className='st-chip'+(on?' on':'');
-  var g=document.createElement('span');g.className='sg';g.textContent=on?'✕':'＋';
-  c.appendChild(g);c.appendChild(document.createTextNode(scopeColLabel(key)));
-  c.title=on?'クリックで表示からはずす':'クリックで表示に追加';
-  c.onclick=function(){stPush();setScopeCol(sc,key,{visible:!on});if(sc===curScope()){renderHead();render();}renderStatusManager();};
-  return c;
+  if(!on){
+    var c=document.createElement('button');c.type='button';c.className='st-chip';
+    var g=document.createElement('span');g.className='sg';g.textContent='＋';
+    c.appendChild(g);c.appendChild(document.createTextNode(scopeColLabel(key)));
+    c.title='クリックで表示に追加';
+    c.onclick=function(){stPush();setScopeCol(sc,key,{visible:true});if(sc===curScope()){renderHead();render();}renderStatusManager();};
+    return c;
+  }
+  var w=document.createElement('span');w.className='st-chip on';
+  var tg=document.createElement('button');tg.type='button';tg.className='st-tg';
+  var g2=document.createElement('span');g2.className='sg';g2.textContent='✕';
+  tg.appendChild(g2);tg.appendChild(document.createTextNode(scopeColLabel(key)));
+  tg.title='クリックで表示からはずす';
+  tg.onclick=function(){stPush();setScopeCol(sc,key,{visible:false});if(sc===curScope()){renderHead();render();}renderStatusManager();};
+  w.appendChild(tg);
+  var cc=(scopeMap(sc)[key])||{};
+  var wl=document.createElement('span');wl.className='st-wl';wl.textContent='幅';w.appendChild(wl);
+  var wi=document.createElement('input');wi.type='number';wi.min='0';wi.step='10';wi.className='st-w';wi.title='幅(px)。空欄で自動';
+  if(cc.width!=null&&cc.width>0){wi.value=String(cc.width);}
+  else{wi.value='';var m=(sc===curScope())?getRenderedColWidth(key):null;wi.placeholder=(m!=null)?String(m):'自動';}
+  wi.onchange=function(){var v=parseInt((wi.value||'').trim(),10);stPush();setScopeCol(sc,key,{width:(isFinite(v)&&v>0)?v:null});if(sc===curScope()){renderHead();render();}renderStatusManager();};
+  wi.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();wi.blur();}};
+  w.appendChild(wi);
+  return w;
 }
 function stBigChip(sc,big){
   var b=document.createElement('button');b.type='button';b.className='st-chip st-chip-big'+(big?' on':'');
@@ -2339,7 +2363,7 @@ function stSection(sc,shown){
   }
   var big=scopeBig(sc);
   if(big===shown){row.appendChild(stBigChip(sc,big));n++;}
-  hd.innerHTML=(shown?'表示中の項目（'+n+'）<em>クリックではずす・並び順は「列名・列幅・列順管理」で調整</em>':'追加できる項目（'+n+'）<em>クリックで表示に追加</em>');
+  hd.innerHTML=(shown?'表示中の項目（'+n+'）<em>✕ ではずす／幅(px)を直接入力・表の列の境界（赤）をドラッグしても変えられます</em>':'追加できる項目（'+n+'）<em>クリックで表示に追加</em>');
   if(!n){var e=document.createElement('div');e.className='st-chips-empty';e.textContent=shown?'表示項目なし（下の候補から選んでください）':'すべて表示中です';row.appendChild(e);}
   wrap.appendChild(hd);wrap.appendChild(row);
   return wrap;
@@ -2421,11 +2445,11 @@ $('btnResetCols').onclick=function(){var sc=curScope();if(!confirm('「'+scopeLa
 function enterColResizeMode(){colResizeMode=true;hide('colsModal');var bar=$('resizeBar');if(bar)bar.hidden=false;renderHead();render();}
 function exitColResizeMode(){colResizeMode=false;var bar=$('resizeBar');if(bar)bar.hidden=true;renderHead();render();show('colsModal');renderColManager();}
 function startColResize(e,th,key){
-  e.preventDefault();e.stopPropagation();
+  e.preventDefault();e.stopPropagation();if(statusMgrOpen){try{stPush();}catch(_e){}}
   var startX=e.clientX;var startW=th.getBoundingClientRect().width;var cells=document.querySelectorAll('#grid [data-col-key="'+key+'"]');var newW=Math.round(startW);
   document.body.style.userSelect='none';document.body.style.cursor='col-resize';
   function move(ev){newW=Math.max(40,Math.round(startW+(ev.clientX-startX)));for(var i=0;i<cells.length;i++){cells[i].style.width=newW+'px';cells[i].style.minWidth=newW+'px';cells[i].style.maxWidth=newW+'px';}}
-  function up(){document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);document.body.style.userSelect='';document.body.style.cursor='';setColCfg(key,{width:newW});}
+  function up(){document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);document.body.style.userSelect='';document.body.style.cursor='';setColCfg(key,{width:newW});if(statusMgrOpen){try{renderStatusManager();}catch(e){}}}
   document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
 }
 if($('btnDragResize'))$('btnDragResize').onclick=enterColResizeMode;
