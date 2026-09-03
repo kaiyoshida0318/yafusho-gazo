@@ -754,14 +754,20 @@
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-14.webp",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-15.webp",
         "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-16.webp"
-      ]
+      ],
+      [],
+      [],
+      [],
+      [],
+      []
     ],
     "yahooLpNames": [
       null,
       "1set",
       "2set",
       "4set",
-      ""
+      "5set",
+      "10set"
     ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1782280573454-rakuten-5.webp",
@@ -796,7 +802,9 @@
     "buttonElem": "■個数：1set(4個)/2set・4set・5set・10set・15set・25setから選ぶ",
     "lpType": "",
     "memo": "",
-    "framesV": 2
+    "frames": {},
+    "framesV": 2,
+    "salesTable": []
   },
   {
     "id": "it1782280896016",
