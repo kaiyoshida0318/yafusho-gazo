@@ -855,6 +855,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-in:focus{outline:0;border-color:var(--red);background:#fff}
 .st-name{background:#fafbfc;position:relative}
 .st-act{text-align:center}
+.st-actbox{display:inline-flex;flex-direction:column;gap:4px;align-items:center}
+.st-ins{appearance:none;border:1px solid #bfe3cf;background:#fff;color:#1f9d63;border-radius:6px;width:24px;height:24px;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
+.st-ins:hover{background:#eaf7ef}
 .st-del{appearance:none;border:1px solid #f1c7c0;background:#fff;color:var(--red);border-radius:6px;width:24px;height:24px;font-size:13px;line-height:1;cursor:pointer}
 .st-del:hover{background:var(--red-soft)}
 .st-del-g{position:absolute;right:4px;bottom:4px}
@@ -1000,7 +1003,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.30.0</span>
+        <span class="version" id="version">v3.31.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1277,7 +1280,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.30.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.31.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2659,7 +2662,10 @@ function renderSalesTable(){
       if(r===0)h+='<td class="st-name" rowspan="'+rows.length+'"><textarea class="st-in" rows="2" data-g="'+g+'" data-f="name" placeholder="PR">'+esc(grp.name||'')+'</textarea><button type="button" class="st-del st-del-g" data-delg="'+g+'" title="このPRごと削除">×</button></td>';
       h+='<td><input class="st-in" type="text" data-g="'+g+'" data-r="'+r+'" data-f="pr" value="'+escA(rows[r].pr||'')+'" placeholder="価格"></td>';
       h+='<td><textarea class="st-in" rows="2" data-g="'+g+'" data-r="'+r+'" data-f="price" placeholder="内容">'+esc(rows[r].price||'')+'</textarea></td>';
-      h+='<td class="st-act"><button type="button" class="st-del" data-delr="'+g+'_'+r+'" title="この行を削除">×</button></td>';
+      h+='<td class="st-act"><div class="st-actbox">'
+        +'<button type="button" class="st-ins" data-insr="'+g+'_'+r+'" title="このPRの中に、この行の下へ 価格・内容 を追加">＋</button>'
+        +((rows.length>1)?('<button type="button" class="st-del" data-delr="'+g+'_'+r+'" title="この行を削除">×</button>'):'')
+        +'</div></td>';
       h+='</tr>';
     }
   }
@@ -2677,6 +2683,11 @@ if($('stBody')){
   $('stBody').addEventListener('click',function(e){
     var t=e.target;if(!t||!t.classList)return;
     if(t.classList.contains('st-del-g')){var g=parseInt(t.getAttribute('data-delg'),10);if(!confirm('このPRの行をすべて削除しますか？'))return;salesTbl.splice(g,1);renderSalesTable();markDirty();return;}
+    if(t.classList.contains('st-ins')){var vi=(t.getAttribute('data-insr')||'').split('_');var gi=parseInt(vi[0],10),ri=parseInt(vi[1],10);
+      if(!salesTbl[gi])return;
+      if(!salesTbl[gi].rows||!salesTbl[gi].rows.length)salesTbl[gi].rows=[{pr:'',price:'',variation:''}];
+      salesTbl[gi].rows.splice(ri+1,0,{pr:'',price:'',variation:''});
+      renderSalesTable();markDirty();return;}
     if(t.classList.contains('st-del')){var v=(t.getAttribute('data-delr')||'').split('_');var g2=parseInt(v[0],10),r2=parseInt(v[1],10);
       if(!salesTbl[g2])return;
       if(salesTbl[g2].rows.length<=1){salesTbl.splice(g2,1);}else{salesTbl[g2].rows.splice(r2,1);}
