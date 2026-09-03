@@ -931,6 +931,28 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 #colsModal .mini.modal-col{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:52vh!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 16px!important}
 #colsModal .mini.modal-col h2{margin-top:0}
 #colsModal .mini.modal-col .hint{margin:4px 0 10px}
+/* 状態管理も下にドッキング（上の表を見ながら調整）＋状態カードを左右に並べる */
+#statusModal{background:transparent!important;place-items:end center!important;padding:0!important;pointer-events:none}
+#statusModal .mini.modal-status{pointer-events:auto;width:100%!important;max-width:100%!important;max-height:calc(100vh - 200px)!important;border-radius:16px 16px 0 0!important;box-shadow:0 -14px 44px rgba(20,24,32,.30)!important;padding:14px 24px 14px!important;display:flex;flex-direction:column}
+#statusModal .mini.modal-status h2{margin-top:0}
+#statusModal .mini.modal-status .hint{margin:4px 0 8px}
+#statusModal .cat-add-row{flex:0 0 auto}
+.status-cols{display:flex;gap:10px;align-items:stretch;overflow-x:auto;overflow-y:hidden;flex:1 1 auto;min-height:150px;padding:2px 2px 8px;margin-bottom:8px}
+.st-card{flex:0 0 300px;display:flex;flex-direction:column;gap:6px;padding:8px 9px;background:#faf9f7;border:1px solid var(--line-2);border-radius:10px;min-height:0}
+.st-card.st-fixed{background:#f2f5fa;border-style:dashed}
+.st-card-title{font-size:13px;font-weight:800;color:var(--ink-2);padding:7px 2px}
+.st-card .status-num-picker{flex-wrap:nowrap}
+.st-card .cat-label-input{width:100%;flex:0 0 auto}
+.st-card-ops{display:flex;align-items:center;gap:4px}
+.st-card-ops .sp{flex:1}
+.st-card .btn-scols{width:100%;text-align:center}
+.st-chips{display:flex;flex-wrap:wrap;align-content:flex-start;gap:4px;overflow-y:auto;min-height:56px;max-height:200px;flex:1 1 auto;padding:6px;background:#fff;border:1px solid var(--line-2);border-radius:8px}
+.st-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px solid var(--line-2);border-radius:6px;background:#fff;font-size:11.5px;color:var(--ink-3);cursor:pointer;user-select:none;white-space:nowrap;line-height:1.5}
+.st-chip:hover{border-color:#9aa3ae}
+.st-chip.on{background:#eaf1fb;border-color:#1f3a63;color:#1f3a63;font-weight:700}
+.st-chip-big{background:#fff9f0;border-color:#e6c9a0}
+.st-chip-big.on{background:#ffe9c9;border-color:#d98324;color:#8a4b00}
+.st-chips-empty{font-size:11.5px;color:var(--ink-3);padding:3px}
 </style>
 </head>
 <body>
@@ -941,7 +963,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.5.1</span>
+        <span class="version" id="version">v3.6.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1209,7 +1231,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.5.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.6.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1302,12 +1324,12 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 <div class="overlay" id="statusModal" hidden>
   <div class="mini modal-status">
     <h2>📋 状態管理</h2>
-    <p class="hint">状態（下段タブ）を管理します。番号バッジ・並び替え・名前変更・追加・削除ができます。</p>
+    <p class="hint">状態を左右に並べて管理します。← → で並び替え、各カードの「表示項目」でその状態を選んだときに表に出す項目を設定します。</p>
     <div class="cat-add-row">
       <input type="text" id="newStatusLabel" placeholder="新しいステータス名" autocomplete="off">
       <button class="btn btn-red" id="btnAddStatus">追加</button>
     </div>
-    <div id="statusList" class="cat-list"></div>
+    <div id="statusList" class="status-cols"></div>
     <div class="acts"><button class="btn btn-line" id="btnStatusBack"><span class="btn-arrow">←</span>戻る</button><span class="sp"></span><button class="btn btn-ghost" data-close="statusModal">閉じる</button></div>
   </div>
 </div>
@@ -2213,60 +2235,74 @@ function addCategory(){var inp=$('newCatLabel');var v=(inp.value||'').trim();if(
 function openStatusManager(){stColsOpen=null;renderStatusManager();show('statusModal');}
 function renderStatusManager(){
   var list=$('statusList');if(!list)return;list.innerHTML='';var sts=getStatuses();
-  (function(){
-    var row=document.createElement('div');row.className='cat-row cat-row-all';
-    var lb=document.createElement('span');lb.className='status-all-label';lb.textContent='全体（絞り込みなし）';
-    var sp=document.createElement('span');sp.style.flex='1';
-    row.appendChild(lb);row.appendChild(sp);row.appendChild(scopeColsBtn(SCOPE_ALL));list.appendChild(row);
-    if(stColsOpen===SCOPE_ALL)list.appendChild(scopeColsPanel(SCOPE_ALL));
-  })();
-  for(var idx=0;idx<sts.length;idx++){(function(s,idx){
-    var row=document.createElement('div');row.className='cat-row';
+  list.appendChild(stCard(SCOPE_ALL,null,-1,sts.length));
+  for(var i=0;i<sts.length;i++)list.appendChild(stCard(sts[i].id,sts[i],i,sts.length));
+  list.appendChild(stCard('__none__',null,-1,sts.length));
+}
+function stCard(sc,s,idx,total){
+  var card=document.createElement('div');card.className='st-card'+(s?'':' st-fixed');
+  if(s){
     var numWrap=document.createElement('div');numWrap.className='status-num-picker';
-    [null,1,2,3,4,5].forEach(function(n){var b=document.createElement('button');b.type='button';b.className='status-num-opt';var val=n===null?'':('num:'+n);if((s.icon||'')===val)b.classList.add('selected');if(n===null){b.textContent='—';b.classList.add('status-num-none');}else b.innerHTML=statusNumSvg('num:'+n);b.onclick=function(){var a=getStatuses();a[idx].icon=val;saveStatuses(a);renderStatusManager();render();};numWrap.appendChild(b);});
-    var labelInp=document.createElement('input');labelInp.type='text';labelInp.value=s.label;labelInp.className='cat-label-input';
-    labelInp.onchange=function(){var a=getStatuses();a[idx].label=labelInp.value.trim()||a[idx].label;saveStatuses(a);render();};
-    var up=document.createElement('button');up.type='button';up.className='cat-mv';up.textContent='▲';up.disabled=idx===0;up.onclick=function(){var a=getStatuses();var t=a[idx-1];a[idx-1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
-    var dn=document.createElement('button');dn.type='button';dn.className='cat-mv';dn.textContent='▼';dn.disabled=idx===sts.length-1;dn.onclick=function(){var a=getStatuses();var t=a[idx+1];a[idx+1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
-    var del=document.createElement('button');del.type='button';del.className='cat-del';del.textContent='🗑';del.onclick=function(){if(!confirm('ステータス「'+s.label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;for(var i=0;i<items.length;i++){if(items[i].status===s.id)items[i].status='';}var a=getStatuses();a.splice(idx,1);saveStatuses(a);if(statusFilter===s.id)statusFilter='';persist();renderStatusManager();render();};
-    row.appendChild(numWrap);row.appendChild(labelInp);row.appendChild(scopeColsBtn(s.id));row.appendChild(up);row.appendChild(dn);row.appendChild(del);list.appendChild(row);
-    if(stColsOpen===s.id)list.appendChild(scopeColsPanel(s.id));
-  })(sts[idx],idx);}
-  (function(){
-    var row=document.createElement('div');row.className='cat-row cat-row-all';
-    var lb=document.createElement('span');lb.className='status-all-label';lb.textContent='未設定（状態なし）';
-    var sp=document.createElement('span');sp.style.flex='1';
-    row.appendChild(lb);row.appendChild(sp);row.appendChild(scopeColsBtn('__none__'));list.appendChild(row);
-    if(stColsOpen==='__none__')list.appendChild(scopeColsPanel('__none__'));
-  })();
+    [null,1,2,3,4,5].forEach(function(n){var b=document.createElement('button');b.type='button';b.className='status-num-opt';var val=(n===null)?'':('num:'+n);if((s.icon||'')===val)b.classList.add('selected');if(n===null){b.textContent='—';b.classList.add('status-num-none');}else b.innerHTML=statusNumSvg('num:'+n);b.onclick=function(){var a=getStatuses();a[idx].icon=val;saveStatuses(a);renderStatusManager();render();};numWrap.appendChild(b);});
+    card.appendChild(numWrap);
+    var labelInp=document.createElement('input');labelInp.type='text';labelInp.className='cat-label-input';labelInp.value=s.label;
+    labelInp.onchange=function(){var a=getStatuses();a[idx].label=labelInp.value.trim()||a[idx].label;saveStatuses(a);renderStatusManager();render();};
+    card.appendChild(labelInp);
+    var ops=document.createElement('div');ops.className='st-card-ops';
+    var lf=document.createElement('button');lf.type='button';lf.className='cat-mv';lf.textContent='←';lf.title='左へ';lf.disabled=(idx<=0);
+    lf.onclick=function(){var a=getStatuses();var t=a[idx-1];a[idx-1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
+    var rt=document.createElement('button');rt.type='button';rt.className='cat-mv';rt.textContent='→';rt.title='右へ';rt.disabled=(idx>=total-1);
+    rt.onclick=function(){var a=getStatuses();var t=a[idx+1];a[idx+1]=a[idx];a[idx]=t;saveStatuses(a);renderStatusManager();render();};
+    var sp=document.createElement('span');sp.className='sp';
+    var del=document.createElement('button');del.type='button';del.className='cat-del';del.textContent='🗑';
+    del.onclick=function(){if(!confirm('ステータス「'+s.label+'」を削除しますか？\n中のデータは「未設定」になります。'))return;for(var i=0;i<items.length;i++){if(items[i].status===s.id)items[i].status='';}var a=getStatuses();a.splice(idx,1);saveStatuses(a);if(statusFilter===s.id)statusFilter='';if(stColsOpen===s.id)stColsOpen=null;persist();renderStatusManager();render();};
+    ops.appendChild(lf);ops.appendChild(rt);ops.appendChild(sp);ops.appendChild(del);
+    card.appendChild(ops);
+  }else{
+    var t2=document.createElement('div');t2.className='st-card-title';t2.textContent=(sc===SCOPE_ALL?'全体（絞り込みなし）':'未設定（状態なし）');
+    card.appendChild(t2);
+  }
+  card.appendChild(scopeColsBtn(sc));
+  card.appendChild(scopeChips(sc));
+  return card;
 }
 var stColsOpen=null;
+function scopeOnCount(sc){var n=0;for(var i=0;i<DEFAULT_COLS.length;i++){if(scopeColOn(sc,DEFAULT_COLS[i].key))n++;}return n;}
 function scopeColsBtn(sc){
-  var b=document.createElement('button');b.type='button';b.className='btn-scols'+(stColsOpen===sc?' on':'');
-  b.textContent=(stColsOpen===sc?'▲ 表示項目':'▼ 表示項目');
+  var open=(stColsOpen===sc);
+  var b=document.createElement('button');b.type='button';b.className='btn-scols'+(open?' on':'');
+  b.textContent=(open?'▲ 選び終わる':'▼ 表示項目')+'（'+scopeOnCount(sc)+'）';
   b.title='この状態を選んだときに表に出す項目を選びます';
-  b.onclick=function(){stColsOpen=(stColsOpen===sc)?null:sc;renderStatusManager();};
+  b.onclick=function(){stColsOpen=open?null:sc;renderStatusManager();};
   return b;
 }
 function scopeColLabel(key){if(key==='buttonElemLp')return 'ボタン要素（LP別）';var d=colDef(key);return d?d.label:key;}
-function scopeColsPanel(sc){
-  var wrap=document.createElement('div');wrap.className='scope-cols';
-  var hd=document.createElement('div');hd.className='sc-head';hd.textContent='「'+scopeLabel(sc)+'」を選んだときに表示する項目（クリックでON/OFF・並び順や幅は「列名・列幅・列順管理」で調整）';
-  wrap.appendChild(hd);
-  for(var i=0;i<DEFAULT_COLS.length;i++){(function(key){
-    var on=scopeColOn(sc,key);
-    var lb=document.createElement('label');lb.className='scope-col'+(on?' on':'');
-    var cb=document.createElement('input');cb.type='checkbox';cb.checked=on;
-    cb.onchange=function(){setScopeCol(sc,key,{visible:cb.checked});lb.classList.toggle('on',cb.checked);if(sc===curScope()){renderHead();render();}};
-    var tx=document.createElement('span');tx.textContent=scopeColLabel(key);
-    lb.appendChild(cb);lb.appendChild(tx);wrap.appendChild(lb);
-  })(DEFAULT_COLS[i].key);}
+function stChip(sc,key,on,editing){
+  var c=document.createElement('button');c.type='button';c.className='st-chip'+(on?' on':'');
+  c.textContent=(editing?(on?'✓ ':'　'):'')+scopeColLabel(key);
+  c.title=editing?'クリックでON/OFF':'クリックで非表示にする';
+  c.onclick=function(){setScopeCol(sc,key,{visible:!on});if(sc===curScope()){renderHead();render();}renderStatusManager();};
+  return c;
+}
+function scopeChips(sc){
+  var editing=(stColsOpen===sc);
+  var wrap=document.createElement('div');wrap.className='st-chips';
+  var n=0;
+  for(var i=0;i<DEFAULT_COLS.length;i++){
+    var key=DEFAULT_COLS[i].key,on=scopeColOn(sc,key);
+    if(!editing&&!on)continue;
+    wrap.appendChild(stChip(sc,key,on,editing));n++;
+  }
   var big=scopeBig(sc);
-  var bl=document.createElement('label');bl.className='scope-col sc-big'+(big?' on':'');
-  var bc=document.createElement('input');bc.type='checkbox';bc.checked=big;
-  bc.onchange=function(){scopeBigSet(sc,bc.checked);bl.classList.toggle('on',bc.checked);if(sc===curScope()){renderHead();render();}};
-  var bt=document.createElement('span');bt.textContent='🔍 出品画像を大きく表示';
-  bl.appendChild(bc);bl.appendChild(bt);wrap.appendChild(bl);
+  if(editing||big){
+    (function(){
+      var b=document.createElement('button');b.type='button';b.className='st-chip st-chip-big'+(big?' on':'');
+      b.textContent=(editing?(big?'✓ ':'　'):'')+'🔍 画像を大きく';
+      b.onclick=function(){scopeBigSet(sc,!big);if(sc===curScope()){renderHead();render();}renderStatusManager();};
+      wrap.appendChild(b);n++;
+    })();
+  }
+  if(!n){var e=document.createElement('div');e.className='st-chips-empty';e.textContent='表示項目なし（「▼ 表示項目」から選んでください）';wrap.appendChild(e);}
   return wrap;
 }
 var VIEW_LABELS=[['','（変更しない）'],['basic','📋 基礎情報'],['detail','📑 販売設計'],['images','🖼️ 画像一覧'],['ybig','🔍 Y画像大表示'],['plan','📐 販売設計＋画像']];
