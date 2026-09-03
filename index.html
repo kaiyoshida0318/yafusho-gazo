@@ -437,6 +437,8 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cvt-btn:hover{border-color:var(--ink-3)}
 .cvt-btn.on{background:#1f3a63;color:#fff;border-color:#1f3a63}
 .cvt-hint{font-size:11.5px;color:var(--ink-3);margin-left:4px;flex:1;min-width:0}
+.lpn-detail{margin-bottom:10px}
+.lpn-detail .lpnames{margin-top:6px}
 .cvt-scope{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9px;background:#1f3a63;color:#fff;font-size:13px;font-weight:700;white-space:nowrap}
 .scope-cols{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px 10px;margin:2px 0 8px;background:#f7f8fa;border:1px solid var(--line-2);border-radius:9px}
 .scope-cols .sc-head{width:100%;font-size:11.5px;color:var(--ink-3);margin-bottom:2px}
@@ -983,7 +985,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.12.0</span>
+        <span class="version" id="version">v3.13.0</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
@@ -1137,6 +1139,9 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
             <label class="fld">ボタン要素<textarea id="fButtonElem" rows="5" placeholder="複数行OK"></textarea></label>
           </div>
           <div class="detail-right">
+            <div class="fld lpn-detail">Yahoo新規の名称
+              <div class="lpnames" id="lpNamesBox2"></div>
+            </div>
             <div class="fld-label gal-head" style="--gh-c:#2c3e50;background:#2c3e5014;border-left-color:#2c3e50"><span class="gh-title">📊 PR・価格・内容・備考</span></div>
             <div class="st-wrap">
               <table class="stbl">
@@ -1251,7 +1256,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.12.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.13.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2597,27 +2602,29 @@ function galOf(side){if(side==='rakuten')return galRakuten;var m=/^yahoo(\d+)$/.
 function stripEl(side){return side==='rakuten'?$('stripRakuten'):$('strip_'+side);}
 function dzEl(side){return side==='rakuten'?$('dzRakuten'):$('dz_'+side);}
 function fileEl(side){return side==='rakuten'?$('fileRakuten'):$('file_'+side);}
-function renderLpNamesBox(){
-  var box=$('lpNamesBox');if(!box)return;
+function syncLpName(k,v,from){
+  galYahooLpNames[k]=v;
+  var ids=['lpname_'+k,'lpnbox_'+k,'lpnbox2_'+k];
+  for(var i=0;i<ids.length;i++){var e=$(ids[i]);if(e&&e!==from&&e.value!==v)e.value=v;}
+  markDirty();
+}
+function fillLpNamesBox(boxId,pfx){
+  var box=$(boxId);if(!box)return;
   var n=galYahooLps.length;
   var h='';
   for(var k=1;k<n;k++){
     h+='<div class="lpn-row"><span class="lpn-tag" style="background:'+lpTagColor(k)+'">'+esc(lpDefName(k,n))+'</span>'+
-       '<input type="text" class="lpn-inp" id="lpnbox_'+k+'" data-lpn="'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'（名称を入力）"></div>';
+       '<input type="text" class="lpn-inp" id="'+pfx+k+'" data-lpn="'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'（名称を入力）"></div>';
   }
   if(!h)h='<div class="lpn-empty">制作LP本数を1以上にすると、Yahoo新規の名称を入力できます</div>';
   box.innerHTML=h;
   var ins=box.querySelectorAll('.lpn-inp');
   for(var i=0;i<ins.length;i++){(function(inp){
-    inp.addEventListener('input',function(){
-      var k=parseInt(inp.getAttribute('data-lpn'),10);
-      galYahooLpNames[k]=inp.value;
-      var m=$('lpname_'+k);if(m&&m.value!==inp.value)m.value=inp.value;
-      markDirty();
-    });
+    inp.addEventListener('input',function(){syncLpName(parseInt(inp.getAttribute('data-lpn'),10),inp.value,inp);});
   })(ins[i]);}
 }
-function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+(k===0?' sec-old':' sec-new')+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint"><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="start" title="先頭へ">⇤ 先頭</button><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="end" title="末尾へ">末尾 ⇥</button></span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){galYahooLpNames[k]=ni.value;var bx=$('lpnbox_'+k);if(bx&&bx.value!==ni.value)bx.value=ni.value;markDirty();});})(k);}
+function renderLpNamesBox(){fillLpNamesBox('lpNamesBox','lpnbox_');fillLpNamesBox('lpNamesBox2','lpnbox2_');}
+function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+(k===0?' sec-old':' sec-new')+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint"><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="start" title="先頭へ">⇤ 先頭</button><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="end" title="末尾へ">末尾 ⇥</button></span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){syncLpName(k,ni.value,ni);});})(k);}
   renderLpNamesBox();}
 function syncYahooLps(){var n=1+ppNewCount(val('fPagePlan'));for(var k=galYahooLps.length-1;k>=n;k--){if(galYahooLps[k]&&galYahooLps[k].length){n=k+1;break;}}renderYahooLpBlocks(n);}
 function updateMini(side){
