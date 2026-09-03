@@ -999,7 +999,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.25.1</span>
+        <span class="version" id="version">v3.26.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1276,7 +1276,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.25.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.26.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -3521,7 +3521,11 @@ async function loadSettingsFromGitHub(){
     }
     if(!rs||typeof rs!=='object')return;
     var remote=rs.updatedAt||0,local=settingsUpdatedAt();
-    if(!_viewerFirstLoad&&remote<=local){if(remote<local)log('表示設定：この端末の方が新しいので保持（remote='+remote+' / local='+local+'）');return;}
+    if(!_viewerFirstLoad){
+      if(getPending()){log('表示設定：この端末に未保存の変更があるため保持（保存後に自動で揃います）');return;}
+      if(remote===local)return;
+    }
+    log('表示設定：GitHub側を適用（remote='+remote+' / local='+local+'）');
     _applyingRemoteSettings=true;
     try{localStorage.setItem(SETTINGS,JSON.stringify(rs));}catch(e){}
     _applyingRemoteSettings=false;
