@@ -1016,7 +1016,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.37.0</span>
+        <span class="version" id="version">v3.38.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1293,7 +1293,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.37.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.38.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -3038,6 +3038,7 @@ function dlName(it,idx,src){var base=(it&&(it.code||it.name))?String(it.code||it
 function asciiSeg(s,fb){var t=String(s||'').replace(/[\\\/:*?"<>|]/g,'_');t=t.replace(/[^\x20-\x7E]/g,'');t=t.replace(/\s+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'');return t?t.slice(0,30):(fb||'');}
 function dlBase(it){return asciiSeg((it&&(it.code||it.name))||'','image');}
 function dlPad(n){return (n<10?'0':'')+n;}
+function dlStamp(){var d=new Date();function p2(v){return (v<10?'0':'')+v;}return ''+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes());}
 function dataUrlToBlob(src){var m=/^data:([^;,]+)?(;base64)?,(.*)$/.exec(src||'');if(!m)return null;var mime=m[1]||'application/octet-stream';var data=m[3]||'';if(m[2]){var bin=atob(data);var len=bin.length;var buf=new Uint8Array(len);for(var i=0;i<len;i++)buf[i]=bin.charCodeAt(i);return new Blob([buf],{type:mime});}return new Blob([decodeURIComponent(data)],{type:mime});}
 function downloadOne(src,fn){
   try{
@@ -3054,7 +3055,7 @@ function srcExt(src){
 }
 function b64ToU8(b64){var bs=atob(b64);var u=new Uint8Array(bs.length);for(var i=0;i<bs.length;i++)u[i]=bs.charCodeAt(i);return u;}
 async function srcToBytes(src){
-  if(/^data:/.test(src)){var i=String(src).indexOf(',');return b64ToU8(String(src).slice(i+1));}
+  if(/^data:/.test(src)){var i=String(src).indexOf(',');var b=String(src).slice(i+1);var hh=b.indexOf('#');if(hh>=0)b=b.slice(0,hh);b=b.replace(/\s+/g,'');return b64ToU8(b);}
   var r=await fetch(src,{cache:'no-store'});
   if(!r.ok)throw new Error('取得エラー '+r.status);
   return new Uint8Array(await r.arrayBuffer());
@@ -3091,11 +3092,16 @@ function bulkDlOneByOne(imgs,base,label,seg){
     k++;setTimeout(next,250);
   })();
 }
-async function bulkDownload(list,base,label,seg){
-  var imgs=[];for(var i=0;i<(list||[]).length;i++){if(list[i]&&!isTextItem(list[i]))imgs.push(list[i]);}
-  if(!imgs.length){toast('ダウンロードできる画像がありません');return;}
-  var folderAscii=asciiSeg((base||'images')+'_'+(seg||'img'),'images')||'images';
-  var folder=String((base||'images')+'_'+(label||seg||'img')).replace(/[\\\/:*?"<>|]/g,'_').replace(/\s+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,60)||folderAscii;
+async function bulkDownload(list,base,label,seg,isHidden){
+  var imgs=[],_skip=0;
+  for(var i=0;i<(list||[]).length;i++){
+    var _s=list[i];if(!_s||isTextItem(_s))continue;
+    if(typeof isHidden==='function'&&isHidden(_s)){_skip++;continue;}
+    imgs.push(_s);
+  }
+  if(!imgs.length){toast(_skip?('非表示以外の画像がありません（非表示'+_skip+'枚を除外）'):'ダウンロードできる画像がありません');return;}
+  var folder=(base||'image')+'-'+dlStamp();
+  var folderAscii=folder;
   var fname=function(n,src){return base+'_'+(seg||'img')+'_'+dlPad(n)+'.'+srcExt(src);};
   toast('「'+(label||'')+'」の'+imgs.length+'枚を準備中…');
   /* 1) フォルダを作って保存（Chrome等） */
@@ -3115,8 +3121,8 @@ async function bulkDownload(list,base,label,seg){
           var fh=await dir.getFileHandle(fname(a1+1,imgs[a1]),{create:true});
           var w=await fh.createWritable();await w.write(by);await w.close();
         }
-        log('一括DL（フォルダ）: '+folder+' '+imgs.length+'枚');
-        toast('📁 フォルダ「'+folder+'」に'+imgs.length+'枚を保存しました');
+        log('一括DL（フォルダ）: '+folder+' '+imgs.length+'枚'+(_skip?('（非表示'+_skip+'枚を除外）'):''));
+        toast('📁 フォルダ「'+folder+'」に'+imgs.length+'枚を保存しました'+(_skip?('（非表示'+_skip+'枚は除外）'):''));
         return;
       }catch(e1){log('フォルダ保存に失敗 → ZIPで出力: '+((e1&&e1.message)||e1));}
     }
@@ -3130,28 +3136,34 @@ async function bulkDownload(list,base,label,seg){
     var a3=document.createElement('a');a3.href=url;a3.download=folderAscii+'.zip';a3.style.display='none';
     document.body.appendChild(a3);a3.click();
     setTimeout(function(){if(a3.parentNode)a3.parentNode.removeChild(a3);URL.revokeObjectURL(url);},2000);
-    log('一括DL（ZIP）: '+folderAscii+'.zip（フォルダ名: '+folder+'） '+imgs.length+'枚');
-    toast('🗂 '+folderAscii+'.zip（'+imgs.length+'枚）をダウンロードしました');
+    log('一括DL（ZIP）: '+folderAscii+'.zip '+imgs.length+'枚'+(_skip?('（非表示'+_skip+'枚を除外）'):''));
+    toast('🗂 '+folderAscii+'.zip（'+imgs.length+'枚）をダウンロードしました'+(_skip?('（非表示'+_skip+'枚は除外）'):''));
     return;
   }catch(e2){log('ZIP作成に失敗 → 1枚ずつDL: '+((e2&&e2.message)||e2));}
   /* 3) 従来どおり1枚ずつ */
   bulkDlOneByOne(imgs,base,label,seg);
 }
+function itemHiddenFn(it,grp){
+  migrateItemFrames(it);
+  var fr=(it&&it.frames)||{};
+  return function(src){return fr[fKey(grp,src)]==='x';};
+}
 function bulkDlFromRow(el){
   var id=el.getAttribute('data-dl'),sd=el.getAttribute('data-dlside')||'r';
   var it=findItemById(id);if(!it)return;
-  if(sd==='r'){bulkDownload(imgArr(it,'rakuten'),dlBase(it),'楽天','rakuten');return;}
+  if(sd==='r'){bulkDownload(imgArr(it,'rakuten'),dlBase(it),'楽天','rakuten',itemHiddenFn(it,'r'));return;}
   var g=parseInt(sd.slice(1),10)||0;var lps=itemYahooLps(it,ppShowCount(it));
   var nm=lpDispName(it,g,lps.length)||lpDefName(g,lps.length);
-  bulkDownload(lps[g]||[],dlBase(it),nm,asciiSeg(nm,'Yahoo'+(g+1)));
+  bulkDownload(lps[g]||[],dlBase(it),nm,asciiSeg(nm,'Yahoo'+(g+1)),itemHiddenFn(it,'y'+g));
 }
 function bulkDlFromModal(el){
   var side=el.getAttribute('data-dlgal')||'rakuten';
   var base=dlBase({code:val('fCode'),name:val('fName')});
-  if(side==='rakuten'){bulkDownload(galRakuten,base,'楽天','rakuten');return;}
+  var _hid=function(src){return frameOfSrc(side,src)==='x';};
+  if(side==='rakuten'){bulkDownload(galRakuten,base,'楽天','rakuten',_hid);return;}
   var m=/^yahoo(\d+)$/.exec(side);var k=m?(+m[1]):0;
   var nm=(galYahooLpNames[k]!=null?String(galYahooLpNames[k]).trim():'')||lpDefName(k,galYahooLps.length);
-  bulkDownload(galOf(side),base,nm,asciiSeg(nm,'Yahoo'+(k+1)));
+  bulkDownload(galOf(side),base,nm,asciiSeg(nm,'Yahoo'+(k+1)),_hid);
 }
 function setDownloadDrag(e,src,fn){if(!src)return;try{var mime=dataUrlMime(src)||'image/jpeg';e.dataTransfer.setData('DownloadURL',mime+':'+(fn||'image.jpg')+':'+src);e.dataTransfer.setData('text/uri-list',src);e.dataTransfer.effectAllowed='copy';}catch(_e){}}
 var lbList=[],lbIdx=0,lbItem=null;
