@@ -1479,14 +1479,20 @@
       },
       {
         "name": "7",
-        "gcode": " si-22-05-case",
+        "gcode": " si-22-05-1s-case",
         "rows": [
           {
             "pr": "1480",
             "price": "Sサイズ+ケース",
             "variation": "",
             "code": " si-22-05-case"
-          },
+          }
+        ]
+      },
+      {
+        "name": "",
+        "gcode": " si-22-05-2l-case",
+        "rows": [
           {
             "pr": "1780",
             "price": "Lサイズ+ケース",
