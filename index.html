@@ -856,10 +856,17 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-name{background:#fafbfc;position:relative}
 .st-c4{width:120px}
 .mst-code{white-space:nowrap}
-.mst-open{margin-top:6px}
-.strip-open{appearance:none;flex:0 0 auto;width:26px;height:26px;align-self:center;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid #1f3a63;border-radius:6px;background:#fff;color:#1f3a63;font-size:13px;font-weight:800;line-height:1;cursor:pointer;padding:0}
+.mst-open{margin-top:9px}
+.strip-open{appearance:none;flex:0 0 auto;align-self:center;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;padding:6px 11px;border:1.5px solid #1f3a63;border-radius:8px;background:#eef3fb;color:#1f3a63;font:inherit;font-size:11.5px;font-weight:800;line-height:1.15;cursor:pointer;white-space:nowrap}
 .strip-open:hover{background:#1f3a63;color:#fff}
-.big-grid .strip-open{width:100%;height:100%;min-height:34px;align-self:stretch}
+.strip-open.so-old{border-color:#c88a2f;background:#fdf3e4;color:#8a5a12}
+.strip-open.so-old:hover{background:#c88a2f;color:#fff}
+.strip-open .so-a{font-size:12px;opacity:.85}
+.lp-grid>.strip-open{grid-column:span 2;justify-self:start}
+.big-grid .strip-open{grid-column:span 3;justify-self:start;width:auto;min-height:38px;align-self:center;font-size:12px}
+.lp-grid>.strip-open{width:auto}
+.mst-open .btn-open-detail{appearance:none;display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border:1px solid #1f3a63;border-radius:10px;background:#1f3a63;color:#fff;font:inherit;font-size:13.5px;font-weight:800;line-height:1;cursor:pointer;box-shadow:0 1px 3px rgba(20,24,32,.18)}
+.mst-open .btn-open-detail:hover{background:#16294a;border-color:#16294a}
 .st-act{text-align:center}
 .st-actbox{display:inline-flex;flex-direction:column;gap:4px;align-items:center}
 .st-ins{appearance:none;border:1px solid #bfe3cf;background:#fff;color:#1f9d63;border-radius:6px;width:24px;height:24px;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
@@ -1009,7 +1016,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.33.0</span>
+        <span class="version" id="version">v3.34.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1286,7 +1293,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.33.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.34.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1942,8 +1949,8 @@ function stripOfArr(arr,id,badge,grp){
 function openImgLinkHtml(id,grp){
   var isNew=/^y[1-9]/.test(String(grp||''));
   var tab=isNew?'images2':'images';
-  var ttl=isNew?'Yahoo出品画像を開く':'既存画像を開く';
-  return '<button type="button" class="strip-open" data-edit="'+escA(id)+'" data-opentab="'+tab+'" title="'+ttl+'">□</button>';
+  var lbl=isNew?'Yahoo出品画像':'既存画像';
+  return '<button type="button" class="strip-open'+(isNew?' so-new':' so-old')+'" data-edit="'+escA(id)+'" data-opentab="'+tab+'" title="'+lbl+'を開く"><span class="so-t">'+lbl+'</span><span class="so-a">↗</span></button>';
 }
 function cntCircle(cls,count,col){if(!count)return '';return '<span class="tag-cnt-o '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' title="'+count+'枚">'+count+'</span>';}
 function dlBtnHtml(id,side,cls,col){return '<button type="button" class="tag-dl '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' data-dl="'+escA(id)+'" data-dlside="'+escA(side)+'" title="この行の画像をまとめてダウンロード"><span>DL</span></button>';}
@@ -2017,7 +2024,7 @@ function salesTableCell(it){
     }
   }
   h+='</tbody></table></div>';
-  h+='<div class="mst-open"><button type="button" class="btn btn-line btn-sm" data-edit="'+escA(it.id)+'" data-opentab="detail" title="販売設計を開く">📑 販売設計をひらく</button></div>';
+  h+='<div class="mst-open"><button type="button" class="btn-open-detail" data-edit="'+escA(it.id)+'" data-opentab="detail" title="販売設計を開く"><span>📑 販売設計をひらく</span><span class="so-a">↗</span></button></div>';
   return h+'</td>';
 }
 function cnLinksHtml(it){
