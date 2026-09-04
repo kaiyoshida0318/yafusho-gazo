@@ -1016,7 +1016,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.34.0</span>
+        <span class="version" id="version">v3.35.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1179,16 +1179,16 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
               <span class="lpn-hd">Yahoo新規の名称<button type="button" class="btn btn-line btn-sm" id="btnLpToSales" title="名称を下の表の「内容」に入れる（PRは30／7）">↧ 表に反映</button></span>
               <div class="lpnames" id="lpNamesBox2"></div>
             </div>
-            <div class="fld-label gal-head" style="--gh-c:#2c3e50;background:#2c3e5014;border-left-color:#2c3e50"><span class="gh-title">📊 PR・価格・内容・商品コード</span></div>
+            <div class="fld-label gal-head" style="--gh-c:#2c3e50;background:#2c3e5014;border-left-color:#2c3e50"><span class="gh-title">📊 商品コード・価格・内容</span></div>
             <div class="st-wrap">
               <table class="stbl">
-                <thead><tr><th class="st-c1">PR</th><th class="st-c3">価格</th><th>内容</th><th class="st-c4">商品コード</th><th class="st-c5"></th></tr></thead>
+                <thead><tr><th class="st-c4">商品コード</th><th class="st-c3">価格</th><th>内容</th><th class="st-c5"></th></tr></thead>
                 <tbody id="stBody"></tbody>
               </table>
             </div>
             <div class="st-adds">
-              <button type="button" class="btn btn-line btn-sm" id="btnStAddAll">＋ PRから追加</button>
-              <button type="button" class="btn btn-line btn-sm" id="btnStAddRight">＋ 価格・内容を追加</button>
+              <button type="button" class="btn btn-line btn-sm" id="btnStAddAll">＋ 行を追加</button>
+              <button type="button" class="btn btn-line btn-sm" id="btnStAddRight">＋ 続けて行を追加</button>
             </div>
           </div>
         </div>
@@ -1293,7 +1293,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.34.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.35.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1841,7 +1841,7 @@ var DEFAULT_COLS=[
   {key:'salesMethod',label:'販売手法',width:null,align:'left'},
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
   {key:'buttonElemLp',label:'Yahoo新規の名称',width:140,align:'left'},
-  {key:'salesTable',label:'PR・価格・内容・商品コード',width:null,align:'left'},
+  {key:'salesTable',label:'商品コード・価格・内容',width:null,align:'left'},
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
@@ -2011,15 +2011,14 @@ function salesTableCell(it){
   var has=false;
   for(var i=0;i<t.length;i++){if((t[i].name||'').trim()){has=true;break;}var rs=t[i].rows||[];for(var j=0;j<rs.length;j++){if((rs[j].pr||'').trim()||(rs[j].price||'').trim()||(rs[j].code||'').trim()||(rs[j].variation||'').trim()){has=true;break;}}if(has)break;}
   if(!has)return '<td><span class="sm-empty">—</span></td>';
-  var h='<td><div class="mst-wrap"><table class="mini-st"><thead><tr><th>PR</th><th>価格</th><th>内容</th><th>商品コード</th></tr></thead><tbody>';
+  var h='<td><div class="mst-wrap"><table class="mini-st"><thead><tr><th>商品コード</th><th>価格</th><th>内容</th></tr></thead><tbody>';
   for(var g=0;g<t.length;g++){
     var rows=(t[g].rows&&t[g].rows.length)?t[g].rows:[{pr:'',price:'',variation:'',code:''}];
     for(var r=0;r<rows.length;r++){
       h+='<tr>';
-      if(r===0)h+='<td class="mst-pr" rowspan="'+rows.length+'">'+esc(t[g].name||'').replace(/\n/g,'<br>')+'</td>';
+      h+='<td class="mst-code">'+esc(rows[r].code||'')+'</td>';
       h+='<td class="mst-price">'+esc(rows[r].pr||'')+'</td>';
       h+='<td>'+esc(rows[r].price||'').replace(/\n/g,'<br>')+'</td>';
-      h+='<td class="mst-code">'+esc(rows[r].code||'')+'</td>';
       h+='</tr>';
     }
   }
@@ -2678,18 +2677,17 @@ function stTrim(t){
 function renderSalesTable(){
   var tb=$('stBody');if(!tb)return;
   var h='';
-  if(!salesTbl.length){h='<tr class="st-empty"><td colspan="5">下の「＋ PRから追加」で行を作成してください</td></tr>';}
+  if(!salesTbl.length){h='<tr class="st-empty"><td colspan="4">下の「＋ 行を追加」で行を作成してください</td></tr>';}
   for(var g=0;g<salesTbl.length;g++){
     var grp=salesTbl[g];var rows=grp.rows&&grp.rows.length?grp.rows:[{pr:'',price:'',variation:'',code:''}];
     for(var r=0;r<rows.length;r++){
       h+='<tr>';
-      if(r===0)h+='<td class="st-name" rowspan="'+rows.length+'"><textarea class="st-in" rows="2" data-g="'+g+'" data-f="name" placeholder="PR">'+esc(grp.name||'')+'</textarea><button type="button" class="st-del st-del-g" data-delg="'+g+'" title="このPRごと削除">×</button></td>';
+      h+='<td><input class="st-in" type="text" data-g="'+g+'" data-r="'+r+'" data-f="code" value="'+escA(rows[r].code||'')+'" placeholder="商品コード"></td>';
       h+='<td><input class="st-in" type="text" data-g="'+g+'" data-r="'+r+'" data-f="pr" value="'+escA(rows[r].pr||'')+'" placeholder="価格"></td>';
       h+='<td><textarea class="st-in" rows="2" data-g="'+g+'" data-r="'+r+'" data-f="price" placeholder="内容">'+esc(rows[r].price||'')+'</textarea></td>';
-      h+='<td><input class="st-in" type="text" data-g="'+g+'" data-r="'+r+'" data-f="code" value="'+escA(rows[r].code||'')+'" placeholder="商品コード"></td>';
       h+='<td class="st-act"><div class="st-actbox">'
-        +'<button type="button" class="st-ins" data-insr="'+g+'_'+r+'" title="このPRの中に、この行の下へ 価格・内容 を追加">＋</button>'
-        +((rows.length>1)?('<button type="button" class="st-del" data-delr="'+g+'_'+r+'" title="この行を削除">×</button>'):'')
+        +'<button type="button" class="st-ins" data-insr="'+g+'_'+r+'" title="この行の下に1行追加">＋</button>'
+        +'<button type="button" class="st-del" data-delr="'+g+'_'+r+'" title="この行を削除">×</button>'
         +'</div></td>';
       h+='</tr>';
     }
