@@ -1016,7 +1016,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.36.0</span>
+        <span class="version" id="version">v3.37.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1293,7 +1293,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.36.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.37.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -3047,17 +3047,95 @@ function downloadOne(src,fn){
     setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);if(rev)URL.revokeObjectURL(rev);},1500);
   }catch(_e){}
 }
-function bulkDownload(list,base,label,seg){
-  var imgs=[];for(var i=0;i<(list||[]).length;i++){if(list[i]&&!isTextItem(list[i]))imgs.push(list[i]);}
-  if(!imgs.length){toast('ダウンロードできる画像がありません');return;}
-  toast('「'+(label||'')+'」の'+imgs.length+'枚をダウンロード中…');
+function srcExt(src){
+  if(/^data:/.test(src))return extForMime(dataUrlMime(src));
+  var m=/\.([a-zA-Z0-9]{2,5})(?:[?#]|$)/.exec(String(src||''));
+  return m?m[1].toLowerCase():'jpg';
+}
+function b64ToU8(b64){var bs=atob(b64);var u=new Uint8Array(bs.length);for(var i=0;i<bs.length;i++)u[i]=bs.charCodeAt(i);return u;}
+async function srcToBytes(src){
+  if(/^data:/.test(src)){var i=String(src).indexOf(',');return b64ToU8(String(src).slice(i+1));}
+  var r=await fetch(src,{cache:'no-store'});
+  if(!r.ok)throw new Error('取得エラー '+r.status);
+  return new Uint8Array(await r.arrayBuffer());
+}
+/* ===== 最小ZIP（無圧縮・格納のみ） ===== */
+var _crcT=null;
+function crc32(u){
+  if(!_crcT){_crcT=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);_crcT[n]=c>>>0;}}
+  var c2=0xFFFFFFFF;for(var i=0;i<u.length;i++)c2=_crcT[(c2^u[i])&0xFF]^(c2>>>8);
+  return (c2^0xFFFFFFFF)>>>0;
+}
+function zipMake(files){
+  var enc=new TextEncoder(),parts=[],central=[],off=0;
+  function u16(v){return [v&255,(v>>>8)&255];}
+  function u32(v){return [v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];}
+  for(var i=0;i<files.length;i++){
+    var nm=enc.encode(files[i].name),d=files[i].data,c=crc32(d);
+    var lh=[].concat([80,75,3,4],u16(20),u16(2048),u16(0),u16(0),u16(0),u32(c),u32(d.length),u32(d.length),u16(nm.length),u16(0));
+    parts.push(new Uint8Array(lh));parts.push(nm);parts.push(d);
+    var ch=[].concat([80,75,1,2],u16(20),u16(20),u16(2048),u16(0),u16(0),u16(0),u32(c),u32(d.length),u32(d.length),u16(nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off));
+    central.push(new Uint8Array(ch));central.push(nm);
+    off+=lh.length+nm.length+d.length;
+  }
+  var cs=0;for(var j=0;j<central.length;j++)cs+=central[j].length;
+  var eocd=new Uint8Array([].concat([80,75,5,6],u16(0),u16(0),u16(files.length),u16(files.length),u32(cs),u32(off),u16(0)));
+  return new Blob(parts.concat(central,[eocd]),{type:'application/zip'});
+}
+function bulkDlOneByOne(imgs,base,label,seg){
   var k=0;
   (function next(){
     if(k>=imgs.length){log('一括DL: '+(label||'')+' '+imgs.length+'枚');toast('「'+(label||'')+'」'+imgs.length+'枚をダウンロードしました');return;}
     var src=imgs[k];
-    downloadOne(src,base+'_'+(seg||'img')+'_'+dlPad(k+1)+'.'+extForMime(dataUrlMime(src)));
+    downloadOne(src,base+'_'+(seg||'img')+'_'+dlPad(k+1)+'.'+srcExt(src));
     k++;setTimeout(next,250);
   })();
+}
+async function bulkDownload(list,base,label,seg){
+  var imgs=[];for(var i=0;i<(list||[]).length;i++){if(list[i]&&!isTextItem(list[i]))imgs.push(list[i]);}
+  if(!imgs.length){toast('ダウンロードできる画像がありません');return;}
+  var folderAscii=asciiSeg((base||'images')+'_'+(seg||'img'),'images')||'images';
+  var folder=String((base||'images')+'_'+(label||seg||'img')).replace(/[\\\/:*?"<>|]/g,'_').replace(/\s+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,60)||folderAscii;
+  var fname=function(n,src){return base+'_'+(seg||'img')+'_'+dlPad(n)+'.'+srcExt(src);};
+  toast('「'+(label||'')+'」の'+imgs.length+'枚を準備中…');
+  /* 1) フォルダを作って保存（Chrome等） */
+  if(window.showDirectoryPicker){
+    var root=null;
+    try{root=await window.showDirectoryPicker({mode:'readwrite',id:'yafusho-dl'});}
+    catch(e0){
+      if(e0&&e0.name==='AbortError'){toast('ダウンロードをキャンセルしました');return;}
+      log('フォルダ選択が使えないためZIPで出力します: '+((e0&&e0.name)||e0));
+      root=null;
+    }
+    if(root){
+      try{
+        var dir=await root.getDirectoryHandle(folder,{create:true});
+        for(var a1=0;a1<imgs.length;a1++){
+          var by=await srcToBytes(imgs[a1]);
+          var fh=await dir.getFileHandle(fname(a1+1,imgs[a1]),{create:true});
+          var w=await fh.createWritable();await w.write(by);await w.close();
+        }
+        log('一括DL（フォルダ）: '+folder+' '+imgs.length+'枚');
+        toast('📁 フォルダ「'+folder+'」に'+imgs.length+'枚を保存しました');
+        return;
+      }catch(e1){log('フォルダ保存に失敗 → ZIPで出力: '+((e1&&e1.message)||e1));}
+    }
+  }
+  /* 2) ZIP（フォルダ入り）でダウンロード */
+  try{
+    var files=[];
+    for(var a2=0;a2<imgs.length;a2++)files.push({name:folder+'/'+fname(a2+1,imgs[a2]),data:await srcToBytes(imgs[a2])});
+    var blob=zipMake(files);
+    var url=URL.createObjectURL(blob);
+    var a3=document.createElement('a');a3.href=url;a3.download=folderAscii+'.zip';a3.style.display='none';
+    document.body.appendChild(a3);a3.click();
+    setTimeout(function(){if(a3.parentNode)a3.parentNode.removeChild(a3);URL.revokeObjectURL(url);},2000);
+    log('一括DL（ZIP）: '+folderAscii+'.zip（フォルダ名: '+folder+'） '+imgs.length+'枚');
+    toast('🗂 '+folderAscii+'.zip（'+imgs.length+'枚）をダウンロードしました');
+    return;
+  }catch(e2){log('ZIP作成に失敗 → 1枚ずつDL: '+((e2&&e2.message)||e2));}
+  /* 3) 従来どおり1枚ずつ */
+  bulkDlOneByOne(imgs,base,label,seg);
 }
 function bulkDlFromRow(el){
   var id=el.getAttribute('data-dl'),sd=el.getAttribute('data-dlside')||'r';
