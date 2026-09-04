@@ -1005,7 +1005,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.32.0</span>
+        <span class="version" id="version">v3.32.1</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1282,7 +1282,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.32.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.32.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2189,7 +2189,7 @@ function populateFormSelects(){refreshFormCdd('fStatus');refreshFormCdd('fListin
 function populateListing(){populateFormSelects();}
 function resetForm(){var _bd=$('btnDup');if(_bd)_bd.hidden=true;populateListing();mainYahoo='';mainRakuten='';updateMini('yahoo');updateMini('rakuten');galYahooLps=[[]];galYahooLpNames=[];galRakuten=[];galFrames={};salesTbl=[stEmptyRow()];renderSalesTable();stripExpanded={};renderYahooLpBlocks(1);renderStrip('rakuten');switchTab('basic');setVal('fDate',todayStr());setVal('fRating','');setVal('fListing','');setVal('fPagePlan','');setVal('fPagePlan2','');setVal('fStatus',defaultStatusId());setVal('fName','');setVal('fCode','');setVal('fMethod','');setVal('fVariation','');setVal('fButtonElem','');setVal('fMemo','');setVal('fSearchUrl','');resetUrls('urlYahoo',PH_Y);resetUrls('urlYahooRank',PH_RANK);resetUrls('urlRakuten',PH_R);}
 function openNew(){editingId=null;$('edTitle').textContent='新規作成';resetForm();show('editModal');}
-function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahooLps=itemYahooLps(it,ppShowCount(it));galYahooLpNames=(it.yahooLpNames||[]).slice();salesTbl=stEnsure(it.salesTable);galYahooLpNames=(it.yahooLpNames||[]).slice();applyAllLpNamesToSales(false);renderSalesTable();migrateItemFrames(it);galFrames={};if(it.frames)for(var _fk in it.frames)galFrames[_fk]=it.frames[_fk];galRakuten=imgArr(it,'rakuten');stripExpanded={};renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fPagePlan2',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlYahooRank',it.yahooRank,PH_RANK);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
+function openEdit(id,tab){var it=null;for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}if(!it)return;editingId=id;$('edTitle').textContent='編集';var _bd=$('btnDup');if(_bd)_bd.hidden=false;populateListing();mainYahoo=it.yahooMain||'';mainRakuten=it.rakutenMain||'';updateMini('yahoo');updateMini('rakuten');galYahooLps=itemYahooLps(it,ppShowCount(it));galYahooLpNames=(it.yahooLpNames||[]).slice();salesTbl=stEnsure(it.salesTable);galYahooLpNames=(it.yahooLpNames||[]).slice();renderSalesTable();migrateItemFrames(it);galFrames={};if(it.frames)for(var _fk in it.frames)galFrames[_fk]=it.frames[_fk];galRakuten=imgArr(it,'rakuten');stripExpanded={};renderYahooLpBlocks(galYahooLps.length);renderStrip('rakuten');switchTab(tab||'basic');setVal('fDate',it.date||'');setVal('fRating',it.rating||'');setVal('fListing',it.listingType||'');setVal('fPagePlan',it.pagePlan||'');setVal('fPagePlan2',it.pagePlan||'');setVal('fStatus',it.status||'');setVal('fName',it.name||'');setVal('fCode',it.code||'');setVal('fMethod',it.salesMethod||'');setVal('fVariation',it.variation||'');setVal('fButtonElem',it.buttonElem||'');setVal('fMemo',it.memo||'');setVal('fSearchUrl',it.searchUrl||'');fillUrls('urlYahoo',it.yahooUrls,PH_Y);fillUrls('urlYahooRank',it.yahooRank,PH_RANK);fillUrls('urlRakuten',it.rakutenUrls,PH_R);show('editModal');}
 
 function firstRealImg(arr){for(var i=0;i<arr.length;i++){if(arr[i]&&!isTextItem(arr[i]))return arr[i];}return '';}
 function gather(){var _lps=galYahooLps.map(function(a){return a.slice();});while(_lps.length>1&&_lps[_lps.length-1].length===0&&!String(galYahooLpNames[_lps.length-1]||'').trim())_lps.pop();var _names=[];for(var _n=0;_n<_lps.length;_n++){_names.push(galYahooLpNames[_n]!=null?String(galYahooLpNames[_n]).trim():null);}var _yflat=[];for(var _i=0;_i<_lps.length;_i++)for(var _j=0;_j<_lps[_i].length;_j++)_yflat.push(_lps[_i][_j]);var _rk=galRakuten.slice();var _d={id:editingId||('it'+Date.now()),yahooMain:firstRealImg(_yflat),rakutenMain:firstRealImg(_rk),yahooImgs:_yflat,yahooLps:_lps,yahooLpNames:_names,rakutenImgs:_rk,date:val('fDate'),rating:val('fRating'),listingType:val('fListing'),pagePlan:val('fPagePlan'),status:val('fStatus'),name:val('fName'),code:val('fCode'),salesMethod:val('fMethod'),searchUrl:val('fSearchUrl'),yahooUrls:collectUrls('urlYahoo'),rakutenUrls:collectUrls('urlRakuten')};_d.yahooRank=collectUrls('urlYahooRank');_d.variation=val('fVariation');_d.buttonElem=val('fButtonElem');_d.lpType=(document.getElementById('fLp')?val('fLp'):(editingId&&findItemById(editingId)?(findItemById(editingId).lpType||''):''));_d.memo=val('fMemo');_d.frames=galFrames;_d.framesV=2;_d.salesTable=stTrim(salesTbl);if(editingId){var _old=findItemById(editingId);if(_old&&_old.buttonElemLps)_d.buttonElemLps=_old.buttonElemLps;}return _d;}
@@ -2728,11 +2728,12 @@ function itemApplyLpName(it,k,ov,nv){
     var t=stClone(it.salesTable||[]);
     var had=!!(t[sl.gi]&&t[sl.gi].rows&&t[sl.gi].rows[sl.ri]);
     if(!nm&&!had)return;
+    var made=(t.length<=sl.gi);
     while(t.length<=sl.gi)t.push(stEmptyRow());
     var g=t[sl.gi];
     if(!g.rows||!g.rows.length)g.rows=[{pr:'',price:'',variation:'',code:''}];
     while(g.rows.length<=sl.ri)g.rows.push({pr:'',price:'',variation:'',code:''});
-    if(!String(g.name||'').trim())g.name=sl.pr;
+    if(made&&!String(g.name||'').trim())g.name=sl.pr;
     var cur=String(g.rows[sl.ri].price||'').trim();
     var names={};for(var i=1;i<(it.yahooLpNames||[]).length;i++){var v2=it.yahooLpNames[i];if(v2!=null&&String(v2).trim())names[String(v2).trim()]=1;}
     if(!cur||cur===ov||(names[cur]&&cur!==nm))g.rows[sl.ri].price=nm;
@@ -2742,11 +2743,12 @@ function itemApplyLpName(it,k,ov,nv){
 function lpSalesSlot(k){return (k===1)?{gi:0,ri:0,pr:'30'}:{gi:1,ri:k-2,pr:'7'};}
 function lpNameSet(){var o={};for(var i=1;i<galYahooLpNames.length;i++){var v=galYahooLpNames[i];if(v!=null&&String(v).trim())o[String(v).trim()]=1;}return o;}
 function stSlotEnsure(sl){
+  var made=(salesTbl.length<=sl.gi);
   while(salesTbl.length<=sl.gi)salesTbl.push(stEmptyRow());
   var g=salesTbl[sl.gi];
   if(!g.rows||!g.rows.length)g.rows=[{pr:'',price:'',variation:'',code:''}];
   while(g.rows.length<=sl.ri)g.rows.push({pr:'',price:'',variation:'',code:''});
-  if(!String(g.name||'').trim())g.name=sl.pr;
+  if(made&&!String(g.name||'').trim())g.name=sl.pr;
   return g;
 }
 function applyLpNameToSales(k,oldName,newName,force){
@@ -2765,6 +2767,13 @@ function applyLpNameToSales(k,oldName,newName,force){
 }
 function applyAllLpNamesToSales(force){
   var n=0;
+  if(force){
+    for(var q=1;q<galYahooLps.length;q++){
+      var v0=galYahooLpNames[q];if(v0==null||!String(v0).trim())continue;
+      var sl0=lpSalesSlot(q);
+      if(salesTbl[sl0.gi]&&!String(salesTbl[sl0.gi].name||'').trim())salesTbl[sl0.gi].name=sl0.pr;
+    }
+  }
   for(var k=1;k<galYahooLps.length;k++){
     var v=galYahooLpNames[k];
     if(v==null||!String(v).trim())continue;
