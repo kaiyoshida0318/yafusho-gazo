@@ -856,6 +856,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .st-name{background:#fafbfc;position:relative}
 .st-c4{width:120px}
 .mst-code{white-space:nowrap}
+.mst-open{margin-top:6px}
+.strip-open{appearance:none;flex:0 0 auto;width:26px;height:26px;align-self:center;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid #1f3a63;border-radius:6px;background:#fff;color:#1f3a63;font-size:13px;font-weight:800;line-height:1;cursor:pointer;padding:0}
+.strip-open:hover{background:#1f3a63;color:#fff}
+.big-grid .strip-open{width:100%;height:100%;min-height:34px;align-self:stretch}
 .st-act{text-align:center}
 .st-actbox{display:inline-flex;flex-direction:column;gap:4px;align-items:center}
 .st-ins{appearance:none;border:1px solid #bfe3cf;background:#fff;color:#1f9d63;border-radius:6px;width:24px;height:24px;font-size:13px;font-weight:800;line-height:1;cursor:pointer}
@@ -1005,7 +1009,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.32.2</span>
+        <span class="version" id="version">v3.33.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1282,7 +1286,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.32.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.33.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1932,7 +1936,14 @@ function stripOfArr(arr,id,badge,grp){
   var n=arr.length,lim=(n>_cap)?_cap:n;
   for(var i=0;i<lim;i++){if(!arr[i])continue;s+=thumbItem(arr[i],id,'strip-thumb',grp);}
   if(n>_cap){s+='<span class="strip-more clk" data-edit="'+escA(id)+'" title="残り'+(n-_cap)+'枚（クリックで全画像を編集）">+'+(n-_cap)+'</span>';}
+  if(id)s+=openImgLinkHtml(id,grp);
   return s+'</div>';
+}
+function openImgLinkHtml(id,grp){
+  var isNew=/^y[1-9]/.test(String(grp||''));
+  var tab=isNew?'images2':'images';
+  var ttl=isNew?'Yahoo出品画像を開く':'既存画像を開く';
+  return '<button type="button" class="strip-open" data-edit="'+escA(id)+'" data-opentab="'+tab+'" title="'+ttl+'">□</button>';
 }
 function cntCircle(cls,count,col){if(!count)return '';return '<span class="tag-cnt-o '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' title="'+count+'枚">'+count+'</span>';}
 function dlBtnHtml(id,side,cls,col){return '<button type="button" class="tag-dl '+(cls==='tb-r'?'cnt-r':'cnt-y')+'"'+(col?' style="color:'+col+'"':'')+' data-dl="'+escA(id)+'" data-dlside="'+escA(side)+'" title="この行の画像をまとめてダウンロード"><span>DL</span></button>';}
@@ -1954,6 +1965,7 @@ function imgBlockBigHtml(it){
     var gh='<div class="big-grid" style="grid-template-columns:repeat('+_n+',minmax(0,1fr))">';
     for(var n=0;n<lim;n++)gh+=thumbItem(arr[n],it.id,'big-thumb','y'+g);
     if(arr.length>BIG_CAP)gh+='<span class="big-more clk" data-edit="'+escA(it.id)+'" title="残り'+(arr.length-lim)+'枚">+'+(arr.length-lim)+'</span>';
+    gh+=openImgLinkHtml(it.id,'y'+g);
     gh+='</div>';
     h+='<div class="big-group" style="border-color:'+lpTagColor(g)+'66;background:'+lpTagColor(g)+'0a"><div class="img2-side"><div class="img2-left img2-taglab">'+tagLblY(it,g,lps.length,arr.length)+'</div><div class="img2-right">'+gh+'</div></div></div>';
   }
@@ -2004,7 +2016,9 @@ function salesTableCell(it){
       h+='</tr>';
     }
   }
-  return h+'</tbody></table></div></td>';
+  h+='</tbody></table></div>';
+  h+='<div class="mst-open"><button type="button" class="btn btn-line btn-sm" data-edit="'+escA(it.id)+'" data-opentab="detail" title="販売設計を開く">📑 販売設計をひらく</button></div>';
+  return h+'</td>';
 }
 function cnLinksHtml(it){
   if(hasUrlCols())return '';
