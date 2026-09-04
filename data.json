@@ -1364,7 +1364,7 @@
       null,
       "30%",
       "7%",
-      "7%"
+      ""
     ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-rakuten-5.jpg",
@@ -1386,7 +1386,7 @@
     "date": "2026-07-29",
     "rating": "4.42",
     "listingType": "cat_b",
-    "pagePlan": "3",
+    "pagePlan": "2",
     "status": "st_doing",
     "name": "爪切りS+ケース/L+ケース",
     "code": "si-22-05",
@@ -1474,30 +1474,6 @@
             "price": "Lサイズ5種類",
             "variation": "",
             "code": " si-22-05-2l"
-          }
-        ]
-      },
-      {
-        "name": "7",
-        "gcode": " si-22-05-1s-case",
-        "rows": [
-          {
-            "pr": "1480",
-            "price": "Sサイズ+ケース",
-            "variation": "",
-            "code": " si-22-05-case"
-          }
-        ]
-      },
-      {
-        "name": "",
-        "gcode": " si-22-05-2l-case",
-        "rows": [
-          {
-            "pr": "1780",
-            "price": "Lサイズ+ケース",
-            "variation": "",
-            "code": ""
           }
         ]
       }
