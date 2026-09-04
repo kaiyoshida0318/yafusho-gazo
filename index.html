@@ -851,6 +851,17 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .stbl .st-c3{width:14%}
 .stbl .st-c5{width:34px}
 .st-in{width:100%;box-sizing:border-box;font:inherit;font-size:12.5px;border:1px solid transparent;border-radius:6px;padding:4px 6px;background:#fff;color:var(--ink);resize:vertical}
+/* 内容・種類：エクセル風にコンパクト */
+#ctBody td{padding:0;vertical-align:middle}
+#ctBody .st-name{position:static}
+#ctBody .ct-cell{display:flex;align-items:center;gap:3px;padding:1px 2px}
+#ctBody .ct-in{font-size:12.5px;padding:2px 5px;height:24px;line-height:1.2;border-radius:4px;border-color:var(--line-2)}
+#ctBody .ct-in:focus{border-color:var(--red);background:#fff}
+#ctBody .st-del-g{position:static;flex:0 0 auto;width:20px;height:20px;font-size:11px;line-height:1;border-radius:5px}
+#ctBody .st-act{padding:1px 3px;vertical-align:middle}
+#ctBody .st-actbox{flex-direction:row;gap:3px}
+#ctBody .st-ins,#ctBody .st-act .st-del{width:19px;height:19px;font-size:10.5px;border-radius:5px}
+#ctBody tr .st-empty,#ctBody .st-empty td{padding:6px 8px}
 .st-in:hover{border-color:var(--line-2)}
 .st-in:focus{outline:0;border-color:var(--red);background:#fff}
 .st-name{background:#fafbfc;position:relative}
@@ -879,6 +890,8 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .fld-stock select{width:100%;margin-top:6px;font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0;background:#fff}
 .fld-stock select:focus{border-color:var(--red)}
 .ct-head{margin-bottom:8px}
+#ctBody+tbody,#panel-detail .ct-tbl th{padding:5px 8px}
+.ct-tbl .st-c5{width:52px}
 @media(max-width:1100px){.detail-split{grid-template-columns:1fr}}
 .gal-nav{appearance:none;border:1px solid var(--line-2);background:#fff;border-radius:999px;padding:3px 11px;margin-left:6px;font:inherit;font-size:11.5px;font-weight:700;color:var(--ink-2);cursor:pointer;font-family:"Zen Kaku Gothic New",sans-serif}
 .gal-nav:hover{border-color:var(--ink-3);color:var(--ink-1)}
@@ -1019,7 +1032,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.40.0</span>
+        <span class="version" id="version">v3.40.1</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1182,7 +1195,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
             <div class="fld">
               <div class="fld-label gal-head ct-head" style="--gh-c:#1f9d63;background:#1f9d6314;border-left-color:#1f9d63"><span class="gh-title">📝 内容・種類</span></div>
               <div class="st-wrap">
-                <table class="stbl">
+                <table class="stbl ct-tbl">
                   <thead><tr><th class="st-c4">内容</th><th>種類</th><th class="st-c5"></th></tr></thead>
                   <tbody id="ctBody"></tbody>
                 </table>
@@ -1315,7 +1328,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.40.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.40.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2705,8 +2718,8 @@ function renderContentTable(){
     var grp=contentTbl[g];var rows=grp.rows&&grp.rows.length?grp.rows:[{kind:''}];
     for(var r=0;r<rows.length;r++){
       h+='<tr>';
-      if(r===0)h+='<td class="st-name" rowspan="'+rows.length+'"><textarea class="st-in ct-in" rows="2" data-g="'+g+'" data-f="name" placeholder="内容">'+esc(grp.name||'')+'</textarea><button type="button" class="st-del st-del-g" data-ctdelg="'+g+'" title="この内容ごと削除">×</button></td>';
-      h+='<td><textarea class="st-in ct-in" rows="2" data-g="'+g+'" data-r="'+r+'" data-f="kind" placeholder="種類">'+esc(rows[r].kind||'')+'</textarea></td>';
+      if(r===0)h+='<td class="st-name" rowspan="'+rows.length+'"><div class="ct-cell"><input type="text" class="st-in ct-in" data-g="'+g+'" data-f="name" value="'+escA(grp.name||'')+'" placeholder="内容"><button type="button" class="st-del st-del-g" data-ctdelg="'+g+'" title="この内容ごと削除">×</button></div></td>';
+      h+='<td><div class="ct-cell"><input type="text" class="st-in ct-in" data-g="'+g+'" data-r="'+r+'" data-f="kind" value="'+escA(rows[r].kind||'')+'" placeholder="種類"></div></td>';
       h+='<td class="st-act"><div class="st-actbox">'
         +'<button type="button" class="st-ins" data-ctinsr="'+g+'_'+r+'" title="同じ内容の中に、この行の下へ 種類 を追加">＋</button>'
         +((rows.length>1)?('<button type="button" class="st-del" data-ctdelr="'+g+'_'+r+'" title="この行を削除">×</button>'):'')
