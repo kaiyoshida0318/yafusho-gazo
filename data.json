@@ -1459,7 +1459,8 @@
           {
             "pr": "1380",
             "price": "Sサイズ5種類",
-            "variation": ""
+            "variation": "",
+            "code": " si-22-05"
           }
         ]
       },
@@ -1469,7 +1470,14 @@
           {
             "pr": "1680",
             "price": "Lサイズ5種類",
-            "variation": ""
+            "variation": "",
+            "code": " si-22-05-2l"
+          },
+          {
+            "pr": "",
+            "price": "7%",
+            "variation": "",
+            "code": ""
           }
         ]
       },
@@ -1479,12 +1487,14 @@
           {
             "pr": "1480",
             "price": "Sサイズ+ケース",
-            "variation": ""
+            "variation": "",
+            "code": " si-22-05-case"
           },
           {
             "pr": "1780",
             "price": "Lサイズ+ケース",
-            "variation": ""
+            "variation": "",
+            "code": ""
           }
         ]
       }
