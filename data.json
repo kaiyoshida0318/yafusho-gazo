@@ -1368,6 +1368,7 @@
     "buttonElem": "■カラー：グレー/ブラック/シャンパン\nブロンズ/シルバー\n■サイズ：S/L\n■アルミケース：無/有\n",
     "lpType": "lp_new_sq",
     "memo": "■■全ページ正方形にリサイズ\n\n■サムネイル✔\n最強配送　を　優良配送　に変更\nkintoneに素材として保管\n\n■どーん\nそぐわない内容をyahooバージョンにする\n\n■商品詳細すべて\n長方形を正方形にする\n\n\n■ついで購入用のページ-正方形\n・◯円追加で●●購入可能\n・無料で●●を付属可能\n\n画像をgptでつくる\nkintoneに素材として保管\n\n→有料追加ページ、チャットワークで送って依頼",
+    "stockChk": "確認前",
     "frames": {
       "y1|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-0.jpg": "r",
       "y2|https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1785308763473-yahoo1-0.jpg": "r",
@@ -1423,6 +1424,48 @@
             "price": "Lサイズ5種類",
             "variation": "",
             "code": " si-22-05-2l"
+          }
+        ]
+      }
+    ],
+    "contentTable": [
+      {
+        "name": "Sサイズ",
+        "rows": [
+          {
+            "kind": "グレー/Sサイズ"
+          },
+          {
+            "kind": "ブラック/Sサイズ"
+          },
+          {
+            "kind": "シャンパン/Sサイズ"
+          },
+          {
+            "kind": "ブロンズ/Sサイズ"
+          },
+          {
+            "kind": "シルバー/Sサイズ"
+          }
+        ]
+      },
+      {
+        "name": "Lサイズ",
+        "rows": [
+          {
+            "kind": "グレー/Lサイズ"
+          },
+          {
+            "kind": "ブラック/Lサイズ"
+          },
+          {
+            "kind": "シャンパン/Lサイズ"
+          },
+          {
+            "kind": "ブロンズ/Lサイズ"
+          },
+          {
+            "kind": "シルバー/Lサイズ"
           }
         ]
       }
