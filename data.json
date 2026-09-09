@@ -1029,7 +1029,8 @@
     "variation": "ベルト/ベルト+無料工具\n1280　1280",
     "buttonElem": "■内容：ベルトのみ/ベルト+無料工具",
     "lpType": "",
-    "memo": ""
+    "memo": "",
+    "framesV": 2
   },
   {
     "id": "it1785218020075",
@@ -1534,7 +1535,7 @@
   {
     "id": "it1788936038339",
     "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/y49j0tgwthtb2bbk.jpg",
-    "rakutenMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/y49j0tgwthtb2bbk.jpg",
     "yahooImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/y49j0tgwthtb2bbk.jpg"
     ],
@@ -1550,7 +1551,9 @@
       "1足or2足",
       "3足セット＆ネット"
     ],
-    "rakutenImgs": [],
+    "rakutenImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/y49j0tgwthtb2bbk.jpg"
+    ],
     "date": "2026-09-09",
     "rating": "3.9",
     "listingType": "cat_b",
