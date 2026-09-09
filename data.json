@@ -1549,7 +1549,7 @@
     "yahooLpNames": [
       null,
       "1足or2足",
-      "3足セット＆ネット"
+      "3足セット＆ネット(既存)"
     ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/y49j0tgwthtb2bbk.jpg"
@@ -1598,7 +1598,7 @@
         "rows": [
           {
             "pr": "",
-            "price": "3足セット＆ネット",
+            "price": "3足セット＆ネット(既存)",
             "variation": "",
             "code": ""
           }
