@@ -1606,5 +1606,76 @@
       }
     ],
     "contentTable": []
+  },
+  {
+    "id": "it1788936509761",
+    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/d6l64bgwql7d2i34.jpg",
+    "rakutenMain": "",
+    "yahooImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/d6l64bgwql7d2i34.jpg"
+    ],
+    "yahooLps": [
+      [
+        "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/d6l64bgwql7d2i34.jpg"
+      ],
+      [],
+      []
+    ],
+    "yahooLpNames": [
+      null,
+      "1足or2足",
+      "3足セット＆ネット(既存)"
+    ],
+    "rakutenImgs": [],
+    "date": "2026-09-09",
+    "rating": "",
+    "listingType": "cat_b",
+    "pagePlan": "2",
+    "status": "st_todo",
+    "name": "ヨガソックス 指なし",
+    "code": "yoga-23-01-00set",
+    "salesMethod": "",
+    "searchUrl": "https://shopping.yahoo.co.jp/search/%E3%83%A8%E3%82%AC%E3%82%BD%E3%83%83%E3%82%AF%E3%82%B9/0/",
+    "yahooUrls": [
+      "https://store.shopping.yahoo.co.jp/yukaiya/yoga-23-01-00set.html?sc_i=shopping-pc-web-result-item-rsltlst-title&ea="
+    ],
+    "rakutenUrls": [],
+    "yahooRank": [
+      "https://shopping.yahoo.co.jp/categoryranking/47489/list"
+    ],
+    "variation": "",
+    "buttonElem": "",
+    "lpType": "",
+    "memo": "",
+    "stockChk": "確認前",
+    "frames": {},
+    "framesV": 2,
+    "salesTable": [
+      {
+        "name": "",
+        "gcode": "",
+        "rows": [
+          {
+            "pr": "",
+            "price": "1足or2足",
+            "variation": "",
+            "code": ""
+          }
+        ]
+      },
+      {
+        "name": "7",
+        "gcode": "",
+        "rows": [
+          {
+            "pr": "",
+            "price": "3足セット＆ネット(既存)",
+            "variation": "",
+            "code": ""
+          }
+        ]
+      }
+    ],
+    "contentTable": []
   }
 ]
