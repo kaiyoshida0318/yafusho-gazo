@@ -1610,7 +1610,7 @@
   {
     "id": "it1788936509761",
     "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/d6l64bgwql7d2i34.jpg",
-    "rakutenMain": "",
+    "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/6lbmxy1ah6akk3hq4.jpg",
     "yahooImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/d6l64bgwql7d2i34.jpg"
     ],
@@ -1626,7 +1626,10 @@
       "1足or2足",
       "3足セット＆ネット(既存)"
     ],
-    "rakutenImgs": [],
+    "rakutenImgs": [
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/6lbmxy1ah6akk3hq4.jpg",
+      "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/d6l64bgwql7d2i34.jpg"
+    ],
     "date": "2026-09-09",
     "rating": "",
     "listingType": "cat_b",
