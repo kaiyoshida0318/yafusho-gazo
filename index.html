@@ -899,6 +899,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .fld-stock select{width:100%;margin-top:6px;font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;outline:0;background:#fff}
 .fld-stock select:focus{border-color:var(--red)}
 .ct-head{margin-bottom:8px}
+.lp-need{margin-top:12px;padding:16px 18px;border:1.5px dashed #e0b070;border-radius:12px;background:#fff8ee;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.lp-need-t{font-size:14px;font-weight:800;color:#8a5a12}
+.lp-need-s{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.lp-need-s b{color:#8a5a12}
 .detail-right .dr-sec{margin-top:16px}
 .detail-right .fld-stock{max-width:220px}
 #ctBody+tbody,#panel-detail .ct-tbl th{padding:5px 8px}
@@ -1043,7 +1047,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.41.1</span>
+        <span class="version" id="version">v3.42.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1341,7 +1345,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.41.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.42.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2952,7 +2956,11 @@ function fillLpNamesBox(boxId,pfx){
   })(ins[i]);}
 }
 function renderLpNamesBox(){fillLpNamesBox('lpNamesBox','lpnbox_');fillLpNamesBox('lpNamesBox2','lpnbox2_');}
-function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+(k===0?' sec-old':' sec-new')+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint"><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="start" title="先頭へ">⇤ 先頭</button><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="end" title="末尾へ">末尾 ⇥</button></span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}wrap.innerHTML=h;for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){syncLpName(k,ni.value,ni);});})(k);}
+function renderYahooLpBlocks(n){var wrap=$('yahooLpWrap');if(!wrap)return;n=n||1;while(galYahooLps.length<n)galYahooLps.push([]);var h='';for(var k=0;k<n;k++){var cls='gallery-sec'+(k===0?' gal-sec-r':' gal-sub');var nmInp=(k>=1)?('<input type="text" class="lp-name-modal" id="lpname_'+k+'" value="'+escA(galYahooLpNames[k]||'')+'" placeholder="'+escA(lpDefName(k,n))+'" title="このグループの名前（例：10枚set）">'):'';var _gc=lpTagColor(k);h+='<div class="'+cls+(k===0?' sec-old':' sec-new')+'"><div class="fld-label gal-head" style="--gh-c:'+_gc+';background:'+_gc+'14;border-left-color:'+_gc+'"><span class="tag-badge tb-y" style="background:'+_gc+'">Y</span><span class="gh-title">'+esc(lpDefName(k,n))+'画像</span>'+nmInp+'<button type="button" class="gal-dl" data-dlgal="yahoo'+k+'" title="このLPの画像をまとめてダウンロード">⬇ 一括DL</button><button type="button" class="gal-dl gal-apply" data-applygal="yahoo'+k+'" title="この画像を他のグループへ一括反映">⇄ 一括反映</button><span class="gal-hint"><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="start" title="先頭へ">⇤ 先頭</button><button type="button" class="gal-nav" data-scroll="yahoo'+k+'" data-dir="end" title="末尾へ">末尾 ⇥</button></span></div><div class="dropzone" id="dz_yahoo'+k+'">📤 画像をここにドラッグ＆ドロップ、またはクリックで選択（複数可）</div><input type="file" id="file_yahoo'+k+'" accept="image/*" multiple hidden><div class="img-strip" id="strip_yahoo'+k+'"></div></div>';}if(n<=1){h+='<div class="lp-need"><div class="lp-need-t">⚠ 制作LP本数が未入力です</div><div class="lp-need-s">「📑 販売設計」タブで <b>制作LP本数</b> を1以上にすると、Yahoo新規の画像を追加できます。</div><button type="button" class="btn btn-red btn-sm" id="btnGoPagePlan">📑 販売設計を開く</button></div>';}
+  wrap.innerHTML=h;
+  var _gp=$('btnGoPagePlan');
+  if(_gp)_gp.onclick=function(){switchTab('detail');setTimeout(function(){var e=$('fPagePlan2');if(e){try{e.focus();}catch(_e){}try{e.scrollIntoView({block:'center'});}catch(_e2){}}},60);};
+  for(var k=0;k<n;k++){wireDrop('dz_yahoo'+k,'file_yahoo'+k,'yahoo'+k);wireStripDrop('strip_yahoo'+k,'yahoo'+k);renderStrip('yahoo'+k);(function(k){var ni=$('lpname_'+k);if(ni)ni.addEventListener('input',function(){syncLpName(k,ni.value,ni);});})(k);}
   renderLpNamesBox();}
 function syncYahooLps(){
   var n=1+ppNewCount(val('fPagePlan'));
