@@ -1680,5 +1680,39 @@
       }
     ],
     "contentTable": []
+  },
+  {
+    "id": "it1789615228967",
+    "yahooMain": "",
+    "rakutenMain": "",
+    "yahooImgs": [],
+    "yahooLps": [
+      []
+    ],
+    "yahooLpNames": [
+      null
+    ],
+    "rakutenImgs": [],
+    "date": "2026-09-17",
+    "rating": "",
+    "listingType": "",
+    "pagePlan": "",
+    "status": "st_todo",
+    "name": "噛み噛みネックレス",
+    "code": "si-26-08",
+    "salesMethod": "",
+    "searchUrl": "",
+    "yahooUrls": [],
+    "rakutenUrls": [],
+    "yahooRank": [],
+    "variation": "",
+    "buttonElem": "",
+    "lpType": "",
+    "memo": "",
+    "stockChk": "確認前",
+    "frames": {},
+    "framesV": 2,
+    "salesTable": [],
+    "contentTable": []
   }
 ]
