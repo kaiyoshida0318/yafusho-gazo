@@ -1687,10 +1687,14 @@
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/ty55kv1ddylnh1t8s.jpg",
     "yahooImgs": [],
     "yahooLps": [
+      [],
+      [],
       []
     ],
     "yahooLpNames": [
-      null
+      null,
+      "3個set",
+      "6個set"
     ],
     "rakutenImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/ty55kv1ddylnh1t8s.jpg",
@@ -1711,7 +1715,7 @@
     "date": "2026-09-17",
     "rating": "",
     "listingType": "",
-    "pagePlan": "",
+    "pagePlan": "2",
     "status": "st_doing",
     "name": "噛み噛みネックレス",
     "code": "si-26-08",
