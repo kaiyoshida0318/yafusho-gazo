@@ -1727,7 +1727,32 @@
     "stockChk": "確認前",
     "frames": {},
     "framesV": 2,
-    "salesTable": [],
+    "salesTable": [
+      {
+        "name": "",
+        "gcode": "si-26-08-3set",
+        "rows": [
+          {
+            "pr": "1980",
+            "price": "3個set",
+            "variation": "",
+            "code": ""
+          }
+        ]
+      },
+      {
+        "name": "",
+        "gcode": "si-26-08-6set",
+        "rows": [
+          {
+            "pr": "2980",
+            "price": "6個set",
+            "variation": "",
+            "code": ""
+          }
+        ]
+      }
+    ],
     "contentTable": []
   }
 ]
