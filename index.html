@@ -1102,7 +1102,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.46.0</span>
+        <span class="version" id="version">v3.46.1</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1447,7 +1447,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.46.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.46.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -4097,7 +4097,7 @@ async function reloadAllFromGitHub(opt,quiet){
   _viewerFirstLoad=true;setPending(false);
   try{ghShaCache={};}catch(e){}
   if(o.data!==false){try{await loadFromGitHub();}catch(e){}}
-  if(o.settings!==false){try{await loadSettingsFromGitHub();}catch(e){}}
+  if(o.settings!==false){try{await loadSettingsFromGitHub(!!quiet);}catch(e){}}
   if(o.tpl!==false){try{await loadTemplatesFromGitHub();}catch(e){}}
   _viewerFirstLoad=false;
   try{renderHead();render();updateStickyH();}catch(e){}
@@ -4244,7 +4244,8 @@ async function loadTemplatesFromGitHub(){
     log('テンプレ画像をGitHubから適用（'+rs.list.length+'件）');
   }catch(e){log('templates.json 読込スキップ: '+(e&&e.message));}
 }
-async function loadSettingsFromGitHub(){
+function _setSig(o){try{var c=JSON.parse(JSON.stringify(o||{}));delete c.updatedAt;return JSON.stringify(c);}catch(e){return '';}}
+async function loadSettingsFromGitHub(quiet){
   var c=getCfg();
   try{
     var rs=null;
@@ -4262,9 +4263,14 @@ async function loadSettingsFromGitHub(){
     }
     if(!rs||typeof rs!=='object')return;
     var remote=rs.updatedAt||0,local=settingsUpdatedAt();
-    if(!_viewerFirstLoad){
-      if(getPending()){log('表示設定：この端末に未保存の変更があるため保持（保存後に自動で揃います）');return;}
-      if(remote===local)return;
+    if(getPending()&&!_viewerFirstLoad){log('表示設定：この端末に未保存の変更があるため保持（保存後に自動で揃います）');return;}
+    if(remote===local&&!_viewerFirstLoad)return;
+    /* 中身が同じなら何もしない（updatedAt だけ揃える／再描画もトーストも無し） */
+    var same=false;
+    try{same=(_setSig(JSON.parse(setRaw()||'{}'))===_setSig(rs));}catch(e){}
+    if(same){
+      if(remote!==local&&!getPending()){_applyingRemoteSettings=true;writeSettingsRaw(JSON.stringify(rs));_applyingRemoteSettings=false;}
+      return;
     }
     log('表示設定：GitHub側を適用（remote='+remote+' / local='+local+'）');
     _applyingRemoteSettings=true;
@@ -4273,7 +4279,7 @@ async function loadSettingsFromGitHub(){
     if(!_okw)log('※ 保存領域が満杯のため、表示設定はこのタブのメモリ上で反映しています');
     renderHead();render();renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();renderCmpTabs();populateFormSelects();updateStickyH();
     log('表示設定をGitHubから適用（列幅・列順・色など）');
-    toast('🖥️ 表示設定を他の端末と同期しました');
+    if(!quiet&&!_viewerFirstLoad)toast('🖥️ 表示設定を他の端末と同期しました');
   }catch(e){log('settings.json 読込スキップ: '+(e&&e.message));}
 }
 /* ===== 起動時に GitHub から読み込み（公開リポジトリはPAT不要） ===== */
