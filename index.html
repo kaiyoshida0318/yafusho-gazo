@@ -932,6 +932,19 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok-btn:hover{border-color:#17643f;color:#17643f}
 .ok-btn.on{background:#17643f;border-color:#17643f;color:#fff}
 .ok-btn:active{transform:scale(.94)}
+.ok3{display:inline-flex;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:#fff}
+.ok3b{appearance:none;border:0;border-right:1px solid var(--line-2);background:transparent;font:inherit;font-size:11px;font-weight:800;color:var(--ink-3);padding:4px 8px;cursor:pointer;white-space:nowrap;line-height:1.4}
+.ok3b:last-child{border-right:0}
+.ok3b:hover{background:#f3f1ec}
+.ok3b.on{color:#fff}
+.ok3b.ok3-no.on{background:#7a756d}
+.ok3b.ok3-ok.on{background:#17643f}
+.ok3b.ok3-r.on{background:#bf0000}
+.ok3b:active{transform:scale(.96)}
+tr.cmp-r-row{background:#fdf0ee}
+tr.cmp-r-row.ghost-row{background:#fcefed}
+tr.cmp-r-row td{border-bottom-color:#f0d2cc}
+.ctab-r.on{background:#bf0000!important;border-color:#bf0000!important;color:#fff!important}
 .save-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:70;display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line-2);border-left:5px solid #d98324;border-radius:12px;padding:11px 14px 11px 16px;box-shadow:0 10px 28px rgba(0,0,0,.18)}
 .save-bar.busy{border-left-color:#2f6fb0}
 .save-bar-txt{font-size:13.5px;font-weight:800;color:var(--ink-1);white-space:nowrap}
@@ -1159,7 +1172,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.57.0</span>
+        <span class="version" id="version">v3.59.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1512,7 +1525,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.57.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.59.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2165,7 +2178,8 @@ function cmpOkCount(want){
   var n=0;
   for(var i=0;i<rows.length;i++){var g=_cmpG[rows[i].id];if(g&&g.sub)continue;
     if(!cmpShowReg&&cmpHasReg(rows[i]))continue;
-    if(!!cmpIsOk(g&&g.key)===!!want)n++;}
+    if(want==='*'){n++;continue;}
+    if(cmpOkState(g&&g.key)===want)n++;}
   return n;
 }
 function cmpCount(v){
@@ -2248,21 +2262,29 @@ function cmpClearHidden(){var s=getSettings();s.cmpHide={};cmpQuietSave(s);cmpIn
 /* 結びつき確定 */
 function cmpOkMap(){var s=getSettings();return (s.cmpOk&&typeof s.cmpOk==='object')?s.cmpOk:{};}
 var _okOv=null,_okQ=null,_okTimer=null;
-function cmpIsOk(k){if(!k)return false;if(_okOv&&_okOv[k]!=null)return !!_okOv[k];return !!cmpOkMap()[k];}
+function cmpOkState(k){
+  if(!k)return '';
+  var v=(_okOv&&_okOv[k]!=null)?_okOv[k]:cmpOkMap()[k];
+  if(v==='r')return 'r';
+  return v?'ok':'';
+}
+function cmpIsOk(k){return cmpOkState(k)==='ok';}
 function cmpOkFlush(){
   if(_okTimer){clearTimeout(_okTimer);_okTimer=null;}
   if(!_okQ)return;
   var q=_okQ;_okQ=null;_okOv=null;
   var s=getSettings();var m=(s.cmpOk&&typeof s.cmpOk==='object')?s.cmpOk:{};
-  for(var k in q){if(!Object.prototype.hasOwnProperty.call(q,k))continue;if(q[k])m[k]=1;else delete m[k];}
+  for(var k in q){if(!Object.prototype.hasOwnProperty.call(q,k))continue;
+    if(q[k]==='r')m[k]='r';else if(q[k]==='ok')m[k]=1;else delete m[k];}
   s.cmpOk=m;cmpQuietSave(s,true);cmpInvalidate();
 }
 /* 画面は即座に、保存はまとめて（押した瞬間に反応させるため） */
-function cmpSetOkFast(k,on){
+function cmpSetOkFast(k,st){
   if(!k)return;
   if(!_okQ)_okQ={};if(!_okOv)_okOv={};
   var had=(_okQ[k]!=null);
-  _okQ[k]=on?1:0;_okOv[k]=on?1:0;
+  st=(st==='r')?'r':(st==='ok'||st===true?'ok':'');
+  _okQ[k]=st;_okOv[k]=st;
   if(!had)cmpPend++;
   try{setPending(true);}catch(e){}
   renderCmpSave();try{renderSaveChip();}catch(e){}
@@ -2331,7 +2353,7 @@ function cmpRows(){if(!_cmpRowsCache)_cmpRowsCache=cmpBuildRows();return _cmpRow
 function cmpSalesPair(it){var q=cmpGrpOf(it);if(q)return {r:q.rSum||0,y:q.ySum||0};var r=cmpRakuFor(it),y=cmpYahooFor(it);return {r:(r&&r.sales)||0,y:(y&&y.sales)||0};}
 function cmpSortVal(it,key){
   var g=cmpGroupOf(it)||{},r=g.raku,y=g.yahoo;
-  if(key==='cmpOk')return cmpIsOk(g.key)?0:1;
+  if(key==='cmpOk'){var _s=cmpOkState(g.key);return _s==='ok'?0:(_s==='r'?1:2);}
   if(key==='rakuCmp'){var _op=getOpts('rakuCmp'),_v=rakuCmpVal(it);for(var _i=0;_i<_op.length;_i++){if(_op[_i].l===_v)return _i;}return 99;}
   if(key==='rakuSales')return (g.group?g.group.rSum:((r&&r.sales)||0))||0;
   if(key==='yahooSales')return (g.group?g.group.ySum:((y&&y.sales)||0))||0;
@@ -2347,6 +2369,14 @@ function cmpSortVal(it,key){
   return '';
 }
 var CMP_SORTABLE=['date','cmpOk','rakuCmp','rakuCode','rakuName','rakuFix','rakuSales','yahooCode','yahooName','yahooFix','yahooSales','codeName','code','name'];
+/* 並び順の段：0=確定 / 1=両モールあり / 2=片方だけ */
+function cmpRank(it){
+  var g=cmpGroupOf(it);if(!g)return 2;
+  if(cmpOkState(g.key)==='ok')return 0;
+  var q=g.group;
+  if(q&&q.rakus&&q.rakus.length&&q.yahoos&&q.yahoos.length)return 1;
+  return 2;
+}
 function cmpTie(a,b){
   var ga=cmpGroupOf(a),gb=cmpGroupOf(b);
   var ka=(ga&&ga.key)||'',kb=(gb&&gb.key)||'';
@@ -2368,6 +2398,8 @@ function cmpSortRows(list){
     return list;
   }
   list.sort(function(a,b){
+    var ra=cmpRank(a),rb=cmpRank(b);
+    if(ra!==rb)return ra-rb;
     var sa=cmpSalesPair(a),sb=cmpSalesPair(b);
     var ta=sa.r+sa.y,tb=sb.r+sb.y;
     if(tb!==ta)return tb-ta;
@@ -2395,9 +2427,10 @@ function renderCmpTabs(){
   var op=getOpts('rakuCmp');
   for(var i=0;i<op.length;i++){h+='<button class="ctab'+((cmpMode&&cmpFilter===op[i].l)?' on':'')+'" data-cmp="'+escA(op[i].l)+'">'+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';}
   h+='<span class="pill-sep"></span>';
-  h+='<button class="ctab ctab-ok'+((cmpMode&&!cmpOkFilter)?' on':'')+'" data-cmpok="">両方<span class="cnt">'+(cmpOkCount(false)+cmpOkCount(true))+'</span></button>';
-  h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='no')?' on':'')+'" data-cmpok="no">未確定<span class="cnt">'+cmpOkCount(false)+'</span></button>';
-  h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='ok')?' on':'')+'" data-cmpok="ok">確定<span class="cnt">'+cmpOkCount(true)+'</span></button>';
+  h+='<button class="ctab ctab-ok'+((cmpMode&&!cmpOkFilter)?' on':'')+'" data-cmpok="">全て<span class="cnt">'+cmpOkCount('*')+'</span></button>';
+  h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='no')?' on':'')+'" data-cmpok="no">未確定<span class="cnt">'+cmpOkCount('')+'</span></button>';
+  h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='ok')?' on':'')+'" data-cmpok="ok">確定<span class="cnt">'+cmpOkCount('ok')+'</span></button>';
+  h+='<button class="ctab ctab-ok ctab-r'+((cmpMode&&cmpOkFilter==='r')?' on':'')+'" data-cmpok="r">楽のみ<span class="cnt">'+cmpOkCount('r')+'</span></button>';
   h+='<span class="pill-sep"></span>';
   h+='<button class="ctab ctab-reg'+(cmpShowReg?' on':'')+'" data-cmpreg="1" title="本ツールに登録済みの商品も一覧に出します">登録済みも表示</button>';
   el.innerHTML=h;
@@ -2493,7 +2526,7 @@ var DEFAULT_COLS=[
   {key:'yahooCode',label:'Yahoo商品コード',width:130,align:'left'},
   {key:'yahooName',label:'Yahoo商品名',width:220,align:'left'},
   {key:'yahooFix',label:'Yahoo確定コード',width:120,align:'left'},
-  {key:'cmpOk',label:'結びつき',width:86,align:'center'},
+  {key:'cmpOk',label:'結びつき',width:172,align:'center'},
   {key:'rakuDel',label:'楽天削除',width:54,align:'center'},
   {key:'yahooDel',label:'Yahoo削除',width:54,align:'center'},
   {key:'memo',label:'メモ',width:40,align:'center'},
@@ -2690,6 +2723,15 @@ function cnLinksHtml(it){
   for(var i=0;i<yu.length&&i<3;i++)h+='<a class="cn-link cl-y" href="'+escA(yu[i])+'" target="_blank" rel="noopener" title="Yahoo商品ページを開く&#10;'+escA(yu[i])+'">Yahoo'+(i?String(i+1):'')+'</a>';
   return h+'</div>';
 }
+var OK_STATES=[{v:'',l:'未確定'},{v:'ok',l:'確定'},{v:'r',l:'楽天のみ'}];
+function okBtnsHtml(k){
+  var st=cmpOkState(k),h='<div class="ok3" data-okgrp="'+escA(k)+'">';
+  for(var i=0;i<OK_STATES.length;i++){
+    var o=OK_STATES[i];
+    h+='<button type="button" class="ok3b ok3-'+(o.v||'no')+(st===o.v?' on':'')+'" data-ok="'+escA(k)+'" data-okv="'+o.v+'">'+esc(o.l)+'</button>';
+  }
+  return h+'</div>';
+}
 function cmpFixInp(code){
   if(!code)return '<span class="cmp-na">—</span>';
   return '<input type="text" class="fix-inp" data-fix="'+escA(code)+'" value="'+escA(cmpFixOf(code))+'" placeholder="確定コード" autocomplete="off">';
@@ -2698,10 +2740,10 @@ function cellHtml(key,it){
   if(key==='cmpOk'||key==='rakuDel'||key==='yahooDel'){
     var _g=cmpGroupOf(it);
     if(key==='cmpOk'){
-      var _k=_g?_g.key:'';var _on=cmpIsOk(_k);
+      var _k=_g?_g.key:'';
       if(_g&&_g.sub)return '<td></td>';
       if(!_k)return '<td><span class="cmp-na">—</span></td>';
-      return '<td><button type="button" class="ok-btn'+(_on?' on':'')+'" data-ok="'+escA(_k)+'" title="'+(_on?'確定を解除':'この結びつきを確定にします')+'">'+(_on?'確定':'未確定')+'</button></td>';
+      return '<td>'+okBtnsHtml(_k)+'</td>';
     }
     var _side=(key==='rakuDel')?'r':'y';
     var _o=(key==='rakuDel')?cmpRakuFor(it):cmpYahooFor(it);
@@ -2884,7 +2926,8 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
       if(!cmpShowReg&&cmpHasReg(x))return false;
       var _hd=cmpHeadOf(x);
       if(cmpFilter==='__none__'){if(_hd.rakuCmp)return false;}else if(cmpFilter){if(rakuCmpVal(_hd)!==cmpFilter)return false;}
-      if(cmpOkFilter){var _gg=_cmpG[x.id];var _ok=cmpIsOk(_gg&&_gg.key);if(cmpOkFilter==='ok'?!_ok:_ok)return false;}
+      if(cmpOkFilter){var _gg=_cmpG[x.id];var _stt=cmpOkState(_gg&&_gg.key);
+        if(cmpOkFilter==='no'){if(_stt!=='')return false;}else if(_stt!==cmpOkFilter)return false;}
       if(cmpQ&&!srchHit(x))return false;
       return true;
     });
@@ -2902,7 +2945,8 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
   });
   }
   for(var i=0;i<list.length;i++){
-    var it=list[i];var tr=document.createElement('tr');tr.setAttribute('data-id',it.id);var _cls=(it.__ghost?'ghost-row':'');if(cmpMode){var _gk=cmpGroupOf(it);if(_gk&&cmpIsOk(_gk.key))_cls+=(_cls?' ':'')+'cmp-ok-row';
+    var it=list[i];var tr=document.createElement('tr');tr.setAttribute('data-id',it.id);var _cls=(it.__ghost?'ghost-row':'');if(cmpMode){var _gk=cmpGroupOf(it);var _ost=_gk?cmpOkState(_gk.key):'';
+      if(_ost==='ok')_cls+=(_cls?' ':'')+'cmp-ok-row';else if(_ost==='r')_cls+=(_cls?' ':'')+'cmp-r-row';
       if(_gk&&_gk.group&&_gk.group.n>1)_cls+=(_cls?' ':'')+'grp-row'+(_gk.sub?' grp-sub':' grp-head');
       if(_gk&&_gk.key)tr.setAttribute('data-gk',_gk.key);}if(_cls)tr.className=_cls;if(!it.__ghost&&isDetailish()){var _ph=getRowHItem(it.id);if(_ph){tr.style.height=_ph+'px';tr.style.setProperty('--dc-lines',String(rowLines(_ph)));}}var tds='';
     var _ord=getColOrder();for(var c=0;c<_ord.length;c++){var key=_ord[c];if(!colDef(key))continue;var cc=getColCfg(key);if(!cc.visible)continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
@@ -4131,15 +4175,14 @@ document.addEventListener('click',function(e){
     if(t.classList&&t.classList.contains('fix-inp'))return;
     var okEl=(t.closest?t.closest('[data-ok]'):null);
     if(okEl){e.stopPropagation();
-      var _k=okEl.getAttribute('data-ok'),_on=!cmpIsOk(_k);
-      okEl.classList.toggle('on',_on);okEl.textContent=_on?'確定':'未確定';
-      okEl.title=_on?'確定を解除':'この結びつきを確定にします';
+      var _k=okEl.getAttribute('data-ok'),_st=okEl.getAttribute('data-okv')||'';
+      var _box=okEl.closest?okEl.closest('.ok3'):null;
+      if(_box){var _bs=_box.querySelectorAll('.ok3b');for(var _q=0;_q<_bs.length;_q++)_bs[_q].classList.toggle('on',(_bs[_q].getAttribute('data-okv')||'')===_st);}
       var _tr=okEl.closest?okEl.closest('tr'):null;
       if(_tr){var _gkk=_tr.getAttribute('data-gk');
-        if(_gkk){var _all=document.querySelectorAll('#gridBody tr[data-gk="'+(window.CSS&&CSS.escape?CSS.escape(_gkk):_gkk)+'"]');
-          for(var _z=0;_z<_all.length;_z++)_all[_z].classList.toggle('cmp-ok-row',_on);}
-        else _tr.classList.toggle('cmp-ok-row',_on);}
-      cmpSetOkFast(_k,_on);
+        var _all=_gkk?document.querySelectorAll('#gridBody tr[data-gk="'+(window.CSS&&CSS.escape?CSS.escape(_gkk):_gkk)+'"]'):[_tr];
+        for(var _z=0;_z<_all.length;_z++){_all[_z].classList.toggle('cmp-ok-row',_st==='ok');_all[_z].classList.toggle('cmp-r-row',_st==='r');}}
+      cmpSetOkFast(_k,_st);
       try{renderCmpTabs();}catch(_e1){}
       return;}
     var cdEl=(t.closest?t.closest('[data-cdel]'):null);
