@@ -164,7 +164,7 @@
   },
   {
     "id": "it1781746196902",
-    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-yahoo-main.jpg",
+    "yahooMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-yahoo0-0.jpg",
     "rakutenMain": "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-rakuten-3.webp",
     "yahooImgs": [
       "https://raw.githubusercontent.com/kaiyoshida0318/yafusho-gazo/main/images/it1781746196902-yahoo0-0.jpg",
@@ -227,7 +227,11 @@
     "buttonElem": "",
     "lpType": "",
     "memo": "",
-    "framesV": 2
+    "stockChk": "確認前",
+    "frames": {},
+    "framesV": 2,
+    "salesTable": [],
+    "contentTable": []
   },
   {
     "id": "it1781749202241",
