@@ -928,6 +928,15 @@ tr.ghost-row td{color:var(--ink-2)}
 .btn-reg{background:#17643f;border-color:#17643f;color:#fff;font-weight:700;padding:3px 9px;font-size:11.5px;border-radius:6px;cursor:pointer;border:1px solid #17643f}
 .btn-reg:hover{filter:brightness(1.08)}
 .gh-ln{margin-top:4px}
+.fix-inp{width:100%;box-sizing:border-box;font:inherit;font-size:12px;font-family:"Roboto Mono",monospace;padding:3px 6px;border:1px solid var(--line-2);border-radius:5px;background:#fff;color:var(--ink-1)}
+.fix-inp:focus{outline:none;border-color:#2f6fb0;box-shadow:0 0 0 2px rgba(47,111,176,.14)}
+.fix-inp::placeholder{color:#c3bfb8;font-size:11px}
+.cmp-cd{font-size:12px}
+#gridHead th.th-srt{cursor:pointer;user-select:none}
+#gridHead th.th-srt:hover{background:#f3f1ec}
+#gridHead th.srt-on{color:#1f3a63}
+.srt-ar{font-size:10px;margin-left:3px;color:#c3bfb8}
+.srt-ar.on{color:#1f3a63}
 .overlay>.mini.pull-mini{max-width:780px!important}
 .pull-mini h2{margin-top:0}
 .pull-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line-2);margin:10px 0 14px}
@@ -1108,7 +1117,7 @@ tr.ghost-row td{color:var(--ink-2)}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.47.0</span>
+        <span class="version" id="version">v3.48.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1453,7 +1462,7 @@ tr.ghost-row td{color:var(--ink-2)}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.47.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.48.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1940,7 +1949,8 @@ var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeM
 var cmpFilter='',cmpMode=true;
 var CMPCACHE='yafusho_cmpcache';
 var CMP_SCOPE='__cmp__';
-var CMP_DEFAULT_VISIBLE=['date','codeName','rakutenMain','yahooMain','rakuSales','yahooSales'];
+var CMP_DEFAULT_VISIBLE=['date','rakutenMain','rakuCode','rakuName','rakuFix','rakuSales','yahooMain','yahooCode','yahooName','yahooFix','yahooSales'];
+var cmpSort={key:'',dir:-1};
 var cmpData={raku:null,yahoo:null,ym:'',at:0,loading:false,err:''};
 function cmpCfg(){
   var st=getSettings();
@@ -1978,9 +1988,11 @@ function cmpPick(map,looseMap,code){
 }
 function cmpStats(){
   var tot=0,mr=0,my=0,miss=[];
+  try{if(cmpData.raku||cmpData.yahoo)cmpRows();}catch(e){}
   for(var i=0;i<items.length;i++){
-    var c=items[i].code;if(!c)continue;tot++;
-    var r=cmpRakuOf(items[i]),y=cmpYahooOf(items[i]);
+    var it=items[i],c=it.code;if(!c)continue;tot++;
+    var g=_cmpG[it.id];
+    var r=g?g.raku:cmpRakuOf(it),y=g?g.yahoo:cmpYahooOf(it);
     if(r)mr++;if(y)my++;
     if(!r&&!y)miss.push(c);
   }
@@ -2015,7 +2027,7 @@ async function cmpLoad(force){
       if(!Object.prototype.hasOwnProperty.call(pc,ic))continue;
       var p=pc[ic];var num=cmpNorm(p&&p.itemNumber);
       if(!num)continue;
-      byCode[num]={code:num,itemCode:ic,img:(p.manualImg||p.img||''),name:(p.manualName||p.name||''),sales:0};
+      byCode[num]={code:num,disp:String((p&&p.itemNumber)||num),itemCode:ic,img:(p.manualImg||p.img||''),name:(p.manualName||p.name||''),sales:0};
     }
     var icToNum={};
     for(var k in byCode){if(Object.prototype.hasOwnProperty.call(byCode,k))icToNum[byCode[k].itemCode]=k;}
@@ -2035,14 +2047,14 @@ async function cmpLoad(force){
     for(var mk in mst){
       if(!Object.prototype.hasOwnProperty.call(mst,mk))continue;
       var mv=mst[mk];var mc=cmpNorm(mv&&mv.code||mk);if(!mc)continue;
-      yahoo[mc]={code:mc,img:(mv&&mv.customImage)||'',name:(mv&&mv.name)||'',sales:0};
+      yahoo[mc]={code:mc,disp:String((mv&&mv.code)||mk||mc),img:(mv&&mv.customImage)||'',name:(mv&&mv.name)||'',sales:0};
     }
     var its=j2.item||[];
     for(var n=0;n<its.length;n++){
       var itr=its[n];if(!itr)continue;
       if(String(itr.month||'')!==lm.y)continue;
       var cc=cmpNorm(itr.code);if(!cc)continue;
-      if(!yahoo[cc])yahoo[cc]={code:cc,img:'',name:'',sales:0};
+      if(!yahoo[cc])yahoo[cc]={code:cc,disp:String(itr.code||cc),img:'',name:'',sales:0};
       yahoo[cc].sales+=(+itr.revenue||0);
     }
     for(var yk in yahoo){
@@ -2075,42 +2087,115 @@ function cmpSalesHtml(o){
   return '<span class="cmp-yen">'+cmpYen(o.sales)+'</span>';
 }
 function cmpCount(v){
-  var _d=doneStatusId(),n=0;
-  for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;
-    if(v===''){n++;}else if(v==='__none__'){if(!x.rakuCmp)n++;}else if(x.rakuCmp===v)n++;}
-  if(v===''||v==='__none__'){try{n+=cmpGhostRows().length;}catch(e){}}
-  return n;
+  var rows=null;try{if(cmpData.raku||cmpData.yahoo)rows=cmpRows();}catch(e){rows=null;}
+  if(rows){
+    var n=0;
+    for(var i=0;i<rows.length;i++){var x=rows[i];
+      if(v===''){n++;}else if(v==='__none__'){if(!x.rakuCmp)n++;}else if(x.rakuCmp===v)n++;}
+    return n;
+  }
+  var _d=doneStatusId(),n2=0;
+  for(var j=0;j<items.length;j++){var y=items[j];if(y.status===_d)continue;
+    if(v===''){n2++;}else if(v==='__none__'){if(!y.rakuCmp)n2++;}else if(y.rakuCmp===v)n2++;}
+  return n2;
 }
-/* ADcheck / Ycheck にあって本ツールに未登録の商品を、仮の行として返す */
-function cmpGhostRows(){
-  if(!cmpData.raku&&!cmpData.yahoo)return [];
-  var have={};
+/* ===== 確定コード（両モールの手動ひも付け） ===== */
+function cmpFixMap(){var s=getSettings();return (s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};}
+function cmpFixOf(code){var k=cmpNorm(code);if(!k)return '';var m=cmpFixMap();return m[k]||'';}
+function cmpSetFix(code,v){
+  var k=cmpNorm(code);if(!k)return;
+  var s=getSettings();var m=(s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};
+  v=String(v==null?'':v).trim();
+  if(v)m[k]=v;else delete m[k];
+  s.cmpFix=m;saveSettings(s);cmpInvalidate();
+}
+function cmpKeyOf(code){var f=cmpFixOf(code);return f?('f:'+cmpNorm(f)):('c:'+cmpNorm(code));}
+
+/* ===== 比較行（楽天／Yahoo／登録商品をまとめた1行） ===== */
+var _cmpG={},_cmpRowsCache=null;
+function cmpInvalidate(){_cmpRowsCache=null;}
+function cmpGroupOf(it){return (it&&_cmpG[it.id])||null;}
+function cmpRakuFor(it){var g=cmpGroupOf(it);return g?g.raku:cmpRakuOf(it);}
+function cmpYahooFor(it){var g=cmpGroupOf(it);return g?g.yahoo:cmpYahooOf(it);}
+function cmpBuildRows(){
+  var g={},order=[];
+  function grp(k){if(!g[k]){g[k]={key:k,raku:null,yahoo:null,item:null};order.push(k);}return g[k];}
+  var m=cmpData.raku||{};
+  for(var a in m){if(Object.prototype.hasOwnProperty.call(m,a))grp(cmpKeyOf(a)).raku=m[a];}
+  var n2=cmpData.yahoo||{};
+  for(var b in n2){if(Object.prototype.hasOwnProperty.call(n2,b))grp(cmpKeyOf(b)).yahoo=n2[b];}
   for(var i=0;i<items.length;i++){
-    var c=items[i].code;if(!c)continue;
-    have['n:'+cmpNorm(c)]=1;have['l:'+cmpLoose(c)]=1;
+    var it=items[i];if(isDone(it.status))continue;
+    var k;
+    if(cmpFixOf(it.code)){k=cmpKeyOf(it.code);}
+    else{var r=cmpRakuOf(it),y=cmpYahooOf(it);k=r?cmpKeyOf(r.code):(y?cmpKeyOf(y.code):cmpKeyOf(it.code));}
+    var gg=grp(k);
+    if(gg.item)gg=grp(k+'#'+it.id);
+    gg.item=it;
   }
-  var out=[],seen={};
-  function add(k){
-    if(!k||seen[k])return;
-    if(have['n:'+k]||have['l:'+cmpLoose(k)])return;
-    seen[k]=1;
-    var r=(cmpData.raku&&cmpData.raku[k])||null,y=(cmpData.yahoo&&cmpData.yahoo[k])||null;
-    out.push({id:'__g_'+k,__ghost:true,code:(r&&r.code)||(y&&y.code)||k,name:(r&&r.name)||(y&&y.name)||'',
-      date:'',rakuCmp:'',status:'',listingType:'',pagePlan:'',lpType:'',memo:'',
-      yahooImgs:[],rakutenImgs:[],yahooLps:[[]],yahooUrls:[],yahooRank:[],rakutenUrls:[]});
+  var out=[];_cmpG={};
+  for(var j=0;j<order.length;j++){
+    var q=g[order[j]],row;
+    if(q.item){row=q.item;}
+    else{
+      var rr=q.raku,yy=q.yahoo;
+      row={id:'__g_'+q.key,__ghost:true,code:(rr&&rr.code)||(yy&&yy.code)||'',name:(rr&&rr.name)||(yy&&yy.name)||'',
+        date:'',rakuCmp:'',status:'',listingType:'',pagePlan:'',lpType:'',memo:'',
+        yahooImgs:[],rakutenImgs:[],yahooLps:[[]],yahooUrls:[],yahooRank:[],rakutenUrls:[]};
+    }
+    _cmpG[row.id]=q;out.push(row);
   }
-  var m=cmpData.raku||{};for(var a in m){if(Object.prototype.hasOwnProperty.call(m,a))add(a);}
-  var n2=cmpData.yahoo||{};for(var b in n2){if(Object.prototype.hasOwnProperty.call(n2,b))add(b);}
   return out;
 }
-function cmpSalesPair(it){var r=cmpRakuOf(it),y=cmpYahooOf(it);return {r:(r&&r.sales)||0,y:(y&&y.sales)||0};}
+function cmpRows(){if(!_cmpRowsCache)_cmpRowsCache=cmpBuildRows();return _cmpRowsCache;}
+function cmpSalesPair(it){var r=cmpRakuFor(it),y=cmpYahooFor(it);return {r:(r&&r.sales)||0,y:(y&&y.sales)||0};}
+function cmpSortVal(it,key){
+  var g=cmpGroupOf(it)||{},r=g.raku,y=g.yahoo;
+  if(key==='rakuSales')return (r&&r.sales)||0;
+  if(key==='yahooSales')return (y&&y.sales)||0;
+  if(key==='date')return it.date||'';
+  if(key==='rakuCode')return r?cmpNorm(r.code):'';
+  if(key==='rakuName')return r?cmpNorm(r.name):'';
+  if(key==='rakuFix')return r?cmpNorm(cmpFixOf(r.code)):'';
+  if(key==='yahooCode')return y?cmpNorm(y.code):'';
+  if(key==='yahooName')return y?cmpNorm(y.name):'';
+  if(key==='yahooFix')return y?cmpNorm(cmpFixOf(y.code)):'';
+  if(key==='codeName'||key==='code')return cmpNorm(it.code);
+  if(key==='name')return cmpNorm(it.name);
+  return '';
+}
+var CMP_SORTABLE=['date','rakuCode','rakuName','rakuFix','rakuSales','yahooCode','yahooName','yahooFix','yahooSales','codeName','code','name'];
+function cmpSortRows(list){
+  if(cmpSort.key&&CMP_SORTABLE.indexOf(cmpSort.key)>=0){
+    var k=cmpSort.key,d=cmpSort.dir<0?-1:1;
+    list.sort(function(a,b){
+      var va=cmpSortVal(a,k),vb=cmpSortVal(b,k);
+      if(typeof va==='number'||typeof vb==='number'){var na=+va||0,nb=+vb||0;if(na!==nb)return (na-nb)*d;}
+      else{var sa=String(va||''),sb=String(vb||'');
+        if(!sa&&sb)return 1;if(sa&&!sb)return -1;
+        if(sa!==sb)return (sa<sb?-1:1)*d;}
+      return String(a.code||'').localeCompare(String(b.code||''));
+    });
+    return list;
+  }
+  list.sort(function(a,b){
+    var sa=cmpSalesPair(a),sb=cmpSalesPair(b);
+    var ta=sa.r+sa.y,tb=sb.r+sb.y;
+    if(tb!==ta)return tb-ta;
+    if(sb.r!==sa.r)return sb.r-sa.r;
+    return String(a.code||'').localeCompare(String(b.code||''));
+  });
+  return list;
+}
 function cmpRegister(code){
   if(!code)return;
-  var g=null,gs=cmpGhostRows();
-  for(var i=0;i<gs.length;i++){if(gs[i].code===code){g=gs[i];break;}}
+  var g=null,gs=[];try{gs=cmpRows();}catch(e){}
+  for(var i=0;i<gs.length;i++){if(gs[i].__ghost&&gs[i].code===code){g=gs[i];break;}}
+  var gp=(g&&_cmpG[g.id])||null;
   var nm=(g&&g.name)||'';
+  var cd=(gp&&gp.raku&&(gp.raku.disp||gp.raku.code))||(gp&&gp.yahoo&&(gp.yahoo.disp||gp.yahoo.code))||code;
   var d={id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],yahooLps:[[]],yahooLpNames:[],rakutenImgs:[],
-    date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:nm,code:code,
+    date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:nm,code:cd,
     salesMethod:'',searchUrl:'',yahooUrls:[],yahooRank:[],rakutenUrls:[],memo:'',stockChk:'確認前'};
   items.push(d);persist();renderCmpTabs();render();scheduleSync();
   toast('✅ '+code+' を登録しました');
@@ -2207,6 +2292,12 @@ var DEFAULT_COLS=[
   {key:'yahooImgEx',label:'Yahoo商品画像',width:110,align:'center'},
   {key:'rakuSales',label:'楽天売上(先月)',width:120,align:'right'},
   {key:'yahooSales',label:'Yahoo売上(先月)',width:120,align:'right'},
+  {key:'rakuCode',label:'楽天商品コード',width:130,align:'left'},
+  {key:'rakuName',label:'楽天商品名',width:220,align:'left'},
+  {key:'rakuFix',label:'楽天確定コード',width:120,align:'left'},
+  {key:'yahooCode',label:'Yahoo商品コード',width:130,align:'left'},
+  {key:'yahooName',label:'Yahoo商品名',width:220,align:'left'},
+  {key:'yahooFix',label:'Yahoo確定コード',width:120,align:'left'},
   {key:'memo',label:'メモ',width:40,align:'center'},
   {key:'actions',label:'操作',width:90,align:'center'}
 ];
@@ -2223,7 +2314,7 @@ function writeSettingsRaw(js){
     return false;
   }
 }
-function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:''};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;}}catch(e){}return d;}
+function getSettings(){var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpFix:{},cmpMig2:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpMig2)d.cmpMig2=true;}}catch(e){}return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -2401,7 +2492,21 @@ function cnLinksHtml(it){
   for(var i=0;i<yu.length&&i<3;i++)h+='<a class="cn-link cl-y" href="'+escA(yu[i])+'" target="_blank" rel="noopener" title="Yahoo商品ページを開く&#10;'+escA(yu[i])+'">Yahoo'+(i?String(i+1):'')+'</a>';
   return h+'</div>';
 }
+function cmpFixInp(code){
+  if(!code)return '<span class="cmp-na">—</span>';
+  return '<input type="text" class="fix-inp" data-fix="'+escA(code)+'" value="'+escA(cmpFixOf(code))+'" placeholder="確定コード" autocomplete="off">';
+}
 function cellHtml(key,it){
+  if(key==='rakuCode'||key==='rakuName'||key==='rakuFix'||key==='yahooCode'||key==='yahooName'||key==='yahooFix'){
+    var _r=cmpRakuFor(it),_y=cmpYahooFor(it);
+    var _reg=(it&&it.__ghost&&it.code)?'<div class="gh-ln"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'" title="この商品を本ツールに登録します">＋ 登録</button></div>':'';
+    if(key==='rakuCode')return '<td class="mono cmp-cd">'+(_r?(esc(_r.disp||_r.code)+(_reg?_reg:'')):'<span class="cmp-na">—</span>')+'</td>';
+    if(key==='rakuName')return '<td class="cell-name">'+((_r&&_r.name)?esc(_r.name):'<span class="cmp-na">—</span>')+'</td>';
+    if(key==='rakuFix')return '<td>'+cmpFixInp(_r?_r.code:'')+'</td>';
+    if(key==='yahooCode')return '<td class="mono cmp-cd">'+(_y?(esc(_y.disp||_y.code)+((!_r&&_reg)?_reg:'')):'<span class="cmp-na">—</span>')+'</td>';
+    if(key==='yahooName')return '<td class="cell-name">'+((_y&&_y.name)?esc(_y.name):'<span class="cmp-na">—</span>')+'</td>';
+    return '<td>'+cmpFixInp(_y?_y.code:'')+'</td>';
+  }
   if(it&&it.__ghost){
     if(key==='codeName')return '<td><div class="cn-wrap">'
       +'<div class="mono cn-code">'+esc(it.code)+'<span class="gh-badge">未登録</span></div>'
@@ -2410,17 +2515,17 @@ function cellHtml(key,it){
       +'</div></td>';
     if(key==='code')return '<td class="mono">'+esc(it.code)+'<span class="gh-badge">未登録</span></td>';
     if(key==='name')return '<td class="cell-name">'+esc(it.name||'')+'</td>';
-    if(key==='rakutenMain'||key==='rakuImg')return '<td>'+cmpImgHtml(cmpRakuOf(it),'r')+'</td>';
-    if(key==='yahooMain'||key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooOf(it),'y')+'</td>';
-    if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuOf(it))+'</td>';
-    if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooOf(it))+'</td>';
+    if(key==='rakutenMain'||key==='rakuImg')return '<td>'+cmpImgHtml(cmpRakuFor(it),'r')+'</td>';
+    if(key==='yahooMain'||key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
+    if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
+    if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooFor(it))+'</td>';
     if(key==='actions')return '<td><div class="act-cell"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'">＋ 登録</button></div></td>';
     return '<td></td>';
   }
   if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?fmtDate(it.date):md())+'</td>';
   if(key==='imageBlock')return '<td>'+imgBlockHtml(it)+'</td>';
-  if(key==='yahooMain'){var _ym=mainImg(it,'yahoo');if(!_ym&&cmpMode)return '<td>'+cmpImgHtml(cmpYahooOf(it),'y')+'</td>';return '<td>'+thumb(_ym,it.id)+'</td>';}
-  if(key==='rakutenMain'){var _rm=mainImg(it,'rakuten');if(!_rm&&cmpMode)return '<td>'+cmpImgHtml(cmpRakuOf(it),'r')+'</td>';return '<td>'+thumb(_rm,it.id)+'</td>';}
+  if(key==='yahooMain'){var _ym=mainImg(it,'yahoo');if(!_ym&&cmpMode)return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';return '<td>'+thumb(_ym,it.id)+'</td>';}
+  if(key==='rakutenMain'){var _rm=mainImg(it,'rakuten');if(!_rm&&cmpMode)return '<td>'+cmpImgHtml(cmpRakuFor(it),'r')+'</td>';return '<td>'+thumb(_rm,it.id)+'</td>';}
   if(key==='yahooImg')return '<td>'+stripHtml((it.yahooImgs||[]),it.id)+'</td>';
   if(key==='rakutenImg')return '<td>'+stripHtml((it.rakutenImgs||[]),it.id)+'</td>';
   if(key==='mainThumb'){var _mt=pickMain(it);return '<td>'+(_mt?(isTextItem(_mt)?'<span class="row-thumb strip-thumb-text clk" data-edit="'+escA(it.id)+'" style="'+txtStyle(parseTextItem(_mt))+'">'+esc(parseTextItem(_mt).t)+'</span>':'<img class="row-thumb clk" data-edit="'+escA(it.id)+'" loading="lazy" src="'+escA(_mt)+'" alt="">'):md())+'</td>';}
@@ -2451,10 +2556,10 @@ function cellHtml(key,it){
   if(key==='buttonElemLp')return beLpCellHtml(it);
   if(key==='salesTable')return salesTableCell(it);
   if(key==='rakuCmp')return cddCell('rakuCmp',it.id,it.rakuCmp);
-  if(key==='rakuImg')return '<td>'+cmpImgHtml(cmpRakuOf(it),'r')+'</td>';
-  if(key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooOf(it),'y')+'</td>';
-  if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuOf(it))+'</td>';
-  if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooOf(it))+'</td>';
+  if(key==='rakuImg')return '<td>'+cmpImgHtml(cmpRakuFor(it),'r')+'</td>';
+  if(key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
+  if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
+  if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooFor(it))+'</td>';
   if(key==='memo'){var _hm=!!(it.memo&&String(it.memo).trim());return '<td><button type="button" class="memo-btn'+(_hm?' has':'')+'" data-memo="'+escA(it.id)+'" title="'+(_hm?'メモを開く（入力あり）':'メモを開く')+'">📝'+(_hm?'<span class="memo-dot"></span>':'')+'</button></td>';}
   if(key==='actions'){var _mb='';if(isImgView()){var _hm=!!(it.memo&&String(it.memo).trim());_mb='<button type="button" class="btn btn-sm btn-memo'+(_hm?' has':'')+'" data-memo="'+it.id+'" title="メモを開く">📝 メモ（画像）</button>';}
     return '<td><div class="act-cell">'
@@ -2511,7 +2616,11 @@ function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var
 function setColOrder(arr){var sc=curScope();var s=getSettings();if(!s.colorderS)s.colorderS={};s.colorderS[sc]=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
 function headLabelHtml(key,def){if(key==='pagePlan')return '制作LP<br>本数';return esc(def.label);}
-function renderHead(){resetViewCache();var order=getColOrder();var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+((colResizeMode||colsModalOpen||statusMgrOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}$('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
+function renderHead(){resetViewCache();var order=getColOrder();var srt=cmpMode;var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;
+  var sortable=srt&&CMP_SORTABLE.indexOf(key)>=0;
+  var arrow=sortable?('<span class="srt-ar'+(cmpSort.key===key?' on':'')+'">'+(cmpSort.key===key?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>'):'';
+  h+='<th data-col-key="'+key+'"'+(sortable?' data-sort="'+key+'" class="th-srt'+(cmpSort.key===key?' srt-on':'')+'"':'')+' style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+arrow+((colResizeMode||colsModalOpen||statusMgrOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}
+  $('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
 
 function statusCount(st){if(st==='')return items.length;if(st==='__none__')return items.filter(function(x){return !x.status;}).length;var _t=statusTarget(st);return items.filter(function(x){return x.status===_t;}).length;}
 function updateStatusPills(){var sp=document.querySelectorAll('#statusRow .spill');for(var i=0;i<sp.length;i++){var st=sp[i].getAttribute('data-status');var c=sp[i].querySelector('.cnt');if(c)c.textContent=statusCount(st);}}
@@ -2555,23 +2664,15 @@ function gridEditingNow(){
 function flushQueuedRender(){if(_renderQueued&&!gridEditingNow()){_renderQueued=false;try{renderHead();}catch(e){}render();}}
 document.addEventListener('focusout',function(){setTimeout(function(){flushQueuedRender();try{flushDeferredSync();}catch(e){}},80);},true);
 function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache();_frameCache={id:null,map:null};var _g=$('grid');if(_g)_g.classList.toggle('imgfix',isImgView());
-  closeCdd();
+  closeCdd();cmpInvalidate();
   var tb=$('gridBody');tb.innerHTML='';
   var list;
   if(cmpMode){
-    list=items.filter(function(x){
-      if(isDone(x.status))return false;
+    list=cmpRows().filter(function(x){
       if(cmpFilter==='__none__'){if(x.rakuCmp)return false;}else if(cmpFilter){if(x.rakuCmp!==cmpFilter)return false;}
       return true;
     });
-    if(cmpFilter===''||cmpFilter==='__none__')list=list.concat(cmpGhostRows());
-    list.sort(function(a,b){
-      var sa=cmpSalesPair(a),sb=cmpSalesPair(b);
-      var ta=sa.r+sa.y,tb=sb.r+sb.y;
-      if(tb!==ta)return tb-ta;
-      if(sb.r!==sa.r)return sb.r-sa.r;
-      return String(a.code||'').localeCompare(String(b.code||''));
-    });
+    cmpSortRows(list);
   }else{
   list=items.filter(function(x){
     if(statusFilter!==doneStatusId()&&isDone(x.status))return false;
@@ -3047,6 +3148,14 @@ function startColResize(e,th,key){
 if($('btnDragResize'))$('btnDragResize').onclick=enterColResizeMode;
 if($('btnResizeDone'))$('btnResizeDone').onclick=exitColResizeMode;
 var _gh=$('gridHead');if(_gh)_gh.addEventListener('mousedown',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('col-resize-handle')){startColResize(e,t.parentNode,t.getAttribute('data-rk'));}});
+if(_gh)_gh.addEventListener('click',function(e){
+  var t=e.target;if(t&&t.classList&&t.classList.contains('col-resize-handle'))return;
+  var th=t&&t.closest?t.closest('th[data-sort]'):null;if(!th)return;
+  var k=th.getAttribute('data-sort');
+  if(cmpSort.key===k){cmpSort.dir=(cmpSort.dir<0?1:-1);}
+  else{cmpSort.key=k;cmpSort.dir=(k==='rakuSales'||k==='yahooSales')?-1:1;}
+  renderHead();render();
+});
 if($('btnBulkDel'))$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();scheduleSync();}};
 
 /* 閉じる系 */
@@ -3800,6 +3909,7 @@ document.addEventListener('click',function(e){
   if(t&&t.classList&&t.classList.contains('mv')){var row=t.closest('.col-edit-row');if(row){var bx=row.parentNode;if(t.classList.contains('up')&&row.previousElementSibling){bx.insertBefore(row,row.previousElementSibling);}else if(t.classList.contains('down')&&row.nextElementSibling){bx.insertBefore(row.nextElementSibling,row);}}return;}
   if(t&&t.classList&&t.classList.contains('url-del')){var row=t.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}return;}
   if(t&&t.getAttribute){
+    if(t.classList&&t.classList.contains('fix-inp'))return;
     var rgEl=(t.closest?t.closest('[data-reg]'):null);if(rgEl){e.stopPropagation();cmpRegister(rgEl.getAttribute('data-reg'));return;}
     var dlEl=(t.closest?t.closest('[data-dl]'):null);if(dlEl){e.stopPropagation();bulkDlFromRow(dlEl);return;}
     var mmEl=(t.closest?t.closest('[data-memo]'):null);if(mmEl){openMemo(mmEl.getAttribute('data-memo'),mmEl);return;}
@@ -3864,6 +3974,18 @@ if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
   if(!cmpData.raku)cmpLoad(false);
 });
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
+/* 確定コード入力 */
+if($('gridBody'))$('gridBody').addEventListener('change',function(e){
+  var t=e.target;if(!t||!t.classList||!t.classList.contains('fix-inp'))return;
+  var cd=t.getAttribute('data-fix');var v=t.value;
+  cmpSetFix(cd,v);
+  _renderQueued=false;try{t.blur();}catch(_e){}
+  renderCmpTabs();render();
+});
+if($('gridBody'))$('gridBody').addEventListener('keydown',function(e){
+  var t=e.target;if(!t||!t.classList||!t.classList.contains('fix-inp'))return;
+  if(e.key==='Enter'){e.preventDefault();try{t.blur();}catch(_e){}}
+});
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;var nv=b.getAttribute('data-status')||'';statusFilter=(nv&&nv===statusFilter)?'':nv;
   if(cmpMode){cmpMode=false;cmpFilter='';renderCmpTabs();}
   applyScope();
@@ -4452,7 +4574,18 @@ function migrateScopes(){
 migrateScopes();
 renderHead();
 render();
-function applyInitialView(){try{migrateScopes();applyScope();}catch(e){}}
+function migrateCmpCols(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig2)return;
+    if(!s.colcfgS)s.colcfgS={};if(!s.colorderS)s.colorderS={};
+    delete s.colorderS[CMP_SCOPE];
+    var m={};
+    for(var i=0;i<DEFAULT_COLS.length;i++){var k=DEFAULT_COLS[i].key;m[k]={visible:CMP_DEFAULT_VISIBLE.indexOf(k)>=0};}
+    s.colcfgS[CMP_SCOPE]=m;s.cmpMig2=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
