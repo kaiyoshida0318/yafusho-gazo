@@ -951,6 +951,8 @@ tr.grp-sub:last-child td,tr.grp-sub+tr:not(.grp-sub) td{border-bottom:1px solid 
 .srch-clr:hover{color:var(--red)}
 .ctab-ok{font-weight:800}
 .ctab-ok.on{background:#17643f!important;border-color:#17643f!important;color:#fff!important}
+.ctab-reg{font-weight:800;border-style:dashed;color:var(--ink-3)}
+.ctab-reg.on{background:#8257c9!important;border-color:#8257c9!important;border-style:solid;color:#fff!important}
 @media(max-width:700px){.save-bar{left:10px;right:10px;transform:none;justify-content:space-between}}
 .save-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;border:1px solid var(--line-2);background:#fff;color:var(--ink-3);white-space:nowrap;line-height:1.5}
 .save-chip .save-dot{width:7px;height:7px;border-radius:50%;background:#c3bfb8;flex:0 0 auto}
@@ -1157,7 +1159,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.55.0</span>
+        <span class="version" id="version">v3.56.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1510,7 +1512,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.55.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.56.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1995,6 +1997,11 @@ function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'<
 var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeMode=false,colsModalOpen=false,statusMgrOpen=false;
 /* ===== 楽天比較（ADcheck / Ycheck 連携） ===== */
 var cmpFilter='',cmpMode=true,cmpOkFilter='',cmpQ='';
+var CMPREGKEY='yafusho_cmpshowreg';
+var cmpShowReg=(function(){try{return localStorage.getItem(CMPREGKEY)==='1';}catch(e){return false;}})();
+function cmpSetShowReg(v){cmpShowReg=!!v;try{localStorage.setItem(CMPREGKEY,v?'1':'0');}catch(e){}}
+/* 本ツールに登録済みの商品を含むグループか */
+function cmpHasReg(it){var g=cmpGroupOf(it);return !!(g&&g.group&&g.group.its&&g.group.its.length);}
 function srchHit(it){
   if(!cmpQ)return true;
   var g=(typeof _cmpG!=='undefined')?_cmpG[it.id]:null;
@@ -2156,7 +2163,9 @@ function cmpOkCount(want){
   var rows=null;try{if(cmpData.raku||cmpData.yahoo)rows=cmpRows();}catch(e){rows=null;}
   if(!rows)return 0;
   var n=0;
-  for(var i=0;i<rows.length;i++){var g=_cmpG[rows[i].id];if(g&&g.sub)continue;if(!!cmpIsOk(g&&g.key)===!!want)n++;}
+  for(var i=0;i<rows.length;i++){var g=_cmpG[rows[i].id];if(g&&g.sub)continue;
+    if(!cmpShowReg&&cmpHasReg(rows[i]))continue;
+    if(!!cmpIsOk(g&&g.key)===!!want)n++;}
   return n;
 }
 function cmpCount(v){
@@ -2164,6 +2173,7 @@ function cmpCount(v){
   if(rows){
     var n=0;
     for(var i=0;i<rows.length;i++){var x=rows[i];if(cmpSubOf(x))continue;
+      if(!cmpShowReg&&cmpHasReg(x))continue;
       if(v===''){n++;}else if(v==='__none__'){if(!x.rakuCmp)n++;}else if(rakuCmpVal(x)===v)n++;}
     return n;
   }
@@ -2385,8 +2395,11 @@ function renderCmpTabs(){
   var op=getOpts('rakuCmp');
   for(var i=0;i<op.length;i++){h+='<button class="ctab'+((cmpMode&&cmpFilter===op[i].l)?' on':'')+'" data-cmp="'+escA(op[i].l)+'">'+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';}
   h+='<span class="pill-sep"></span>';
+  h+='<button class="ctab ctab-ok'+((cmpMode&&!cmpOkFilter)?' on':'')+'" data-cmpok="">両方<span class="cnt">'+(cmpOkCount(false)+cmpOkCount(true))+'</span></button>';
   h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='no')?' on':'')+'" data-cmpok="no">未確定<span class="cnt">'+cmpOkCount(false)+'</span></button>';
   h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='ok')?' on':'')+'" data-cmpok="ok">確定<span class="cnt">'+cmpOkCount(true)+'</span></button>';
+  h+='<span class="pill-sep"></span>';
+  h+='<button class="ctab ctab-reg'+(cmpShowReg?' on':'')+'" data-cmpreg="1" title="本ツールに登録済みの商品も一覧に出します">登録済みも表示</button>';
   el.innerHTML=h;
   renderCmpStat();
 }
@@ -2868,6 +2881,7 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
   var list;
   if(cmpMode){
     list=cmpRows().filter(function(x){
+      if(!cmpShowReg&&cmpHasReg(x))return false;
       var _hd=cmpHeadOf(x);
       if(cmpFilter==='__none__'){if(_hd.rakuCmp)return false;}else if(cmpFilter){if(rakuCmpVal(_hd)!==cmpFilter)return false;}
       if(cmpOkFilter){var _gg=_cmpG[x.id];var _ok=cmpIsOk(_gg&&_gg.key);if(cmpOkFilter==='ok'?!_ok:_ok)return false;}
@@ -4193,9 +4207,15 @@ if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.targ
 if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
   var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;
   if(!b||!b.classList||!b.classList.contains('ctab'))return;
+  if(b.hasAttribute('data-cmpreg')){
+    cmpSetShowReg(!cmpShowReg);cmpMode=true;
+    renderCmpTabs();renderHead();render();updateStickyH();
+    if(!cmpData.raku)cmpLoad(false);
+    return;
+  }
   if(b.hasAttribute('data-cmpok')){
     var ov=b.getAttribute('data-cmpok')||'';
-    cmpMode=true;cmpOkFilter=(cmpOkFilter===ov)?'':ov;
+    cmpMode=true;cmpOkFilter=(ov&&cmpOkFilter===ov)?'':ov;
     renderCmpTabs();renderHead();render();updateStickyH();
     if(!cmpData.raku)cmpLoad(false);
     return;
