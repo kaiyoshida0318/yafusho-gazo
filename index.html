@@ -1125,7 +1125,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.49.0</span>
+        <span class="version" id="version">v3.50.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1148,6 +1148,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
     <div class="pill-group" id="cmpPills"></div>
     <span class="spacer"></span>
     <span class="cmp-stat" id="cmpStat"></span>
+    <button class="btn btn-dark btn-sm" id="btnCmpSave" hidden title="楽天比較でのまとめた変更をGitHubへ保存します">💾 変更を保存</button>
     <button class="btn btn-line btn-sm" id="btnCmpUnhide" hidden title="削除した商品をすべて元に戻します">🗑 削除を元に戻す</button>
     <button class="btn btn-line btn-sm" id="btnCmpLoad" title="ADcheck / Ycheck から最新データを取得します">🔄 比較データ</button>
   </div>
@@ -1471,7 +1472,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.49.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.50.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2108,6 +2109,21 @@ function cmpCount(v){
     if(v===''){n2++;}else if(v==='__none__'){if(!y.rakuCmp)n2++;}else if(y.rakuCmp===v)n2++;}
   return n2;
 }
+/* ===== 楽天比較の変更はまとめて保存（自動pushしない） ===== */
+var cmpPend=0;
+function renderCmpSave(){var b=$('btnCmpSave');if(!b)return;b.hidden=!cmpPend;b.textContent='💾 変更を保存('+cmpPend+')';}
+function cmpQuietSave(s){
+  var pv=_stQuiet;_stQuiet=true;
+  try{saveSettings(s);}finally{_stQuiet=pv;}
+  cmpPend++;try{setPending(true);}catch(e){}
+  renderCmpSave();
+}
+function cmpFlushSave(){
+  if(!cmpPend)return;
+  var n=cmpPend;cmpPend=0;renderCmpSave();
+  try{triggerSync(false);}catch(e){}
+  try{log('楽天比較の変更 '+n+'件 をGitHubへ保存');}catch(e){}
+}
 /* ===== 確定コード（両モールの手動ひも付け） ===== */
 function cmpFixMap(){var s=getSettings();return (s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};}
 function cmpFixOf(code){var k=cmpNorm(code);if(!k)return '';var m=cmpFixMap();return m[k]||'';}
@@ -2116,7 +2132,7 @@ function cmpSetFix(code,v){
   var s=getSettings();var m=(s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};
   v=String(v==null?'':v).trim();
   if(v)m[k]=v;else delete m[k];
-  s.cmpFix=m;saveSettings(s);cmpInvalidate();
+  s.cmpFix=m;cmpQuietSave(s);cmpInvalidate();
 }
 function cmpKeyOf(code){var f=cmpFixOf(code);return f?('f:'+cmpNorm(f)):('c:'+cmpNorm(code));}
 /* 非表示（削除）した商品 */
@@ -2126,10 +2142,10 @@ function cmpSetHidden(side,code,on){
   var k=cmpNorm(code);if(!k)return;
   var s=getSettings();var m=(s.cmpHide&&typeof s.cmpHide==='object')?s.cmpHide:{};
   if(on)m[side+':'+k]=1;else delete m[side+':'+k];
-  s.cmpHide=m;saveSettings(s);cmpInvalidate();
+  s.cmpHide=m;cmpQuietSave(s);cmpInvalidate();
 }
 function cmpHiddenCount(){var m=cmpHideMap(),n=0;for(var k in m){if(Object.prototype.hasOwnProperty.call(m,k))n++;}return n;}
-function cmpClearHidden(){var s=getSettings();s.cmpHide={};saveSettings(s);cmpInvalidate();}
+function cmpClearHidden(){var s=getSettings();s.cmpHide={};cmpQuietSave(s);cmpInvalidate();}
 /* 結びつき確定 */
 function cmpOkMap(){var s=getSettings();return (s.cmpOk&&typeof s.cmpOk==='object')?s.cmpOk:{};}
 function cmpIsOk(k){return !!(k&&cmpOkMap()[k]);}
@@ -2137,7 +2153,7 @@ function cmpSetOk(k,on){
   if(!k)return;
   var s=getSettings();var m=(s.cmpOk&&typeof s.cmpOk==='object')?s.cmpOk:{};
   if(on)m[k]=1;else delete m[k];
-  s.cmpOk=m;saveSettings(s);cmpInvalidate();
+  s.cmpOk=m;cmpQuietSave(s);cmpInvalidate();
 }
 
 /* ===== 比較行（楽天／Yahoo／登録商品をまとめた1行） ===== */
@@ -2242,6 +2258,7 @@ function renderCmpTabs(){
 function renderCmpStat(){
   var el=$('cmpStat');if(!el)return;
   try{var ub=$('btnCmpUnhide');if(ub){var hn=cmpHiddenCount();ub.hidden=!hn;ub.textContent='🗑 削除を元に戻す('+hn+')';}}catch(e){}
+  try{renderCmpSave();}catch(e){}
   if(cmpData.loading){el.textContent='比較データ取得中…';el.className='cmp-stat load';return;}
   if(!cmpData.raku&&!cmpData.yahoo){el.textContent='比較データ未取得（🔄 比較データ を押してください）';el.className='cmp-stat none';return;}
   var st2=cmpStats();
@@ -3957,12 +3974,12 @@ document.addEventListener('click',function(e){
   if(t&&t.getAttribute){
     if(t.classList&&t.classList.contains('fix-inp'))return;
     var okEl=(t.closest?t.closest('[data-ok]'):null);
-    if(okEl){e.stopPropagation();var _k=okEl.getAttribute('data-ok');cmpSetOk(_k,!cmpIsOk(_k));renderCmpTabs();render();scheduleSync();return;}
+    if(okEl){e.stopPropagation();var _k=okEl.getAttribute('data-ok');cmpSetOk(_k,!cmpIsOk(_k));renderCmpTabs();render();return;}
     var cdEl=(t.closest?t.closest('[data-cdel]'):null);
     if(cdEl){e.stopPropagation();
       var sd=cdEl.getAttribute('data-cdel'),cc2=cdEl.getAttribute('data-ccode');
       if(confirm((sd==='r'?'楽天':'Yahoo')+'の「'+cc2+'」を一覧から削除しますか？\n（商品データは消えません。「🗑 削除を元に戻す」で戻せます）')){
-        cmpSetHidden(sd,cc2,true);renderCmpTabs();render();scheduleSync();toast('🗑 '+cc2+' を一覧から削除しました');
+        cmpSetHidden(sd,cc2,true);renderCmpTabs();render();toast('🗑 '+cc2+' を一覧から削除しました');
       }
       return;}
     var rgEl=(t.closest?t.closest('[data-reg]'):null);if(rgEl){e.stopPropagation();cmpRegister(rgEl.getAttribute('data-reg'));return;}
@@ -4029,10 +4046,11 @@ if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
   if(!cmpData.raku)cmpLoad(false);
 });
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
+if($('btnCmpSave'))$('btnCmpSave').onclick=function(){cmpFlushSave();};
 if($('btnCmpUnhide'))$('btnCmpUnhide').onclick=function(){
   var n=cmpHiddenCount();if(!n)return;
   if(!confirm('削除した '+n+' 件をすべて一覧に戻しますか？'))return;
-  cmpClearHidden();renderCmpTabs();render();scheduleSync();toast('🗑 削除した商品を元に戻しました');
+  cmpClearHidden();renderCmpTabs();render();toast('🗑 削除した商品を元に戻しました');
 };
 /* 確定コード入力 */
 if($('gridBody'))$('gridBody').addEventListener('change',function(e){
@@ -4316,6 +4334,7 @@ async function saveToGitHub(silent){
     persist();
     if(silent){prog(false);if(_imgUp||_tplUp)toast('☁️ 画像'+(_imgUp+_tplUp)+'枚を含めて同期しました');}else{progDone('✓ 保存しました');}
     setPending(false);
+    try{cmpPend=0;renderCmpSave();}catch(_ce2){}
     if(_pend>0)syncLockStep(_pend,'仕上げ中…');
     log('=== GitHub保存 完了（商品'+items.length+'件 / 画像'+_imgUp+'枚）上記commitリンクで反映確認 ===');
     try{setTimeout(function(){capLoad(true);},1200);}catch(_ce){}
@@ -4431,6 +4450,7 @@ if($('btnPullRun'))$('btnPullRun').onclick=function(){
   if(!confirm('GitHubから「'+names.join('・')+'」を取り込みます。\nこの端末の未保存の変更は破棄されます。よろしいですか？'))return;
   hide('pullModal');
   setPending(false);
+  try{cmpPend=0;renderCmpSave();}catch(_ce3){}
   reloadAllFromGitHub(o);
 };
 if($('btnPull'))$('btnPull').onclick=function(){pullTab('run');renderPullModal();show('pullModal');};
