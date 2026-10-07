@@ -1190,7 +1190,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.62.0</span>
+        <span class="version" id="version">v3.62.1</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1543,7 +1543,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.62.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.62.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2159,13 +2159,35 @@ async function cmpLoad(force){
       yahoo[mc]={code:mc,disp:String((mv&&mv.code)||mk||mc),img:(mv&&mv.customImage)||'',name:(mv&&mv.name)||'',sales:0};
     }
     /* 売上は日次(daily.item)を優先。item配列は月途中のスナップショットで古いことがある */
-    var dit=(j2.daily&&j2.daily.item)||null,dayN=0;
+    var dit=(j2.daily&&j2.daily.item)||null,dov=(j2.daily&&j2.daily.overall)||{},dayN=0;
+    var _ySum=0,_oSum=0,_skip=[],_mismatch=[];
+    function _daySig(d){
+      var row=dit&&dit[d];if(!row)return null;
+      var ks=[];for(var k in row){if(Object.prototype.hasOwnProperty.call(row,k))ks.push(k);}
+      ks.sort();var out='';
+      for(var i=0;i<ks.length;i++){var v=row[ks[i]];out+=ks[i]+':'+(Array.isArray(v)?(+v[0]||0):(+v||0))+'|';}
+      return out;
+    }
+    function _prevDay(d){
+      var t=new Date(d+'T00:00:00');t.setDate(t.getDate()-1);
+      return t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2);
+    }
     if(dit&&typeof dit==='object'){
-      for(var dk in dit){
-        if(!Object.prototype.hasOwnProperty.call(dit,dk))continue;
-        if(String(dk).slice(0,7)!==lm.y)continue;
-        dayN++;
-        var drow=dit[dk]||{};
+      var _days=[];
+      for(var dk0 in dit){if(Object.prototype.hasOwnProperty.call(dit,dk0)&&String(dk0).slice(0,7)===lm.y)_days.push(dk0);}
+      _days.sort();
+      for(var _i=0;_i<_days.length;_i++){
+        var dk=_days[_i],drow=dit[dk]||{};
+        var _dSum=0;
+        for(var _c0 in drow){if(!Object.prototype.hasOwnProperty.call(drow,_c0))continue;var _v0=drow[_c0];_dSum+=Array.isArray(_v0)?(+_v0[0]||0):(+_v0||0);}
+        var _ov=(+dov[dk]||0);
+        /* 前日とまったく同じ内訳なのに店舗合計が違う日＝Ycheck側の取り込み重複。除外する */
+        var _pd=_prevDay(dk);
+        if(dit[_pd]&&_daySig(dk)===_daySig(_pd)&&_ov!==(+dov[_pd]||0)){
+          _skip.push(dk+'（商品別¥'+_dSum+' / 店舗¥'+_ov+'）');_oSum+=_ov;continue;
+        }
+        if(_ov&&_dSum!==_ov)_mismatch.push(dk+'（商品別¥'+_dSum+' / 店舗¥'+_ov+'）');
+        dayN++;_ySum+=_dSum;_oSum+=_ov;
         for(var dc in drow){
           if(!Object.prototype.hasOwnProperty.call(drow,dc))continue;
           var dv=drow[dc],drev=Array.isArray(dv)?(+dv[0]||0):(+dv||0);
@@ -2174,6 +2196,7 @@ async function cmpLoad(force){
           yahoo[dcc].sales+=drev;
         }
       }
+      cmpData.yChk={item:_ySum,shop:_oSum,skip:_skip,mismatch:_mismatch,days:dayN};
     }
     if(!dayN){
       var its=j2.item||[];
@@ -2196,6 +2219,14 @@ async function cmpLoad(force){
   try{
     var stt=cmpStats();
     log('Yahoo売上の集計元：'+(cmpData.ySrc||'月次'));
+    try{
+      var _yc=cmpData.yChk;
+      if(_yc){
+        log('Yahoo日次チェック（'+lm.label+'）商品別合計 '+cmpYen(_yc.item)+' / 店舗合計 '+cmpYen(_yc.shop)+(_yc.item===_yc.shop?'（一致）':'（差 '+cmpYen(Math.abs(_yc.item-_yc.shop))+'）'));
+        if(_yc.skip.length)log('※ 前日と内訳が完全一致した重複日を除外：'+_yc.skip.join(' , ')+' → Ycheck側でこの日を取り直してください');
+        if(_yc.mismatch.length)log('※ 商品別と店舗合計が合わない日：'+_yc.mismatch.join(' , '));
+      }
+    }catch(_ye){}
     log('比較データ取得（'+lm.label+'）取得：楽天'+Object.keys(raku).length+'件／Yahoo'+Object.keys(yahoo).length+'件 → 突合：楽天'+stt.raku+'/'+stt.tot+'件・Yahoo'+stt.yahoo+'/'+stt.tot+'件'+(cmpData.err?(' ※'+cmpData.err):''));
     if(stt.miss.length)log('どちらにも一致しない商品コード（'+stt.miss.length+'件）: '+stt.miss.slice(0,40).join(' , ')+(stt.miss.length>40?' …':''));
   }catch(e3){}
