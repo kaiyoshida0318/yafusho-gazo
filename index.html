@@ -1183,7 +1183,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.60.2</span>
+        <span class="version" id="version">v3.60.3</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1536,7 +1536,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.60.2</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.60.3</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2630,7 +2630,8 @@ var cddState={field:null,id:null,btn:null};
 function closeCdd(){var m=document.getElementById('cddMenu');if(m)m.hidden=true;cddState.btn=null;}
 function cddInner(field,value){var it=cddFind(field,value);if(value&&it){return (it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+cddValHtml(field,value,it.label);}return '<span class="cdd-empty">未設定</span>';}
 function openCdd(btn){
-  var field=btn.getAttribute('data-field');var id=btn.getAttribute('data-id');var cur=btn.getAttribute('data-value')||'';
+  var field=btn.getAttribute('data-field');if(!field)return;
+  var id=btn.getAttribute('data-id');var cur=btn.getAttribute('data-value')||'';
   var m=document.getElementById('cddMenu');if(!m){m=document.createElement('div');m.id='cddMenu';m.className='cdd-menu';document.body.appendChild(m);}
   var its=cddItems(field);var h='';
   for(var i=0;i<its.length;i++){var it=its[i];h+='<button type="button" class="cdd-item'+(cur===it.v?' on':'')+'" data-v="'+escA(it.v)+'">'+(it.ico?'<span class="cdd-ico">'+it.ico+'</span>':'')+(it.v?cddValHtml(field,it.v,it.label):'<span class="cdd-empty">'+esc(it.label)+'</span>')+'</button>';}
@@ -2813,7 +2814,7 @@ function cellHtml(key,it){
     if(key==='yahooMain'||key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
     if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
     if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooFor(it))+'</td>';
-    if(key==='rakuCmp')return '<td><span class="cdd cdd-ro" title="未登録商品のため変更できません">'+esc(CMP_DEF_VAL)+'</span></td>';
+    if(key==='rakuCmp')return '<td><span class="cdd-ro" title="未登録商品のため変更できません">'+esc(CMP_DEF_VAL)+'</span></td>';
     if(key==='actions')return '<td><div class="act-cell"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'">＋ 登録</button></div></td>';
     return '<td></td>';
   }
@@ -4390,6 +4391,7 @@ document.addEventListener('click',function(e){
   var t=e.target;var item=t.closest?t.closest('.cdd-item'):null;
   if(item&&cddState.btn){cddSelect(item.getAttribute('data-v')||'');return;}
   var trg=t.closest?t.closest('.cdd'):null;
+  if(trg&&!trg.getAttribute('data-field'))trg=null;
   if(trg){if(cddState.btn===trg)closeCdd();else openCdd(trg);return;}
   if(!(t.closest&&t.closest('#cddMenu')))closeCdd();
 });
