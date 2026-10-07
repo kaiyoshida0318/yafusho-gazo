@@ -922,6 +922,12 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .cmp-na{color:var(--ink-3);font-size:12px}
 .cmp-yen{font-family:"Roboto Mono",monospace;font-size:12.5px;font-weight:700;color:var(--ink-1)}
 .cmp-zero{font-family:"Roboto Mono",monospace;font-size:12.5px;color:var(--ink-3)}
+tr.ghost-row{background:#fbfaf7}
+tr.ghost-row td{color:var(--ink-2)}
+.gh-badge{display:inline-block;font-size:10px;font-weight:800;color:#8a6d1f;background:#fdf3d6;border:1px solid #efd98f;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:1px}
+.btn-reg{background:#17643f;border-color:#17643f;color:#fff;font-weight:700;padding:3px 9px;font-size:11.5px;border-radius:6px;cursor:pointer;border:1px solid #17643f}
+.btn-reg:hover{filter:brightness(1.08)}
+.gh-ln{margin-top:4px}
 .overlay>.mini.pull-mini{max-width:780px!important}
 .pull-mini h2{margin-top:0}
 .pull-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line-2);margin:10px 0 14px}
@@ -1102,7 +1108,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.46.1</span>
+        <span class="version" id="version">v3.47.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1447,7 +1453,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.46.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.47.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1931,7 +1937,7 @@ function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'<
 
 var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeMode=false,colsModalOpen=false,statusMgrOpen=false;
 /* ===== 楽天比較（ADcheck / Ycheck 連携） ===== */
-var cmpFilter='',cmpMode=false;
+var cmpFilter='',cmpMode=true;
 var CMPCACHE='yafusho_cmpcache';
 var CMP_SCOPE='__cmp__';
 var CMP_DEFAULT_VISIBLE=['date','codeName','rakutenMain','yahooMain','rakuSales','yahooSales'];
@@ -2072,12 +2078,46 @@ function cmpCount(v){
   var _d=doneStatusId(),n=0;
   for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;
     if(v===''){n++;}else if(v==='__none__'){if(!x.rakuCmp)n++;}else if(x.rakuCmp===v)n++;}
+  if(v===''||v==='__none__'){try{n+=cmpGhostRows().length;}catch(e){}}
   return n;
+}
+/* ADcheck / Ycheck にあって本ツールに未登録の商品を、仮の行として返す */
+function cmpGhostRows(){
+  if(!cmpData.raku&&!cmpData.yahoo)return [];
+  var have={};
+  for(var i=0;i<items.length;i++){
+    var c=items[i].code;if(!c)continue;
+    have['n:'+cmpNorm(c)]=1;have['l:'+cmpLoose(c)]=1;
+  }
+  var out=[],seen={};
+  function add(k){
+    if(!k||seen[k])return;
+    if(have['n:'+k]||have['l:'+cmpLoose(k)])return;
+    seen[k]=1;
+    var r=(cmpData.raku&&cmpData.raku[k])||null,y=(cmpData.yahoo&&cmpData.yahoo[k])||null;
+    out.push({id:'__g_'+k,__ghost:true,code:(r&&r.code)||(y&&y.code)||k,name:(r&&r.name)||(y&&y.name)||'',
+      date:'',rakuCmp:'',status:'',listingType:'',pagePlan:'',lpType:'',memo:'',
+      yahooImgs:[],rakutenImgs:[],yahooLps:[[]],yahooUrls:[],yahooRank:[],rakutenUrls:[]});
+  }
+  var m=cmpData.raku||{};for(var a in m){if(Object.prototype.hasOwnProperty.call(m,a))add(a);}
+  var n2=cmpData.yahoo||{};for(var b in n2){if(Object.prototype.hasOwnProperty.call(n2,b))add(b);}
+  return out;
+}
+function cmpSalesPair(it){var r=cmpRakuOf(it),y=cmpYahooOf(it);return {r:(r&&r.sales)||0,y:(y&&y.sales)||0};}
+function cmpRegister(code){
+  if(!code)return;
+  var g=null,gs=cmpGhostRows();
+  for(var i=0;i<gs.length;i++){if(gs[i].code===code){g=gs[i];break;}}
+  var nm=(g&&g.name)||'';
+  var d={id:'it'+Date.now(),yahooMain:'',rakutenMain:'',yahooImgs:[],yahooLps:[[]],yahooLpNames:[],rakutenImgs:[],
+    date:todayStr(),rating:'',listingType:'',pagePlan:'',status:defaultStatusId(),name:nm,code:code,
+    salesMethod:'',searchUrl:'',yahooUrls:[],yahooRank:[],rakutenUrls:[],memo:'',stockChk:'確認前'};
+  items.push(d);persist();renderCmpTabs();render();scheduleSync();
+  toast('✅ '+code+' を登録しました');
 }
 function renderCmpTabs(){
   var el=$('cmpPills');if(!el)return;
-  var h='<button class="ctab ctab-off'+(!cmpMode?' on':'')+'" data-cmp="__off__">通常表示</button>';
-  h+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="">全体<span class="cnt">'+cmpCount('')+'</span></button>';
+  var h='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="">全体<span class="cnt">'+cmpCount('')+'</span></button>';
   var op=getOpts('rakuCmp');
   for(var i=0;i<op.length;i++){h+='<button class="ctab'+((cmpMode&&cmpFilter===op[i].l)?' on':'')+'" data-cmp="'+escA(op[i].l)+'">'+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';}
   h+='<button class="ctab ctab-none'+((cmpMode&&cmpFilter==='__none__')?' on':'')+'" data-cmp="__none__">未設定<span class="cnt">'+cmpCount('__none__')+'</span></button>';
@@ -2362,10 +2402,25 @@ function cnLinksHtml(it){
   return h+'</div>';
 }
 function cellHtml(key,it){
+  if(it&&it.__ghost){
+    if(key==='codeName')return '<td><div class="cn-wrap">'
+      +'<div class="mono cn-code">'+esc(it.code)+'<span class="gh-badge">未登録</span></div>'
+      +'<div class="cell-name cn-name">'+(it.name?esc(it.name):'<span class="sm-empty">—</span>')+'</div>'
+      +'<div class="gh-ln"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'" title="この商品を本ツールに登録します">＋ 登録</button></div>'
+      +'</div></td>';
+    if(key==='code')return '<td class="mono">'+esc(it.code)+'<span class="gh-badge">未登録</span></td>';
+    if(key==='name')return '<td class="cell-name">'+esc(it.name||'')+'</td>';
+    if(key==='rakutenMain'||key==='rakuImg')return '<td>'+cmpImgHtml(cmpRakuOf(it),'r')+'</td>';
+    if(key==='yahooMain'||key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooOf(it),'y')+'</td>';
+    if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuOf(it))+'</td>';
+    if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooOf(it))+'</td>';
+    if(key==='actions')return '<td><div class="act-cell"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'">＋ 登録</button></div></td>';
+    return '<td></td>';
+  }
   if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?fmtDate(it.date):md())+'</td>';
   if(key==='imageBlock')return '<td>'+imgBlockHtml(it)+'</td>';
-  if(key==='yahooMain')return '<td>'+thumb(mainImg(it,'yahoo'),it.id)+'</td>';
-  if(key==='rakutenMain')return '<td>'+thumb(mainImg(it,'rakuten'),it.id)+'</td>';
+  if(key==='yahooMain'){var _ym=mainImg(it,'yahoo');if(!_ym&&cmpMode)return '<td>'+cmpImgHtml(cmpYahooOf(it),'y')+'</td>';return '<td>'+thumb(_ym,it.id)+'</td>';}
+  if(key==='rakutenMain'){var _rm=mainImg(it,'rakuten');if(!_rm&&cmpMode)return '<td>'+cmpImgHtml(cmpRakuOf(it),'r')+'</td>';return '<td>'+thumb(_rm,it.id)+'</td>';}
   if(key==='yahooImg')return '<td>'+stripHtml((it.yahooImgs||[]),it.id)+'</td>';
   if(key==='rakutenImg')return '<td>'+stripHtml((it.rakutenImgs||[]),it.id)+'</td>';
   if(key==='mainThumb'){var _mt=pickMain(it);return '<td>'+(_mt?(isTextItem(_mt)?'<span class="row-thumb strip-thumb-text clk" data-edit="'+escA(it.id)+'" style="'+txtStyle(parseTextItem(_mt))+'">'+esc(parseTextItem(_mt).t)+'</span>':'<img class="row-thumb clk" data-edit="'+escA(it.id)+'" loading="lazy" src="'+escA(_mt)+'" alt="">'):md())+'</td>';}
@@ -2502,7 +2557,23 @@ document.addEventListener('focusout',function(){setTimeout(function(){flushQueue
 function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache();_frameCache={id:null,map:null};var _g=$('grid');if(_g)_g.classList.toggle('imgfix',isImgView());
   closeCdd();
   var tb=$('gridBody');tb.innerHTML='';
-  var list=items.filter(function(x){
+  var list;
+  if(cmpMode){
+    list=items.filter(function(x){
+      if(isDone(x.status))return false;
+      if(cmpFilter==='__none__'){if(x.rakuCmp)return false;}else if(cmpFilter){if(x.rakuCmp!==cmpFilter)return false;}
+      return true;
+    });
+    if(cmpFilter===''||cmpFilter==='__none__')list=list.concat(cmpGhostRows());
+    list.sort(function(a,b){
+      var sa=cmpSalesPair(a),sb=cmpSalesPair(b);
+      var ta=sa.r+sa.y,tb=sb.r+sb.y;
+      if(tb!==ta)return tb-ta;
+      if(sb.r!==sa.r)return sb.r-sa.r;
+      return String(a.code||'').localeCompare(String(b.code||''));
+    });
+  }else{
+  list=items.filter(function(x){
     if(statusFilter!==doneStatusId()&&isDone(x.status))return false;
     if(listingFilter==='__none__'){if(x.listingType)return false;}else if(listingFilter){if(x.listingType!==listingFilter)return false;}
     if(statusFilter==='__none__'){if(x.status)return false;}else if(statusFilter){if(x.status!==statusTarget(statusFilter))return false;}
@@ -2511,8 +2582,9 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
     if(cmpFilter==='__none__'){if(x.rakuCmp)return false;}else if(cmpFilter){if(x.rakuCmp!==cmpFilter)return false;}
     return true;
   });
+  }
   for(var i=0;i<list.length;i++){
-    var it=list[i];var tr=document.createElement('tr');tr.setAttribute('data-id',it.id);if(isDetailish()){var _ph=getRowHItem(it.id);if(_ph){tr.style.height=_ph+'px';tr.style.setProperty('--dc-lines',String(rowLines(_ph)));}}var tds='';
+    var it=list[i];var tr=document.createElement('tr');tr.setAttribute('data-id',it.id);if(it.__ghost)tr.className='ghost-row';if(!it.__ghost&&isDetailish()){var _ph=getRowHItem(it.id);if(_ph){tr.style.height=_ph+'px';tr.style.setProperty('--dc-lines',String(rowLines(_ph)));}}var tds='';
     var _ord=getColOrder();for(var c=0;c<_ord.length;c++){var key=_ord[c];if(!colDef(key))continue;var cc=getColCfg(key);if(!cc.visible)continue;var cell=cellHtml(key,it);cell=cell.replace('<td','<td data-col-key="'+key+'" style="'+colStyleStr(cc,false)+'"');tds+=cell;}
     tds+='<td class="col-spx"></td>';tr.innerHTML=tds;tb.appendChild(tr);
   }
@@ -3728,6 +3800,7 @@ document.addEventListener('click',function(e){
   if(t&&t.classList&&t.classList.contains('mv')){var row=t.closest('.col-edit-row');if(row){var bx=row.parentNode;if(t.classList.contains('up')&&row.previousElementSibling){bx.insertBefore(row,row.previousElementSibling);}else if(t.classList.contains('down')&&row.nextElementSibling){bx.insertBefore(row.nextElementSibling,row);}}return;}
   if(t&&t.classList&&t.classList.contains('url-del')){var row=t.closest('.url-row');var list=row.parentNode;if(list.children.length>1){row.remove();}else{row.querySelector('input').value='';}return;}
   if(t&&t.getAttribute){
+    var rgEl=(t.closest?t.closest('[data-reg]'):null);if(rgEl){e.stopPropagation();cmpRegister(rgEl.getAttribute('data-reg'));return;}
     var dlEl=(t.closest?t.closest('[data-dl]'):null);if(dlEl){e.stopPropagation();bulkDlFromRow(dlEl);return;}
     var mmEl=(t.closest?t.closest('[data-memo]'):null);if(mmEl){openMemo(mmEl.getAttribute('data-memo'),mmEl);return;}
     if(isImgView()&&t.tagName==='IMG'&&t.classList&&(t.classList.contains('strip-thumb')||t.classList.contains('big-thumb'))&&t.closest&&t.closest('#gridBody')){openLightboxFromThumb(t);return;}
@@ -3778,21 +3851,21 @@ function countLpTypeF(v){var _d=doneStatusId();var n=0;for(var i=0;i<items.lengt
 function renderLpTypeTabs(){var el=$('lpTypeRow');if(!el)return;var opts=getLpOpts();var h='<button class="ltab'+(lpTypeFilter===''?' on':'')+'" data-lpt="">全体<span class="cnt">'+countLpTypeF('')+'</span></button>';for(var i=0;i<opts.length;i++){var o=opts[i];h+='<button class="ltab'+(lpTypeFilter===o.v?' on':'')+'" data-lpt="'+escA(o.v)+'"><span class="lp-tile" style="background:'+esc(o.c)+'">'+(i+1)+'</span>'+esc(o.label)+'<span class="cnt">'+countLpTypeF(o.v)+'</span></button>';}h+='<button class="ltab ltab-none'+(lpTypeFilter==='__none__'?' on':'')+'" data-lpt="__none__">未設定<span class="cnt">'+countLpTypeF('__none__')+'</span></button>';el.innerHTML=h;}
 renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();renderCmpTabs();
 try{cmpLoadCache();renderCmpStat();}catch(e){}
-setTimeout(function(){try{if(cmpColsVisible()||cmpFilter)cmpLoad(false);}catch(e){}},1500);
+setTimeout(function(){try{if(cmpMode||cmpColsVisible()||cmpFilter)cmpLoad(false);}catch(e){}},1500);
 if($('lpCountRow'))$('lpCountRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpc')||'';lpCountFilter=(nv&&nv===lpCountFilter)?'':nv;render();});
 if($('lpTypeRow'))$('lpTypeRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpt')||'';lpTypeFilter=(nv&&nv===lpTypeFilter)?'':nv;render();});
-if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;var nv=b.getAttribute('data-listing')||'';listingFilter=(nv&&nv===listingFilter)?'':nv;render();});
+if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;var nv=b.getAttribute('data-listing')||'';listingFilter=(nv&&nv===listingFilter)?'':nv;if(cmpMode){cmpMode=false;cmpFilter='';renderCmpTabs();renderHead();}render();updateStickyH();});
 if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
   var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;
   if(!b||!b.classList||!b.classList.contains('ctab'))return;
   var nv=b.getAttribute('data-cmp')||'';
-  if(nv==='__off__'){cmpMode=false;cmpFilter='';}
-  else{cmpMode=true;cmpFilter=nv;}
+  cmpMode=true;cmpFilter=nv;
   renderCmpTabs();renderHead();render();updateStickyH();
-  if(cmpMode&&!cmpData.raku)cmpLoad(false);
+  if(!cmpData.raku)cmpLoad(false);
 });
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;var nv=b.getAttribute('data-status')||'';statusFilter=(nv&&nv===statusFilter)?'':nv;
+  if(cmpMode){cmpMode=false;cmpFilter='';renderCmpTabs();}
   applyScope();
   if(!$('statusModal').hidden){stEditSel=statusFilter||SCOPE_ALL;renderStatusManager();}});
 function setBulkBtn(){var b=$('btnBulkEdit');if(b){b.classList.toggle('on',bulkEdit);b.textContent=bulkEdit?'キャンセル':'✏️ 一括編集';}}
