@@ -906,6 +906,10 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .ctab .cnt{font-size:11px;font-weight:600;background:#f1f1f4;color:var(--ink-3);padding:2px 8px;border-radius:999px;min-width:20px;text-align:center}
 .ctab.on .cnt{background:rgba(255,255,255,.28)!important;color:#fff!important}
 .ctab-none{border-style:dashed;color:var(--ink-3)}
+.ctab-off{font-weight:700}
+.ctab-off.on{background:#7a756d!important;border-color:#7a756d!important}
+.stab-cmp{font-weight:800}
+.stab-cmp.on{background:#c0392b!important;border-color:#c0392b!important;color:#fff!important}
 .cmp-stat{font-size:11.5px;font-weight:700;margin-right:8px;white-space:nowrap}
 .cmp-stat.none{color:var(--ink-3)}
 .cmp-stat.ok{color:#17643f}
@@ -1098,7 +1102,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.45.0</span>
+        <span class="version" id="version">v3.46.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1443,7 +1447,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.45.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.46.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1927,8 +1931,10 @@ function catBadge(c){return '<span class="cat-badge">'+esc(c||'単一商品')+'<
 
 var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeMode=false,colsModalOpen=false,statusMgrOpen=false;
 /* ===== 楽天比較（ADcheck / Ycheck 連携） ===== */
-var cmpFilter='';
+var cmpFilter='',cmpMode=false;
 var CMPCACHE='yafusho_cmpcache';
+var CMP_SCOPE='__cmp__';
+var CMP_DEFAULT_VISIBLE=['date','codeName','rakutenMain','yahooMain','rakuSales','yahooSales'];
 var cmpData={raku:null,yahoo:null,ym:'',at:0,loading:false,err:''};
 function cmpCfg(){
   var st=getSettings();
@@ -1944,14 +1950,43 @@ function cmpLastMonth(){
   var y=d.getFullYear(),m=('0'+(d.getMonth()+1)).slice(-2);
   return {ad:''+y+m, y:y+'-'+m, label:y+'/'+m};
 }
-function cmpNorm(v){return String(v==null?'':v).trim().toLowerCase();}
+function cmpNorm(v){
+  var t=String(v==null?'':v);
+  t=t.replace(/[\uFF01-\uFF5E]/g,function(ch){return String.fromCharCode(ch.charCodeAt(0)-0xFEE0);});
+  t=t.replace(/[\u2010-\u2015\u2212\uFF0D]/g,'-').replace(/\u3000/g,' ');
+  return t.trim().toLowerCase();
+}
+function cmpLoose(v){return cmpNorm(v).replace(/[^a-z0-9]/g,'');}
+function cmpBuildLoose(map){
+  var o={};
+  for(var k in map){if(!Object.prototype.hasOwnProperty.call(map,k))continue;var lk=cmpLoose(k);if(lk&&!o[lk])o[lk]=map[k];}
+  return o;
+}
+function cmpPick(map,looseMap,code){
+  if(!map)return null;
+  var k=cmpNorm(code);if(!k)return null;
+  if(map[k])return map[k];
+  var lk=cmpLoose(code);
+  if(lk&&looseMap&&looseMap[lk])return looseMap[lk];
+  return null;
+}
+function cmpStats(){
+  var tot=0,mr=0,my=0,miss=[];
+  for(var i=0;i<items.length;i++){
+    var c=items[i].code;if(!c)continue;tot++;
+    var r=cmpRakuOf(items[i]),y=cmpYahooOf(items[i]);
+    if(r)mr++;if(y)my++;
+    if(!r&&!y)miss.push(c);
+  }
+  return {tot:tot,raku:mr,yahoo:my,miss:miss};
+}
 function cmpSaveCache(){
   try{localStorage.setItem(CMPCACHE,JSON.stringify({raku:cmpData.raku,yahoo:cmpData.yahoo,ym:cmpData.ym,at:cmpData.at}));}catch(e){}
 }
 function cmpLoadCache(){
   try{
     var c=JSON.parse(localStorage.getItem(CMPCACHE));
-    if(c&&c.raku&&c.yahoo){cmpData.raku=c.raku;cmpData.yahoo=c.yahoo;cmpData.ym=c.ym||'';cmpData.at=c.at||0;return true;}
+    if(c&&c.raku&&c.yahoo){cmpData.raku=c.raku;cmpData.yahoo=c.yahoo;cmpData.rakuL=cmpBuildLoose(c.raku);cmpData.yahooL=cmpBuildLoose(c.yahoo);cmpData.ym=c.ym||'';cmpData.at=c.at||0;return true;}
   }catch(e){}
   return false;
 }
@@ -2009,14 +2044,18 @@ async function cmpLoad(force){
       if(!yahoo[yk].img)yahoo[yk].img=c.yImg.replace('{shop}',c.shop).replace('{code}',yahoo[yk].code);
     }
   }catch(e2){cmpData.err=(cmpData.err?cmpData.err+' / ':'')+'Yahoo: '+((e2&&e2.message)||e2);}
-  cmpData.raku=raku;cmpData.yahoo=yahoo;cmpData.ym=lm.label;cmpData.at=Date.now();cmpData.loading=false;
+  cmpData.raku=raku;cmpData.yahoo=yahoo;cmpData.rakuL=cmpBuildLoose(raku);cmpData.yahooL=cmpBuildLoose(yahoo);cmpData.ym=lm.label;cmpData.at=Date.now();cmpData.loading=false;
   cmpSaveCache();
-  try{log('比較データ取得（'+lm.label+'）楽天'+Object.keys(raku).length+'件 / Yahoo'+Object.keys(yahoo).length+'件'+(cmpData.err?(' ※'+cmpData.err):''));}catch(e3){}
+  try{
+    var stt=cmpStats();
+    log('比較データ取得（'+lm.label+'）取得：楽天'+Object.keys(raku).length+'件／Yahoo'+Object.keys(yahoo).length+'件 → 突合：楽天'+stt.raku+'/'+stt.tot+'件・Yahoo'+stt.yahoo+'/'+stt.tot+'件'+(cmpData.err?(' ※'+cmpData.err):''));
+    if(stt.miss.length)log('どちらにも一致しない商品コード（'+stt.miss.length+'件）: '+stt.miss.slice(0,40).join(' , ')+(stt.miss.length>40?' …':''));
+  }catch(e3){}
   renderCmpStat();renderHead();render();
 }
 function itemCodeKey(it){return cmpNorm(it&&it.code);}
-function cmpRakuOf(it){var k=itemCodeKey(it);return (cmpData.raku&&k)?(cmpData.raku[k]||null):null;}
-function cmpYahooOf(it){var k=itemCodeKey(it);return (cmpData.yahoo&&k)?(cmpData.yahoo[k]||null):null;}
+function cmpRakuOf(it){return cmpPick(cmpData.raku,cmpData.rakuL,it&&it.code);}
+function cmpYahooOf(it){return cmpPick(cmpData.yahoo,cmpData.yahooL,it&&it.code);}
 function cmpImgHtml(o,side){
   if(!cmpData.raku&&!cmpData.yahoo)return '<span class="cmp-na">—</span>';
   if(!o||!o.img)return '<span class="cmp-na">—</span>';
@@ -2037,10 +2076,11 @@ function cmpCount(v){
 }
 function renderCmpTabs(){
   var el=$('cmpPills');if(!el)return;
-  var h='<button class="ctab'+(cmpFilter===''?' on':'')+'" data-cmp="">全体<span class="cnt">'+cmpCount('')+'</span></button>';
+  var h='<button class="ctab ctab-off'+(!cmpMode?' on':'')+'" data-cmp="__off__">通常表示</button>';
+  h+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="">全体<span class="cnt">'+cmpCount('')+'</span></button>';
   var op=getOpts('rakuCmp');
-  for(var i=0;i<op.length;i++){h+='<button class="ctab'+(cmpFilter===op[i].l?' on':'')+'" data-cmp="'+escA(op[i].l)+'">'+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';}
-  h+='<button class="ctab ctab-none'+(cmpFilter==='__none__'?' on':'')+'" data-cmp="__none__">未設定<span class="cnt">'+cmpCount('__none__')+'</span></button>';
+  for(var i=0;i<op.length;i++){h+='<button class="ctab'+((cmpMode&&cmpFilter===op[i].l)?' on':'')+'" data-cmp="'+escA(op[i].l)+'">'+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';}
+  h+='<button class="ctab ctab-none'+((cmpMode&&cmpFilter==='__none__')?' on':'')+'" data-cmp="__none__">未設定<span class="cnt">'+cmpCount('__none__')+'</span></button>';
   el.innerHTML=h;
   renderCmpStat();
 }
@@ -2048,9 +2088,9 @@ function renderCmpStat(){
   var el=$('cmpStat');if(!el)return;
   if(cmpData.loading){el.textContent='比較データ取得中…';el.className='cmp-stat load';return;}
   if(!cmpData.raku&&!cmpData.yahoo){el.textContent='比較データ未取得（🔄 比較データ を押してください）';el.className='cmp-stat none';return;}
-  var ago=cmpData.at?(Math.round((Date.now()-cmpData.at)/60000)):0;
-  el.textContent=cmpData.ym+'分 ／ 楽天'+Object.keys(cmpData.raku||{}).length+'件・Yahoo'+Object.keys(cmpData.yahoo||{}).length+'件'+(ago?('（'+ago+'分前）'):'')+(cmpData.err?(' ⚠'+cmpData.err):'');
-  el.className='cmp-stat '+(cmpData.err?'err':'ok');
+  var st2=cmpStats();
+  el.textContent=cmpData.ym+'分 ／ 取得 楽天'+Object.keys(cmpData.raku||{}).length+'・Yahoo'+Object.keys(cmpData.yahoo||{}).length+' ／ 突合 楽天'+st2.raku+'/'+st2.tot+'・Yahoo'+st2.yahoo+'/'+st2.tot+(st2.miss.length?('（未一致'+st2.miss.length+'件→ログ）'):'')+(cmpData.err?(' ⚠'+cmpData.err):'');
+  el.className='cmp-stat '+(cmpData.err?'err':((st2.raku||st2.yahoo)?'ok':'none'));
 }
 function cmpColsVisible(){
   try{return !!(getColCfg('rakuImg').visible||getColCfg('yahooImgEx').visible||getColCfg('rakuSales').visible||getColCfg('yahooSales').visible);}catch(e){return false;}
@@ -2387,12 +2427,13 @@ var DEFAULT_VISIBLE={
 var SCOPE_ALL='__all__';
 var SCOPE_DEFAULT_VISIBLE=['date','rakutenMain','codeName','rating','searchUrl','yahooUrls','yahooRank','rakutenUrls','pagePlan','listingType','status','actions'];
 var _bulkScope=null;
-function curScope(){if(_bulkScope)return _bulkScope;return statusFilter||SCOPE_ALL;}
-function scopeLabel(k){if(!k||k===SCOPE_ALL)return '全体';if(k==='__none__')return '未設定';var ss=getStatuses();for(var i=0;i<ss.length;i++){if(ss[i].id===k)return ss[i].label;}return '全体';}
+function curScope(){if(_bulkScope)return _bulkScope;if(cmpMode)return CMP_SCOPE;return statusFilter||SCOPE_ALL;}
+function scopeLabel(k){if(k===CMP_SCOPE)return '楽天比較';if(!k||k===SCOPE_ALL)return '全体';if(k==='__none__')return '未設定';var ss=getStatuses();for(var i=0;i<ss.length;i++){if(ss[i].id===k)return ss[i].label;}return '全体';}
 function scopeMap(sc){var s=getSettings();return (s.colcfgS&&s.colcfgS[sc])||{};}
 function scopeBig(sc){var o=(getSettings().scopeOpt||{})[sc||curScope()];return !!(o&&o.big);}
 function scopeBigSet(sc,v){var s=getSettings();if(!s.scopeOpt)s.scopeOpt={};if(!s.scopeOpt[sc])s.scopeOpt[sc]={};s.scopeOpt[sc].big=!!v;saveSettings(s);resetViewCache();}
-function scopeColOn(sc,key){var c=scopeMap(sc)[key];return (c&&c.visible!=null)?!!c.visible:(SCOPE_DEFAULT_VISIBLE.indexOf(key)>=0);}
+function scopeDefVis(sc){return (sc===CMP_SCOPE)?CMP_DEFAULT_VISIBLE:SCOPE_DEFAULT_VISIBLE;}
+function scopeColOn(sc,key){var c=scopeMap(sc)[key];return (c&&c.visible!=null)?!!c.visible:(scopeDefVis(sc).indexOf(key)>=0);}
 function setScopeCol(sc,key,patch){var s=getSettings();if(!s.colcfgS)s.colcfgS={};if(!s.colcfgS[sc])s.colcfgS[sc]={};var cur=s.colcfgS[sc][key]||{};for(var k in patch)cur[k]=patch[k];s.colcfgS[sc][key]=cur;saveSettings(s);resetViewCache();}
 function getViewMode(){return curScope();}
 function setViewMode(m){}
@@ -2403,12 +2444,14 @@ function isDetailish(){if(_dvCache===null)_dvCache=!!(getColCfg('variation').vis
 function hasUrlCols(){if(_urlColCache===null)_urlColCache=!!(getColCfg('yahooUrls').visible||getColCfg('rakutenUrls').visible);return _urlColCache;}
 function inViewMode(key){return true;}
 function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].key===key)return DEFAULT_COLS[i];}return null;}
-function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=SCOPE_DEFAULT_VISIBLE.indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left'),perRow:((key==='imageBlock'&&scopeBig(sc))?10:null),maxShow:null};var cc=scopeMap(sc)[key]||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign,perRow:(cc.perRow!=null?cc.perRow:base.perRow),maxShow:(cc.maxShow!=null?cc.maxShow:base.maxShow)};}
+function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=scopeDefVis(sc).indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left'),perRow:((key==='imageBlock'&&scopeBig(sc))?10:null),maxShow:null};var cc=scopeMap(sc)[key]||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign,perRow:(cc.perRow!=null?cc.perRow:base.perRow),maxShow:(cc.maxShow!=null?cc.maxShow:base.maxShow)};}
 function setColCfg(key,patch){setScopeCol(curScope(),key,patch);}
 function effCfg(key,cc){if(isImgView()&&(key==='yahooImg'||key==='rakutenImg')){var o={};for(var k in cc)o[k]=cc[k];o.width=Math.max(cc.width||0,360);o.wrap='wrap';return o;}return cc;}
 function colStyleStr(cc,isHeader){var s='';if(cc.width&&cc.width>0)s+='width:'+cc.width+'px;min-width:'+cc.width+'px;max-width:'+cc.width+'px;';if(cc.wrap==='clip')s+='white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';var a=isHeader?cc.headAlign:cc.align;if(a==='left'||a==='center'||a==='right')s+='text-align:'+a+';';return s;}
 function getColOrder(){var keys=DEFAULT_COLS.map(function(c){return c.key;});var _sc=curScope();var saved=(getSettings().colorderS||{})[_sc];
-  if(!saved||!saved.length){return keys.slice();}
+  if(!saved||!saved.length){
+    if(_sc===CMP_SCOPE){var o0=CMP_DEFAULT_VISIBLE.slice();for(var q0=0;q0<keys.length;q0++){if(o0.indexOf(keys[q0])<0)o0.push(keys[q0]);}return o0;}
+    return keys.slice();}
   var out=[],seen={};for(var i=0;i<saved.length;i++){if(keys.indexOf(saved[i])>=0&&!seen[saved[i]]){out.push(saved[i]);seen[saved[i]]=1;}}var missing=[];for(var k=0;k<keys.length;k++){if(!seen[keys[k]])missing.push(keys[k]);}if(missing.length){var ai=out.indexOf('actions');if(ai>=0){out=out.slice(0,ai).concat(missing).concat(out.slice(ai));}else{out=out.concat(missing);}}return out;}
 function setColOrder(arr){var sc=curScope();var s=getSettings();if(!s.colorderS)s.colorderS={};s.colorderS[sc]=arr;saveSettings(s);}
 function moveCol(key,dir){var order=getColOrder();var i=order.indexOf(key);if(i<0)return;var step=dir<0?-1:1;var jj=i+step;while(jj>=0&&jj<order.length){if(getColCfg(order[jj]).visible!==false)break;jj+=step;}if(jj<0||jj>=order.length)return;var t=order[i];order[i]=order[jj];order[jj]=t;setColOrder(order);renderHead();render();renderColManager();}
@@ -2849,11 +2892,17 @@ function colScopePill(sc,label,icon,extra){
   var ic=document.createElement('span');ic.className='stab-ico';ic.innerHTML=icon?statusIconHtml(icon):'';b.appendChild(ic);
   b.appendChild(document.createTextNode(label));
   var c=document.createElement('span');c.className='cnt';c.textContent=(sc===SCOPE_ALL?countStatus(''):countStatus(sc));b.appendChild(c);
-  b.onclick=function(){statusFilter=(sc===SCOPE_ALL)?'':sc;stEditSel=sc;applyScope();};
+  b.onclick=function(){cmpMode=false;statusFilter=(sc===SCOPE_ALL)?'':sc;stEditSel=sc;renderCmpTabs();applyScope();};
   return b;
 }
 function renderColScopePills(){
   var row=$('colScopePills');if(!row)return;row.innerHTML='';
+  (function(){
+    var b=document.createElement('button');b.type='button';b.className='stab stab-cmp'+((curScope()===CMP_SCOPE)?' on':'');
+    b.appendChild(document.createTextNode('🛒 楽天比較'));
+    b.onclick=function(){cmpMode=true;renderCmpTabs();renderHead();render();updateStickyH();renderColManager();};
+    row.appendChild(b);
+  })();
   row.appendChild(colScopePill(SCOPE_ALL,'全体','',''));
   var sts=getStatuses();
   for(var i=0;i<sts.length;i++)row.appendChild(colScopePill(sts[i].id,sts[i].label,sts[i].icon,''));
@@ -3737,9 +3786,10 @@ if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
   var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;
   if(!b||!b.classList||!b.classList.contains('ctab'))return;
   var nv=b.getAttribute('data-cmp')||'';
-  cmpFilter=(nv&&nv===cmpFilter)?'':nv;
-  renderCmpTabs();render();
-  if(cmpFilter&&!cmpData.raku)cmpLoad(false);
+  if(nv==='__off__'){cmpMode=false;cmpFilter='';}
+  else{cmpMode=true;cmpFilter=nv;}
+  renderCmpTabs();renderHead();render();updateStickyH();
+  if(cmpMode&&!cmpData.raku)cmpLoad(false);
 });
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
 if($('statusRow'))$('statusRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('stab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('stab'))return;var nv=b.getAttribute('data-status')||'';statusFilter=(nv&&nv===statusFilter)?'':nv;
