@@ -104,7 +104,12 @@ table#grid{width:100%;border-collapse:separate;border-spacing:0}
 #grid thead th:last-child{border-right:0}
 #grid tbody td{padding:10px 14px;border-bottom:1px solid var(--line-2);border-right:1px solid var(--line-2);vertical-align:middle;font-size:13.5px}
 #grid tbody td:last-child{border-right:0}
-#grid tbody tr:hover{background:#fcfcfd}
+#grid tbody tr:hover{background:#fff6d8}
+#grid tbody tr:hover td{background:#fff6d8}
+#grid tbody tr.cmp-ok-row:hover td{background:#e3f3e9}
+#grid tbody tr.cmp-r-row:hover td{background:#fde3df}
+#grid tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 #d98324}
+#grid tbody tr.more-row:hover td{background:#faf9f6}
 .tbl-thumb{width:54px;height:54px;border-radius:8px;object-fit:cover;border:1px solid var(--line-2);background:#f2f3f5;display:inline-block}
 span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-size:14px}
 .cell-name{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;min-width:150px}
@@ -1178,7 +1183,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.60.0</span>
+        <span class="version" id="version">v3.60.2</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1531,7 +1536,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.60.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.60.2</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2143,14 +2148,34 @@ async function cmpLoad(force){
       var mv=mst[mk];var mc=cmpNorm(mv&&mv.code||mk);if(!mc)continue;
       yahoo[mc]={code:mc,disp:String((mv&&mv.code)||mk||mc),img:(mv&&mv.customImage)||'',name:(mv&&mv.name)||'',sales:0};
     }
-    var its=j2.item||[];
-    for(var n=0;n<its.length;n++){
-      var itr=its[n];if(!itr)continue;
-      if(String(itr.month||'')!==lm.y)continue;
-      var cc=cmpNorm(itr.code);if(!cc)continue;
-      if(!yahoo[cc])yahoo[cc]={code:cc,disp:String(itr.code||cc),img:'',name:'',sales:0};
-      yahoo[cc].sales+=(+itr.revenue||0);
+    /* 売上は日次(daily.item)を優先。item配列は月途中のスナップショットで古いことがある */
+    var dit=(j2.daily&&j2.daily.item)||null,dayN=0;
+    if(dit&&typeof dit==='object'){
+      for(var dk in dit){
+        if(!Object.prototype.hasOwnProperty.call(dit,dk))continue;
+        if(String(dk).slice(0,7)!==lm.y)continue;
+        dayN++;
+        var drow=dit[dk]||{};
+        for(var dc in drow){
+          if(!Object.prototype.hasOwnProperty.call(drow,dc))continue;
+          var dv=drow[dc],drev=Array.isArray(dv)?(+dv[0]||0):(+dv||0);
+          var dcc=cmpNorm(dc);if(!dcc)continue;
+          if(!yahoo[dcc])yahoo[dcc]={code:dcc,disp:String(dc||dcc),img:'',name:'',sales:0};
+          yahoo[dcc].sales+=drev;
+        }
+      }
     }
+    if(!dayN){
+      var its=j2.item||[];
+      for(var n=0;n<its.length;n++){
+        var itr=its[n];if(!itr)continue;
+        if(String(itr.month||'')!==lm.y)continue;
+        var cc=cmpNorm(itr.code);if(!cc)continue;
+        if(!yahoo[cc])yahoo[cc]={code:cc,disp:String(itr.code||cc),img:'',name:'',sales:0};
+        yahoo[cc].sales+=(+itr.revenue||0);
+      }
+    }
+    cmpData.ySrc=dayN?('日次'+dayN+'日分'):'月次';
     for(var yk in yahoo){
       if(!Object.prototype.hasOwnProperty.call(yahoo,yk))continue;
       if(!yahoo[yk].img)yahoo[yk].img=c.yImg.replace('{shop}',c.shop).replace('{code}',yahoo[yk].code);
@@ -2160,6 +2185,7 @@ async function cmpLoad(force){
   cmpSaveCache();
   try{
     var stt=cmpStats();
+    log('Yahoo売上の集計元：'+(cmpData.ySrc||'月次'));
     log('比較データ取得（'+lm.label+'）取得：楽天'+Object.keys(raku).length+'件／Yahoo'+Object.keys(yahoo).length+'件 → 突合：楽天'+stt.raku+'/'+stt.tot+'件・Yahoo'+stt.yahoo+'/'+stt.tot+'件'+(cmpData.err?(' ※'+cmpData.err):''));
     if(stt.miss.length)log('どちらにも一致しない商品コード（'+stt.miss.length+'件）: '+stt.miss.slice(0,40).join(' , ')+(stt.miss.length>40?' …':''));
   }catch(e3){}
