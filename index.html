@@ -998,6 +998,8 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
 .fix-inp:focus{outline:none;border-color:#2f6fb0;box-shadow:0 0 0 2px rgba(47,111,176,.14)}
 .fix-inp::placeholder{color:#c3bfb8;font-size:11px}
 .fix-inp.fix-dirty{border-color:#d98324;background:#fdf8e9}
+.fix-inp.fix-own{border-style:dashed;background:#fbfaf7}
+.fix-inp.fix-own::placeholder{color:#d2cec7}
 .cmp-cd{font-size:12px}
 #gridHead th.th-srt{cursor:pointer;user-select:none}
 #gridHead th.th-srt:hover{background:#f3f1ec}
@@ -1190,7 +1192,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.63.0</span>
+        <span class="version" id="version">v3.64.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1543,7 +1545,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.63.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.64.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2184,7 +2186,7 @@ async function cmpLoad(force){
         /* 前日とまったく同じ内訳なのに店舗合計が違う日＝Ycheck側の取り込み重複。除外する */
         var _pd=_prevDay(dk);
         if(dit[_pd]&&_daySig(dk)===_daySig(_pd)&&_ov!==(+dov[_pd]||0)){
-          _skip.push(dk+'（商品別¥'+_dSum+' / 店舗¥'+_ov+'）');_oSum+=_ov;continue;
+          _skip.push(dk+'（商品別¥'+_dSum+' / 店舗¥'+_ov+'）');
         }
         if(_ov&&_dSum!==_ov)_mismatch.push(dk+'（商品別¥'+_dSum+' / 店舗¥'+_ov+'）');
         dayN++;_ySum+=_dSum;_oSum+=_ov;
@@ -2223,7 +2225,7 @@ async function cmpLoad(force){
       var _yc=cmpData.yChk;
       if(_yc){
         log('Yahoo日次チェック（'+lm.label+'）商品別合計 '+cmpYen(_yc.item)+' / 店舗合計 '+cmpYen(_yc.shop)+(_yc.item===_yc.shop?'（一致）':'（差 '+cmpYen(Math.abs(_yc.item-_yc.shop))+'）'));
-        if(_yc.skip.length)log('※ 前日と内訳が完全一致した重複日を除外：'+_yc.skip.join(' , ')+' → Ycheck側でこの日を取り直してください');
+        if(_yc.skip.length)log('⚠ 前日と内訳が完全一致した日あり（Ycheck側の取り込み重複の可能性）：'+_yc.skip.join(' , ')+' → Ycheck側でこの日を取り直すと正確になります。※Ycheckの表示と揃えるため、金額はそのまま集計しています');
         if(_yc.mismatch.length)log('※ 商品別と店舗合計が合わない日：'+_yc.mismatch.join(' , '));
       }
     }catch(_ye){}
@@ -2857,9 +2859,10 @@ function okBtnsHtml(k){
   }
   return h+'</div>';
 }
-function cmpFixInp(code){
+function cmpFixInp(code,own){
   if(!code)return '<span class="cmp-na">—</span>';
-  return '<input type="text" class="fix-inp" data-fix="'+escA(code)+'" value="'+escA(cmpFixOf(code))+'" placeholder="確定コード" autocomplete="off">';
+  return '<input type="text" class="fix-inp'+(own?' fix-own':'')+'" data-fix="'+escA(code)+'" value="'+escA(cmpFixOf(code))+'" placeholder="確定コード" autocomplete="off"'
+    +(own?' title="この行の商品コード '+escA(code)+' に確定コードを付けます"':'')+'>';
 }
 function cellHtml(key,it){
   if(key==='cmpOk'||key==='rakuDel'||key==='yahooDel'){
@@ -2880,10 +2883,10 @@ function cellHtml(key,it){
     var _reg=(it&&it.__ghost&&it.code)?'<div class="gh-ln"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'" title="この商品を本ツールに登録します">＋ 登録</button></div>':'';
     if(key==='rakuCode')return '<td class="mono cmp-cd">'+(_r?(esc(_r.disp||_r.code)+(_reg?_reg:'')):'<span class="cmp-na">—</span>')+'</td>';
     if(key==='rakuName')return '<td class="cell-name">'+((_r&&_r.name)?esc(_r.name):'<span class="cmp-na">—</span>')+'</td>';
-    if(key==='rakuFix')return '<td>'+cmpFixInp(_r?_r.code:'')+'</td>';
+    if(key==='rakuFix')return '<td>'+(_r?cmpFixInp(_r.code):cmpFixInp(it&&it.code,true))+'</td>';
     if(key==='yahooCode')return '<td class="mono cmp-cd">'+(_y?(esc(_y.disp||_y.code)+((!_r&&_reg)?_reg:'')):'<span class="cmp-na">—</span>')+'</td>';
     if(key==='yahooName')return '<td class="cell-name">'+((_y&&_y.name)?esc(_y.name):'<span class="cmp-na">—</span>')+'</td>';
-    return '<td>'+cmpFixInp(_y?_y.code:'')+'</td>';
+    return '<td>'+(_y?cmpFixInp(_y.code):cmpFixInp(it&&it.code,true))+'</td>';
   }
   if(it&&it.__ghost){
     if(key==='codeName')return '<td><div class="cn-wrap">'
