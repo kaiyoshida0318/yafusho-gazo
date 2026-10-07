@@ -926,6 +926,11 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .pull-tbl th{background:#f5f6f8;text-align:left;font-size:11.5px;padding:7px 9px;border:1px solid var(--line-2);white-space:nowrap}
 .pull-tbl td{padding:7px 9px;border:1px solid var(--line-2);line-height:1.7;vertical-align:top;color:var(--ink-2)}
 .pull-tbl td:first-child{white-space:nowrap;width:1%}
+.pull-auto{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.pull-auto-sw{flex:1 1 auto;margin:0}
+.pull-int{flex:0 0 auto;display:flex;flex-direction:column;gap:4px;font-size:11.5px;font-weight:800;color:var(--ink-3)}
+.pull-int select{font:inherit;font-size:12.5px;padding:7px 9px;border:1px solid var(--line-2);border-radius:8px;background:#fff;color:var(--ink-2);min-width:92px}
+.pull-auto-now{font-size:12px;color:var(--ink-3);margin-top:8px;font-weight:700}
 .lp-need{margin-top:12px;padding:16px 18px;border:1.5px dashed #e0b070;border-radius:12px;background:#fff8ee;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .lp-need-t{font-size:14px;font-weight:800;color:#8a5a12}
 .lp-need-s{font-size:12.5px;color:var(--ink-2);line-height:1.6}
@@ -1074,7 +1079,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.43.0</span>
+        <span class="version" id="version">v3.44.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1359,7 +1364,6 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
     <h2>🔄 GitHubから取り込み</h2>
     <div class="pull-tabs" id="pullTabs">
       <button type="button" class="ptab on" data-ptab="run">▶ 実行</button>
-      <button type="button" class="ptab" data-ptab="info">❓ 説明</button>
       <button type="button" class="ptab" data-ptab="opt">⚙️ 設定</button>
     </div>
 
@@ -1367,45 +1371,27 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
       <div class="pull-state" id="pullState"></div>
       <p class="hint">GitHub（<span id="pullRepo">-</span>）にある最新の内容を、この端末に読み込み直します。<b>この端末の未保存の変更は破棄されます。</b></p>
       <div class="pull-targets" id="pullTargets"></div>
+      <div class="pull-auto-now" id="pullAutoNow"></div>
       <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="pullModal">閉じる</button><button class="btn btn-red" id="btnPullRun">🔄 取り込む</button></div>
     </div>
 
-    <div class="pull-panel" id="ppanel-info" hidden>
-      <div class="pull-doc">
-        <h3>何をするボタン？</h3>
-        <p>GitHubのリポジトリに保存されている最新の内容を取得して、<b>この端末の表示を丸ごとそれに合わせます</b>。複数のPCで同じ内容を見るための機能です。</p>
-
-        <h3>取得するデータ</h3>
-        <table class="pull-tbl">
-          <thead><tr><th>ファイル</th><th>中身</th></tr></thead>
-          <tbody>
-            <tr><td><code>data.json</code></td><td><b>商品データ</b>：日付・商品コード・商品名・評価・各URL・出品内容・状態・制作LP本数・Yahoo新規の名称・画像の並び・枠タグ（共通／独自／変更予定／非表示）・商品コード・価格・内容の表・内容・種類の表・在庫反映・メモ</td></tr>
-            <tr><td><code>settings.json</code></td><td><b>表示設定</b>：状態の一覧と番号・出品内容（カテゴリ）・LP本数の選択肢と色・状態ごとの表示項目・列幅・列順・揃え・1行の画像数・合計表示枚数・画像を大きく表示</td></tr>
-            <tr><td><code>templates.json</code></td><td><b>テンプレ画像</b>の一覧</td></tr>
-            <tr><td><code>images/</code></td><td>画像の実体。商品データからURLで参照しているだけなので、取り込み時にまとめてダウンロードはしません（表示時に読み込まれます）</td></tr>
-          </tbody>
-        </table>
-
-        <h3>取り込みの流れ</h3>
-        <ol>
-          <li>この端末の「未同期フラグ」を解除します（＝未保存の変更を破棄する宣言）</li>
-          <li>GitHub API（PATがあるとき）で取得。失敗したら raw.githubusercontent.com から取り直します</li>
-          <li>取得したJSONでこの端末のローカル保存を置き換え、表を再描画します</li>
-        </ol>
-
-        <h3>注意</h3>
-        <ul>
-          <li>この端末で<b>まだ「GitHubに保存」していない変更は消えます</b>。残したいときは先に保存してください</li>
-          <li>GitHub側のデータは一切変更しません（読むだけです）</li>
-          <li>ブラウザの保存領域が満杯の場合でも、表示設定はメモリ上で反映されます</li>
-          <li>この端末だけの設定（列管理パネルの高さなど）は取り込みの対象外です</li>
-        </ul>
-      </div>
-      <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="pullModal">閉じる</button></div>
-    </div>
-
     <div class="pull-panel" id="ppanel-opt" hidden>
-      <p class="hint">取り込む対象を選べます。この設定はこの端末に保存されます。</p>
+      <div class="pull-auto">
+        <label class="pull-opt pull-auto-sw" id="pullAutoRow">
+          <input type="checkbox" id="pullAutoOn">
+          <span><b>自動で取り込む</b><small>他のPCでの変更を定期的に読み込んで、表示を自動で合わせます。編集中・未保存の変更があるとき・同期中は実行しません。</small></span>
+        </label>
+        <label class="pull-int">間隔
+          <select id="pullAutoMin">
+            <option value="1">1分</option>
+            <option value="3">3分</option>
+            <option value="5">5分</option>
+            <option value="10">10分</option>
+            <option value="30">30分</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">取り込む対象を選べます。この設定はこの端末に保存されます（自動取り込みも同じ対象です）。</p>
       <div class="pull-opts" id="pullOpts"></div>
       <p class="hint">接続先（オーナー／リポジトリ／ブランチ／トークン）は「⚙️ 設定」で変更できます。</p>
       <div class="acts"><button class="btn btn-line" id="btnPullToSettings">⚙️ 接続設定をひらく</button><span class="sp"></span><button class="btn btn-ghost" data-close="pullModal">閉じる</button></div>
@@ -1430,7 +1416,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.43.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.44.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -3877,7 +3863,7 @@ function markViewerUi(){
   var b=$('btnSave');
   if(b){b.textContent=v?'🔄 最新を取得':'💾 GitHubに保存';b.title=v?'GitHubの最新内容を読み直します':'GitHubへ保存します';}
 }
-async function reloadAllFromGitHub(opt){
+async function reloadAllFromGitHub(opt,quiet){
   var o=opt||{data:true,settings:true,tpl:true};
   _viewerFirstLoad=true;setPending(false);
   try{ghShaCache={};}catch(e){}
@@ -3887,8 +3873,8 @@ async function reloadAllFromGitHub(opt){
   _viewerFirstLoad=false;
   try{renderHead();render();updateStickyH();}catch(e){}
   var nm=[];if(o.data!==false)nm.push('商品データ');if(o.settings!==false)nm.push('表示設定');if(o.tpl!==false)nm.push('テンプレ画像');
-  log('取り込み完了：'+nm.join('・'));
-  toast('🔄 GitHubの最新を読み込みました（'+nm.join('・')+'）');
+  log((quiet?'自動取り込み完了：':'取り込み完了：')+nm.join('・'));
+  if(!quiet)toast('🔄 GitHubの最新を読み込みました（'+nm.join('・')+'）');
 }
 $('btnSave').onclick=function(){if(isViewerMode()){reloadAllFromGitHub();return;}triggerSync(false);};
 /* ===== 取り込み（実行 / 説明 / 設定） ===== */
@@ -3928,11 +3914,26 @@ function renderPullModal(){
   var op=$('pullOpts');
   if(op){op.innerHTML='';for(var j=0;j<PULL_PARTS.length;j++)op.appendChild(pullOptRow(PULL_PARTS[j],!!o[PULL_PARTS[j].k],true));}
   var rb=$('btnPullRun');if(rb)rb.disabled=!(o.data||o.settings||o.tpl);
+  try{
+    var a2=autoPullGet();
+    var sw=$('pullAutoOn');if(sw)sw.checked=a2.on;
+    var row=$('pullAutoRow');if(row)row.classList.toggle('on',a2.on);
+    var mi=$('pullAutoMin');if(mi)mi.value=String(a2.min);
+    var nw=$('pullAutoNow');
+    if(nw){
+      if(!a2.on){nw.textContent='自動取り込み：OFF（「⚙️ 設定」タブでONにできます）';}
+      else{
+        var why=autoPullBusy();
+        var sec=Math.max(0,Math.round((_autoPullNext-Date.now())/1000));
+        nw.textContent='自動取り込み：ON（'+a2.min+'分ごと）'+(why?(' ／ いまは実行を見送り中：'+why):(' ／ 次回まで約'+(sec>=60?(Math.ceil(sec/60)+'分'):(sec+'秒'))));
+      }
+    }
+  }catch(e){}
 }
 function pullTab(name){
   var ts=document.querySelectorAll('#pullTabs .ptab');
   for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',ts[i].getAttribute('data-ptab')===name);
-  ['run','info','opt'].forEach(function(n){var el=$('ppanel-'+n);if(el)el.hidden=(n!==name);});
+  ['run','opt'].forEach(function(n){var el=$('ppanel-'+n);if(el)el.hidden=(n!==name);});
 }
 if($('pullTabs'))$('pullTabs').addEventListener('click',function(e){
   var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ptab')))b=b.parentNode;
@@ -3949,6 +3950,46 @@ if($('btnPullRun'))$('btnPullRun').onclick=function(){
   reloadAllFromGitHub(o);
 };
 if($('btnPull'))$('btnPull').onclick=function(){pullTab('run');renderPullModal();show('pullModal');};
+/* ===== 自動取り込み ===== */
+var PULLAUTO='yafusho_pullauto',_autoPullT=null,_autoPullNext=0;
+function autoPullGet(){
+  var d={on:true,min:5};
+  try{var c=JSON.parse(localStorage.getItem(PULLAUTO));if(c){if(typeof c.on==='boolean')d.on=c.on;var m=parseInt(c.min,10);if(isFinite(m)&&m>0)d.min=m;}}catch(e){}
+  return d;
+}
+function autoPullSet(o){try{localStorage.setItem(PULLAUTO,JSON.stringify(o));}catch(e){}}
+function autoPullBusy(){
+  try{
+    if(getPending())return '未保存の変更あり';
+    if(typeof ghBusy!=='undefined'&&(ghBusy||ghPending))return '同期中';
+    if(editModalOpen&&editModalOpen())return '編集中';
+    if(typeof gridEditingNow==='function'&&gridEditingNow())return '入力中';
+    if(typeof bulkEdit!=='undefined'&&bulkEdit)return '一括編集中';
+    if(typeof statusMgrOpen!=='undefined'&&statusMgrOpen)return '状態管理を開いています';
+    if($('pullModal')&&!$('pullModal').hidden)return '取り込み画面を開いています';
+    if(document.hidden)return 'タブが非表示';
+  }catch(e){}
+  return '';
+}
+async function autoPullTick(){
+  var a=autoPullGet();
+  if(!a.on)return;
+  var why=autoPullBusy();
+  if(why){_autoPullNext=Date.now()+60000;try{renderPullModal();}catch(e){}return;}
+  try{await reloadAllFromGitHub(pullOptGet(),true);}catch(e){}
+  _autoPullNext=Date.now()+a.min*60000;
+  try{renderPullModal();}catch(e){}
+}
+function startAutoPull(){
+  if(_autoPullT){clearInterval(_autoPullT);_autoPullT=null;}
+  var a=autoPullGet();
+  if(!a.on){_autoPullNext=0;return;}
+  _autoPullNext=Date.now()+a.min*60000;
+  _autoPullT=setInterval(autoPullTick,30000);
+}
+if($('pullAutoOn'))$('pullAutoOn').onchange=function(){var a=autoPullGet();a.on=$('pullAutoOn').checked;autoPullSet(a);startAutoPull();renderPullModal();log('自動取り込みを'+(a.on?('ON（'+a.min+'分ごと）'):'OFF')+'にしました');};
+if($('pullAutoMin'))$('pullAutoMin').onchange=function(){var a=autoPullGet();a.min=parseInt($('pullAutoMin').value,10)||5;autoPullSet(a);startAutoPull();renderPullModal();};
+startAutoPull();
 markViewerUi();
 
 async function loadTemplatesFromGitHub(){
