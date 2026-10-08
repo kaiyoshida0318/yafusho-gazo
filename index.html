@@ -943,6 +943,12 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b:nth-child(1),.ok3b:nth-child(2),.ok3b:nth-child(3),.ok3b:nth-child(4){border-bottom:1px solid var(--line-2)}
 .ok3b:nth-child(5){grid-column:1 / -1;border-right:0}
 .pill-cap{font-size:11px;font-weight:800;color:var(--ink-3);margin:0 6px 0 2px;white-space:nowrap}
+.num-tile{min-width:17px;height:17px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;padding:0 2px;flex:0 0 auto}
+.ctab.ctab-col.on .num-tile{background:rgba(255,255,255,.3)!important}
+.ctab.ctab-col.on .cnt{background:rgba(255,255,255,.28)!important;color:#fff!important}
+.frow-label2{margin-left:6px}
+.ok3b .bnum{font-weight:900}
+.ok3b.on .bnum{color:#fff!important}
 .pnum{font-size:11px;margin-right:3px;opacity:.85}
 .bnum{font-size:9.5px;margin-right:2px;opacity:.8}
 .ok3.rc4 .ok3b:nth-child(3),.ok3.rc4 .ok3b:nth-child(4){border-bottom:0}
@@ -1203,7 +1209,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.67.0</span>
+        <span class="version" id="version">v3.68.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1222,9 +1228,11 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="console">
   <!-- 1段目：カテゴリ系 ＋ 右側アクション -->
   <div class="frow frow-cmp" id="cmpRow">
-    <span class="frow-label">楽天比較</span>
+    <span class="frow-label">リニュ選定</span>
     <div class="pill-group" id="cmpPills"></div>
     <span class="spacer"></span>
+    <span class="frow-label frow-label2">リニュ実施</span>
+    <div class="pill-group" id="cmpPills2"></div>
     <span class="cmp-stat" id="cmpStat"></span>
     <button class="btn btn-dark btn-sm" id="btnCmpSave" hidden title="楽天比較でのまとめた変更をGitHubへ保存します">💾 変更を保存</button>
     <button class="btn btn-line btn-sm" id="btnCmpUnhide" hidden title="削除した商品をすべて元に戻します">🗑 削除を元に戻す</button>
@@ -1556,7 +1564,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.67.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.68.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2555,22 +2563,31 @@ function cmpRegister(code){
 var NUMS=['\u2460','\u2461','\u2462','\u2463','\u2464','\u2465','\u2466','\u2467','\u2468'];
 var OK_FKEY={'':'no','r':'r','ok':'ok','d':'d','s':'s'};
 var OK_CSS={'':'','r':' ctab-r','ok':'','d':' ctab-d','s':' ctab-s'};
+var OK_COLOR={'':'#7a756d','r':'#bf0000','ok':'#17643f','d':'#d98324','s':'#8257c9'};
+function numTile(n,c){return '<span class="num-tile" style="background:'+c+'">'+n+'</span>';}
 function renderCmpTabs(){
-  var el=$('cmpPills');if(!el)return;
-  var h='<span class="pill-cap">リニュ選定</span>';
-  h+='<button class="ctab ctab-ok'+((cmpMode&&!cmpOkFilter)?' on':'')+'" data-cmpok="">全て<span class="cnt">'+cmpOkCount('*')+'</span></button>';
-  for(var k=0;k<OK_STATES.length;k++){
-    var o2=OK_STATES[k],fk=OK_FKEY[o2.v];
-    h+='<button class="ctab ctab-ok'+(OK_CSS[o2.v]||'')+((cmpMode&&cmpOkFilter===fk)?' on':'')+'" data-cmpok="'+fk+'"><span class="pnum">'+NUMS[k]+'</span>'+esc(o2.l)+'<span class="cnt">'+cmpOkCount(o2.v)+'</span></button>';
+  var el=$('cmpPills');
+  if(el){
+    var h='<button class="ctab ctab-ok'+((cmpMode&&!cmpOkFilter)?' on':'')+'" data-cmpok="">全て<span class="cnt">'+cmpOkCount('*')+'</span></button>';
+    for(var k=0;k<OK_STATES.length;k++){
+      var o2=OK_STATES[k],fk=OK_FKEY[o2.v],c2=OK_COLOR[o2.v]||'#7a756d';
+      var on2=(cmpMode&&cmpOkFilter===fk);
+      h+='<button class="ctab ctab-col'+(on2?' on':'')+'" style="'+(on2?('background:'+c2+';border-color:'+c2+';color:#fff'):'')+'" data-cmpok="'+fk+'">'+numTile(NUMS[k],c2)+esc(o2.l)+'<span class="cnt">'+cmpOkCount(o2.v)+'</span></button>';
+    }
+    el.innerHTML=h;
   }
-  h+='<span class="pill-sep"></span>';
-  h+='<span class="pill-cap">リニュ実施</span>';
-  h+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="">全て<span class="cnt">'+cmpCount('')+'</span></button>';
-  var op=getOpts('rakuCmp');
-  for(var i=0;i<op.length;i++){h+='<button class="ctab'+((cmpMode&&cmpFilter===op[i].l)?' on':'')+'" data-cmp="'+escA(op[i].l)+'"><span class="pnum">'+NUMS[i]+'</span>'+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';}
-  h+='<span class="pill-sep"></span>';
-  h+='<button class="ctab ctab-reg'+(cmpShowReg?' on':'')+'" data-cmpreg="1" title="本ツールに登録済みの商品も一覧に出します">登録済みも表示</button>';
-  el.innerHTML=h;
+  var el2=$('cmpPills2');
+  if(el2){
+    var h2='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="">全て<span class="cnt">'+cmpCount('')+'</span></button>';
+    var op=getOpts('rakuCmp');
+    for(var i=0;i<op.length;i++){
+      var c3=RC_COLOR[op[i].c]||'#7a756d',on3=(cmpMode&&cmpFilter===op[i].l);
+      h2+='<button class="ctab ctab-col'+(on3?' on':'')+'" style="'+(on3?('background:'+c3+';border-color:'+c3+';color:#fff'):'')+'" data-cmp="'+escA(op[i].l)+'">'+numTile(NUMS[i],c3)+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';
+    }
+    h2+='<span class="pill-sep"></span>';
+    h2+='<button class="ctab ctab-reg'+(cmpShowReg?' on':'')+'" data-cmpreg="1" title="本ツールに登録済みの商品も一覧に出します">登録済みも表示</button>';
+    el2.innerHTML=h2;
+  }
   renderCmpStat();
 }
 function renderCmpStat(){
@@ -2880,7 +2897,8 @@ function okBtnsHtml(k){
   var st=cmpOkState(k),h='<div class="ok3" data-okgrp="'+escA(k)+'">';
   for(var i=0;i<OK_STATES.length;i++){
     var o=OK_STATES[i];
-    h+='<button type="button" class="ok3b ok3-'+(o.v||'no')+(st===o.v?' on':'')+'" data-ok="'+escA(k)+'" data-okv="'+o.v+'"><span class="bnum">'+NUMS[i]+'</span>'+esc(o.l)+'</button>';
+    var _c=OK_COLOR[o.v]||'#7a756d',_on=(st===o.v);
+    h+='<button type="button" class="ok3b ok3-'+(o.v||'no')+(_on?' on':'')+'" style="'+(_on?('background:'+_c+';color:#fff'):'')+'" data-ok="'+escA(k)+'" data-okv="'+o.v+'"><span class="bnum" style="'+(_on?'':('color:'+_c))+'">'+NUMS[i]+'</span>'+esc(o.l)+'</button>';
   }
   return h+'</div>';
 }
@@ -2891,7 +2909,8 @@ function rcBtnsHtml(it){
   var h='<div class="ok3 rc4">';
   for(var i=0;i<op.length;i++){
     var on=(cur===op[i].l);
-    h+='<button type="button" class="ok3b rcb'+(on?' on':'')+'" style="'+(on?('background:'+(RC_COLOR[op[i].c]||'#7a756d')+';color:#fff'):'')+'" data-rc="'+escA(op[i].l)+'" data-rcid="'+escA(it.id)+'"><span class="bnum">'+NUMS[i]+'</span>'+esc(op[i].l)+'</button>';
+    var _rc=RC_COLOR[op[i].c]||'#7a756d';
+    h+='<button type="button" class="ok3b rcb'+(on?' on':'')+'" style="'+(on?('background:'+_rc+';color:#fff'):'')+'" data-rc="'+escA(op[i].l)+'" data-rcid="'+escA(it.id)+'"><span class="bnum" style="'+(on?'':('color:'+_rc))+'">'+NUMS[i]+'</span>'+esc(op[i].l)+'</button>';
   }
   return h+'</div>';
 }
@@ -4445,7 +4464,7 @@ setTimeout(function(){try{if(cmpMode||cmpColsVisible()||cmpFilter)cmpLoad(false)
 if($('lpCountRow'))$('lpCountRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpc')||'';lpCountFilter=(nv&&nv===lpCountFilter)?'':nv;render();});
 if($('lpTypeRow'))$('lpTypeRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpt')||'';lpTypeFilter=(nv&&nv===lpTypeFilter)?'':nv;render();});
 if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;var nv=b.getAttribute('data-listing')||'';listingFilter=(nv&&nv===listingFilter)?'':nv;if(cmpMode){cmpMode=false;cmpFilter='';cmpOkFilter='';renderCmpTabs();renderHead();}render();updateStickyH();});
-if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
+function cmpPillClick(e){
   var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;
   if(!b||!b.classList||!b.classList.contains('ctab'))return;
   if(b.hasAttribute('data-cmpreg')){
@@ -4465,7 +4484,9 @@ if($('cmpPills'))$('cmpPills').addEventListener('click',function(e){
   cmpMode=true;cmpFilter=nv;cmpResetLimit();
   renderCmpTabs();renderHead();render();updateStickyH();
   if(!cmpData.raku)cmpLoad(false);
-});
+}
+if($('cmpPills'))$('cmpPills').addEventListener('click',cmpPillClick);
+if($('cmpPills2'))$('cmpPills2').addEventListener('click',cmpPillClick);
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
 if($('btnCmpSave'))$('btnCmpSave').onclick=function(){cmpFlushSave();};
 if($('btnSaveBar'))$('btnSaveBar').onclick=function(){cmpFlushSave();try{renderSaveChip();}catch(e){}};
