@@ -937,16 +937,23 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok-btn:hover{border-color:#17643f;color:#17643f}
 .ok-btn.on{background:#17643f;border-color:#17643f;color:#fff}
 .ok-btn:active{transform:scale(.94)}
-.ok3{display:inline-grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-2);border-radius:9px;overflow:hidden;background:#fff}
-.ok3b{appearance:none;border:0;background:transparent;font:inherit;font-size:10.5px;font-weight:800;color:var(--ink-3);padding:4px 3px;cursor:pointer;white-space:nowrap;line-height:1.5}
+.ok3{display:inline-grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-2);border-radius:9px;overflow:hidden;background:#fff;width:100%;box-sizing:border-box}
+.ok3b{appearance:none;border:0;background:transparent;font:inherit;font-size:10.5px;font-weight:800;color:var(--ink-3);padding:4px 2px;cursor:pointer;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.3;min-width:0}
 .ok3b:nth-child(odd){border-right:1px solid var(--line-2)}
-.ok3b:nth-child(1),.ok3b:nth-child(2){border-bottom:1px solid var(--line-2)}
+.ok3b:nth-child(1),.ok3b:nth-child(2),.ok3b:nth-child(3),.ok3b:nth-child(4){border-bottom:1px solid var(--line-2)}
+.ok3b:nth-child(5){grid-column:1 / -1;border-right:0}
 .ok3b:hover{background:#f3f1ec}
 .ok3b.on{color:#fff}
 .ok3b.ok3-no.on{background:#7a756d}
 .ok3b.ok3-ok.on{background:#17643f}
 .ok3b.ok3-r.on{background:#bf0000}
 .ok3b.ok3-s.on{background:#8257c9}
+.ok3b.ok3-d.on{background:#d98324}
+tr.cmp-d-row{background:#fdf6ea}
+tr.cmp-d-row.ghost-row{background:#fcf5e8}
+tr.cmp-d-row td{border-bottom-color:#f0dfc2}
+#grid tbody tr.cmp-d-row:hover td{background:#faecd4}
+.ctab-d.on{background:#d98324!important;border-color:#d98324!important;color:#fff!important}
 tr.cmp-s-row{background:#f4f0fb}
 tr.cmp-s-row.ghost-row{background:#f3effa}
 tr.cmp-s-row td{border-bottom-color:#ddd3f0}
@@ -1192,7 +1199,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.64.1</span>
+        <span class="version" id="version">v3.66.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1545,7 +1552,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.64.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.66.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2354,6 +2361,7 @@ function cmpOkState(k){
   var v=(_okOv&&_okOv[k]!=null)?_okOv[k]:cmpOkMap()[k];
   if(v==='r')return 'r';
   if(v==='s')return 's';
+  if(v==='d')return 'd';
   return v?'ok':'';
 }
 function cmpIsOk(k){return cmpOkState(k)==='ok';}
@@ -2363,7 +2371,7 @@ function cmpOkFlush(){
   var q=_okQ;_okQ=null;_okOv=null;
   var s=getSettings();var m=(s.cmpOk&&typeof s.cmpOk==='object')?s.cmpOk:{};
   for(var k in q){if(!Object.prototype.hasOwnProperty.call(q,k))continue;
-    if(q[k]==='r')m[k]='r';else if(q[k]==='s')m[k]='s';else if(q[k]==='ok')m[k]=1;else delete m[k];}
+    if(q[k]==='r')m[k]='r';else if(q[k]==='s')m[k]='s';else if(q[k]==='d')m[k]='d';else if(q[k]==='ok')m[k]=1;else delete m[k];}
   s.cmpOk=m;cmpQuietSave(s,true);cmpInvalidate();
 }
 /* 画面は即座に、保存はまとめて（押した瞬間に反応させるため） */
@@ -2371,7 +2379,7 @@ function cmpSetOkFast(k,st){
   if(!k)return;
   if(!_okQ)_okQ={};if(!_okOv)_okOv={};
   var had=(_okQ[k]!=null);
-  st=(st==='r')?'r':((st==='s')?'s':((st==='ok'||st===true)?'ok':''));
+  st=(st==='r'||st==='s'||st==='d')?st:(((st==='ok'||st===true))?'ok':'');
   _okQ[k]=st;_okOv[k]=st;
   if(!had)cmpPend++;
   try{setPending(true);}catch(e){}
@@ -2382,7 +2390,7 @@ function cmpSetOkFast(k,st){
 function cmpSetOk(k,on){
   if(!k)return;
   var s=getSettings();var m=(s.cmpOk&&typeof s.cmpOk==='object')?s.cmpOk:{};
-  if(on)m[k]=1;else delete m[k];
+  if(on==='r'||on==='s'||on==='d')m[k]=on;else if(on==='ok'||on===true||on===1)m[k]=1;else delete m[k];
   s.cmpOk=m;cmpQuietSave(s);cmpInvalidate();
 }
 
@@ -2465,7 +2473,7 @@ function cmpRows(){if(!_cmpRowsCache)_cmpRowsCache=cmpBuildRows();return _cmpRow
 function cmpSalesPair(it){var q=cmpGrpOf(it);if(q)return {r:q.rSum||0,y:q.ySum||0};var r=cmpRakuFor(it),y=cmpYahooFor(it);return {r:(r&&r.sales)||0,y:(y&&y.sales)||0};}
 function cmpSortVal(it,key){
   var g=cmpGroupOf(it)||{},r=g.raku,y=g.yahoo;
-  if(key==='cmpOk'){var _s=cmpOkState(g.key);return _s==='ok'?0:(_s==='r'?1:(_s==='s'?2:3));}
+  if(key==='cmpOk')return okRankOf(cmpOkState(g.key));
   if(key==='rakuCmp'){var _op=getOpts('rakuCmp'),_v=rakuCmpVal(it);for(var _i=0;_i<_op.length;_i++){if(_op[_i].l===_v)return _i;}return 99;}
   if(key==='rakuSales')return (g.group?g.group.rSum:((r&&r.sales)||0))||0;
   if(key==='yahooSales')return (g.group?g.group.ySum:((y&&y.sales)||0))||0;
@@ -2489,6 +2497,12 @@ function cmpRank(it){
   if(q&&q.rakus&&q.rakus.length&&q.yahoos&&q.yahoos.length)return 1;
   return 2;
 }
+function cmpCodeKey(it){
+  if(it&&it.code)return cmpNorm(it.code);
+  var g=cmpGroupOf(it);
+  if(g){if(g.raku&&g.raku.code)return cmpNorm(g.raku.code);if(g.yahoo&&g.yahoo.code)return cmpNorm(g.yahoo.code);}
+  return '\uffff';
+}
 function cmpTie(a,b){
   var ga=cmpGroupOf(a),gb=cmpGroupOf(b);
   var ka=(ga&&ga.key)||'',kb=(gb&&gb.key)||'';
@@ -2509,13 +2523,14 @@ function cmpSortRows(list){
     });
     return list;
   }
+  /* 基本の並び：状態順 → 商品コード順 */
   list.sort(function(a,b){
-    var ra=cmpRank(a),rb=cmpRank(b);
+    var ha=cmpHeadOf(a),hb=cmpHeadOf(b);
+    var ga=cmpGroupOf(ha),gb=cmpGroupOf(hb);
+    var ra=okRankOf(cmpOkState(ga&&ga.key)),rb=okRankOf(cmpOkState(gb&&gb.key));
     if(ra!==rb)return ra-rb;
-    var sa=cmpSalesPair(a),sb=cmpSalesPair(b);
-    var ta=sa.r+sa.y,tb=sb.r+sb.y;
-    if(tb!==ta)return tb-ta;
-    if(sb.r!==sa.r)return sb.r-sa.r;
+    var ca=cmpCodeKey(ha),cb=cmpCodeKey(hb);
+    if(ca!==cb)return ca<cb?-1:1;
     return cmpTie(a,b);
   });
   return list;
@@ -2543,6 +2558,7 @@ function renderCmpTabs(){
   h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='no')?' on':'')+'" data-cmpok="no">未確定<span class="cnt">'+cmpOkCount('')+'</span></button>';
   h+='<button class="ctab ctab-ok'+((cmpMode&&cmpOkFilter==='ok')?' on':'')+'" data-cmpok="ok">確定<span class="cnt">'+cmpOkCount('ok')+'</span></button>';
   h+='<button class="ctab ctab-ok ctab-r'+((cmpMode&&cmpOkFilter==='r')?' on':'')+'" data-cmpok="r">楽のみ<span class="cnt">'+cmpOkCount('r')+'</span></button>';
+  h+='<button class="ctab ctab-ok ctab-d'+((cmpMode&&cmpOkFilter==='d')?' on':'')+'" data-cmpok="d">在庫処分<span class="cnt">'+cmpOkCount('d')+'</span></button>';
   h+='<button class="ctab ctab-ok ctab-s'+((cmpMode&&cmpOkFilter==='s')?' on':'')+'" data-cmpok="s">SKIP<span class="cnt">'+cmpOkCount('s')+'</span></button>';
   h+='<span class="pill-sep"></span>';
   h+='<button class="ctab ctab-reg'+(cmpShowReg?' on':'')+'" data-cmpreg="1" title="本ツールに登録済みの商品も一覧に出します">登録済みも表示</button>';
@@ -2639,7 +2655,7 @@ var DEFAULT_COLS=[
   {key:'yahooCode',label:'Yahoo商品コード',width:112,align:'left'},
   {key:'yahooName',label:'Yahoo商品名',width:160,align:'left'},
   {key:'yahooFix',label:'Yahoo確定コード',width:100,align:'left'},
-  {key:'cmpOk',label:'結びつき',width:140,align:'center'},
+  {key:'cmpOk',label:'状態',width:160,align:'center'},
   {key:'rakuDel',label:'楽天削除',width:42,align:'center'},
   {key:'yahooDel',label:'Yahoo削除',width:42,align:'center'},
   {key:'memo',label:'メモ',width:40,align:'center'},
@@ -2665,7 +2681,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -2850,7 +2866,8 @@ function cnLinksHtml(it){
   for(var i=0;i<yu.length&&i<3;i++)h+='<a class="cn-link cl-y" href="'+escA(yu[i])+'" target="_blank" rel="noopener" title="Yahoo商品ページを開く&#10;'+escA(yu[i])+'">Yahoo'+(i?String(i+1):'')+'</a>';
   return h+'</div>';
 }
-var OK_STATES=[{v:'',l:'未確定'},{v:'ok',l:'確定'},{v:'r',l:'楽天のみ'},{v:'s',l:'SKIP'}];
+var OK_STATES=[{v:'',l:'未確定'},{v:'r',l:'楽天のみ販売'},{v:'ok',l:'結びつき確定'},{v:'d',l:'在庫処分中'},{v:'s',l:'SKIP'}];
+function okRankOf(st){for(var i=0;i<OK_STATES.length;i++){if(OK_STATES[i].v===st)return i;}return 99;}
 function okBtnsHtml(k){
   var st=cmpOkState(k),h='<div class="ok3" data-okgrp="'+escA(k)+'">';
   for(var i=0;i<OK_STATES.length;i++){
@@ -3091,7 +3108,7 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
   var _detailish=isDetailish();
   for(var i=0;i<list.length;i++){
     var it=list[i];var tr=document.createElement('tr');tr.setAttribute('data-id',it.id);var _cls=(it.__ghost?'ghost-row':'');if(cmpMode){var _gk=cmpGroupOf(it);var _ost=_gk?cmpOkState(_gk.key):'';
-      if(_ost==='ok')_cls+=(_cls?' ':'')+'cmp-ok-row';else if(_ost==='r')_cls+=(_cls?' ':'')+'cmp-r-row';else if(_ost==='s')_cls+=(_cls?' ':'')+'cmp-s-row';
+      if(_ost==='ok')_cls+=(_cls?' ':'')+'cmp-ok-row';else if(_ost==='r')_cls+=(_cls?' ':'')+'cmp-r-row';else if(_ost==='s')_cls+=(_cls?' ':'')+'cmp-s-row';else if(_ost==='d')_cls+=(_cls?' ':'')+'cmp-d-row';
       if(_gk&&_gk.group&&_gk.group.n>1)_cls+=(_cls?' ':'')+'grp-row'+(_gk.sub?' grp-sub':' grp-head');
       if(_gk&&_gk.key)tr.setAttribute('data-gk',_gk.key);}if(_cls)tr.className=_cls;if(!it.__ghost&&_detailish){var _ph=getRowHItem(it.id);if(_ph){tr.style.height=_ph+'px';tr.style.setProperty('--dc-lines',String(rowLines(_ph)));}}var tds='';
     for(var c=0;c<_cols.length;c++){var _cd=_cols[c];var cell=cellHtml(_cd.k,it);tds+=cell.replace('<td',_cd.pre);}
@@ -4336,7 +4353,7 @@ document.addEventListener('click',function(e){
       var _tr=okEl.closest?okEl.closest('tr'):null;
       if(_tr){var _gkk=_tr.getAttribute('data-gk');
         var _all=_gkk?document.querySelectorAll('#gridBody tr[data-gk="'+(window.CSS&&CSS.escape?CSS.escape(_gkk):_gkk)+'"]'):[_tr];
-        for(var _z=0;_z<_all.length;_z++){_all[_z].classList.toggle('cmp-ok-row',_st==='ok');_all[_z].classList.toggle('cmp-r-row',_st==='r');_all[_z].classList.toggle('cmp-s-row',_st==='s');}}
+        for(var _z=0;_z<_all.length;_z++){_all[_z].classList.toggle('cmp-ok-row',_st==='ok');_all[_z].classList.toggle('cmp-r-row',_st==='r');_all[_z].classList.toggle('cmp-s-row',_st==='s');_all[_z].classList.toggle('cmp-d-row',_st==='d');}}
       cmpSetOkFast(_k,_st);
       try{renderCmpTabs();}catch(_e1){}
       return;}
@@ -5108,7 +5125,17 @@ function migrateCmpCols3(){
     s.colcfgS[CMP_SCOPE]=m;s.cmpMig7=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpOpts();applyScope();}catch(e){}}
+function migrateCmpCols4(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig8)return;
+    if(!s.colcfgS)s.colcfgS={};
+    var m=s.colcfgS[CMP_SCOPE]||{};
+    m.cmpOk=m.cmpOk||{};m.cmpOk.width=170;
+    s.colcfgS[CMP_SCOPE]=m;s.cmpMig8=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpOpts();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
