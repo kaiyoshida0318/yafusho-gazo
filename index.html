@@ -1237,7 +1237,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.72.1</span>
+        <span class="version" id="version">v3.73.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1615,7 +1615,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.72.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.73.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2635,7 +2635,7 @@ function cmpSortVal(it,key){
   if(key==='name')return cmpNorm(it.name);
   return '';
 }
-var CMP_SORTABLE=['date','cmpOk','rakuCmp','rakuCode','rakuName','rakuFix','rakuSales','yahooCode','yahooName','yahooFix','yahooSales','codeName','code','name'];
+var CMP_SORTABLE=['date','codeName','code','name','rakuCode','rakuName','rakuSales','yahooCode','yahooName','yahooSales'];
 /* 並び順の段：0=確定 / 1=両モールあり / 2=片方だけ */
 function cmpRank(it){
   var g=cmpGroupOf(it);if(!g)return 2;
@@ -3716,8 +3716,7 @@ function renderColManager(){
     var w=document.createElement('input');w.type='number';w.min='0';w.step='10';w.className='col-width-input';w.disabled=!isVis;
     if(cc.width){w.value=String(cc.width);}else{w.value='';var m=getRenderedColWidth(key);w.placeholder=(m!=null)?(m+'（自動）'):'自動';}
     w.onchange=function(){var v=parseInt((w.value||'').trim(),10);setColCfg(key,{width:(isFinite(v)&&v>0)?v:null});renderHead();render();renderColManager();};wf.appendChild(w);body.appendChild(wf);
-    var taf=document.createElement('div');taf.className='chc-field';taf.appendChild(makeColAlignGroup('タイトル揃え',cc.headAlign||'left',function(val){setColCfg(key,{headAlign:val});renderHead();render();}));body.appendChild(taf);
-    var daf=document.createElement('div');daf.className='chc-field';daf.appendChild(makeColAlignGroup('データ揃え',cc.align||'left',function(val){setColCfg(key,{align:val});render();}));body.appendChild(daf);
+    var aaf=document.createElement('div');aaf.className='chc-field';aaf.appendChild(makeColAlignGroup('揃え（見出し＋データ）',cc.align||'left',function(val){setColCfg(key,{align:val,headAlign:val});renderHead();render();renderColManager();}));body.appendChild(aaf);
     if(key==='imageBlock'){
       var pf=document.createElement('label');pf.className='chc-field';var pl2=document.createElement('span');pl2.textContent='1行の画像数';pf.appendChild(pl2);
       var pin=document.createElement('input');pin.type='number';pin.min='1';pin.max='30';pin.step='1';pin.className='col-width-input';pin.value=cc.perRow?String(cc.perRow):'';pin.placeholder='自動';pin.disabled=!isVis;
