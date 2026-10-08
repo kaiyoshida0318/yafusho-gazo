@@ -943,6 +943,18 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b:nth-child(1),.ok3b:nth-child(2),.ok3b:nth-child(3),.ok3b:nth-child(4){border-bottom:1px solid var(--line-2)}
 .ok3b:nth-child(5){grid-column:1 / -1;border-right:0}
 .pill-cap{font-size:11px;font-weight:800;color:var(--ink-3);margin:0 6px 0 2px;white-space:nowrap}
+.save-bar-btn2{font-size:12.5px!important;padding:8px 13px!important;border-radius:8px!important}
+.up-mini{max-width:760px!important}
+.up-list{max-height:52vh;overflow:auto;border:1px solid var(--line-2);border-radius:9px}
+.up-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.up-tbl th{position:sticky;top:0;background:#f6f5f2;text-align:left;padding:8px 10px;font-weight:800;color:var(--ink-3);border-bottom:1px solid var(--line-2);font-size:11.5px}
+.up-tbl td{padding:7px 10px;border-bottom:1px solid var(--line-2)}
+.up-g{font-weight:800;color:var(--ink-2);white-space:nowrap}
+.up-f{color:var(--ink-3)}
+.up-ar{color:var(--ink-3);text-align:center;width:22px}
+.up-t{font-weight:800;color:#17643f}
+.up-sum{margin:10px 2px 0;font-size:12px;font-weight:800;color:var(--ink-3)}
+.up-empty{padding:18px;text-align:center;color:var(--ink-3);font-size:13px}
 .num-tile{min-width:17px;height:17px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;padding:0 2px;flex:0 0 auto}
 .ctab.ctab-col.on .num-tile{background:rgba(255,255,255,.3)!important}
 .ctab.ctab-col.on .cnt{background:rgba(255,255,255,.28)!important;color:#fff!important}
@@ -1209,7 +1221,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.68.0</span>
+        <span class="version" id="version">v3.69.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1268,7 +1280,17 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
 </div>
 <div class="save-bar" id="saveBar" hidden>
   <span class="save-bar-txt" id="saveBarTxt">未保存の変更があります</span>
+  <button type="button" class="btn btn-line save-bar-btn2" id="btnUpList">📋 アップ内容</button>
+  <button type="button" class="btn btn-line save-bar-btn2" id="btnUpCancel">↩ キャンセル</button>
   <button type="button" class="btn btn-dark save-bar-btn" id="btnSaveBar">💾 変更を保存</button>
+</div>
+<div class="overlay" id="upModal" hidden>
+  <div class="mini up-mini">
+    <h2>📋 アップ内容</h2>
+    <p class="hint">「変更を保存」でGitHubへ反映される内容です。</p>
+    <div id="upList" class="up-list"></div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="upModal">閉じる</button><button class="btn btn-dark" id="btnUpSave">💾 変更を保存</button></div>
+  </div>
 </div>
 <div class="table-wrap">
   <div class="table-shell">
@@ -1564,7 +1586,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.68.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.69.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2295,6 +2317,77 @@ function cmpCount(v){
 /* ===== 楽天比較の変更はまとめて保存（自動pushしない） ===== */
 var cmpPend=0;
 function renderCmpSave(){var b=$('btnCmpSave');if(!b)return;b.hidden=!cmpPend;b.textContent='💾 変更を保存('+cmpPend+')';}
+/* 未保存の変更の記録（アップ内容／キャンセル用） */
+var cmpSnap=null;
+function _cp(o){try{return JSON.parse(JSON.stringify(o||{}));}catch(e){return {};}}
+function cmpSnapEnsure(){
+  if(cmpSnap)return;
+  var s=getSettings();
+  cmpSnap={ok:_cp(s.cmpOk),stg:_cp(s.cmpStg),fix:_cp(s.cmpFix),hide:_cp(s.cmpHide),items:{}};
+}
+function cmpSnapItem(id){
+  cmpSnapEnsure();
+  if(Object.prototype.hasOwnProperty.call(cmpSnap.items,id))return;
+  var it=findItemById(id);cmpSnap.items[id]=(it&&it.rakuCmp)||'';
+}
+function okLabelOf(v){
+  var st=(v==='r'||v==='s'||v==='d')?v:(v?'ok':'');
+  for(var i=0;i<OK_STATES.length;i++)if(OK_STATES[i].v===st)return OK_STATES[i].l;
+  return '未確定';
+}
+function cmpDiffList(){
+  var out=[];if(!cmpSnap)return out;
+  var s=getSettings(),k,seen;
+  var cur={},m=s.cmpOk||{};
+  for(k in m)if(Object.prototype.hasOwnProperty.call(m,k))cur[k]=m[k];
+  if(_okQ)for(k in _okQ){if(!Object.prototype.hasOwnProperty.call(_okQ,k))continue;
+    if(_okQ[k])cur[k]=(_okQ[k]==='ok'?1:_okQ[k]);else delete cur[k];}
+  seen={};for(k in cur)seen[k]=1;for(k in cmpSnap.ok)seen[k]=1;
+  for(k in seen){var o1=cmpSnap.ok[k],n1=cur[k];
+    if(String(o1==null?'':o1)!==String(n1==null?'':n1))out.push({g:'リニュ選定',c:String(k).replace(/^[cf]:/,''),f:okLabelOf(o1),t:okLabelOf(n1)});}
+  var m2=s.cmpStg||{};seen={};for(k in m2)seen[k]=1;for(k in cmpSnap.stg)seen[k]=1;
+  for(k in seen){var o2=cmpSnap.stg[k]||'選択前',n2=m2[k]||'選択前';
+    if(o2!==n2)out.push({g:'リニュ実施',c:String(k).replace(/^[cf]:/,''),f:o2,t:n2});}
+  var m3=s.cmpFix||{};seen={};for(k in m3)seen[k]=1;for(k in cmpSnap.fix)seen[k]=1;
+  for(k in seen){var o3=cmpSnap.fix[k]||'(なし)',n3=m3[k]||'(なし)';
+    if(o3!==n3)out.push({g:'確定コード',c:k,f:o3,t:n3});}
+  var m4=s.cmpHide||{};seen={};for(k in m4)seen[k]=1;for(k in cmpSnap.hide)seen[k]=1;
+  for(k in seen){var o4=!!cmpSnap.hide[k],n4=!!m4[k];
+    if(o4!==n4)out.push({g:'一覧から削除',c:String(k).replace(/^([ry]):/,function(_a,b2){return (b2==='r'?'楽天 ':'Yahoo ');}),f:o4?'削除':'表示',t:n4?'削除':'表示'});}
+  for(k in cmpSnap.items){
+    var it=findItemById(k);if(!it)continue;
+    var o5=cmpSnap.items[k]||'選択前',n5=it.rakuCmp||'選択前';
+    if(o5!==n5)out.push({g:'リニュ実施',c:it.code||k,f:o5,t:n5});
+  }
+  return out;
+}
+function renderUpList(){
+  var el=$('upList');if(!el)return;
+  var d=cmpDiffList();
+  if(!d.length){el.innerHTML='<p class="up-empty">未保存の変更はありません。</p>';return;}
+  var h='<table class="up-tbl"><thead><tr><th>種別</th><th>対象</th><th>変更前</th><th></th><th>変更後</th></tr></thead><tbody>';
+  for(var i=0;i<d.length;i++)h+='<tr><td class="up-g">'+esc(d[i].g)+'</td><td class="mono">'+esc(d[i].c)+'</td><td class="up-f">'+esc(d[i].f)+'</td><td class="up-ar">→</td><td class="up-t">'+esc(d[i].t)+'</td></tr>';
+  el.innerHTML=h+'</tbody></table><p class="up-sum">合計 '+d.length+' 件</p>';
+}
+function cmpCancelChanges(){
+  var d=cmpDiffList();
+  if(!cmpSnap&&!cmpPend){toast('取り消す変更はありません');return;}
+  if(!confirm('未保存の変更 '+(d.length||cmpPend)+'件 を取り消します。よろしいですか？'))return;
+  if(_okTimer){clearTimeout(_okTimer);_okTimer=null;}
+  _okQ=null;_okOv=null;
+  if(cmpSnap){
+    var s=getSettings();
+    s.cmpOk=cmpSnap.ok;s.cmpStg=cmpSnap.stg;s.cmpFix=cmpSnap.fix;s.cmpHide=cmpSnap.hide;
+    var pv=_stQuiet;_stQuiet=true;try{saveSettings(s);}finally{_stQuiet=pv;}
+    for(var id in cmpSnap.items){var it=findItemById(id);if(it)it.rakuCmp=cmpSnap.items[id]||'';}
+    try{persist();}catch(e){}
+  }
+  cmpSnap=null;cmpPend=0;cmpInvalidate();
+  try{setPending(false);}catch(e){}
+  renderCmpSave();try{renderSaveChip();}catch(e){}
+  renderCmpTabs();render();
+  toast('↩ 未保存の変更を取り消しました');
+}
 function cmpQuietSave(s,noCount){
   var pv=_stQuiet;_stQuiet=true;
   try{saveSettings(s);}finally{_stQuiet=pv;}
@@ -2338,6 +2431,7 @@ function cmpFixMap(){var s=getSettings();return (s.cmpFix&&typeof s.cmpFix==='ob
 function cmpFixOf(code){var k=cmpNorm(code);if(!k)return '';var m=cmpFixMap();return m[k]||'';}
 function cmpSetFix(code,v){
   var k=cmpNorm(code);if(!k)return;
+  cmpSnapEnsure();
   var s=getSettings();var m=(s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};
   v=String(v==null?'':v).trim();
   if(v)m[k]=v;else delete m[k];
@@ -2349,17 +2443,19 @@ function cmpHideMap(){var s=getSettings();return (s.cmpHide&&typeof s.cmpHide===
 function cmpIsHidden(side,code){var k=cmpNorm(code);if(!k)return false;return !!cmpHideMap()[side+':'+k];}
 function cmpSetHidden(side,code,on){
   var k=cmpNorm(code);if(!k)return;
+  cmpSnapEnsure();
   var s=getSettings();var m=(s.cmpHide&&typeof s.cmpHide==='object')?s.cmpHide:{};
   if(on)m[side+':'+k]=1;else delete m[side+':'+k];
   s.cmpHide=m;cmpQuietSave(s);cmpInvalidate();
 }
 function cmpHiddenCount(){var m=cmpHideMap(),n=0;for(var k in m){if(Object.prototype.hasOwnProperty.call(m,k))n++;}return n;}
-function cmpClearHidden(){var s=getSettings();s.cmpHide={};cmpQuietSave(s);cmpInvalidate();}
+function cmpClearHidden(){cmpSnapEnsure();var s=getSettings();s.cmpHide={};cmpQuietSave(s);cmpInvalidate();}
 /* 未登録商品の「楽天比較」 */
 function cmpStgMap(){var s=getSettings();return (s.cmpStg&&typeof s.cmpStg==='object')?s.cmpStg:{};}
 function cmpStgOf(k){return (k&&cmpStgMap()[k])||'';}
 function cmpSetStg(k,v){
   if(!k)return;
+  cmpSnapEnsure();
   var s=getSettings();var m=(s.cmpStg&&typeof s.cmpStg==='object')?s.cmpStg:{};
   v=String(v==null?'':v);
   if(v)m[k]=v;else delete m[k];
@@ -2389,6 +2485,7 @@ function cmpOkFlush(){
 /* 画面は即座に、保存はまとめて（押した瞬間に反応させるため） */
 function cmpSetOkFast(k,st){
   if(!k)return;
+  cmpSnapEnsure();
   if(!_okQ)_okQ={};if(!_okOv)_okOv={};
   var had=(_okQ[k]!=null);
   st=(st==='r'||st==='s'||st==='d')?st:(((st==='ok'||st===true))?'ok':'');
@@ -4387,7 +4484,11 @@ document.addEventListener('click',function(e){
     if(rcEl){e.stopPropagation();
       var _rv=rcEl.getAttribute('data-rc')||'',_rid=rcEl.getAttribute('data-rcid')||'';
       if(String(_rid).indexOf('__g_')===0){var _gq=_cmpG[_rid];cmpSetStg(_gq&&_gq.key,_rv);}
-      else{stageEdit(_rid,'rakuCmp',_rv);}
+      else{
+        cmpSnapItem(_rid);
+        var _hadQ=(cmpSnap&&cmpSnap.items&&cmpSnap.items[_rid]!=null);
+        stageEditQuiet(_rid,'rakuCmp',_rv);
+      }
       try{renderCmpTabs();render();}catch(_e2){}
       return;}
     var okEl=(t.closest?t.closest('[data-ok]'):null);
@@ -4452,6 +4553,12 @@ var _autoSaveT=null;
 function autoSaveSoon(){if(_autoSaveT)clearTimeout(_autoSaveT);_autoSaveT=setTimeout(function(){_autoSaveT=null;autoSaveNow(true);},700);}
 function autoSaveNow(sync){if(!dirty)return;if(_autoSaveT){clearTimeout(_autoSaveT);_autoSaveT=null;}persist();clearDirty();if(sync!==false)scheduleSync();}
 window.addEventListener('beforeunload',function(e){try{cmpOkFlush();}catch(_e){}if((bulkEdit&&dirty)||ghBusy){e.preventDefault();e.returnValue='まだGitHubへ同期中（または一括編集中）です。今更新すると未保存の変更が失われる可能性があります。よろしいですか？';return e.returnValue;}});
+function stageEditQuiet(id,field,v){
+  for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}
+  try{persist();}catch(e){}
+  cmpPend++;try{setPending(true);}catch(e){}
+  renderCmpSave();try{renderSaveChip();}catch(e){}
+}
 function stageEdit(id,field,v){for(var i=0;i<items.length;i++){if(items[i].id===id){items[i][field]=v;break;}}markDirty();}
 function wirePills(rowSel,pillSel){var ps=document.querySelectorAll(rowSel+' '+pillSel);for(var i=0;i<ps.length;i++){ps[i].addEventListener('click',function(){for(var j=0;j<ps.length;j++){ps[j].classList.remove('on');}this.classList.add('on');});}}
 function countPagePlanF(v){var _d=doneStatusId();var n=0;for(var i=0;i<items.length;i++){var x=items[i];if(x.status===_d)continue;if(v===''||(v==='__none__'?!x.pagePlan:x.pagePlan===v))n++;}return n;}
@@ -4490,6 +4597,9 @@ if($('cmpPills2'))$('cmpPills2').addEventListener('click',cmpPillClick);
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
 if($('btnCmpSave'))$('btnCmpSave').onclick=function(){cmpFlushSave();};
 if($('btnSaveBar'))$('btnSaveBar').onclick=function(){cmpFlushSave();try{renderSaveChip();}catch(e){}};
+if($('btnUpList'))$('btnUpList').onclick=function(){try{cmpOkFlush();}catch(e){}renderUpList();show('upModal');};
+if($('btnUpCancel'))$('btnUpCancel').onclick=function(){cmpCancelChanges();};
+if($('btnUpSave'))$('btnUpSave').onclick=function(){hide('upModal');cmpFlushSave();try{renderSaveChip();}catch(e){}};
 var _srchT=null;
 function applySearch(){
   var el=$('cmpSearch');var v=el?el.value:'';
@@ -4795,7 +4905,7 @@ async function saveToGitHub(silent){
     persist();
     if(silent){prog(false);if(_imgUp||_tplUp)toast('☁️ 画像'+(_imgUp+_tplUp)+'枚を含めて同期しました');}else{progDone('✓ 保存しました');}
     setPending(false);
-    try{cmpPend=0;renderCmpSave();_chipDoneAt=Date.now();renderSaveChip();}catch(_ce2){}
+    try{cmpPend=0;cmpSnap=null;renderCmpSave();_chipDoneAt=Date.now();renderSaveChip();}catch(_ce2){}
     if(_pend>0)syncLockStep(_pend,'仕上げ中…');
     log('=== GitHub保存 完了（商品'+items.length+'件 / 画像'+_imgUp+'枚）上記commitリンクで反映確認 ===');
     try{setTimeout(function(){capLoad(true);},1200);}catch(_ce){}
