@@ -943,6 +943,14 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b:nth-child(1),.ok3b:nth-child(2),.ok3b:nth-child(3),.ok3b:nth-child(4){border-bottom:1px solid var(--line-2)}
 .ok3b:nth-child(5){grid-column:1 / -1;border-right:0}
 .pill-cap{font-size:11px;font-weight:800;color:var(--ink-3);margin:0 6px 0 2px;white-space:nowrap}
+#grid td[data-al="c"] .cn-wrap{align-items:center;text-align:center}
+#grid td[data-al="r"] .cn-wrap{align-items:flex-end;text-align:right}
+#grid td[data-al="c"] .ok3,#grid td[data-al="c"] .img-strip,#grid td[data-al="c"] .act-cell{margin-left:auto;margin-right:auto}
+#grid td[data-al="r"] .ok3,#grid td[data-al="r"] .img-strip,#grid td[data-al="r"] .act-cell{margin-left:auto;margin-right:0}
+#grid td[data-al="c"] .fix-inp{text-align:center}
+#grid td[data-al="r"] .fix-inp{text-align:right}
+#grid td[data-al="c"] .dc-cell,#grid td[data-al="c"] .cell-name{text-align:center}
+#grid td[data-al="r"] .dc-cell,#grid td[data-al="r"] .cell-name{text-align:right}
 .ctab-clr{font-weight:800;color:var(--ink-3);border-style:dashed}
 .ctab-clr:hover{border-color:var(--red);color:var(--red);border-style:solid}
 .pull-sec{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
@@ -1229,7 +1237,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.71.0</span>
+        <span class="version" id="version">v3.72.1</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1607,7 +1615,7 @@ tr.more-row td{text-align:center;padding:14px 8px;background:#faf9f6}
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.71.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.72.1</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2804,14 +2812,14 @@ var DEFAULT_COLS=[
   {key:'rakuCmp',label:'リニュ実施',width:150,align:'center'},
   {key:'rakuImg',label:'楽天商品画像',width:110,align:'center'},
   {key:'yahooImgEx',label:'Yahoo商品画像',width:110,align:'center'},
-  {key:'rakuSales',label:'楽天売上(先月)',width:104,align:'right'},
-  {key:'yahooSales',label:'Yahoo売上(先月)',width:104,align:'right'},
+  {key:'rakuSales',label:'楽天(先月)',width:104,align:'right'},
+  {key:'yahooSales',label:'Yahoo(先月)',width:104,align:'right'},
   {key:'rakuCode',label:'楽天商品コード',width:112,align:'left'},
   {key:'rakuName',label:'楽天商品名',width:160,align:'left'},
-  {key:'rakuFix',label:'楽天確定コード',width:100,align:'left'},
+  {key:'rakuFix',label:'楽天結び',width:100,align:'left'},
   {key:'yahooCode',label:'Yahoo商品コード',width:112,align:'left'},
   {key:'yahooName',label:'Yahoo商品名',width:160,align:'left'},
-  {key:'yahooFix',label:'Yahoo確定コード',width:100,align:'left'},
+  {key:'yahooFix',label:'Yahoo結び',width:100,align:'left'},
   {key:'cmpOk',label:'リニュ選定',width:170,align:'center'},
   {key:'rakuDel',label:'楽天削除',width:42,align:'center'},
   {key:'yahooDel',label:'Yahoo削除',width:42,align:'center'},
@@ -3273,7 +3281,7 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
     while(_cut<_total&&cmpSubOf(list[_cut]))_cut++;
     _more=_total-_cut;list=list.slice(0,_cut);
   }
-  var _cols=[];(function(){var _o=getColOrder();for(var q=0;q<_o.length;q++){var k=_o[q];if(!colDef(k))continue;var cc=getColCfg(k);if(!cc.visible)continue;_cols.push({k:k,pre:'<td data-col-key="'+k+'" style="'+colStyleStr(cc,false)+'"'});}})();
+  var _cols=[];(function(){var _o=getColOrder();for(var q=0;q<_o.length;q++){var k=_o[q];if(!colDef(k))continue;var cc=getColCfg(k);if(!cc.visible)continue;_cols.push({k:k,pre:'<td data-col-key="'+k+'" data-al="'+String(cc.align||'left').charAt(0)+'" style="'+colStyleStr(cc,false)+'"'});}})();
   var _frag=document.createDocumentFragment();
   var _detailish=isDetailish();
   for(var i=0;i<list.length;i++){
