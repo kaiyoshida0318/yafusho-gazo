@@ -1247,7 +1247,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.76.0</span>
+        <span class="version" id="version">v3.77.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1625,7 +1625,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.76.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.77.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2691,6 +2691,8 @@ function cmpSortRows(list){
     if(qa!==qb)return qa-qb;
     var ra=okRankOf(cmpOkState(ga&&ga.key)),rb=okRankOf(cmpOkState(gb&&gb.key));
     if(ra!==rb)return ra-rb;
+    var sa=(ga&&ga.group?ga.group.rSum:0)||0,sb=(gb&&gb.group?gb.group.rSum:0)||0;
+    if(sb!==sa)return sb-sa;
     var ca=cmpCodeKey(ha),cb=cmpCodeKey(hb);
     if(ca!==cb)return ca<cb?-1:1;
     return cmpTie(a,b);
@@ -3048,7 +3050,13 @@ function cnLinksHtml(it){
 }
 var OK_STATES=[{v:'',l:'未確定',b:'未確定'},{v:'r',l:'楽天のみ販売',b:'楽天のみ<br>販売'},{v:'ok',l:'結びつき確定',b:'結びつき<br>確定'},{v:'d',l:'在庫処分中',b:'在庫<br>処分中'},{v:'s',l:'SKIP',b:'SKIP'}];
 function okRankOf(st){for(var i=0;i<OK_STATES.length;i++){if(OK_STATES[i].v===st)return i;}return 99;}
-function okFrameStyle(st){var c=OK_COLOR[st]||'#7a756d';return 'border-color:'+c+';box-shadow:inset 0 0 0 1px '+c;}
+function hexA(h,a){
+  h=String(h||'').replace('#','');
+  if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  var n=parseInt(h,16);if(!isFinite(n))return 'rgba(122,117,109,'+a+')';
+  return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+}
+function okFrameStyle(st){var c=OK_COLOR[st]||'#7a756d';return 'border-color:'+hexA(c,.42);}
 function okBtnsHtml(k){
   var st=cmpOkState(k),h='<div class="ok3" style="'+okFrameStyle(st)+'" data-okgrp="'+escA(k)+'">';
   for(var i=0;i<OK_STATES.length;i++){
