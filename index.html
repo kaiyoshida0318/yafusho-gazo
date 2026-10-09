@@ -1048,6 +1048,8 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
 .fix-inp.fix-own{border-style:dashed;background:#fbfaf7}
 .fix-inp.fix-own::placeholder{color:#d2cec7}
 .cmp-cd{font-size:12px}
+.cd-lnk{color:#bf0000;text-decoration:none;border-bottom:1px dotted rgba(191,0,0,.45)}
+.cd-lnk:hover{color:#8f0000;border-bottom-color:#8f0000;background:rgba(191,0,0,.07)}
 #gridHead th.th-srt{cursor:pointer;user-select:none}
 #gridHead th.th-srt:hover{background:#f3f1ec}
 #gridHead th.srt-on{color:#1f3a63}
@@ -1245,7 +1247,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.78.0</span>
+        <span class="version" id="version">v3.79.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1623,7 +1625,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.78.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.79.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2156,8 +2158,14 @@ function cmpCfg(){
     shop:(st.cmpShop||'yukaiya'),
     adUrl:(st.cmpAdUrl||'https://raw.githubusercontent.com/kaiyoshida0318/adcheck/main/data/{shop}/rpp_data.json'),
     yUrl:(st.cmpYUrl||'https://raw.githubusercontent.com/kaiyoshida0318/ycheck/main/data/{shop}/ycheck_data_v2.json'),
-    yImg:(st.cmpYImg||'https://item-shopping.c.yimg.jp/i/l/{shop}_{code}')
+    yImg:(st.cmpYImg||'https://item-shopping.c.yimg.jp/i/l/{shop}_{code}'),
+    rUrl:(st.cmpRUrl||'https://search.rakuten.co.jp/search/mall/{code}/?sid=354660')
   };
+}
+function cmpRakuUrl(code){
+  var c=String(code||'').trim();if(!c)return '';
+  var t=cmpCfg().rUrl||'';if(!t)return '';
+  return t.replace(/\{shop\}/g,encodeURIComponent(cmpCfg().shop||'')).replace(/\{code\}/g,encodeURIComponent(c));
 }
 function cmpLastMonth(){
   var d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);
@@ -2861,7 +2869,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3106,7 +3114,11 @@ function cellHtml(key,it){
     var _r=cmpRakuFor(it),_y=cmpYahooFor(it);
     var _showReg=false;
     var _reg=(_showReg&&it&&it.__ghost&&it.code)?'<div class="gh-ln"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'" title="この商品を本ツールに登録します">＋ 登録</button></div>':'';
-    if(key==='rakuCode')return '<td class="mono cmp-cd">'+(_r?(esc(_r.disp||_r.code)+(_reg?_reg:'')):'<span class="cmp-na">—</span>')+'</td>';
+    if(key==='rakuCode'){
+      if(!_r)return '<td class="mono cmp-cd"><span class="cmp-na">—</span></td>';
+      var _ru=cmpRakuUrl(_r.code),_rt=esc(_r.disp||_r.code);
+      return '<td class="mono cmp-cd">'+(_ru?('<a class="cd-lnk" href="'+escA(_ru)+'" target="_blank" rel="noopener" title="楽天でこの商品コードを検索">'+_rt+'</a>'):_rt)+(_reg?_reg:'')+'</td>';
+    }
     if(key==='rakuName')return '<td class="cell-name">'+((_r&&_r.name)?esc(_r.name):'<span class="cmp-na">—</span>')+'</td>';
     if(key==='rakuFix')return '<td>'+(_r?cmpFixInp(_r.code):cmpFixInp(it&&it.code,true))+'</td>';
     if(key==='yahooCode')return '<td class="mono cmp-cd">'+(_y?(esc(_y.disp||_y.code)+((!_r&&_reg)?_reg:'')):'<span class="cmp-na">—</span>')+'</td>';
