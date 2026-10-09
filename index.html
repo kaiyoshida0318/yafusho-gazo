@@ -982,7 +982,7 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b.on .bnum{color:#fff!important}
 .pnum{font-size:11px;margin-right:3px;opacity:.85}
 .bnum{font-size:9.5px;margin-right:2px;opacity:.8}
-.ok3.rc4 .ok3b:nth-child(3),.ok3.rc4 .ok3b:nth-child(4){border-bottom:0}
+
 .ok3b:hover{background:#f3f1ec}
 .ok3b.on{color:#fff}
 .ok3b.ok3-no.on{background:#7a756d}
@@ -991,6 +991,9 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b.ok3-s.on{background:#8257c9}
 .ok3b.ok3-d.on{background:#d98324}
 tr.cmp-d-row>td:not(.col-spx){background:#fdf6ea}
+tr.cmp-b-row>td:not(.col-spx){background:#eef4fb}
+tr.cmp-b-row td{border-bottom-color:#cfdef0}
+#grid tbody tr.cmp-b-row:hover td:not(.col-spx){background:#e0ecf8}
 tr.cmp-d-row td{border-bottom-color:#f0dfc2}
 #grid tbody tr.cmp-d-row:hover td:not(.col-spx){background:#faecd4}
 .ctab-d.on{background:#d98324!important;border-color:#d98324!important;color:#fff!important}
@@ -1242,7 +1245,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.77.1</span>
+        <span class="version" id="version">v3.78.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1620,7 +1623,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.77.1</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.78.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2650,7 +2653,7 @@ function cmpRank(it){
   return 2;
 }
 /* リニュ実施の並び順：実施後 → 選択前 → 実施予定 → SKIP */
-var RC_ORDER=['実施後','実施予定','選択前','SKIP'];
+var RC_ORDER=['実施後','実施中','実施予定','選択前','SKIP'];
 function rcRankOf(v){var i=RC_ORDER.indexOf(String(v||CMP_DEF_VAL));return (i>=0)?i:9;}
 function cmpCodeKey(it){
   if(it&&it.code)return cmpNorm(it.code);
@@ -2762,7 +2765,7 @@ var DEFAULT_LISTING=['新規出品','リニューアル-同一ページ','リニ
 var DEFAULT_OPTS={
   status:[{l:'未着手',c:'gray',t:'1'},{l:'作成中',c:'orange',t:'2'},{l:'確認待ち',c:'blue',t:'3'},{l:'完了',c:'green',t:'4'}],
   listingType:[{l:'新規出品',c:'green',t:'新'},{l:'リニューアル-同一ページ',c:'blue',t:'同'},{l:'リニューアル-新規ページ',c:'orange',t:'新'},{l:'再登録',c:'gray',t:'再'}],
-  rakuCmp:[{l:'選択前',c:'gray',t:'前'},{l:'実施予定',c:'orange',t:'予'},{l:'実施後',c:'green',t:'後'},{l:'SKIP',c:'purple',t:'S'}],
+  rakuCmp:[{l:'選択前',c:'gray',t:'前'},{l:'実施予定',c:'orange',t:'予'},{l:'実施中',c:'blue',t:'中'},{l:'実施後',c:'green',t:'後'},{l:'SKIP',c:'purple',t:'S'}],
   pagePlan:[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'},{l:'5',c:'gray',t:'5'},{l:'6',c:'gray',t:'6'},{l:'7',c:'gray',t:'7'},{l:'8',c:'gray',t:'8'},{l:'9',c:'gray',t:'9'}]
 };
 function cloneOpts(o){var r={};for(var k in o){r[k]=o[k].map(function(x){return {l:x.l,c:x.c,t:x.t};});}return r;}
@@ -2821,7 +2824,7 @@ var DEFAULT_COLS=[
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
   {key:'buttonElemLp',label:'Yahoo新規の名称',width:140,align:'left'},
   {key:'salesTable',label:'商品コード・価格・内容',width:null,align:'left'},
-  {key:'rakuCmp',label:'リニュ実施',width:150,align:'center'},
+  {key:'rakuCmp',label:'リニュ実施',width:170,align:'center'},
   {key:'rakuImg',label:'楽天商品画像',width:110,align:'center'},
   {key:'yahooImgEx',label:'Yahoo商品画像',width:110,align:'center'},
   {key:'rakuSales',label:'楽天(先月)',width:104,align:'right'},
@@ -2858,7 +2861,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3063,11 +3066,11 @@ function okBtnsHtml(k){
 }
 /* リニュ実施（旧・楽天比較）をボタン化 */
 var RC_COLOR={gray:'#7a756d',orange:'#d98324',green:'#17643f',purple:'#8257c9',blue:'#2f6fb0',red:'#bf0000',teal:'#0e7c8a'};
-var RC_ROWCLS={green:'cmp-ok-row',orange:'cmp-d-row',purple:'cmp-s-row',red:'cmp-r-row',blue:'',teal:'',gray:''};
+var RC_ROWCLS={green:'cmp-ok-row',orange:'cmp-d-row',purple:'cmp-s-row',red:'cmp-r-row',blue:'cmp-b-row',teal:'',gray:''};
 function rcColorOf(v){var op=getOpts('rakuCmp');for(var i=0;i<op.length;i++){if(op[i].l===v)return op[i].c||'gray';}return 'gray';}
 function rcRowCls(it){return RC_ROWCLS[rcColorOf(rakuCmpVal(it))]||'';}
 function rcRowApply(tr,cls){
-  tr.classList.remove('cmp-ok-row','cmp-d-row','cmp-s-row','cmp-r-row');
+  tr.classList.remove('cmp-ok-row','cmp-d-row','cmp-s-row','cmp-r-row','cmp-b-row');
   if(cls)tr.classList.add(cls);
 }
 function rcBtnsHtml(it){
@@ -5427,7 +5430,25 @@ function migrateCmpCols6(){
     s.cmpMig10=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();applyScope();}catch(e){}}
+function migrateCmpOpts2(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig11)return;
+    if(s.opts&&s.opts.rakuCmp&&s.opts.rakuCmp.length){
+      var a=s.opts.rakuCmp,has=false,i;
+      for(i=0;i<a.length;i++){if(String(a[i].l)==='実施中'){has=true;break;}}
+      if(!has){
+        var at=-1;for(i=0;i<a.length;i++){if(String(a[i].l)==='実施後'){at=i;break;}}
+        var o={l:'実施中',c:'blue',t:'中'};
+        if(at>=0)a.splice(at,0,o);else a.push(o);
+      }
+    }
+    if(!s.colcfgS)s.colcfgS={};
+    var m=s.colcfgS[CMP_SCOPE]||{};m.rakuCmp=m.rakuCmp||{};m.rakuCmp.width=170;s.colcfgS[CMP_SCOPE]=m;
+    s.cmpMig11=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
