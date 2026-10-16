@@ -115,6 +115,12 @@ span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-siz
 .cell-date{white-space:nowrap}
 .cell-date .d-y{display:block;font-size:12px;color:var(--ink-3);line-height:1.2}
 .cell-date .d-md{display:block;font-weight:700;font-size:14px;line-height:1.2}
+/* 最終更新日時（日付の下） */
+.cell-date .d-upd{display:block;margin-top:5px;padding-top:4px;border-top:1px dashed var(--line-2);font-size:10.5px;line-height:1.25;color:var(--ink-3);font-weight:500}
+.cell-date .d-upd b{display:block;font-size:11.5px;color:var(--ink-2);font-weight:700}
+#gridHead .srt-sub{display:block;cursor:pointer;user-select:none;padding:1px 0;border-radius:4px}
+#gridHead .srt-sub:hover{background:#f3f1ec}
+#gridHead .srt-sub+.srt-sub{margin-top:3px;padding-top:3px;border-top:1px dashed var(--line-2);font-size:11px}
 .cat-badge{font-size:11px;font-weight:700;color:var(--ink-2);background:#eef0f3;border:1px solid var(--line-2);border-radius:7px;padding:3px 8px;white-space:nowrap}
 .url-cell{display:flex;flex-direction:column;gap:3px;max-width:220px}
 .url-cell a{font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--red-strong);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1273,7 +1279,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.80.0</span>
+        <span class="version" id="version">v3.81.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1655,7 +1661,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.80.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.81.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1781,6 +1787,7 @@ function $(id){return document.getElementById(id);}
 var STORE='yafusho_items';
 var items=[];
 try{var raw=localStorage.getItem(STORE);if(raw)items=JSON.parse(raw)||[];}catch(e){}
+try{_updStamp();}catch(e){}
 var _quotaWarned=false,_quotaLogAt=0;
 function stripDataImgs(a){var o=[];for(var i=0;i<(a||[]).length;i++){var v=a[i];if(v&&String(v).indexOf('data:')===0)continue;o.push(v);}return o;}
 function lightItems(){
@@ -1794,7 +1801,36 @@ function lightItems(){
     return o;
   });
 }
+/* 商品ごとの最終更新日時（it.upd）。保存のたびに、前回から中身が変わった商品だけ今の時刻を付ける。
+   GitHubから読み込んだ直後など items が丸ごと入れ替わったときは、時刻を付けずに基準だけ取り直す。 */
+var _updBase,_updArr;
+function _updStamp(){
+  try{
+    var rep=function(k,v){return k==='upd'?undefined:v;};
+    var fresh=(_updArr!==items)||!_updBase;var nb={},now=Date.now();
+    for(var i=0;i<items.length;i++){var it=items[i];if(!it||!it.id)continue;var sig=JSON.stringify(it,rep);
+      if(!fresh){var o=_updBase[it.id];
+        if(!o)it.upd=now;                                            /* 新しく追加した商品 */
+        else if(o.s!==sig&&!((it.upd||0)>o.u))it.upd=now;}          /* 中身が変わった商品 */
+      nb[it.id]={s:sig,u:it.upd||0};}
+    _updBase=nb;_updArr=items;
+  }catch(e){}
+}
+function _updTouchGroup(k){
+  if(!k)return;var now=Date.now(),hit=false;
+  for(var i=0;i<items.length;i++){var g=null;try{g=cmpGroupOf(items[i]);}catch(e){}if(g&&g.key===k){items[i].upd=now;hit=true;}}
+  if(hit){try{persist();}catch(e){}}
+}
+function fmtUpd(t){
+  if(!t)return '<span class="d-upd">更新<b>—</b></span>';
+  var d=new Date(t);if(isNaN(d))return '';
+  var p=function(n){return (n<10?'0':'')+n;};
+  var full=d.getFullYear()+'/'+p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+  var sameY=(d.getFullYear()===new Date().getFullYear());
+  return '<span class="d-upd" title="最終更新 '+full+'">更新'+(sameY?'':' '+String(d.getFullYear()).slice(2)+'/')+'<b>'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+'</b></span>';
+}
 function persist(){
+  _updStamp();
   try{localStorage.setItem(STORE,JSON.stringify(items));_quotaWarned=false;}
   catch(e){
     var ok=false;
@@ -2069,7 +2105,7 @@ if($('btnClearLocal'))$('btnClearLocal').onclick=async function(){
 };
 function capRowHtml(name,bytes,total){var pc=total?Math.round(bytes/total*1000)/10:0;return '<div class="cap-row"><b>'+esc(name)+'</b><span class="cap-v">'+capFmt(bytes)+'</span><span class="cap-p">'+pc+'%</span></div>';}
 
-function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}}
+function reloadItems(){try{var r=localStorage.getItem(STORE);items=r?(JSON.parse(r)||[]):[];}catch(e){items=[];}try{_updStamp();}catch(e){}}
 var PENDING='yafusho_pending';
 function isViewerMode(){try{return !getCfg().pat;}catch(e){return true;}}
 function getPending(){if(isViewerMode())return false;try{return localStorage.getItem(PENDING)==='1';}catch(e){return false;}}
@@ -2574,6 +2610,7 @@ function cmpSetOkFast(k,st){
   var had=(_okQ[k]!=null);
   st=(st==='r'||st==='s'||st==='d')?st:(((st==='ok'||st===true))?'ok':'');
   _okQ[k]=st;_okOv[k]=st;
+  try{_updTouchGroup(k);}catch(e){}
   if(!had)cmpPend++;
   try{setPending(true);}catch(e){}
   renderCmpSave();try{renderSaveChip();}catch(e){}
@@ -2671,6 +2708,7 @@ function cmpSortVal(it,key){
   if(key==='rakuSales')return (g.group?g.group.rSum:((r&&r.sales)||0))||0;
   if(key==='yahooSales')return (g.group?g.group.ySum:((y&&y.sales)||0))||0;
   if(key==='date')return it.date||'';
+  if(key==='upd')return it.upd?+it.upd:null;
   if(key==='rakuCode')return r?cmpNorm(r.code):'';
   if(key==='rakuName')return r?cmpNorm(r.name):'';
   if(key==='rakuFix')return r?cmpNorm(cmpFixOf(r.code)):'';
@@ -2681,7 +2719,7 @@ function cmpSortVal(it,key){
   if(key==='name')return cmpNorm(it.name);
   return '';
 }
-var CMP_SORTABLE=['date','codeName','code','name','rakuCode','rakuName','rakuSales','yahooCode','yahooName','yahooSales'];
+var CMP_SORTABLE=['date','upd','codeName','code','name','rakuCode','rakuName','rakuSales','yahooCode','yahooName','yahooSales'];
 /* 並び順の段：0=確定 / 1=両モールあり / 2=片方だけ */
 function cmpRank(it){
   var g=cmpGroupOf(it);if(!g)return 2;
@@ -2711,6 +2749,7 @@ function cmpSortRows(list){
     list.sort(function(a,b){
       var ha=cmpHeadOf(a),hb=cmpHeadOf(b);
       var va=cmpSortVal(ha,k),vb=cmpSortVal(hb,k);
+      if(va==null&&vb!=null)return 1;if(va!=null&&vb==null)return -1;   /* 値が無い行は常に下 */
       if(typeof va==='number'||typeof vb==='number'){var na=+va||0,nb=+vb||0;if(na!==nb)return (na-nb)*d;}
       else{var sa=String(va||''),sb=String(vb||'');
         if(!sa&&sb)return 1;if(sa&&!sb)return -1;
@@ -3171,7 +3210,7 @@ function cellHtml(key,it){
     if(key==='actions')return '<td><div class="act-cell"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'">＋ 登録</button></div></td>';
     return '<td></td>';
   }
-  if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?fmtDate(it.date):md())+'</td>';
+  if(key==='date')return bulkEdit?'<td>'+bulkInp('date',it,'date')+'</td>':'<td class="mono cell-date">'+(it.date?fmtDate(it.date):md())+(it.__ghost?'':fmtUpd(it.upd))+'</td>';
   if(key==='imageBlock')return '<td>'+imgBlockHtml(it)+'</td>';
   if(key==='yahooMain'){var _ym=mainImg(it,'yahoo');if(!_ym&&cmpMode)return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';return '<td>'+thumb(_ym,it.id)+'</td>';}
   if(key==='rakutenMain'){var _rm=mainImg(it,'rakuten');if(!_rm&&cmpMode)return '<td>'+cmpImgHtml(cmpRakuFor(it),'r')+'</td>';return '<td>'+thumb(_rm,it.id)+'</td>';}
@@ -3274,6 +3313,13 @@ function hasAutoCol(){
 function renderHead(){resetViewCache();var order=getColOrder();var srt=cmpMode;var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;
   var sortable=srt&&CMP_SORTABLE.indexOf(key)>=0;
   var arrow=sortable?('<span class="srt-ar'+(cmpSort.key===key?' on':'')+'">'+(cmpSort.key===key?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>'):'';
+  if(key==='date'&&srt){   /* 日付の見出しは2段：日付／最終更新。それぞれ押して昇順・降順 */
+    var _ar=function(k){return '<span class="srt-ar'+(cmpSort.key===k?' on':'')+'">'+(cmpSort.key===k?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>';};
+    h+='<th data-col-key="date" class="'+((cmpSort.key==='date'||cmpSort.key==='upd')?'srt-on':'')+'" style="'+colStyleStr(cc,true)+'">'
+      +'<span class="srt-sub" data-sort="date" title="日付で並び替え">日付'+_ar('date')+'</span>'
+      +'<span class="srt-sub" data-sort="upd" title="最終更新日時で並び替え">最終更新'+_ar('upd')+'</span>'
+      +((colResizeMode||colsModalOpen||statusMgrOpen)?'<div class="col-resize-handle" data-rk="date"></div>':'')+'</th>';
+    continue;}
   h+='<th data-col-key="'+key+'"'+(sortable?' data-sort="'+key+'" class="th-srt'+(cmpSort.key===key?' srt-on':'')+'"':'')+' style="'+colStyleStr(cc,true)+'">'+headLabelHtml(key,def)+arrow+((colResizeMode||colsModalOpen||statusMgrOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';}
   $('gridHead').innerHTML=h+'<th class="col-spx"></th></tr>';}
 
@@ -3863,10 +3909,10 @@ if($('btnResizeDone'))$('btnResizeDone').onclick=exitColResizeMode;
 var _gh=$('gridHead');if(_gh)_gh.addEventListener('mousedown',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('col-resize-handle')){startColResize(e,t.parentNode,t.getAttribute('data-rk'));}});
 if(_gh)_gh.addEventListener('click',function(e){
   var t=e.target;if(t&&t.classList&&t.classList.contains('col-resize-handle'))return;
-  var th=t&&t.closest?t.closest('th[data-sort]'):null;if(!th)return;
+  var th=t&&t.closest?t.closest('[data-sort]'):null;if(!th)return;
   var k=th.getAttribute('data-sort');
   if(cmpSort.key===k){cmpSort.dir=(cmpSort.dir<0?1:-1);}
-  else{cmpSort.key=k;cmpSort.dir=(k==='rakuSales'||k==='yahooSales')?-1:1;}cmpResetLimit();
+  else{cmpSort.key=k;cmpSort.dir=(k==='rakuSales'||k==='yahooSales'||k==='upd')?-1:1;}cmpResetLimit();
   renderHead();render();
 });
 
