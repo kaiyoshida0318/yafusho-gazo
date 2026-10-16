@@ -4916,7 +4916,8 @@ function cmpPillClick(e){
     return;
   }
   var nv=b.getAttribute('data-cmp')||'';
-  cmpMode=true;cmpFilter=nv;cmpResetLimit();
+  /* 選択中のボタンをもう一度押したら「全て」に戻す */
+  cmpMode=true;cmpFilter=(nv&&nv===cmpFilter)?'':nv;cmpResetLimit();
   renderCmpTabs();renderHead();render();updateStickyH();
   if(!cmpData.raku)cmpLoad(false);
 }
