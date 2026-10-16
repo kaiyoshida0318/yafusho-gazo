@@ -1237,6 +1237,32 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
 .st-chip-big{background:#fff9f0;border-color:#e6c9a0;color:#8a6a30}
 .st-chip-big.on{background:#ffe9c9;border-color:#d98324;color:#8a4b00}
 .st-chips-empty{font-size:11.5px;color:var(--ink-3);padding:4px}
+/* ===== 幅調整モード（Ycheck方式）：⇔幅ボタン／一番下の数値入力＋ロック／右の空き ===== */
+#btnColW.is-on{background:#2563eb!important;color:#fff!important;border-color:#1d4ed8!important}
+body.col-resize-on #grid thead th{box-shadow:inset -1px 0 0 rgba(37,99,235,.25)}
+body.col-resize-on #grid thead th .col-resize-handle::after{background:#2563eb;opacity:.45}
+body.col-resize-on #grid thead th .col-resize-handle:hover::after{opacity:1}
+body.is-col-resizing,body.is-col-resizing *{cursor:col-resize!important;user-select:none!important}
+#grid tfoot.yc-wrow-foot td{position:sticky;bottom:0;z-index:5;background:#fff7e0;border-top:2px solid #f59e0b;border-right:1px solid #f3d9a4;padding:4px 3px;text-align:center;overflow:hidden;vertical-align:middle}
+#grid tfoot.yc-wrow-foot td.is-locked{background:#e0ecff}
+#grid tfoot.yc-wrow-foot td.col-spx{background:#fff7e0!important;border-right:0}
+.yc-wrow{display:inline-flex;flex-direction:column;align-items:center;gap:2px;max-width:100%}
+.yc-wrow-in{width:52px;max-width:100%;min-width:0;font:inherit;font-size:12px;padding:2px 3px;text-align:right;border:1px solid #f59e0b;border-radius:4px;background:#fff;-moz-appearance:textfield}
+.yc-wrow-in::-webkit-inner-spin-button,.yc-wrow-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.yc-wrow-in:disabled{border-color:#93c5fd;color:#1e40af;background:#f1f6ff;font-weight:700}
+.yc-wrow-lock{max-width:100%;overflow:hidden;white-space:nowrap;cursor:pointer;font:inherit;font-size:10.5px;font-weight:700;line-height:1.3;padding:1px 5px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;color:#64748b}
+.yc-wrow-lock:hover{border-color:#2563eb;color:#2563eb}
+.yc-wrow-lock.is-locked{background:#2563eb;border-color:#1d4ed8;color:#fff}
+body.col-resize-on .table-scroll{max-height:calc(100vh - var(--sticky-h, 132px) - 50px)}
+.yc-wrow-sum{position:sticky;bottom:0;z-index:7;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:4px 0 0;padding:5px 10px;border:1px solid #f59e0b;border-radius:6px;background:#fff7e0;font-size:12px;color:#78350f;font-variant-numeric:tabular-nums}
+.yc-wrow-sum[hidden]{display:none}
+.yc-wrow-sum b{font-weight:800}
+.yc-wrow-sum .ws-rest{color:#15803d}
+.yc-wrow-sum .ws-rest.is-over{color:#dc2626}
+.yc-wrow-sum .ws-note{color:#92400e;opacity:.8}
+.yc-wrow-sum .ws-end{margin-left:auto;font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #1d4ed8;background:#2563eb;color:#fff;cursor:pointer}
+/* 右の空き（いちばん右の余白列）を斜線で見せる */
+body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{background-image:repeating-linear-gradient(135deg,rgba(245,158,11,.12) 0 6px,transparent 6px 12px)!important}
 </style>
 </head>
 <body>
@@ -1251,6 +1277,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
+        <button class="btn btn-ghost" id="btnColW" type="button" title="幅調整モード：押すと列の境目をドラッグして列幅を変えられます（もう一度押すと終了）">⇔ 幅</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -1326,6 +1353,7 @@ tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9
         <tbody id="gridBody"></tbody>
       </table>
     </div>
+    <div class="yc-wrow-sum" id="ycWrowSum" hidden></div>
     <div class="shell-empty" id="emptyState">
       <div class="lead">まだ商品がありません</div>
       <p>「＋ 新規作成」から商品を登録すると、ここに一覧で表示されます。</p>
@@ -3767,8 +3795,9 @@ function renderColManager(){
     var isFix=(cc.fixw!==false);
     if(isFix&&cc.width){w.value=String(cc.width);}else{w.value='';var m=getRenderedColWidth(key);w.placeholder=(m!=null)?(m+'（自動）'):'自動';}
     w.disabled=w.disabled||!isFix;
+    var _lkC=colIsLocked(key);if(_lkC){w.disabled=true;w.title='この列は幅をロック中です（⇔ 幅 モードの一番下で解除できます）';}
     w.onchange=function(){var v=parseInt((w.value||'').trim(),10);setColCfg(key,{width:(isFinite(v)&&v>0)?v:null,fixw:(isFinite(v)&&v>0)});renderHead();render();renderColManager();};
-    var fx=document.createElement('button');fx.type='button';fx.className='chc-fix'+(isFix?' on':'');fx.textContent=isFix?'固定ON':'固定OFF';fx.disabled=!isVis;
+    var fx=document.createElement('button');fx.type='button';fx.className='chc-fix'+(isFix?' on':'');fx.textContent=isFix?'固定ON':'固定OFF';fx.disabled=!isVis||_lkC;
     fx.title='ONにすると、他の列の幅を変えてもこの列の幅は変わりません（OFFは自動で伸縮します）';
     fx.onclick=function(){
       if(isFix){setColCfg(key,{fixw:false});}
@@ -3814,11 +3843,15 @@ function openCols(){colsModalOpen=true;applyColsH();renderHead();render();render
 document.addEventListener('mousedown',function(e){if(!colsModalOpen)return;var t=e.target;if(t&&t.closest&&(t.closest('#colsModal')||t.closest('.col-resize-handle')||t.closest('#resizeBar')||t.closest('#cddMenu')||t.closest('.add-menu')))return;hide('colsModal');},true);
 $('btnCols2').onclick=openCols;
 $('btnResetCols').onclick=function(){var sc=curScope();if(!confirm('「'+scopeLabel(sc)+'」の表示項目・幅・並びをデフォルトに戻します。よろしいですか？'))return;var s=getSettings();if(s.colcfgS)delete s.colcfgS[sc];if(s.colorderS)delete s.colorderS[sc];if(s.scopeOpt)delete s.scopeOpt[sc];saveSettings(s);renderHead();render();renderColManager();log('「'+scopeLabel(sc)+'」の項目をデフォルトに戻しました');};
-/* ドラッグ幅調整モード */
-function enterColResizeMode(){colResizeMode=true;hide('colsModal');var bar=$('resizeBar');if(bar)bar.hidden=false;renderHead();render();}
-function exitColResizeMode(){colResizeMode=false;var bar=$('resizeBar');if(bar)bar.hidden=true;renderHead();render();show('colsModal');renderColManager();}
+/* ドラッグ幅調整モード（「列名・列幅・列順管理」の「↔ ドラッグで幅調整」→ ⇔ 幅 モードに一本化） */
+var _cwFromModal=false;
+function enterColResizeMode(){_cwFromModal=true;hide('colsModal');colsModalOpen=false;setColWMode(true);}
+function exitColResizeMode(){setColWMode(false);}
 function startColResize(e,th,key){
-  e.preventDefault();e.stopPropagation();if(statusMgrOpen){try{stPush();}catch(_e){}}
+  e.preventDefault();e.stopPropagation();
+  if(colIsLocked(key)){toast('この列は幅をロック中です（⇔ 幅 モードの一番下で解除できます）');return;}
+  if(colWOn){cwStartResize(e,key);return;}
+  if(statusMgrOpen){try{stPush();}catch(_e){}}
   var startX=e.clientX;var startW=th.getBoundingClientRect().width;var cells=document.querySelectorAll('#grid [data-col-key="'+key+'"]');var newW=Math.round(startW);
   document.body.style.userSelect='none';document.body.style.cursor='col-resize';
   function move(ev){newW=Math.max(40,Math.round(startW+(ev.clientX-startX)));for(var i=0;i<cells.length;i++){cells[i].style.width=newW+'px';cells[i].style.minWidth=newW+'px';cells[i].style.maxWidth=newW+'px';}}
@@ -3836,6 +3869,176 @@ if(_gh)_gh.addEventListener('click',function(e){
   else{cmpSort.key=k;cmpSort.dir=(k==='rakuSales'||k==='yahooSales')?-1:1;}cmpResetLimit();
   renderHead();render();
 });
+
+/* ============================================================================
+   幅調整モード（Ycheck の「⇔ 幅」を移植）
+   ・「⇔ 幅」を押している間だけ、列の境目（見出し・各行の右端）をドラッグできる。もう一度押すと終了。
+   ・広げたとき：横スクロールが出る直前までは そのまま広げ、超える分は【ロックしていない他の列から均等に】もらう。
+   ・狭めたとき：他の列は動かさない。空いた分は右の空き（斜線）として残る。
+   ・境目をダブルクリック：その列を既定の幅に戻す。
+   ・表の一番下に、列ごとの幅（px）の入力欄と「ロック」ボタン。ロック中の列は
+     ドラッグ・数値入力・ダブルクリック・他の列からの「もらう」対象のどれでも変わらない。
+   ・表の下の帯：使える幅／表の幅／残り（右の空き）またははみ出し／ロック中の列数。
+   ・保存先は今までどおり 状態ごとの列設定（settings.colcfgS[状態][列].width / fixw）。ロックは .lockw
+     → 設定の保存（GitHub同期）に自動で載るので、他のPCでも同じになる。
+   ============================================================================ */
+var colWOn=false;
+var COLW_MIN=40,COLW_MAX=1200;
+function colIsLocked(key){try{var cc=scopeMap(curScope())[key];return !!(cc&&cc.lockw);}catch(e){return false;}}
+function _cwThs(){var r=$('gridHead');if(!r)return [];return Array.prototype.slice.call(r.querySelectorAll('th[data-col-key]'));}
+function _cwScroll(){return document.querySelector('.table-scroll');}
+function _cwAvail(){var sc=_cwScroll();return sc?Math.round(sc.clientWidth-2):0;}
+function _cwCur(){var m={};_cwThs().forEach(function(th){m[th.getAttribute('data-col-key')]=Math.round(th.getBoundingClientRect().width);});return m;}
+function _cwClamp(v){return Math.max(COLW_MIN,Math.min(COLW_MAX,Math.round(v)));}
+/* ドラッグ中だけ使う上書きスタイル（全セルに毎回styleを書かずに済む） */
+var _cwStyleEl=null;
+function _cwOverride(m){
+  if(!_cwStyleEl){_cwStyleEl=document.createElement('style');_cwStyleEl.id='cwOverride';document.head.appendChild(_cwStyleEl);}
+  var css='';for(var k in m){var w=m[k];css+='#grid [data-col-key="'+k+'"]{width:'+w+'px!important;min-width:'+w+'px!important;max-width:'+w+'px!important}';}
+  _cwStyleEl.textContent=css;
+}
+function _cwClear(){if(_cwStyleEl)_cwStyleEl.textContent='';}
+/* 広げるとき：はみ出すぶんを、ロックしていない他の列から均等にもらう（最小幅まで。足りなければそこが限界） */
+function _cwPlan(key,wantW,base){
+  var res={};for(var k0 in base)res[k0]=base[k0];
+  res[key]=wantW;
+  var grow=wantW-base[key];if(grow<=0)return res;          /* 狭めるときは他の列を動かさない */
+  var avail=_cwAvail();if(!(avail>0))return res;
+  var tot=0;for(var k1 in res)tot+=res[k1];
+  var need=Math.min(grow,tot-avail);if(need<=0.5)return res;  /* そのまま収まる */
+  var others=Object.keys(base).filter(function(k){return k!==key;});
+  var next={};others.forEach(function(k){next[k]=base[k];});
+  var ok=function(k){return !colIsLocked(k)&&next[k]>COLW_MIN+0.5;};
+  var pool=others.filter(ok),g=0;
+  while(need>0.5&&pool.length&&g++<10){
+    var per=need/pool.length,took=0;
+    pool.forEach(function(k){var t=Math.min(per,Math.max(0,next[k]-COLW_MIN));next[k]-=t;took+=t;});
+    if(took<=0.01)break;need-=took;pool=pool.filter(ok);
+  }
+  others.forEach(function(k){res[k]=Math.round(next[k]);});
+  res[key]=Math.round(wantW-Math.max(0,need));               /* もらいきれなかったぶんは広げない */
+  return res;
+}
+/* 幅をまとめて保存（ロック中の列は触らない）→ 再描画 */
+function _cwCommit(m){
+  var s=getSettings();var sc=curScope();if(!s.colcfgS)s.colcfgS={};if(!s.colcfgS[sc])s.colcfgS[sc]={};var mp=s.colcfgS[sc];var ch=0;
+  for(var k in m){var cur=mp[k]||{};if(cur.lockw)continue;var w=_cwClamp(m[k]);if(cur.width!==w||cur.fixw===false){cur.width=w;cur.fixw=true;mp[k]=cur;ch++;}}
+  if(!ch)return;
+  saveSettings(s);resetViewCache();renderHead();render();
+}
+function cwStartResize(e,key){
+  if(colIsLocked(key)){toast('この列は幅をロック中です（一番下の「ロック中」を押すと解除できます）');return;}
+  e.preventDefault();e.stopPropagation();
+  var base=_cwCur();if(base[key]==null)return;
+  var startX=e.clientX,startW=base[key],last=null,moved=false,raf=0,lastX=startX;
+  document.body.classList.add('is-col-resizing');
+  function apply(){raf=0;var plan=_cwPlan(key,_cwClamp(startW+(lastX-startX)),base);
+    /* 仕上げの実測補正：計算どおりでも数pxはみ出すことがあるので、はみ出したぶんだけこの列を縮める */
+    _cwOverride(plan);
+    var sc=_cwScroll();if(sc&&plan[key]>startW){var tot=0;for(var kk in plan)tot+=plan[kk];
+      /* 計算上の「はみ出し」（もともと横スクロールしていた分）は除いて、想定外の数pxだけ直す */
+      var over=(sc.scrollWidth-sc.clientWidth)-Math.max(0,tot-_cwAvail());
+      if(over>0){plan[key]=Math.max(startW,_cwClamp(plan[key]-over));_cwOverride(plan);}}
+    last=plan;_cwRefresh(plan);}
+  function move(ev){moved=true;lastX=ev.clientX;if(!raf)raf=requestAnimationFrame(apply);}
+  function up(){
+    document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);
+    if(raf){cancelAnimationFrame(raf);apply();}
+    document.body.classList.remove('is-col-resizing');
+    if(moved&&last){_cwCommit(last);}
+    _cwClear();_cwRefresh();
+    if(moved){var sw=function(ce){ce.stopPropagation();ce.preventDefault();document.removeEventListener('click',sw,true);};
+      document.addEventListener('click',sw,true);setTimeout(function(){document.removeEventListener('click',sw,true);},250);}
+  }
+  document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+}
+/* ダブルクリック：既定の幅に戻す（他の列は今の幅のまま） */
+function cwResetCol(key){
+  if(colIsLocked(key)){toast('この列は幅をロック中です');return;}
+  var d=colDef(key);var m=_cwCur();
+  var s=getSettings();var sc=curScope();if(!s.colcfgS)s.colcfgS={};if(!s.colcfgS[sc])s.colcfgS[sc]={};var mp=s.colcfgS[sc];
+  for(var k in m){if(k===key)continue;var c=mp[k]||{};if(c.lockw)continue;if(c.width==null||c.fixw===false){c.width=m[k];c.fixw=true;mp[k]=c;}}
+  var cur=mp[key]||{};cur.width=(d&&d.width)?d.width:null;cur.fixw=true;mp[key]=cur;
+  saveSettings(s);resetViewCache();renderHead();render();
+}
+/* 数値入力：打った数字どおり（他の列は今の幅のまま。はみ出したら横スクロール） */
+function _cwSetWidth(key,v){
+  if(!key||colIsLocked(key))return;v=parseInt(v,10);if(!(v>0)){_cwRefresh();return;}
+  var m=_cwCur();m[key]=_cwClamp(v);_cwCommit(m);
+}
+function _cwToggleLock(key){
+  if(!key)return;var s=getSettings();var sc=curScope();if(!s.colcfgS)s.colcfgS={};if(!s.colcfgS[sc])s.colcfgS[sc]={};var mp=s.colcfgS[sc];var cur=mp[key]||{};
+  if(cur.lockw){delete cur.lockw;}
+  else{cur.lockw=true;var w=_cwCur()[key];if(w>0&&(cur.width==null||cur.fixw===false)){cur.width=_cwClamp(w);cur.fixw=true;}}
+  mp[key]=cur;saveSettings(s);resetViewCache();renderHead();render();
+  toast(cur.lockw?'この列の幅をロックしました':'ロックを解除しました');
+}
+/* 一番下の行（数値入力＋ロック） */
+function _cwSync(){
+  var g=$('grid');if(!g)return;var f=g.querySelector('tfoot.yc-wrow-foot');var sb=$('ycWrowSum');
+  if(!colWOn){if(f)f.remove();if(sb)sb.hidden=true;var sc0=_cwScroll();if(sc0)sc0.classList.remove('yc-has-rest');return;}
+  if(!f){f=document.createElement('tfoot');f.className='yc-wrow-foot';g.appendChild(f);}
+  var h='<tr>';
+  _cwThs().forEach(function(th){
+    var k=th.getAttribute('data-col-key');var lk=colIsLocked(k);
+    var st='width:'+th.style.width+';min-width:'+th.style.minWidth+';max-width:'+th.style.maxWidth;
+    h+='<td data-col-key="'+escA(k)+'" class="yc-wrow-td'+(lk?' is-locked':'')+'" style="'+st+'"><span class="yc-wrow">'
+      +'<input type="number" class="yc-wrow-in" min="'+COLW_MIN+'" max="'+COLW_MAX+'" step="1" data-key="'+escA(k)+'"'+(lk?' disabled':'')+' title="この列の幅（px）。入力して Enter か欄の外をクリックで反映">'
+      +'<button type="button" class="yc-wrow-lock'+(lk?' is-locked':'')+'" data-key="'+escA(k)+'" title="'+(lk?'この列の幅をロック中（押すと解除）':'押すとこの幅でロック（ドラッグや他の列の調整で変わらなくなります）')+'">'+(lk?'ロック中':'ロック')+'</button>'
+      +'</span></td>';
+  });
+  f.innerHTML=h+'<td class="col-spx yc-wrow-td"></td></tr>';
+  _cwRefresh();
+}
+/* 入力欄の数値と下の帯を、いまの実際の幅に合わせる（m を渡すとドラッグ中の値で表示） */
+function _cwRefresh(m){
+  if(!colWOn)return;var cur=m||_cwCur();
+  var ins=document.querySelectorAll('#grid tfoot.yc-wrow-foot .yc-wrow-in');
+  for(var i=0;i<ins.length;i++){var inp=ins[i];if(inp===document.activeElement)continue;var w=cur[inp.getAttribute('data-key')];inp.value=w?Math.round(w):'';}
+  var sb=$('ycWrowSum');if(!sb)return;sb.hidden=false;
+  var avail=_cwAvail(),used=0,n=0,nl=0;for(var k in cur){used+=cur[k];n++;if(colIsLocked(k))nl++;}
+  var rest=avail-used;var fmt=function(x){return Math.abs(Math.round(x)).toLocaleString('ja-JP');};
+  var restHtml=(rest>=0)?'<span class="ws-rest">残り（右の空き）<b>'+fmt(rest)+'px</b></span>':'<span class="ws-rest is-over">はみ出し <b>'+fmt(rest)+'px</b>（横スクロール）</span>';
+  sb.innerHTML='<span>使える幅 <b>'+fmt(avail)+'px</b></span><span>表の幅 <b>'+fmt(used)+'px</b></span>'+restHtml
+    +'<span>ロック中 <b>'+nl+'</b> / '+n+'列</span>'
+    +'<span class="ws-note">境目をドラッグ／ダブルクリックで既定に戻す／一番下で数値入力・ロック。狭くした分は右の空きになります（他の列は動きません）</span>'
+    +'<button type="button" class="ws-end" id="btnColWEnd">✓ 幅調整を終了</button>';
+}
+function setColWMode(on){
+  var was=colWOn;colWOn=!!on;colResizeMode=colWOn;
+  document.body.classList.toggle('col-resize-on',colWOn);
+  var b=$('btnColW');if(b){b.classList.toggle('is-on',colWOn);b.title=colWOn?'幅調整モード中：列の境目をドラッグで幅変更（狭くした分は右の空きに）／境目をダブルクリックで既定に戻す／表の一番下で数値入力・ロック（もう一度押すと終了）':'幅調整モード：押すと列の境目をドラッグして列幅を変えられます（もう一度押すと終了）';}
+  var bar=$('resizeBar');if(bar)bar.hidden=true;
+  renderHead();render();
+  if(was&&!colWOn){toast('幅調整モードを終了しました（列幅は保存済み）');
+    if(_cwFromModal){_cwFromModal=false;try{openCols();}catch(e){}}}
+}
+window.setColWMode=setColWMode;
+/* 再描画のたびに一番下の行と帯を付け直す */
+(function(){
+  var _rh=renderHead;renderHead=function(){var r=_rh.apply(this,arguments);try{_cwSync();}catch(e){}return r;};
+  var _rd=render;render=function(){var r=_rd.apply(this,arguments);try{if(colWOn)_cwRefresh();}catch(e){}return r;};
+})();
+if($('btnColW'))$('btnColW').onclick=function(){_cwFromModal=false;setColWMode(!colWOn);};
+document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)return;
+  if(t.closest('#btnColWEnd')){e.preventDefault();setColWMode(false);return;}
+  var lb=t.closest('.yc-wrow-lock');if(lb){e.preventDefault();e.stopPropagation();_cwToggleLock(lb.getAttribute('data-key'));return;}
+  if(t.closest('tfoot.yc-wrow-foot'))e.stopPropagation();
+},true);
+document.addEventListener('change',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('yc-wrow-in'))_cwSetWidth(t.getAttribute('data-key'),t.value);});
+document.addEventListener('keydown',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('yc-wrow-in')&&e.key==='Enter'){e.preventDefault();t.blur();}});
+/* 見出しの境目ダブルクリック＝既定に戻す */
+if(_gh)_gh.addEventListener('dblclick',function(e){var t=e.target;if(colWOn&&t&&t.classList&&t.classList.contains('col-resize-handle')){e.preventDefault();e.stopPropagation();cwResetCol(t.getAttribute('data-rk'));}});
+/* 各行のセルの右端でもドラッグ・ダブルクリックできる（幅調整モード中だけ） */
+(function(){
+  var gb=$('gridBody');if(!gb)return;
+  function edgeKey(e){var td=e.target&&e.target.closest?e.target.closest('td[data-col-key]'):null;if(!td||!gb.contains(td))return null;var d=td.getBoundingClientRect().right-e.clientX;return (d<=6&&d>=-2)?td.getAttribute('data-col-key'):null;}
+  gb.addEventListener('mousemove',function(e){if(!colWOn){if(gb.style.cursor)gb.style.cursor='';return;}gb.style.cursor=edgeKey(e)?'col-resize':'';});
+  gb.addEventListener('mousedown',function(e){if(!colWOn||e.button!==0)return;var k=edgeKey(e);if(k)cwStartResize(e,k);},true);
+  gb.addEventListener('dblclick',function(e){if(!colWOn)return;var k=edgeKey(e);if(k){e.preventDefault();e.stopPropagation();cwResetCol(k);}},true);
+})();
+/* 画面の大きさが変わったら帯の数値を合わせ直す */
+window.addEventListener('resize',function(){if(colWOn){try{_cwRefresh();}catch(e){}}});
 if($('btnBulkDel'))$('btnBulkDel').onclick=function(){if(items.length&&confirm('全ての商品を削除します。よろしいですか？')){items=[];persist();render();scheduleSync();}};
 
 /* 閉じる系 */
