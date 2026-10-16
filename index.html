@@ -4595,6 +4595,8 @@ document.addEventListener('click',function(e){
     var rcEl=(t.closest?t.closest('[data-rc]'):null);
     if(rcEl){e.stopPropagation();
       var _rv=rcEl.getAttribute('data-rc')||'',_rid=rcEl.getAttribute('data-rcid')||'';
+      /* 選択中のボタンをもう一度押したら「選択前」に戻す */
+      if(rcEl.classList.contains('on')&&_rv!==CMP_DEF_VAL)_rv=CMP_DEF_VAL;
       if(String(_rid).indexOf('__g_')===0){var _gq=_cmpG[_rid];cmpSetStg(_gq&&_gq.key,_rv);}
       else{cmpSnapItem(_rid);stageEditQuiet(_rid,'rakuCmp',_rv);}
       /* 押した瞬間に見た目だけ反映（行は動かさない） */
