@@ -1938,5 +1938,26 @@
     "stockChk": "確認前",
     "rakuCmp": "実施後",
     "upd": 1792140224212
+  },
+  {
+    "id": "it1792375620647",
+    "yahooMain": "",
+    "rakutenMain": "",
+    "yahooImgs": [],
+    "rakutenImgs": [],
+    "date": "2026-10-19",
+    "rating": "",
+    "listingType": "",
+    "pagePlan": "",
+    "status": "st_todo",
+    "name": "",
+    "code": "",
+    "salesMethod": "",
+    "searchUrl": "",
+    "yahooUrls": [],
+    "yahooRank": [],
+    "rakutenUrls": [],
+    "memo": "",
+    "upd": 1792375620647
   }
 ]
