@@ -946,16 +946,23 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b:nth-child(odd){border-right:1px solid var(--line-2)}
 .ok3b:nth-child(1),.ok3b:nth-child(2),.ok3b:nth-child(3),.ok3b:nth-child(4){border-bottom:1px solid var(--line-2)}
 .ok3b:nth-child(5){grid-column:1 / -1;border-right:0}
-/* リニュ選定（表のセル）：①②／③④ を各1行に、⑤SKIP は右側に縦2段ぶんで置く */
-.ok3:not(.rc4){grid-template-columns:auto auto auto;width:max-content;max-width:100%}
-.ok3:not(.rc4) .ok3b{white-space:nowrap;padding:5px 5px}
-#grid tbody td[data-col-key="cmpOk"]{padding-left:6px;padding-right:6px}
-.ok3:not(.rc4) .ok3b br{display:none}
-.ok3:not(.rc4) .ok3b:nth-child(1){grid-column:1;grid-row:1}
-.ok3:not(.rc4) .ok3b:nth-child(2){grid-column:2;grid-row:1;border-right:1px solid var(--line-2)}
-.ok3:not(.rc4) .ok3b:nth-child(3){grid-column:1;grid-row:2;border-bottom:0}
-.ok3:not(.rc4) .ok3b:nth-child(4){grid-column:2;grid-row:2;border-bottom:0;border-right:1px solid var(--line-2)}
-.ok3:not(.rc4) .ok3b:nth-child(5){grid-column:3;grid-row:1 / span 2;border-right:0;border-bottom:0}
+/* リニュ選定・リニュ実施（表のセル）：①②／③④ を各1行に、⑤SKIP は右側に縦2段ぶんで置く */
+.ok3{grid-template-columns:auto auto auto;width:max-content;max-width:100%}
+.ok3 .ok3b{white-space:nowrap;padding:5px 5px}
+#grid tbody td[data-col-key="cmpOk"],#grid tbody td[data-col-key="rakuCmp"]{padding-left:6px;padding-right:6px}
+/* 行の高さをリニュ選定のボタンの高さに合わせて詰める（比較表示） */
+#grid.cmpfix tbody td{padding-top:4px;padding-bottom:4px}
+#grid.cmpfix .cmp-img{width:48px;height:48px;border-radius:6px}
+#grid.cmpfix .cell-date .d-upd b{display:inline;margin-left:3px}
+#grid.cmpfix .cell-date .d-upd{margin-top:2px;padding-top:2px;font-size:9.5px;white-space:nowrap}
+#grid.cmpfix .cell-date .d-upd b{font-size:10.5px}
+#grid.cmpfix tbody td.cell-date{padding-left:8px;padding-right:6px}
+.ok3 .ok3b br{display:none}
+.ok3 .ok3b:nth-child(1){grid-column:1;grid-row:1}
+.ok3 .ok3b:nth-child(2){grid-column:2;grid-row:1;border-right:1px solid var(--line-2)}
+.ok3 .ok3b:nth-child(3){grid-column:1;grid-row:2;border-bottom:0}
+.ok3 .ok3b:nth-child(4){grid-column:2;grid-row:2;border-bottom:0;border-right:1px solid var(--line-2)}
+.ok3 .ok3b:nth-child(5){grid-column:3;grid-row:1 / span 2;border-right:0;border-bottom:0}
 .pill-cap{font-size:11px;font-weight:800;color:var(--ink-3);margin:0 6px 0 2px;white-space:nowrap}
 #grid td[data-al="c"] .cn-wrap{align-items:center;text-align:center}
 #grid td[data-al="r"] .cn-wrap{align-items:flex-end;text-align:right}
@@ -972,6 +979,7 @@ tr.ghost-row td{color:var(--ink-2)}
 .chc-fix.on{background:#1f3a63;border-color:#1f3a63;color:#fff}
 .chc-fix:disabled{opacity:.45;cursor:default}
 .ctab-clr{font-weight:800;color:var(--ink-3);border-style:dashed}
+.ctab-fixmode{font-weight:800;color:#0e7c8a;border-color:#9fd3da}
 .ctab-clr:hover{border-color:var(--red);color:var(--red);border-style:solid}
 .pull-sec{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
 .pull-sec-ttl{font-size:13px;font-weight:800;color:var(--ink-1);margin-bottom:6px}
@@ -1164,7 +1172,7 @@ tr.cmp-ok-row td{border-bottom-color:#cfe5d8}
 .tag-cnt{font-weight:800;opacity:.95;font-size:10px}
 #grid.imgfix{table-layout:fixed}
 #grid.cmpfix{table-layout:fixed}
-#grid.cmpfix tbody tr{content-visibility:auto;contain-intrinsic-size:auto 94px}
+#grid.cmpfix tbody tr{content-visibility:auto;contain-intrinsic-size:auto 60px}
 tr.more-row td:not(.col-spx){text-align:center;padding:14px 8px;background:#faf9f6}
 .more-btn{appearance:none;border:1px solid var(--line-2);background:#fff;font:inherit;font-size:13px;font-weight:800;color:var(--ink-1);padding:9px 22px;border-radius:999px;cursor:pointer;margin:0 5px}
 .more-btn:hover{border-color:#2f6fb0;color:#2f6fb0}
@@ -1289,7 +1297,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.85.0</span>
+        <span class="version" id="version">v3.87.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1671,7 +1679,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.85.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.87.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2811,6 +2819,8 @@ function renderCmpTabs(){
       var on2=(cmpMode&&cmpOkFilter===fk);
       h+='<button class="ctab ctab-col'+(on2?' on':'')+'" style="'+(on2?('background:'+c2+';border-color:'+c2+';color:#fff'):'')+'" data-cmpok="'+fk+'">'+numTile(NUMS[k],c2)+esc(o2.l)+'<span class="cnt">'+cmpOkCount(o2.v)+'</span></button>';
     }
+    /* 結び作成用：押している間だけ「楽天結び」「Yahoo結び」の列を出す（絞り込みではなく表示の切り替え） */
+    h+='<span class="pill-sep"></span><button class="ctab ctab-fixmode'+(cmpFixMode?' on':'')+'" data-cmpfixmode="1" title="押すと「楽天結び」「Yahoo結び」の列を表示します（もう一度押すと隠します）">🔗 結び作成用</button>';
     el.innerHTML=h;
   }
   var el2=$('cmpPills2');
@@ -2948,7 +2958,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3307,6 +3317,16 @@ function inViewMode(key){return true;}
 function colDef(key){for(var i=0;i<DEFAULT_COLS.length;i++){if(DEFAULT_COLS[i].key===key)return DEFAULT_COLS[i];}return null;}
 function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=scopeDefVis(sc).indexOf(key)>=0;var base={visible:defVis,width:(def?def.width:null),wrap:((def&&def.wrap)?def.wrap:'wrap'),align:(def?def.align:'left'),headAlign:(def?def.align:'left'),perRow:((key==='imageBlock'&&scopeBig(sc))?10:null),maxShow:null};var cc=scopeMap(sc)[key]||{};return {visible:(cc.visible!=null?cc.visible:base.visible),width:(cc.width!=null?cc.width:base.width),wrap:cc.wrap||base.wrap,align:cc.align||base.align,headAlign:cc.headAlign||base.headAlign,perRow:(cc.perRow!=null?cc.perRow:base.perRow),maxShow:(cc.maxShow!=null?cc.maxShow:base.maxShow),fixw:(cc.fixw!=null?!!cc.fixw:true)};}
 function setColCfg(key,patch){setScopeCol(curScope(),key,patch);}
+/* 結び作成用モード：比較表示では「楽天結び」「Yahoo結び」はこのモードのときだけ表示（横幅の節約） */
+var CMP_FIX_KEYS=['rakuFix','yahooFix'];
+var cmpFixMode=(function(){try{return localStorage.getItem('yafusho_cmpfixmode')==='1';}catch(e){return false;}})();
+(function(){var _g=getColCfg;getColCfg=function(key){var c=_g.apply(this,arguments);
+  if(CMP_FIX_KEYS.indexOf(key)>=0&&curScope()===CMP_SCOPE)c.visible=!!cmpFixMode;return c;};})();
+function setCmpFixMode(on){
+  cmpFixMode=!!on;try{if(cmpFixMode)localStorage.setItem('yafusho_cmpfixmode','1');else localStorage.removeItem('yafusho_cmpfixmode');}catch(e){}
+  cmpMode=true;resetViewCache();renderCmpTabs();renderHead();render();updateStickyH();
+  toast(cmpFixMode?'🔗 結び作成用：楽天結び・Yahoo結びの列を表示しました':'結びの列を隠しました');
+}
 function effCfg(key,cc){if(isImgView()&&(key==='yahooImg'||key==='rakutenImg')){var o={};for(var k in cc)o[k]=cc[k];o.width=Math.max(cc.width||0,360);o.wrap='wrap';return o;}return cc;}
 function colStyleStr(cc,isHeader){var s='';
   if(cc.fixw!==false){if(cc.width&&cc.width>0)s+='width:'+cc.width+'px;min-width:'+cc.width+'px;max-width:'+cc.width+'px;';}
@@ -4976,6 +4996,10 @@ function cmpPillClick(e){
     if(!cmpData.raku)cmpLoad(false);
     return;
   }
+  if(b.hasAttribute('data-cmpfixmode')){
+    setCmpFixMode(!cmpFixMode);
+    return;
+  }
   if(b.hasAttribute('data-cmpok')){
     var ov=b.getAttribute('data-cmpok')||'';
     cmpMode=true;cmpOkFilter=(ov&&cmpOkFilter===ov)?'':ov;cmpResetLimit();
@@ -5746,7 +5770,16 @@ function migrateCmpOkW(){
     m.cmpOk=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig12=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();applyScope();}catch(e){}}
+function migrateRcW(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig13)return;
+    if(!s.colcfgS)s.colcfgS={};var m=s.colcfgS[CMP_SCOPE]||{};var c=m.rakuCmp||{};
+    if(!c.lockw&&(c.width==null||c.width<190)){c.width=190;c.fixw=true;}
+    m.rakuCmp=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig13=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
