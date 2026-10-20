@@ -62,6 +62,13 @@ button{font-family:inherit}
 .collapse-btn{flex:0 0 auto;white-space:nowrap}
 body.top-collapsed .app-header{display:none}
 body.top-collapsed .console{padding-top:8px}
+/* 上部をたたむ：見出しと絞り込みの段をすべて隠し、「上部を表示」と保存ボタンだけ残す */
+body.top-collapsed .console .frow:not(.frow-status):not(#cmpRow2){display:none}
+body.top-collapsed #cmpRow2:not(:has(#btnCmpSave:not([hidden]))){display:none}
+body.top-collapsed .console .frow-status>*:not(#btnCollapseTop):not(#btnSaveEdits):not(#btnDiscardEdits),
+body.top-collapsed #cmpRow2>*:not(#btnCmpSave){display:none!important}
+body.top-collapsed .console .frow-status{justify-content:flex-end;margin-top:0}
+body.top-collapsed .console{padding-bottom:6px}
 .frow + .frow{margin-top:10px}
 
 /* カテゴリ ピル */
@@ -1299,7 +1306,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.92.0</span>
+        <span class="version" id="version">v3.93.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1676,7 +1683,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.92.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.93.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
