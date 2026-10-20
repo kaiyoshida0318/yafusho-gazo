@@ -1299,7 +1299,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.91.0</span>
+        <span class="version" id="version">v3.92.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1336,24 +1336,19 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
     <span class="spacer"></span>
   </div>
 
-  <!-- 2段目：ステータス ＋ 変更を保存（右上） -->
-  <div class="frow frow-status">
+  <!-- 2段目：出品内容 ＋ 右側に検索・追加・一括編集・保存（LP本数の段は廃止） -->
+  <div class="frow frow-status frow-lp">
     <span class="frow-label">出品内容</span>
     <div class="pill-group" id="catPills"></div>
-    <span class="spacer"></span>
-    <button class="btn btn-ghost btn-sm" id="btnDiscardEdits" hidden>取り消し</button>
-    <button class="btn btn-save-hero" id="btnSaveEdits" hidden>● 変更を保存</button>
-    <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseTop" title="上部の見出し・フィルタを折りたたむ">▲ 上部をたたむ</button>
-  </div>
-  <div class="frow frow-lp">
-    <span class="frow-label">LP本数</span>
-    <div class="pill-group" id="lpCountRow"></div>
     <span class="spacer"></span>
     <span class="srch-box"><span class="srch-ico">🔍</span><input type="text" id="cmpSearch" class="srch-inp" placeholder="商品コード・商品名で検索" autocomplete="off"><button type="button" class="srch-clr" id="cmpSearchClr" hidden title="検索をクリア">✕</button></span>
     <button class="btn btn-green-line btn-sm" id="btnAddRow">＋ 行だけ</button>
     <button class="btn btn-green" id="btnAdd">＋ 新規作成</button>
     <button class="btn btn-line btn-sm" id="btnBulkEdit">✏️ 一括編集</button>
     <span class="save-chip" id="saveChip" hidden><span class="save-dot"></span><span id="saveChipTxt"></span></span>
+    <button class="btn btn-ghost btn-sm" id="btnDiscardEdits" hidden>取り消し</button>
+    <button class="btn btn-save-hero" id="btnSaveEdits" hidden>● 変更を保存</button>
+    <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseTop" title="上部の見出し・フィルタを折りたたむ">▲ 上部をたたむ</button>
   </div>
   </div>
 </div>
@@ -1681,7 +1676,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.91.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.92.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
