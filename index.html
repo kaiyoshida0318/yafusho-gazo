@@ -946,6 +946,16 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3b:nth-child(odd){border-right:1px solid var(--line-2)}
 .ok3b:nth-child(1),.ok3b:nth-child(2),.ok3b:nth-child(3),.ok3b:nth-child(4){border-bottom:1px solid var(--line-2)}
 .ok3b:nth-child(5){grid-column:1 / -1;border-right:0}
+/* リニュ選定（表のセル）：①②／③④ を各1行に、⑤SKIP は右側に縦2段ぶんで置く */
+.ok3:not(.rc4){grid-template-columns:auto auto auto;width:max-content;max-width:100%}
+.ok3:not(.rc4) .ok3b{white-space:nowrap;padding:5px 5px}
+#grid tbody td[data-col-key="cmpOk"]{padding-left:6px;padding-right:6px}
+.ok3:not(.rc4) .ok3b br{display:none}
+.ok3:not(.rc4) .ok3b:nth-child(1){grid-column:1;grid-row:1}
+.ok3:not(.rc4) .ok3b:nth-child(2){grid-column:2;grid-row:1;border-right:1px solid var(--line-2)}
+.ok3:not(.rc4) .ok3b:nth-child(3){grid-column:1;grid-row:2;border-bottom:0}
+.ok3:not(.rc4) .ok3b:nth-child(4){grid-column:2;grid-row:2;border-bottom:0;border-right:1px solid var(--line-2)}
+.ok3:not(.rc4) .ok3b:nth-child(5){grid-column:3;grid-row:1 / span 2;border-right:0;border-bottom:0}
 .pill-cap{font-size:11px;font-weight:800;color:var(--ink-3);margin:0 6px 0 2px;white-space:nowrap}
 #grid td[data-al="c"] .cn-wrap{align-items:center;text-align:center}
 #grid td[data-al="r"] .cn-wrap{align-items:flex-end;text-align:right}
@@ -1279,7 +1289,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.83.0</span>
+        <span class="version" id="version">v3.85.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1661,7 +1671,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.83.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.85.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2938,7 +2948,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3176,7 +3186,10 @@ function cellHtml(key,it){
     }
     var _side=(key==='rakuDel')?'r':'y';
     var _o=(key==='rakuDel')?cmpRakuFor(it):cmpYahooFor(it);
-    if(!_o)return '<td></td>';
+    if(!_o){
+      /* 楽天にもYahooにも無い商品（中身が空の行など）は、この行そのものを削除できるようにする */
+      if(key==='rakuDel'&&!it.__ghost&&!cmpRakuFor(it)&&!cmpYahooFor(it))return '<td><button type="button" class="del-x" data-idel="'+escA(it.id)+'" title="楽天・Yahooのどちらにも無い商品です。この行を削除します">✕</button></td>';
+      return '<td></td>';}
     return '<td><button type="button" class="del-x" data-cdel="'+_side+'" data-ccode="'+escA(_o.code)+'" title="'+(_side==='r'?'楽天':'Yahoo')+'のこの商品を一覧から削除します">✕</button></td>';
   }
   if(key==='rakuCode'||key==='rakuName'||key==='rakuFix'||key==='yahooCode'||key==='yahooName'||key==='yahooFix'){
@@ -4880,6 +4893,15 @@ document.addEventListener('click',function(e){
         cmpSetHidden(sd,cc2,true);renderCmpTabs();render();toast('🗑 '+cc2+' を一覧から削除しました');
       }
       return;}
+    var idEl=(t.closest?t.closest('[data-idel]'):null);
+    if(idEl){e.stopPropagation();
+      var _iid=idEl.getAttribute('data-idel'),_it=findItemById(_iid);
+      var _lb=_it?((_it.code||'')+(_it.name?(' '+_it.name):'')):'';
+      if(confirm('この行'+(_lb.trim()?('「'+_lb.trim()+'」'):'（商品コード・商品名なし）')+'を削除しますか？\n※商品データごと消えます（元に戻せません）')){
+        items=items.filter(function(x){return x.id!==_iid;});persist();try{cmpInvalidate();}catch(_e3){}
+        renderCmpTabs();render();scheduleSync();toast('🗑 行を削除しました');
+      }
+      return;}
     var rgEl=(t.closest?t.closest('[data-reg]'):null);if(rgEl){e.stopPropagation();cmpRegister(rgEl.getAttribute('data-reg'));return;}
     var dlEl=(t.closest?t.closest('[data-dl]'):null);if(dlEl){e.stopPropagation();bulkDlFromRow(dlEl);return;}
     var mmEl=(t.closest?t.closest('[data-memo]'):null);if(mmEl){openMemo(mmEl.getAttribute('data-memo'),mmEl);return;}
@@ -5714,7 +5736,17 @@ function migrateCmpOpts2(){
     s.cmpMig11=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();applyScope();}catch(e){}}
+/* リニュ選定のボタンを横長（①②／③④＋右にSKIP）にしたので、列幅を一度だけ広げる（ロック中・すでに広い場合はそのまま） */
+function migrateCmpOkW(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig12)return;
+    if(!s.colcfgS)s.colcfgS={};var m=s.colcfgS[CMP_SCOPE]||{};var c=m.cmpOk||{};
+    if(!c.lockw&&(c.width==null||c.width<246)){c.width=246;c.fixw=true;}
+    m.cmpOk=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig12=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
