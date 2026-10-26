@@ -117,6 +117,7 @@ table#grid{width:100%;border-collapse:separate;border-spacing:0}
 /* 並び替えの矢印（↕▲▼）は表示しない（クリックでの並び替えはそのまま） */
 #gridHead .srt-ar{display:none!important}
 #gridHead .srt-sub{text-align:center}
+#gridHead th[data-col-key="rakuSales"],#gridHead th[data-col-key="yahooSales"]{padding-left:4px;padding-right:4px;white-space:nowrap}
 #grid tbody td{padding:10px 14px;border-bottom:1px solid var(--line-2);border-right:1px solid var(--line-2);vertical-align:middle;font-size:13.5px}
 #grid tbody td:last-child{border-right:0}
 #grid tbody tr:hover td:not(.col-spx){background:#fff6d8}
@@ -992,10 +993,11 @@ tr.ghost-row td{color:var(--ink-2)}
 .ok3 .ok3b:nth-child(3){grid-column:1;grid-row:2;border-bottom:0}
 .ok3 .ok3b:nth-child(4){grid-column:2;grid-row:2;border-bottom:0;border-right:1px solid var(--line-2)}
 .ok3 .ok3b:nth-child(5){grid-column:3;grid-row:1 / span 2;border-right:0;border-bottom:0}
-/* リニュ実施（6個）：①②③／④⑤⑥ の3列×2段 */
+/* リニュ実施（7個）：①②③④／⑤⑥⑦ の4列×2段 */
+.ok3.rc4{grid-template-columns:auto auto auto auto}
 .ok3.rc4 .ok3b:nth-child(n){grid-column:auto;grid-row:auto;border-right:1px solid var(--line-2);border-bottom:0}
-.ok3.rc4 .ok3b:nth-child(-n+3){border-bottom:1px solid var(--line-2)}
-.ok3.rc4 .ok3b:nth-child(3n){border-right:0}
+.ok3.rc4 .ok3b:nth-child(-n+4){border-bottom:1px solid var(--line-2)}
+.ok3.rc4 .ok3b:nth-child(4n),.ok3.rc4 .ok3b:last-child{border-right:0}
 .pill-cap{font-size:11px;font-weight:800;color:var(--ink-3);margin:0 6px 0 2px;white-space:nowrap}
 #grid td[data-al="c"] .cn-wrap{align-items:center;text-align:center}
 #grid td[data-al="r"] .cn-wrap{align-items:flex-end;text-align:right}
@@ -1333,7 +1335,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.08</span>
+        <span class="version" id="version">v4.10</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1712,7 +1714,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.08</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.10</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2229,7 +2231,7 @@ var statusFilter='',listingFilter='',lpCountFilter='',lpTypeFilter='',colResizeM
 /* ===== 楽天比較（ADcheck / Ycheck 連携） ===== */
 /* リニュ実施の絞り込み。既定は「進行中」（実施後・SKIP を除く＝選択前／実施予定／実施中）。'' は全て */
 var CMP_DEF_F='__active__';
-function rcActive(v){v=String(v||'選択前');return v!=='実施後'&&v!=='SKIP';}
+function rcActive(v){v=String(v||'選択前');return v!=='実施後'&&v!=='SKIP'&&v!=='リニュ後分';}   /* 進行中＝選択前・実施予定・実施候補・実施中 */
 var cmpFilter=CMP_DEF_F,cmpMode=true,cmpOkFilter='',cmpQ='';
 var CMP_PAGE=150,cmpLimit=CMP_PAGE;
 function cmpResetLimit(){cmpLimit=CMP_PAGE;}
@@ -2865,7 +2867,7 @@ function cmpRank(it){
   return 2;
 }
 /* リニュ実施の並び順：実施後 → 選択前 → 実施予定 → SKIP */
-var RC_ORDER=['実施後','実施中','実施候補','実施予定','選択前','SKIP'];
+var RC_ORDER=['実施後','リニュ後分','実施中','実施候補','実施予定','選択前','SKIP'];
 function rcRankOf(v){var i=RC_ORDER.indexOf(String(v||CMP_DEF_VAL));return (i>=0)?i:9;}
 function cmpCodeKey(it){
   if(it&&it.code)return cmpNorm(it.code);
@@ -2942,14 +2944,14 @@ function renderCmpTabs(){
   }
   var el2=$('cmpPills2');
   if(el2){
-    var h2='<button class="ctab'+((cmpMode&&cmpFilter===CMP_DEF_F)?' on':'')+'" data-cmp="'+CMP_DEF_F+'" title="実施後・SKIP を除いた商品（選択前・実施予定・実施中）">進行中<span class="cnt">'+cmpCount(CMP_DEF_F)+'</span></button>';
+    var h2='<button class="ctab'+((cmpMode&&cmpFilter===CMP_DEF_F)?' on':'')+'" data-cmp="'+CMP_DEF_F+'" title="実施後・SKIP・リニュ後分 を除いた商品（選択前・実施予定・実施候補・実施中）">進行中<span class="cnt">'+cmpCount(CMP_DEF_F)+'</span></button>';
     var op=getOpts('rakuCmp');
     for(var i=0;i<op.length;i++){
       var c3=RC_COLOR[op[i].c]||'#7a756d',on3=(cmpMode&&cmpFilter===op[i].l);
       h2+='<button class="ctab ctab-col'+(on3?' on':'')+'" style="'+(on3?('background:'+c3+';border-color:'+c3+';color:#fff'):'')+'" data-cmp="'+escA(op[i].l)+'">'+numTile(NUMS[i],c3)+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';
     }
     h2+='<span class="pill-sep"></span>';
-    h2+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="" title="実施後・SKIP も含めてすべて表示">全て<span class="cnt">'+cmpCount('')+'</span></button>';
+    h2+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="" title="実施後・SKIP・リニュ後分 も含めてすべて表示">全て<span class="cnt">'+cmpCount('')+'</span></button>';
     h2+='<span class="pill-sep"></span>';
     h2+='<button class="ctab ctab-clr" data-cmpclr="1" title="すべての絞り込み・検索・並び替えを解除します">✕ クリア</button>';
     /* 結び作成用：押している間だけ「楽天結び」「Yahoo結び」の列を出す（リニュ選定の段を消したのでこちらへ移動） */
@@ -2983,7 +2985,7 @@ var DEFAULT_LISTING=['新規出品','リニューアル-同一ページ','リニ
 var DEFAULT_OPTS={
   status:[{l:'未着手',c:'gray',t:'1'},{l:'作成中',c:'orange',t:'2'},{l:'確認待ち',c:'blue',t:'3'},{l:'完了',c:'green',t:'4'}],
   listingType:[{l:'新規出品',c:'green',t:'新'},{l:'リニューアル-同一ページ',c:'blue',t:'同'},{l:'リニューアル-新規ページ',c:'orange',t:'新'},{l:'再登録',c:'gray',t:'再'}],
-  rakuCmp:[{l:'選択前',c:'gray',t:'前'},{l:'実施予定',c:'orange',t:'予'},{l:'実施候補',c:'teal',t:'候'},{l:'実施中',c:'blue',t:'中'},{l:'実施後',c:'green',t:'後'},{l:'SKIP',c:'purple',t:'S'}],
+  rakuCmp:[{l:'選択前',c:'gray',t:'前'},{l:'実施予定',c:'orange',t:'予'},{l:'実施候補',c:'teal',t:'候'},{l:'実施中',c:'blue',t:'中'},{l:'実施後',c:'green',t:'後'},{l:'SKIP',c:'purple',t:'S'},{l:'リニュ後分',c:'pink',t:'後'}],
   pagePlan:[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'},{l:'5',c:'gray',t:'5'},{l:'6',c:'gray',t:'6'},{l:'7',c:'gray',t:'7'},{l:'8',c:'gray',t:'8'},{l:'9',c:'gray',t:'9'}]
 };
 function cloneOpts(o){var r={};for(var k in o){r[k]=o[k].map(function(x){return {l:x.l,c:x.c,t:x.t};});}return r;}
@@ -3042,7 +3044,7 @@ var DEFAULT_COLS=[
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
   {key:'buttonElemLp',label:'Yahoo新規の名称',width:140,align:'left'},
   {key:'salesTable',label:'商品コード・価格・内容',width:null,align:'left'},
-  {key:'rakuCmp',label:'リニュ実施',width:200,align:'center'},
+  {key:'rakuCmp',label:'リニュ実施',width:276,align:'center'},
   {key:'rakuImg',label:'楽天商品画像',width:110,align:'center'},
   {key:'yahooImgEx',label:'Yahoo商品画像',width:110,align:'center'},
   {key:'rakuSales',label:'楽天(先月)',width:104,align:'right'},
@@ -3081,7 +3083,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false,cmpMig18:false,cmpMig19:false,cmpMig20:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;if(c.cmpMig18)d.cmpMig18=true;if(c.cmpMig19)d.cmpMig19=true;if(c.cmpMig20)d.cmpMig20=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false,cmpMig18:false,cmpMig19:false,cmpMig20:false,cmpMig21:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;if(c.cmpMig18)d.cmpMig18=true;if(c.cmpMig19)d.cmpMig19=true;if(c.cmpMig20)d.cmpMig20=true;if(c.cmpMig21)d.cmpMig21=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3285,7 +3287,7 @@ function okBtnsHtml(k){
   return h+'</div>';
 }
 /* リニュ実施（旧・楽天比較）をボタン化 */
-var RC_COLOR={gray:'#7a756d',orange:'#d98324',green:'#17643f',purple:'#8257c9',blue:'#2f6fb0',red:'#bf0000',teal:'#0e7c8a'};
+var RC_COLOR={gray:'#7a756d',orange:'#d98324',green:'#17643f',purple:'#8257c9',blue:'#2f6fb0',red:'#bf0000',teal:'#0e7c8a',pink:'#c0367a'};
 var RC_ROWCLS={green:'cmp-ok-row',orange:'cmp-d-row',purple:'cmp-s-row',red:'cmp-r-row',blue:'cmp-b-row',teal:'',gray:''};
 function rcColorOf(v){var op=getOpts('rakuCmp');for(var i=0;i<op.length;i++){if(op[i].l===v)return op[i].c||'gray';}return 'gray';}
 function rcRowCls(it){return RC_ROWCLS[rcColorOf(rakuCmpVal(it))]||'';}
@@ -3474,7 +3476,7 @@ function hasAutoCol(){
 function renderHead(){resetViewCache();var order=getColOrder();var srt=cmpMode;var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;
   var sortable=srt&&CMP_SORTABLE.indexOf(key)>=0;
   var arrow=sortable?('<span class="srt-ar'+(cmpSort.key===key?' on':'')+'">'+(cmpSort.key===key?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>'):'';
-  var _split=({rakuSales:[['rakuSales','楽天<br>(先月)'],['rakuAd','広告費']],yahooSales:[['yahooSales','Yahoo<br>(先月)'],['yahooAd','広告費']],rakuAd:[['rakuRoas','売上<br>ROAS']],yahooAd:[['yahooRoas','PR広告<br>売上ROAS']]})[key];
+  var _split=({rakuSales:[['rakuSales','楽天(先月)'],['rakuAd','広告費']],yahooSales:[['yahooSales','Yahoo(先月)'],['yahooAd','広告費']],rakuAd:[['rakuRoas','売上<br>ROAS']],yahooAd:[['yahooRoas','PR広告<br>売上ROAS']]})[key];
   if(_split){   /* 広告費／ROAS の見出しは2段。それぞれ押して並び替え */
     var _ar2=function(k){return srt?('<span class="srt-ar'+(cmpSort.key===k?' on':'')+'">'+(cmpSort.key===k?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>'):'';};
     h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'
@@ -6011,6 +6013,17 @@ function migrateAdColsW(){
     s.colcfgS[CMP_SCOPE]=m;s.cmpMig20=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
+/* リニュ実施に「リニュ後分」を追加（SKIPの次）＋ボタンが4列になったので列幅を広げる。一度だけ */
+function migrateRcAfter(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig21)return;
+    if(s.opts&&s.opts.rakuCmp&&s.opts.rakuCmp.length){var a=s.opts.rakuCmp,i,has=false;for(i=0;i<a.length;i++){if(String(a[i].l)==='リニュ後分'){has=true;break;}}
+      if(!has){var at=-1;for(i=0;i<a.length;i++){if(String(a[i].l)==='SKIP'){at=i;break;}}var o={l:'リニュ後分',c:'pink',t:'後'};if(at>=0)a.splice(at+1,0,o);else a.push(o);}}
+    if(s.colcfgS)Object.keys(s.colcfgS).forEach(function(sc){var c=(s.colcfgS[sc]||{}).rakuCmp;if(c&&!c.lockw&&c.width!=null&&c.width<276){c.width=276;c.fixw=true;}});
+    s.cmpMig21=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
 function migrateRcW(){
   _migrating=true;
   try{try{
@@ -6020,7 +6033,7 @@ function migrateRcW(){
     m.rakuCmp=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig13=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();migrateRcCand();migrateAdCols();migrateAdColsW();applyScope();}catch(e){}}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();migrateRcCand();migrateAdCols();migrateAdColsW();migrateRcAfter();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
