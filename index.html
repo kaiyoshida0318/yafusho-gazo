@@ -1315,7 +1315,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.101.0</span>
+        <span class="version" id="version">v4.02</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1350,8 +1350,8 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
 
   <!-- 2段目：出品内容 ＋ 右側に検索・追加・一括編集・保存（LP本数の段は廃止） -->
   <div class="frow frow-status frow-lp">
-    <span class="frow-label">出品内容</span>
-    <div class="pill-group" id="catPills"></div>
+    <span class="frow-label" style="display:none">出品内容</span>
+    <div class="pill-group" id="catPills" style="display:none"></div><!-- 出品内容の絞り込みは廃止（要素はJSの互換のため残す） -->
     <span class="spacer"></span>
     <span class="srch-box"><span class="srch-ico">🔍</span><input type="text" id="cmpSearch" class="srch-inp" placeholder="商品コード・商品名で検索" autocomplete="off"><button type="button" class="srch-clr" id="cmpSearchClr" hidden title="検索をクリア">✕</button></span>
     <button class="btn btn-green-line btn-sm" id="btnAddRow">＋ 行だけ</button>
@@ -1442,7 +1442,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
               </div>
             </div>
             <div class="span-all" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">
-              <label class="fld">出品内容
+              <label class="fld" style="display:none">出品内容
                 <button type="button" id="fListing" class="cdd cdd-form" data-field="listingType" data-id="__form" data-value=""><span class="cdd-cur"><span class="cdd-empty">未設定</span></span><span class="cdd-arrow">▾</span></button>
               </label>
               <label class="fld" style="display:none">状態
@@ -1694,7 +1694,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.101.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.02</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1755,10 +1755,10 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
 <div class="overlay" id="topMgrModal" hidden>
   <div class="mini">
     <h2>📋 表示内容</h2>
-    <p class="hint">表に出す項目と、「出品内容」「LP本数」の選択肢を編集します。</p>
+    <p class="hint">表に出す項目と、「LP本数」の選択肢を編集します。</p>
     <div class="setedit-btns">
       <button type="button" class="setedit-item" id="tmStatus"><span class="se-ico">📋</span><span class="se-txt"><b>表示項目</b><small>表に出す項目の出し入れ・並び替え</small></span></button>
-      <button type="button" class="setedit-item" id="tmCat"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリ（A/B/C…）の追加・名前・アイコン・並び替え</small></span></button>
+      <button type="button" class="setedit-item" id="tmCat" style="display:none"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリ（A/B/C…）の追加・名前・アイコン・並び替え</small></span></button>
       <button type="button" class="setedit-item" id="tmLp"><span class="se-ico">📄</span><span class="se-txt"><b>LP本数</b><small>本数の選択肢（数字）を編集</small></span></button>
     </div>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="topMgrModal">閉じる</button></div>
@@ -3325,7 +3325,7 @@ function scopeMap(sc){var s=getSettings();return (s.colcfgS&&s.colcfgS[sc])||{};
 function scopeBig(sc){var o=(getSettings().scopeOpt||{})[sc||curScope()];return !!(o&&o.big);}
 function scopeBigSet(sc,v){var s=getSettings();if(!s.scopeOpt)s.scopeOpt={};if(!s.scopeOpt[sc])s.scopeOpt[sc]={};s.scopeOpt[sc].big=!!v;saveSettings(s);resetViewCache();}
 function scopeDefVis(sc){return (sc===CMP_SCOPE)?CMP_DEFAULT_VISIBLE:SCOPE_DEFAULT_VISIBLE;}
-function scopeColOn(sc,key){if(key==='status')return false;var c=scopeMap(sc)[key];return (c&&c.visible!=null)?!!c.visible:(scopeDefVis(sc).indexOf(key)>=0);}
+function scopeColOn(sc,key){if(HIDDEN_COL_KEYS.indexOf(key)>=0)return false;var c=scopeMap(sc)[key];return (c&&c.visible!=null)?!!c.visible:(scopeDefVis(sc).indexOf(key)>=0);}
 function setScopeCol(sc,key,patch){var s=getSettings();if(!s.colcfgS)s.colcfgS={};if(!s.colcfgS[sc])s.colcfgS[sc]={};var cur=s.colcfgS[sc][key]||{};for(var k in patch)cur[k]=patch[k];s.colcfgS[sc][key]=cur;saveSettings(s);resetViewCache();}
 function getViewMode(){return curScope();}
 function setViewMode(m){}
@@ -3340,7 +3340,7 @@ function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=scopeDe
 function setColCfg(key,patch){setScopeCol(curScope(),key,patch);}
 /* 結び作成用モード：比較表示では「楽天結び」「Yahoo結び」はこのモードのときだけ表示（横幅の節約） */
 var CMP_FIX_KEYS=['rakuFix','yahooFix'];
-var HIDDEN_COL_KEYS=['status'];   /* 状態は廃止：どの画面でも列を出さない */
+var HIDDEN_COL_KEYS=['status','listingType'];   /* 状態・出品内容は廃止：どの画面でも列を出さない */
 var cmpFixMode=(function(){try{return localStorage.getItem('yafusho_cmpfixmode')==='1';}catch(e){return false;}})();
 (function(){var _g=getColCfg;getColCfg=function(key){var c=_g.apply(this,arguments);
   if(CMP_FIX_KEYS.indexOf(key)>=0&&curScope()===CMP_SCOPE)c.visible=!!cmpFixMode;if(HIDDEN_COL_KEYS.indexOf(key)>=0)c.visible=false;return c;};})();
@@ -3832,11 +3832,11 @@ function stSection(sc,shown){
     if(!n){var e=document.createElement('div');e.className='st-chips-empty';e.textContent='表示項目なし（下の一覧から選んでください）';row.appendChild(e);}
   }else{
     for(var j=0;j<DEFAULT_COLS.length;j++){
-      var k=DEFAULT_COLS[j].key,on=scopeColOn(sc,k);if(k==='status')continue;
+      var k=DEFAULT_COLS[j].key,on=scopeColOn(sc,k);if(HIDDEN_COL_KEYS.indexOf(k)>=0)continue;
       row.appendChild(stPickChip(sc,k,on));if(on)n++;
     }
     row.appendChild(stBigChip(sc,big));if(big)n++;
-    hd.innerHTML='項目の一覧（表示中 '+n+' / '+(DEFAULT_COLS.length)+'）<em>色つき＝表示中。クリックで出し入れ（並びは固定）</em>';
+    hd.innerHTML='項目の一覧（表示中 '+n+' / '+(DEFAULT_COLS.length-HIDDEN_COL_KEYS.length+1)+'）<em>色つき＝表示中。クリックで出し入れ（並びは固定）</em>';
   }
   wrap.appendChild(hd);wrap.appendChild(row);
   return wrap;
