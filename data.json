@@ -64,7 +64,9 @@
     "buttonElem": "",
     "lpType": "",
     "memo": "",
-    "framesV": 2
+    "framesV": 2,
+    "rakuCmp": "実施予定",
+    "upd": 1792986018797
   },
   {
     "id": "it1781746183669",
@@ -160,7 +162,9 @@
     ],
     "buttonElemLps": {
       "y0": ""
-    }
+    },
+    "rakuCmp": "実施予定",
+    "upd": 1792986019546
   },
   {
     "id": "it1781746196902",
