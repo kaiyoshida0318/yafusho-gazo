@@ -1315,7 +1315,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v3.99.0</span>
+        <span class="version" id="version">v3.100.0</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1694,7 +1694,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v3.99.0</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v3.100.0</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2942,7 +2942,7 @@ var DEFAULT_COLS=[
   {key:'buttonElem',label:'ボタン要素',width:null,align:'left'},
   {key:'buttonElemLp',label:'Yahoo新規の名称',width:140,align:'left'},
   {key:'salesTable',label:'商品コード・価格・内容',width:null,align:'left'},
-  {key:'rakuCmp',label:'リニュ実施',width:170,align:'center'},
+  {key:'rakuCmp',label:'リニュ実施',width:190,align:'center'},
   {key:'rakuImg',label:'楽天商品画像',width:110,align:'center'},
   {key:'yahooImgEx',label:'Yahoo商品画像',width:110,align:'center'},
   {key:'rakuSales',label:'楽天(先月)',width:104,align:'right'},
@@ -2979,7 +2979,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3250,7 +3250,7 @@ function cellHtml(key,it){
     if(key==='yahooMain'||key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
     if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
     if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooFor(it))+'</td>';
-    if(key==='rakuCmp')return cmpMode?(cmpSubOf(it)?'<td></td>':('<td>'+rcBtnsHtml(it)+'</td>')):cddCell('rakuCmp',it.id,rakuCmpVal(it));   /* まとめた商品は親の行だけに出す（リニュ選定と同じ） */
+    if(key==='rakuCmp')return (cmpMode&&cmpSubOf(it))?'<td></td>':('<td>'+rcBtnsHtml(it)+'</td>');   /* まとめた商品は親の行だけに出す（リニュ選定と同じ）。状態ごとの画面でも同じボタン表示 */
     if(key==='actions')return '<td><div class="act-cell"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'">＋ 登録</button></div></td>';
     return '<td></td>';
   }
@@ -3287,7 +3287,7 @@ function cellHtml(key,it){
   if(key==='buttonElem')return bulkEdit?'<td>'+bulkArea(it,'buttonElem')+'</td>':dcCell(it,'buttonElem');
   if(key==='buttonElemLp')return beLpCellHtml(it);
   if(key==='salesTable')return salesTableCell(it);
-  if(key==='rakuCmp')return cmpMode?(cmpSubOf(it)?'<td></td>':('<td>'+rcBtnsHtml(it)+'</td>')):cddCell('rakuCmp',it.id,rakuCmpVal(it));   /* まとめた商品は親の行だけに出す（リニュ選定と同じ） */
+  if(key==='rakuCmp')return (cmpMode&&cmpSubOf(it))?'<td></td>':('<td>'+rcBtnsHtml(it)+'</td>');   /* まとめた商品は親の行だけに出す（リニュ選定と同じ）。状態ごとの画面でも同じボタン表示 */
   if(key==='rakuImg')return '<td>'+cmpImgHtml(cmpRakuFor(it),'r')+'</td>';
   if(key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
   if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
@@ -4926,9 +4926,11 @@ document.addEventListener('click',function(e){
       /* 選択中のボタンをもう一度押したら「選択前」に戻す */
       if(rcEl.classList.contains('on')&&_rv!==CMP_DEF_VAL)_rv=CMP_DEF_VAL;
       if(String(_rid).indexOf('__g_')===0){var _gq=_cmpG[_rid];cmpSetStg(_gq&&_gq.key,_rv);}
-      else{cmpSnapItem(_rid);stageEditQuiet(_rid,'rakuCmp',_rv);}
+      else if(cmpMode){cmpSnapItem(_rid);stageEditQuiet(_rid,'rakuCmp',_rv);}
+      else{stageEdit(_rid,'rakuCmp',_rv);}   /* 状態ごとの画面：ほかの項目と同じ保存の流れ */
       /* 押した瞬間に見た目だけ反映（行は動かさない） */
       var _rtr=rcEl.closest?rcEl.closest('tr'):null;
+      if(_rtr&&!cmpMode){var _rbx0=rcEl.closest('.ok3');if(_rbx0){var _rb0=_rbx0.querySelectorAll('.ok3b');for(var _r0=0;_r0<_rb0.length;_r0++){var _o0=((_rb0[_r0].getAttribute('data-rc')||'')===_rv);_rb0[_r0].classList.toggle('on',_o0);if(_o0){_rb0[_r0].setAttribute('style','background:'+(RC_COLOR[rcColorOf(_rv)]||'#7a756d')+';color:#fff');}else _rb0[_r0].removeAttribute('style');}}_rtr=null;}
       if(_rtr){
         var _rbx=rcEl.closest?rcEl.closest('.ok3'):null;
         if(_rbx){var _rbs=_rbx.querySelectorAll('.ok3b');
@@ -5844,12 +5846,21 @@ function migrateRcInScopes(){
   try{try{
     var s=getSettings();if(s.cmpMig16)return;
     if(!s.colcfgS)s.colcfgS={};if(!s.colorderS)s.colorderS={};
-    Object.keys(s.colcfgS).forEach(function(sc){if(sc===CMP_SCOPE)return;var m=s.colcfgS[sc]||{};var c=m.rakuCmp||{};c.visible=true;if(c.width==null||c.width>150){c.width=130;c.fixw=true;}m.rakuCmp=c;s.colcfgS[sc]=m;});
+    Object.keys(s.colcfgS).forEach(function(sc){if(sc===CMP_SCOPE)return;var m=s.colcfgS[sc]||{};var c=m.rakuCmp||{};c.visible=true;m.rakuCmp=c;s.colcfgS[sc]=m;});
     Object.keys(s.colorderS).forEach(function(sc){if(sc===CMP_SCOPE)return;var o=s.colorderS[sc];if(!o||!o.length)return;
       o=o.filter(function(k){return k!=='rakuCmp';});var i=o.indexOf('status');
       if(i>=0)o.splice(i+1,0,'rakuCmp');else{var a=o.indexOf('actions');if(a>=0)o.splice(a,0,'rakuCmp');else o.push('rakuCmp');}
       s.colorderS[sc]=o;});
     s.cmpMig16=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
+/* 状態ごとの画面のリニュ実施もボタン表示にしたので、幅を190pxに（ロック中・すでに広い場合はそのまま） */
+function migrateRcScopesW(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig17)return;if(!s.colcfgS)s.colcfgS={};
+    Object.keys(s.colcfgS).forEach(function(sc){if(sc===CMP_SCOPE)return;var m=s.colcfgS[sc]||{};var c=m.rakuCmp;if(!c||c.lockw)return;if(c.width!=null&&c.width<190){c.width=190;c.fixw=true;}});
+    s.cmpMig17=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
 function migrateRcW(){
@@ -5861,7 +5872,7 @@ function migrateRcW(){
     m.rakuCmp=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig13=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();applyScope();}catch(e){}}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
