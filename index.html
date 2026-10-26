@@ -944,6 +944,15 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .cmp-na{color:var(--ink-3);font-size:12px}
 .cmp-yen{font-family:"Roboto Mono",monospace;font-size:12.5px;font-weight:700;color:var(--ink-1)}
 .cmp-zero{font-family:"Roboto Mono",monospace;font-size:12.5px;color:var(--ink-3)}
+.cmp-proas{display:block;margin-top:3px;line-height:1.2;color:#7c3aed;text-align:right}
+.cmp-proas .pl{display:block;font-size:9px;font-weight:700;color:#9a7cc9;white-space:nowrap}
+.cmp-proas b{font-family:"Roboto Mono",monospace;font-size:12px;font-weight:800}
+.cmp-rroas{color:#1d4ed8}
+.cmp-ad{display:block;text-align:right}
+.cmp-adsp{display:block;font-family:"Roboto Mono",monospace;font-size:12px;font-weight:700;color:#b45309}
+.cmp-ad .cmp-proas{margin-top:2px}
+#grid tbody td[data-col-key="rakuAd"],#grid tbody td[data-col-key="yahooAd"]{padding-left:6px;padding-right:6px}
+.cmp-rroas .pl{color:#6b8fd6}
 tr.ghost-row td{color:var(--ink-2)}
 .gh-badge{display:inline-block;font-size:10px;font-weight:800;color:#8a6d1f;background:#fdf3d6;border:1px solid #efd98f;border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:1px}
 .btn-reg{background:#17643f;border-color:#17643f;color:#fff;font-weight:700;padding:3px 9px;font-size:11.5px;border-radius:6px;cursor:pointer;border:1px solid #17643f}
@@ -1319,7 +1328,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.03</span>
+        <span class="version" id="version">v4.06</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
@@ -1364,11 +1373,11 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
     <span class="save-chip" id="saveChip" hidden><span class="save-dot"></span><span id="saveChipTxt"></span></span>
     <button class="btn btn-ghost btn-sm" id="btnDiscardEdits" hidden>取り消し</button>
     <button class="btn btn-save-hero" id="btnSaveEdits" hidden>● 変更を保存</button>
-    <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseBottom" title="下の「リニュ選定」の段を折りたたむ">▼ 下部をたたむ</button>
+    <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseBottom" style="display:none" title="下の「リニュ選定」の段を折りたたむ">▼ 下部をたたむ</button>
     <button type="button" class="btn btn-line btn-sm collapse-btn" id="btnCollapseTop" title="上部の見出し・フィルタを折りたたむ">▲ 上部をたたむ</button>
   </div>
   <!-- リニュ選定は出品内容の下（横線で区切る） -->
-  <div class="frow frow-cmp frow-sep" id="cmpRow">
+  <div class="frow frow-cmp frow-sep" id="cmpRow" style="display:none"><!-- リニュ選定の段は見た目から廃止 -->
     <span class="frow-label">リニュ選定</span>
     <div class="pill-group" id="cmpPills"></div>
   </div>
@@ -1698,7 +1707,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.03</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.06</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2251,7 +2260,7 @@ function srchHit(it){
 }
 var CMPCACHE='yafusho_cmpcache';
 var CMP_SCOPE='__cmp__';
-var CMP_DEFAULT_VISIBLE=['date','codeName','cmpOk','rakuDel','rakutenMain','rakuCode','rakuName','rakuFix','rakuSales','yahooDel','yahooMain','yahooCode','yahooName','yahooFix','yahooSales','rakuCmp'];
+var CMP_DEFAULT_VISIBLE=['date','codeName','cmpOk','rakuDel','rakutenMain','rakuCode','rakuName','rakuFix','rakuSales','rakuAd','yahooDel','yahooMain','yahooCode','yahooName','yahooFix','yahooSales','yahooAd','rakuCmp'];
 var CMP_DEF_VAL='選択前';
 function rakuCmpVal(it){
   if(it&&it.__ghost){var g=(typeof cmpGroupOf==='function')?cmpGroupOf(it):null;var v=g?cmpStgOf(g.key):'';return v||CMP_DEF_VAL;}
@@ -2312,12 +2321,12 @@ function cmpStats(){
   return {tot:tot,raku:mr,yahoo:my,miss:miss};
 }
 function cmpSaveCache(){
-  try{localStorage.setItem(CMPCACHE,JSON.stringify({raku:cmpData.raku,yahoo:cmpData.yahoo,ym:cmpData.ym,at:cmpData.at}));}catch(e){}
+  try{localStorage.setItem(CMPCACHE,JSON.stringify({v:3,raku:cmpData.raku,yahoo:cmpData.yahoo,ym:cmpData.ym,at:cmpData.at}));}catch(e){}
 }
 function cmpLoadCache(){
   try{
     var c=JSON.parse(localStorage.getItem(CMPCACHE));
-    if(c&&c.raku&&c.yahoo){cmpData.raku=c.raku;cmpData.yahoo=c.yahoo;cmpData.rakuL=cmpBuildLoose(c.raku);cmpData.yahooL=cmpBuildLoose(c.yahoo);cmpData.ym=c.ym||'';cmpData.at=c.at||0;return true;}
+    if(c&&c.v===3&&c.raku&&c.yahoo){cmpData.raku=c.raku;cmpData.yahoo=c.yahoo;cmpData.rakuL=cmpBuildLoose(c.raku);cmpData.yahooL=cmpBuildLoose(c.yahoo);cmpData.ym=c.ym||'';cmpData.at=c.at||0;return true;}
   }catch(e){}
   return false;
 }
@@ -2350,6 +2359,24 @@ async function cmpLoad(force){
       var nm=icToNum[String(row.itemCode)];if(!nm)continue;
       byCode[nm].sales+=(+row.sales||0);
     }
+    /* 売上ROAS用（ADcheckの商品一覧と同じ）：先月の商品別 RPP実績額（rpp_item.json）＋ クーポンアドバンス実績（coupon_advance.json） */
+    try{
+      var base=c.adUrl.replace('{shop}',c.shop);
+      var itUrl=base.replace(/rpp_data\.json$/,'rpp_item.json')+'?t='+Date.now();
+      var caUrl=base.replace(/rpp_data\.json$/,'coupon_advance.json')+'?t='+Date.now();
+      var lmy=lm.y;   /* 'YYYY-MM' */
+      var rs=await Promise.all([fetch(itUrl,{cache:'no-store'}).then(function(x){return x.ok?x.json():null;}).catch(function(){return null;}),
+                                fetch(caUrl,{cache:'no-store'}).then(function(x){return x.ok?x.json():null;}).catch(function(){return null;})]);
+      var ji=rs[0],jc=rs[1];
+      if(ji&&ji.DB){
+        var spByIc={};
+        for(var ic2 in ji.DB){if(!Object.prototype.hasOwnProperty.call(ji.DB,ic2))continue;var dys=(ji.DB[ic2]&&ji.DB[ic2].days)||{};var sp=0;
+          for(var dd in dys){if(Object.prototype.hasOwnProperty.call(dys,dd)&&String(dd).slice(0,7)===lmy)sp+=(+(dys[dd]&&dys[dd].spend)||0);}spByIc[ic2]=sp;}
+        var caByIc={};
+        if(jc&&Array.isArray(jc.item))jc.item.forEach(function(r){if(!r||!r.date||String(r.date).slice(0,7)!==lmy)return;caByIc[r.itemCode]=(caByIc[r.itemCode]||0)+(+r.spend||0);});
+        for(var bk in byCode){if(!Object.prototype.hasOwnProperty.call(byCode,bk))continue;var bo=byCode[bk];bo.rSpend=spByIc[bo.itemCode]||0;bo.caSpend=Math.round(caByIc[bo.itemCode]||0);}
+      }
+    }catch(_re){}
     raku=byCode;
   }catch(e){cmpData.err='楽天: '+((e&&e.message)||e);}
   try{
@@ -2413,6 +2440,21 @@ async function cmpLoad(force){
       }
     }
     cmpData.ySrc=dayN?('日次'+dayN+'日分'):'月次';
+    /* PR広告売上ROAS(推定)用：先月の商品別 広告実績額（日次優先・無ければ月次）と、PRオプ料率（Ycheckの⑤設定） */
+    try{
+      var dad=(j2.daily&&j2.daily.ad)||null,adN=0;
+      if(dad&&typeof dad==='object'){
+        for(var ad0 in dad){if(!Object.prototype.hasOwnProperty.call(dad,ad0)||String(ad0).slice(0,7)!==lm.y)continue;adN++;
+          var arow=dad[ad0]||{};
+          for(var ac in arow){if(!Object.prototype.hasOwnProperty.call(arow,ac))continue;var av=arow[ac];var acost=Array.isArray(av)?(+av[0]||0):(+(av&&av.adCost)||0);
+            var acc=cmpNorm(ac);if(!acc)continue;if(!yahoo[acc])yahoo[acc]={code:acc,disp:String(ac||acc),img:'',name:'',sales:0};yahoo[acc].adCost=(yahoo[acc].adCost||0)+acost;}}
+      }
+      if(!adN){(j2.ad||[]).forEach(function(a){if(!a||String(a.month||'')!==lm.y)return;var acc=cmpNorm(a.code);if(!acc)return;if(!yahoo[acc])yahoo[acc]={code:acc,disp:String(a.code||acc),img:'',name:'',sales:0};yahoo[acc].adCost=(yahoo[acc].adCost||0)+(+a.adCost||0);});}
+      var prr=j2.proRate||{};var prL={};for(var pk in prr){if(Object.prototype.hasOwnProperty.call(prr,pk))prL[String(pk).toLowerCase()]=prr[pk];}
+      for(var yk0 in yahoo){if(!Object.prototype.hasOwnProperty.call(yahoo,yk0))continue;var yo=yahoo[yk0];
+        var rt=prL[String(yo.disp||'').toLowerCase()];if(rt==null)rt=prL[String(yo.code||'').toLowerCase()];
+        yo.prRate=(rt==null||isNaN(rt))?null:+rt;if(yo.adCost==null)yo.adCost=0;}
+    }catch(_pe){}
     for(var yk in yahoo){
       if(!Object.prototype.hasOwnProperty.call(yahoo,yk))continue;
       if(!yahoo[yk].img)yahoo[yk].img=c.yImg.replace('{shop}',c.shop).replace('{code}',yahoo[yk].code);
@@ -2450,6 +2492,42 @@ function cmpSalesHtml(o){
   if(!o)return '<span class="cmp-na">—</span>';
   if(!o.sales)return '<span class="cmp-zero">¥0</span>';
   return '<span class="cmp-yen">'+cmpYen(o.sales)+'</span>';
+}
+/* PR広告売上ROAS(推定) ＝ 総売上 ÷（広告実績額 ＋ PR実績額(7%超・推定)）× 100　※Ycheckと同じ計算
+   PR実績額(7%超・推定) ＝ 税抜売上（総売上÷1.1）×（PRオプ料率−7）%。料率が未設定の商品は出さない */
+function cmpPrRoas(o){
+  if(!o||o.prRate==null||isNaN(o.prRate))return null;
+  var rev=+o.sales||0;if(!(rev>0))return null;
+  var over=(rev/1.1)*Math.max(0,(+o.prRate)-7)/100;
+  var den=(+o.adCost||0)+over;if(!(den>0))return null;
+  return Math.round(rev/den*100);
+}
+/* 楽天の売上ROAS ＝ 総売上 ÷（RPP実績額 ＋ クーポンアドバンス実績）× 100　※ADcheckの商品一覧と同じ */
+function cmpRakuRoasHtml(o){
+  if(!o||o.rSpend===undefined)return '';
+  var den=(+o.rSpend||0)+(+o.caSpend||0),v=(den>0&&(+o.sales||0)>0)?Math.round((+o.sales)/den*100):null;
+  var tip='売上ROAS ＝ 総売上 ÷（RPP実績額 ＋ CA実績）× 100&#10;RPP実績額 '+cmpYen(+o.rSpend||0)+'／CA実績 '+cmpYen(+o.caSpend||0);
+  return '<span class="cmp-proas cmp-rroas" title="'+tip+'"><span class="pl">売上ROAS</span><b>'+(v==null?'—':(v.toLocaleString('ja-JP')+'%'))+'</b></span>';
+}
+/* 広告費＋ROAS の列（楽天：RPP実績額＋CA実績／売上ROAS、Yahoo：広告実績額／PR広告売上ROAS） */
+function cmpRakuSpend(o){if(!o||o.rSpend===undefined)return null;return (+o.rSpend||0)+(+o.caSpend||0);}
+function cmpRakuRoas(o){var den=cmpRakuSpend(o);return (den>0&&(+o.sales||0)>0)?Math.round((+o.sales)/den*100):null;}
+function cmpAdCellHtml(o,side){
+  if(!cmpData.raku&&!cmpData.yahoo)return '<span class="cmp-na">—</span>';
+  if(!o)return '<span class="cmp-na">—</span>';
+  var sp,roas,tip;
+  if(side==='r'){if(o.rSpend===undefined)return '<span class="cmp-na">—</span>';sp=cmpRakuSpend(o);roas=cmpRakuRoas(o);
+    tip='広告費 ＝ RPP実績額 '+cmpYen(+o.rSpend||0)+' ＋ CA実績 '+cmpYen(+o.caSpend||0)+'&#10;売上ROAS ＝ 総売上 ÷ 広告費 × 100（ADcheckと同じ）';}
+  else{if(o.prRate===undefined)return '<span class="cmp-na">—</span>';sp=+o.adCost||0;roas=cmpPrRoas(o);
+    tip='広告費 ＝ 広告実績額（アイテムリーチ）&#10;PRオプ料率 '+(o.prRate==null?'未設定':(o.prRate+'%'))+'&#10;PR広告売上ROAS(推定) ＝ 総売上 ÷（広告実績額 ＋ PR実績額(7%超・推定)）× 100（Ycheckと同じ）';}
+  return '<span class="cmp-ad" title="'+tip+'"><span class="cmp-adsp">'+(sp>0?cmpYen(sp):'<span class="cmp-zero">¥0</span>')+'</span>'
+    +'<span class="cmp-proas'+(side==='r'?' cmp-rroas':'')+'"><b>'+(roas==null?'—':(roas.toLocaleString('ja-JP')+'%'))+'</b></span></span>';
+}
+function cmpPrRoasHtml(o){
+  if(!o||o.prRate===undefined)return '';
+  var v=cmpPrRoas(o);
+  var tip='PR広告売上ROAS(推定) ＝ 総売上 ÷（広告実績額 ＋ PR実績額(7%超・推定)）× 100&#10;広告実績額 '+cmpYen(+o.adCost||0)+'／PRオプ料率 '+(o.prRate==null?'未設定':(o.prRate+'%'));
+  return '<span class="cmp-proas" title="'+tip+'"><span class="pl">PR広告売上ROAS</span><b>'+(v==null?'—':(v.toLocaleString('ja-JP')+'%'))+'</b></span>';
 }
 function cmpOkCount(want){
   var rows=null;try{if(cmpData.raku||cmpData.yahoo)rows=cmpRows();}catch(e){rows=null;}
@@ -2748,6 +2826,10 @@ function cmpSortVal(it,key){
   if(key==='rakuCmp')return rcRankOf(rakuCmpVal(it));
   if(key==='rakuSales')return (g.group?g.group.rSum:((r&&r.sales)||0))||0;
   if(key==='yahooSales')return (g.group?g.group.ySum:((y&&y.sales)||0))||0;
+  if(key==='rakuAd'){var _rs=cmpRakuSpend(r);return _rs==null?null:_rs;}
+  if(key==='rakuRoas')return cmpRakuRoas(r);
+  if(key==='yahooAd')return (y&&y.prRate!==undefined)?(+y.adCost||0):null;
+  if(key==='yahooRoas')return y?cmpPrRoas(y):null;
   if(key==='date')return it.date||'';
   if(key==='upd')return it.upd?+it.upd:null;
   if(key==='rakuCode')return r?cmpNorm(r.code):'';
@@ -2760,7 +2842,7 @@ function cmpSortVal(it,key){
   if(key==='name')return cmpNorm(it.name);
   return '';
 }
-var CMP_SORTABLE=['date','upd','codeName','code','name','rakuCode','rakuName','rakuSales','yahooCode','yahooName','yahooSales'];
+var CMP_SORTABLE=['date','upd','codeName','code','name','rakuCode','rakuName','rakuSales','yahooCode','yahooName','yahooSales','rakuAd','rakuRoas','yahooAd','yahooRoas'];
 /* 並び順の段：0=確定 / 1=両モールあり / 2=片方だけ */
 function cmpRank(it){
   var g=cmpGroupOf(it);if(!g)return 2;
@@ -2843,7 +2925,6 @@ function renderCmpTabs(){
       h+='<button class="ctab ctab-col'+(on2?' on':'')+'" style="'+(on2?('background:'+c2+';border-color:'+c2+';color:#fff'):'')+'" data-cmpok="'+fk+'">'+numTile(NUMS[k],c2)+esc(o2.l)+'<span class="cnt">'+cmpOkCount(o2.v)+'</span></button>';
     }
     /* 結び作成用：押している間だけ「楽天結び」「Yahoo結び」の列を出す（絞り込みではなく表示の切り替え） */
-    h+='<span class="pill-sep"></span><button class="ctab ctab-fixmode'+(cmpFixMode?' on':'')+'" data-cmpfixmode="1" title="押すと「楽天結び」「Yahoo結び」の列を表示します（もう一度押すと隠します）">🔗 結び作成用</button>';
     el.innerHTML=h;
   }
   var el2=$('cmpPills2');
@@ -2858,6 +2939,8 @@ function renderCmpTabs(){
     h2+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="" title="実施後・SKIP も含めてすべて表示">全て<span class="cnt">'+cmpCount('')+'</span></button>';
     h2+='<span class="pill-sep"></span>';
     h2+='<button class="ctab ctab-clr" data-cmpclr="1" title="すべての絞り込み・検索・並び替えを解除します">✕ クリア</button>';
+    /* 結び作成用：押している間だけ「楽天結び」「Yahoo結び」の列を出す（リニュ選定の段を消したのでこちらへ移動） */
+    h2+='<span class="pill-sep"></span><button class="ctab ctab-fixmode'+(cmpFixMode?' on':'')+'" data-cmpfixmode="1" title="押すと「楽天結び」「Yahoo結び」の列を表示します（もう一度押すと隠します）">🔗 結び作成用</button>';
     el2.innerHTML=h2;
   }
   renderCmpStat();
@@ -2950,7 +3033,9 @@ var DEFAULT_COLS=[
   {key:'rakuImg',label:'楽天商品画像',width:110,align:'center'},
   {key:'yahooImgEx',label:'Yahoo商品画像',width:110,align:'center'},
   {key:'rakuSales',label:'楽天(先月)',width:104,align:'right'},
+  {key:'rakuAd',label:'楽天 広告費／売上ROAS',width:96,align:'right'},
   {key:'yahooSales',label:'Yahoo(先月)',width:104,align:'right'},
+  {key:'yahooAd',label:'Yahoo 広告費／PR広告売上ROAS',width:110,align:'right'},
   {key:'rakuCode',label:'楽天商品コード',width:112,align:'left'},
   {key:'rakuName',label:'楽天商品名',width:160,align:'left'},
   {key:'rakuFix',label:'楽天結び',width:100,align:'left'},
@@ -2983,7 +3068,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false,cmpMig18:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;if(c.cmpMig18)d.cmpMig18=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false,cmpMig18:false,cmpMig19:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;if(c.cmpMig18)d.cmpMig18=true;if(c.cmpMig19)d.cmpMig19=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3254,6 +3339,8 @@ function cellHtml(key,it){
     if(key==='yahooMain'||key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
     if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
     if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooFor(it))+'</td>';
+    if(key==='rakuAd')return '<td>'+cmpAdCellHtml(cmpRakuFor(it),'r')+'</td>';
+    if(key==='yahooAd')return '<td>'+cmpAdCellHtml(cmpYahooFor(it),'y')+'</td>';
     if(key==='rakuCmp')return (cmpMode&&cmpSubOf(it))?'<td></td>':('<td>'+rcBtnsHtml(it)+'</td>');   /* まとめた商品は親の行だけに出す（リニュ選定と同じ）。状態ごとの画面でも同じボタン表示 */
     if(key==='actions')return '<td><div class="act-cell"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'">＋ 登録</button></div></td>';
     return '<td></td>';
@@ -3296,6 +3383,8 @@ function cellHtml(key,it){
   if(key==='yahooImgEx')return '<td>'+cmpImgHtml(cmpYahooFor(it),'y')+'</td>';
   if(key==='rakuSales')return '<td>'+cmpSalesHtml(cmpRakuFor(it))+'</td>';
   if(key==='yahooSales')return '<td>'+cmpSalesHtml(cmpYahooFor(it))+'</td>';
+  if(key==='rakuAd')return '<td>'+cmpAdCellHtml(cmpRakuFor(it),'r')+'</td>';
+  if(key==='yahooAd')return '<td>'+cmpAdCellHtml(cmpYahooFor(it),'y')+'</td>';
   if(key==='memo'){var _hm=!!(it.memo&&String(it.memo).trim());return '<td><button type="button" class="memo-btn'+(_hm?' has':'')+'" data-memo="'+escA(it.id)+'" title="'+(_hm?'メモを開く（入力あり）':'メモを開く')+'">📝'+(_hm?'<span class="memo-dot"></span>':'')+'</button></td>';}
   if(key==='actions'){var _mb='';if(isImgView()){var _hm=!!(it.memo&&String(it.memo).trim());_mb='<button type="button" class="btn btn-sm btn-memo'+(_hm?' has':'')+'" data-memo="'+it.id+'" title="メモを開く">📝 メモ（画像）</button>';}
     return '<td><div class="act-cell">'
@@ -3344,7 +3433,7 @@ function getColCfg(key){var def=colDef(key);var sc=curScope();var defVis=scopeDe
 function setColCfg(key,patch){setScopeCol(curScope(),key,patch);}
 /* 結び作成用モード：比較表示では「楽天結び」「Yahoo結び」はこのモードのときだけ表示（横幅の節約） */
 var CMP_FIX_KEYS=['rakuFix','yahooFix'];
-var HIDDEN_COL_KEYS=['status','listingType'];   /* 状態・出品内容は廃止：どの画面でも列を出さない */
+var HIDDEN_COL_KEYS=['status','listingType','cmpOk'];   /* 状態・出品内容・リニュ選定は見た目から廃止：どの画面でも列を出さない（データは残る） */
 var cmpFixMode=(function(){try{return localStorage.getItem('yafusho_cmpfixmode')==='1';}catch(e){return false;}})();
 (function(){var _g=getColCfg;getColCfg=function(key){var c=_g.apply(this,arguments);
   if(CMP_FIX_KEYS.indexOf(key)>=0&&curScope()===CMP_SCOPE)c.visible=!!cmpFixMode;if(HIDDEN_COL_KEYS.indexOf(key)>=0)c.visible=false;return c;};})();
@@ -3372,6 +3461,13 @@ function hasAutoCol(){
 function renderHead(){resetViewCache();var order=getColOrder();var srt=cmpMode;var h='<tr>';for(var i=0;i<order.length;i++){var key=order[i];var def=colDef(key);if(!def)continue;var cc=getColCfg(key);if(!cc.visible)continue;
   var sortable=srt&&CMP_SORTABLE.indexOf(key)>=0;
   var arrow=sortable?('<span class="srt-ar'+(cmpSort.key===key?' on':'')+'">'+(cmpSort.key===key?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>'):'';
+  var _split=({rakuAd:[['rakuAd','広告費'],['rakuRoas','売上ROAS']],yahooAd:[['yahooAd','広告費'],['yahooRoas','PR広告<br>売上ROAS']]})[key];
+  if(_split){   /* 広告費／ROAS の見出しは2段。それぞれ押して並び替え */
+    var _ar2=function(k){return srt?('<span class="srt-ar'+(cmpSort.key===k?' on':'')+'">'+(cmpSort.key===k?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>'):'';};
+    h+='<th data-col-key="'+key+'" style="'+colStyleStr(cc,true)+'">'
+      +_split.map(function(p){return '<span class="srt-sub"'+(srt?' data-sort="'+p[0]+'"':'')+'>'+p[1]+_ar2(p[0])+'</span>';}).join('')
+      +((colResizeMode||colsModalOpen||statusMgrOpen)?'<div class="col-resize-handle" data-rk="'+key+'"></div>':'')+'</th>';
+    continue;}
   if(key==='date'&&srt){   /* 日付の見出しは2段：日付／最終更新。それぞれ押して昇順・降順 */
     var _ar=function(k){return '<span class="srt-ar'+(cmpSort.key===k?' on':'')+'">'+(cmpSort.key===k?(cmpSort.dir<0?'▼':'▲'):'↕')+'</span>';};
     h+='<th data-col-key="date" class="'+((cmpSort.key==='date'||cmpSort.key==='upd')?'srt-on':'')+'" style="'+colStyleStr(cc,true)+'">'
@@ -3991,7 +4087,7 @@ if(_gh)_gh.addEventListener('click',function(e){
   var th=t&&t.closest?t.closest('[data-sort]'):null;if(!th)return;
   var k=th.getAttribute('data-sort');
   if(cmpSort.key===k){cmpSort.dir=(cmpSort.dir<0?1:-1);}
-  else{cmpSort.key=k;cmpSort.dir=(k==='rakuSales'||k==='yahooSales'||k==='upd')?-1:1;}cmpResetLimit();
+  else{cmpSort.key=k;cmpSort.dir=(k==='rakuSales'||k==='yahooSales'||k==='upd'||k==='rakuAd'||k==='rakuRoas'||k==='yahooAd'||k==='yahooRoas')?-1:1;}cmpResetLimit();
   renderHead();render();
 });
 
@@ -5878,6 +5974,21 @@ function migrateRcCand(){
     s.cmpMig18=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
+/* 楽天・Yahooの「広告費／ROAS」列を、比較表示の各(先月)列の右に一度だけ追加 */
+function migrateAdCols(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig19)return;
+    if(!s.colcfgS)s.colcfgS={};if(!s.colorderS)s.colorderS={};
+    var m=s.colcfgS[CMP_SCOPE]||{};['rakuAd','yahooAd'].forEach(function(k){var c=m[k]||{};c.visible=true;m[k]=c;});s.colcfgS[CMP_SCOPE]=m;
+    var o=s.colorderS[CMP_SCOPE];
+    if(o&&o.length){o=o.filter(function(k){return k!=='rakuAd'&&k!=='yahooAd';});
+      var i1=o.indexOf('rakuSales');if(i1>=0)o.splice(i1+1,0,'rakuAd');else o.push('rakuAd');
+      var i2=o.indexOf('yahooSales');if(i2>=0)o.splice(i2+1,0,'yahooAd');else o.push('yahooAd');
+      s.colorderS[CMP_SCOPE]=o;}
+    s.cmpMig19=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
 function migrateRcW(){
   _migrating=true;
   try{try{
@@ -5887,7 +5998,7 @@ function migrateRcW(){
     m.rakuCmp=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig13=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();migrateRcCand();applyScope();}catch(e){}}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();migrateRcCand();migrateAdCols();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
