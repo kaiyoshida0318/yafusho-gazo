@@ -1308,21 +1308,34 @@ body.is-col-resizing,body.is-col-resizing *{cursor:col-resize!important;user-sel
 #grid tfoot.yc-wrow-foot td{position:sticky;bottom:0;z-index:5;background:#fff7e0;border-top:2px solid #f59e0b;border-right:1px solid #f3d9a4;padding:4px 3px;text-align:center;overflow:hidden;vertical-align:middle}
 #grid tfoot.yc-wrow-foot td.is-locked{background:#e0ecff}
 #grid tfoot.yc-wrow-foot td.col-spx{background:#fff7e0!important;border-right:0}
-.yc-wrow{display:inline-flex;flex-direction:column;align-items:center;gap:2px;max-width:100%}
+.yc-wrow{display:inline-flex;flex-direction:column;align-items:center;gap:3px;max-width:100%;width:100%}
+.yc-wrow-r1{display:flex;align-items:center;justify-content:center;gap:2px;max-width:100%}
+.yc-wrow-mv{flex:0 0 auto;width:16px;height:20px;padding:0;border:1px solid #f3d9a4;border-radius:4px;background:#fff;color:#92400e;font-size:9px;line-height:1;cursor:pointer}
+.yc-wrow-mv:hover:not(:disabled){border-color:#f59e0b;background:#fff3d6}
+.yc-wrow-mv:disabled{opacity:.3;cursor:default}
+.yc-wrow-hide{flex:0 0 auto;font:inherit;font-size:10px;line-height:1.3;padding:1px 4px;border:1px solid #e5c7c7;border-radius:4px;background:#fff;color:#b45454;cursor:pointer}
+.yc-wrow-al,.yc-wrow-wr{width:100%;max-width:82px;min-width:0;font:inherit;font-size:10.5px;padding:1px 2px;border:1px solid #f3d9a4;border-radius:4px;background:#fff;color:#78350f}
 .yc-wrow-in{width:52px;max-width:100%;min-width:0;font:inherit;font-size:12px;padding:2px 3px;text-align:right;border:1px solid #f59e0b;border-radius:4px;background:#fff;-moz-appearance:textfield}
 .yc-wrow-in::-webkit-inner-spin-button,.yc-wrow-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .yc-wrow-in:disabled{border-color:#93c5fd;color:#1e40af;background:#f1f6ff;font-weight:700}
 .yc-wrow-lock{max-width:100%;overflow:hidden;white-space:nowrap;cursor:pointer;font:inherit;font-size:10.5px;font-weight:700;line-height:1.3;padding:1px 5px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;color:#64748b}
 .yc-wrow-lock:hover{border-color:#2563eb;color:#2563eb}
 .yc-wrow-lock.is-locked{background:#2563eb;border-color:#1d4ed8;color:#fff}
-body.col-resize-on .table-scroll{max-height:max(220px,calc(100vh - var(--sticky-h, 132px) - 380px))}
+body.col-resize-on .table-scroll{max-height:max(220px,calc(100vh - var(--sticky-h, 132px) - 120px))}
 /* 幅調整モードの下に並べる「列名・並び順の設定」 */
 .cw-panel{margin-top:6px;border:1px solid #f59e0b;border-radius:8px;background:#fffdf6;padding:8px 10px}
 .cw-panel[hidden]{display:none}
 .modal-col.cw-inline{width:auto!important;max-width:none!important;max-height:none!important;height:auto!important;margin:0!important;box-shadow:none!important;border:0!important;padding:0!important;background:transparent!important;display:block!important}
 .modal-col.cw-inline h2{font-size:13px;margin:0 0 6px}
 .modal-col.cw-inline #btnDragResize,.modal-col.cw-inline #btnColsH,.modal-col.cw-inline [data-close="colsModal"]{display:none!important}
-.modal-col.cw-inline .col-hstrip{max-height:250px}
+.modal-col.cw-inline .col-hstrip,.modal-col.cw-inline .cvt-hint,.modal-col.cw-inline h2{display:none!important}
+.modal-col.cw-inline .col-view-tabs{margin:0}
+.modal-col.cw-inline{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px;flex-wrap:wrap}
+.modal-col.cw-inline,.modal-col.cw-inline *{text-align:left}
+.modal-col.cw-inline .col-view-tabs,.modal-col.cw-inline .col-scope-pills{display:flex;align-items:center;gap:6px;margin:0!important;padding:0!important;justify-content:flex-start!important;width:auto!important;flex:0 0 auto!important}
+.modal-col.cw-inline .acts{margin:0!important;padding:0!important;border:0!important;display:flex;align-items:center}
+.modal-col.cw-inline .acts .sp{display:none}
+.cw-panel{padding:6px 10px}
 .modal-col.cw-inline .acts{margin-top:6px}
 .yc-wrow-sum{position:sticky;bottom:0;z-index:7;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:4px 0 0;padding:5px 10px;border:1px solid #f59e0b;border-radius:6px;background:#fff7e0;font-size:12px;color:#78350f;font-variant-numeric:tabular-nums}
 .yc-wrow-sum[hidden]{display:none}
@@ -1344,7 +1357,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.12</span>
+        <span class="version" id="version">v4.13</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1724,7 +1737,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.12</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.13</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -4224,13 +4237,24 @@ function _cwSync(){
   var g=$('grid');if(!g)return;var f=g.querySelector('tfoot.yc-wrow-foot');var sb=$('ycWrowSum');
   if(!colWOn){if(f)f.remove();if(sb)sb.hidden=true;var sc0=_cwScroll();if(sc0)sc0.classList.remove('yc-has-rest');return;}
   if(!f){f=document.createElement('tfoot');f.className='yc-wrow-foot';g.appendChild(f);}
-  var h='<tr>';
-  _cwThs().forEach(function(th){
-    var k=th.getAttribute('data-col-key');var lk=colIsLocked(k);
+  var h='<tr>';var _ths=_cwThs();
+  _ths.forEach(function(th,ix){
+    var k=th.getAttribute('data-col-key');var lk=colIsLocked(k);var cc=getColCfg(k);
     var st='width:'+th.style.width+';min-width:'+th.style.minWidth+';max-width:'+th.style.maxWidth;
+    var al=cc.align||'left',wr=cc.wrap||'wrap';
+    var opt=function(v,l,cur){return '<option value="'+v+'"'+(v===cur?' selected':'')+'>'+l+'</option>';};
     h+='<td data-col-key="'+escA(k)+'" class="yc-wrow-td'+(lk?' is-locked':'')+'" style="'+st+'"><span class="yc-wrow">'
-      +'<input type="number" class="yc-wrow-in" min="'+COLW_MIN+'" max="'+COLW_MAX+'" step="1" data-key="'+escA(k)+'"'+(lk?' disabled':'')+' title="この列の幅（px）。入力して Enter か欄の外をクリックで反映">'
-      +'<button type="button" class="yc-wrow-lock'+(lk?' is-locked':'')+'" data-key="'+escA(k)+'" title="'+(lk?'この列の幅をロック中（押すと解除）':'押すとこの幅でロック（ドラッグや他の列の調整で変わらなくなります）')+'">'+(lk?'ロック中':'ロック')+'</button>'
+      +'<span class="yc-wrow-r1">'
+        +'<button type="button" class="yc-wrow-mv" data-key="'+escA(k)+'" data-dir="-1" title="左へ移動"'+(ix===0?' disabled':'')+'>◀</button>'
+        +'<input type="number" class="yc-wrow-in" min="'+COLW_MIN+'" max="'+COLW_MAX+'" step="1" data-key="'+escA(k)+'"'+(lk?' disabled':'')+' title="この列の幅（px）。入力して Enter か欄の外をクリックで反映">'
+        +'<button type="button" class="yc-wrow-mv" data-key="'+escA(k)+'" data-dir="1" title="右へ移動"'+(ix===_ths.length-1?' disabled':'')+'>▶</button>'
+      +'</span>'
+      +'<span class="yc-wrow-r1">'
+        +'<button type="button" class="yc-wrow-lock'+(lk?' is-locked':'')+'" data-key="'+escA(k)+'" title="'+(lk?'この列の幅をロック中（押すと解除）':'押すとこの幅でロック（ドラッグや他の列の調整で変わらなくなります）')+'">'+(lk?'ロック中':'ロック')+'</button>'
+        +'<button type="button" class="yc-wrow-hide" data-key="'+escA(k)+'" title="この列を表示から外す（戻すときは「表示内容 → 表示項目」）">✕</button>'
+      +'</span>'
+      +'<select class="yc-wrow-al" data-key="'+escA(k)+'" title="揃え（見出し＋データ）">'+opt('left','左',al)+opt('center','中央',al)+opt('right','右',al)+'</select>'
+      +'<select class="yc-wrow-wr" data-key="'+escA(k)+'" title="折り返し">'+opt('wrap','折り返す',wr)+opt('clip','1行',wr)+'</select>'
       +'</span></td>';
   });
   f.innerHTML=h+'<td class="col-spx yc-wrow-td"></td></tr>';
@@ -4285,9 +4309,16 @@ document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)r
   if(t.closest('#btnColWEnd')){e.preventDefault();setColWMode(false);return;}
   if(t.closest('#btnColWMgr')){e.preventDefault();e.stopPropagation();_cwFromModal=false;setColWMode(false);openCols();return;}
   var lb=t.closest('.yc-wrow-lock');if(lb){e.preventDefault();e.stopPropagation();_cwToggleLock(lb.getAttribute('data-key'));return;}
+  var mv=t.closest('.yc-wrow-mv');if(mv){e.preventDefault();e.stopPropagation();if(!mv.disabled)moveCol(mv.getAttribute('data-key'),+mv.getAttribute('data-dir'));return;}
+  var hd=t.closest('.yc-wrow-hide');if(hd){e.preventDefault();e.stopPropagation();var hk=hd.getAttribute('data-key');var hdef=colDef(hk);
+    if(confirm('「'+(hdef?hdef.label:hk)+'」の列を表示から外しますか？\n（戻すときは「表示内容 → 表示項目」から）')){setColCfg(hk,{visible:false});renderHead();render();try{renderColManager();}catch(_e){}}return;}
   if(t.closest('tfoot.yc-wrow-foot'))e.stopPropagation();
 },true);
-document.addEventListener('change',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('yc-wrow-in'))_cwSetWidth(t.getAttribute('data-key'),t.value);});
+document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classList)return;
+  if(t.classList.contains('yc-wrow-in'))_cwSetWidth(t.getAttribute('data-key'),t.value);
+  else if(t.classList.contains('yc-wrow-al')){setColCfg(t.getAttribute('data-key'),{align:t.value,headAlign:t.value});renderHead();render();}
+  else if(t.classList.contains('yc-wrow-wr')){setColCfg(t.getAttribute('data-key'),{wrap:t.value});renderHead();render();}
+});
 document.addEventListener('keydown',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('yc-wrow-in')&&e.key==='Enter'){e.preventDefault();t.blur();}});
 /* 見出しの境目ダブルクリック＝既定に戻す */
 if(_gh)_gh.addEventListener('dblclick',function(e){var t=e.target;if(colWOn&&t&&t.classList&&t.classList.contains('col-resize-handle')){e.preventDefault();e.stopPropagation();cwResetCol(t.getAttribute('data-rk'));}});
