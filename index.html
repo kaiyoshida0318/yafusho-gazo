@@ -1322,7 +1322,8 @@ body.col-resize-on .table-scroll{max-height:calc(100vh - var(--sticky-h, 132px) 
 .yc-wrow-sum .ws-rest{color:#15803d}
 .yc-wrow-sum .ws-rest.is-over{color:#dc2626}
 .yc-wrow-sum .ws-note{color:#92400e;opacity:.8}
-.yc-wrow-sum .ws-end{margin-left:auto;font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #1d4ed8;background:#2563eb;color:#fff;cursor:pointer}
+.yc-wrow-sum .ws-mgr{margin-left:auto;font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #f59e0b;background:#fff;color:#92400e;cursor:pointer}
+.yc-wrow-sum .ws-end{font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #1d4ed8;background:#2563eb;color:#fff;cursor:pointer}
 /* 右の空き（いちばん右の余白列）を斜線で見せる */
 body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{background-image:repeating-linear-gradient(135deg,rgba(245,158,11,.12) 0 6px,transparent 6px 12px)!important}
 </style>
@@ -1335,11 +1336,11 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.10</span>
+        <span class="version" id="version">v4.11</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
-        <button class="btn btn-ghost" id="btnCols2"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button>
-        <button class="btn btn-ghost" id="btnColW" type="button" title="幅調整モード：押すと列の境目をドラッグして列幅を変えられます（もう一度押すと終了）">⇔ 幅</button>
+        <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
+        <button class="btn btn-ghost" id="btnColW" type="button" title="列・幅：押すと列の境目をドラッグして幅を変えられます。表の下の帯から列名・並び・表示項目の設定も開けます（もう一度押すと終了）">⇔ 列・幅</button>
         <button class="btn btn-ghost" id="btnTpl" title="テンプレ画像の登録・編集">🖼️ テンプレ画像</button>
         <button class="btn btn-ghost cap-btn" id="btnCap" title="保存容量の使用状況">💾 容量<span class="cap-pct" id="capPct">--%</span></button>
         <button class="btn btn-ghost" id="btnSettings">⚙️ 設定</button>
@@ -1714,7 +1715,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.10</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.11</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -4238,6 +4239,7 @@ function _cwRefresh(m){
   sb.innerHTML='<span>使える幅 <b>'+fmt(avail)+'px</b></span><span>表の幅 <b>'+fmt(used)+'px</b></span>'+restHtml
     +'<span>ロック中 <b>'+nl+'</b> / '+n+'列</span>'
     +'<span class="ws-note">境目をドラッグ／ダブルクリックで既定に戻す／一番下で数値入力・ロック。狭くした分は右の空きになります（他の列は動きません）</span>'
+    +'<button type="button" class="ws-mgr" id="btnColWMgr" title="列名の変更・列の並び替え・揃え・折り返しなど">📐 列名・並び順の設定</button>'
     +'<button type="button" class="ws-end" id="btnColWEnd">✓ 幅調整を終了</button>';
 }
 function setColWMode(on){
@@ -4258,6 +4260,7 @@ window.setColWMode=setColWMode;
 if($('btnColW'))$('btnColW').onclick=function(){_cwFromModal=false;setColWMode(!colWOn);};
 document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)return;
   if(t.closest('#btnColWEnd')){e.preventDefault();setColWMode(false);return;}
+  if(t.closest('#btnColWMgr')){e.preventDefault();e.stopPropagation();_cwFromModal=false;setColWMode(false);openCols();return;}
   var lb=t.closest('.yc-wrow-lock');if(lb){e.preventDefault();e.stopPropagation();_cwToggleLock(lb.getAttribute('data-key'));return;}
   if(t.closest('tfoot.yc-wrow-foot'))e.stopPropagation();
 },true);
