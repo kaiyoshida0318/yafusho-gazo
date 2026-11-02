@@ -1315,7 +1315,15 @@ body.is-col-resizing,body.is-col-resizing *{cursor:col-resize!important;user-sel
 .yc-wrow-lock{max-width:100%;overflow:hidden;white-space:nowrap;cursor:pointer;font:inherit;font-size:10.5px;font-weight:700;line-height:1.3;padding:1px 5px;border-radius:4px;border:1px solid #cbd5e1;background:#fff;color:#64748b}
 .yc-wrow-lock:hover{border-color:#2563eb;color:#2563eb}
 .yc-wrow-lock.is-locked{background:#2563eb;border-color:#1d4ed8;color:#fff}
-body.col-resize-on .table-scroll{max-height:calc(100vh - var(--sticky-h, 132px) - 50px)}
+body.col-resize-on .table-scroll{max-height:max(220px,calc(100vh - var(--sticky-h, 132px) - 380px))}
+/* 幅調整モードの下に並べる「列名・並び順の設定」 */
+.cw-panel{margin-top:6px;border:1px solid #f59e0b;border-radius:8px;background:#fffdf6;padding:8px 10px}
+.cw-panel[hidden]{display:none}
+.modal-col.cw-inline{width:auto!important;max-width:none!important;max-height:none!important;height:auto!important;margin:0!important;box-shadow:none!important;border:0!important;padding:0!important;background:transparent!important;display:block!important}
+.modal-col.cw-inline h2{font-size:13px;margin:0 0 6px}
+.modal-col.cw-inline #btnDragResize,.modal-col.cw-inline #btnColsH,.modal-col.cw-inline [data-close="colsModal"]{display:none!important}
+.modal-col.cw-inline .col-hstrip{max-height:250px}
+.modal-col.cw-inline .acts{margin-top:6px}
 .yc-wrow-sum{position:sticky;bottom:0;z-index:7;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:4px 0 0;padding:5px 10px;border:1px solid #f59e0b;border-radius:6px;background:#fff7e0;font-size:12px;color:#78350f;font-variant-numeric:tabular-nums}
 .yc-wrow-sum[hidden]{display:none}
 .yc-wrow-sum b{font-weight:800}
@@ -1323,7 +1331,7 @@ body.col-resize-on .table-scroll{max-height:calc(100vh - var(--sticky-h, 132px) 
 .yc-wrow-sum .ws-rest.is-over{color:#dc2626}
 .yc-wrow-sum .ws-note{color:#92400e;opacity:.8}
 .yc-wrow-sum .ws-mgr{margin-left:auto;font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #f59e0b;background:#fff;color:#92400e;cursor:pointer}
-.yc-wrow-sum .ws-end{font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #1d4ed8;background:#2563eb;color:#fff;cursor:pointer}
+.yc-wrow-sum .ws-end{margin-left:auto;font:inherit;font-size:12px;font-weight:700;padding:3px 12px;border-radius:6px;border:1px solid #1d4ed8;background:#2563eb;color:#fff;cursor:pointer}
 /* 右の空き（いちばん右の余白列）を斜線で見せる */
 body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{background-image:repeating-linear-gradient(135deg,rgba(245,158,11,.12) 0 6px,transparent 6px 12px)!important}
 </style>
@@ -1336,7 +1344,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.11</span>
+        <span class="version" id="version">v4.12</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1414,6 +1422,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       </table>
     </div>
     <div class="yc-wrow-sum" id="ycWrowSum" hidden></div>
+    <div class="cw-panel" id="cwPanel" hidden></div><!-- ⇔ 列・幅 のとき、列名・並び順の設定をここに出す -->
     <div class="shell-empty" id="emptyState">
       <div class="lead">まだ商品がありません</div>
       <p>「＋ 新規作成」から商品を登録すると、ここに一覧で表示されます。</p>
@@ -1715,7 +1724,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.11</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.12</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1756,7 +1765,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
     <h2>📐 列名・列幅・列順管理</h2>
     <div class="col-view-tabs" id="colViewTabs">
       <div class="st-pills col-scope-pills" id="colScopePills"></div>
-      <span class="cvt-hint" id="colScopeLbl">状態を選ぶと、その状態で表示中の項目だけが並びます。各カードで順序（◀▶）・幅・揃え・折り返しを設定（上の表に即反映）。項目の出し入れは「表示内容 → 状態」から。</span>
+      <span class="cvt-hint" id="colScopeLbl">画面（リニュ選定／全体）を選ぶと、その画面で表示中の項目だけが並びます。各カードで順序（◀▶）・幅・揃え・折り返しを設定（上の表に即反映）。項目の出し入れは「表示内容 → 表示項目」から。</span>
     </div>
     <div class="col-hstrip" id="colHStrip"></div>
     <div class="acts">
@@ -4239,17 +4248,31 @@ function _cwRefresh(m){
   sb.innerHTML='<span>使える幅 <b>'+fmt(avail)+'px</b></span><span>表の幅 <b>'+fmt(used)+'px</b></span>'+restHtml
     +'<span>ロック中 <b>'+nl+'</b> / '+n+'列</span>'
     +'<span class="ws-note">境目をドラッグ／ダブルクリックで既定に戻す／一番下で数値入力・ロック。狭くした分は右の空きになります（他の列は動きません）</span>'
-    +'<button type="button" class="ws-mgr" id="btnColWMgr" title="列名の変更・列の並び替え・揃え・折り返しなど">📐 列名・並び順の設定</button>'
     +'<button type="button" class="ws-end" id="btnColWEnd">✓ 幅調整を終了</button>';
+}
+/* 列名・並び順の設定パネルを、幅調整モードの下（表の下）にそのまま並べる／モードを終えたら元のモーダルへ戻す */
+function _cwPanelSync(){
+  var panel=$('cwPanel'),modal=$('colsModal');if(!panel||!modal)return;
+  var box=document.querySelector('.modal-col');if(!box)return;
+  if(colWOn){
+    if(box.parentNode!==panel){panel.appendChild(box);}
+    box.classList.add('cw-inline');panel.hidden=false;
+    try{renderColManager();}catch(e){}
+  }else{
+    if(box.parentNode!==modal){modal.appendChild(box);}
+    box.classList.remove('cw-inline');panel.hidden=true;
+  }
 }
 function setColWMode(on){
   var was=colWOn;colWOn=!!on;colResizeMode=colWOn;
   document.body.classList.toggle('col-resize-on',colWOn);
   var b=$('btnColW');if(b){b.classList.toggle('is-on',colWOn);b.title=colWOn?'幅調整モード中：列の境目をドラッグで幅変更（狭くした分は右の空きに）／境目をダブルクリックで既定に戻す／表の一番下で数値入力・ロック（もう一度押すと終了）':'幅調整モード：押すと列の境目をドラッグして列幅を変えられます（もう一度押すと終了）';}
   var bar=$('resizeBar');if(bar)bar.hidden=true;
+  if(colWOn){colsModalOpen=false;var _cm=$('colsModal');if(_cm)_cm.hidden=true;}
+  _cwPanelSync();
   renderHead();render();
   if(was&&!colWOn){toast('幅調整モードを終了しました（列幅は保存済み）');
-    if(_cwFromModal){_cwFromModal=false;try{openCols();}catch(e){}}}
+    _cwFromModal=false;}
 }
 window.setColWMode=setColWMode;
 /* 再描画のたびに一番下の行と帯を付け直す */
