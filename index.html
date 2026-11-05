@@ -129,6 +129,7 @@ table#grid{width:100%;border-collapse:separate;border-spacing:0}
 span.tbl-thumb.empty{display:grid;place-items:center;color:var(--ink-3);font-size:14px}
 .cell-name{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;min-width:150px}
 .cell-date{white-space:nowrap}
+.row-no{display:block;width:max-content;min-width:20px;margin:0 0 3px;padding:0 6px;border-radius:999px;background:#1f3a63;color:#fff;font-family:"Roboto Mono",monospace;font-size:10.5px;font-weight:800;line-height:16px;text-align:center}
 .cell-date .d-y{display:block;font-size:12px;color:var(--ink-3);line-height:1.2}
 .cell-date .d-md{display:block;font-weight:700;font-size:14px;line-height:1.2}
 /* 最終更新日時（日付の下） */
@@ -1357,7 +1358,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.13</span>
+        <span class="version" id="version">v4.14</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1737,7 +1738,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.13</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.14</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -4304,6 +4305,20 @@ window.setColWMode=setColWMode;
   var _rh=renderHead;renderHead=function(){var r=_rh.apply(this,arguments);try{_cwSync();}catch(e){}return r;};
   var _rd=render;render=function(){var r=_rd.apply(this,arguments);try{if(colWOn)_cwRefresh();}catch(e){}return r;};
 })();
+/* 一番左の列（日付）に上から何件目かの番号を振る。セットの商品は親の行（リニュ実施のボタンが出ている行）だけ数える＝上の件数と同じ数え方 */
+function numberRows(){
+  var tb=$('gridBody');if(!tb)return;var n=0;
+  var trs=tb.querySelectorAll('tr[data-id]');
+  for(var i=0;i<trs.length;i++){
+    var tr=trs[i],id=tr.getAttribute('data-id');
+    var old=tr.querySelector('.row-no');if(old)old.remove();
+    var sub=0;if(cmpMode){try{var _g=_cmpG[id];sub=_g?(_g.sub||0):0;}catch(e){}}
+    if(sub)continue;n++;
+    var td=tr.querySelector('td[data-col-key="date"]')||tr.querySelector('td');if(!td)continue;
+    var b=document.createElement('span');b.className='row-no';b.textContent=n;td.insertBefore(b,td.firstChild);
+  }
+}
+(function(){var _rd2=render;render=function(){var r=_rd2.apply(this,arguments);try{numberRows();}catch(e){}return r;};})();
 if($('btnColW'))$('btnColW').onclick=function(){_cwFromModal=false;setColWMode(!colWOn);};
 document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)return;
   if(t.closest('#btnColWEnd')){e.preventDefault();setColWMode(false);return;}
