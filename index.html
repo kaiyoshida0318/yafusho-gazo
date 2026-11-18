@@ -1367,7 +1367,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.27</span>
+        <span class="version" id="version">v4.28</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1750,7 +1750,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.27</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.28</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2285,6 +2285,8 @@ function rcActive(v){v=String(rcNorm(v)||'選択前');return v!=='実施後'&&v.
 var cmpFilter=CMP_DEF_F,cmpMode=true,cmpOkFilter='',cmpQ='';
 /* 楽天のみ（'r'）／Yahooのみ（'y'）：片方にしか情報がなく、結びつけされていない商品 */
 var cmpSideFilter='';
+/* リニュ実施の①〜④（選択肢の並びの最初の4つ） */
+function rcIn14(v){var op=getOpts('rakuCmp');for(var i=0;i<op.length&&i<4;i++){if(op[i].l===v)return true;}return false;}
 function cmpSideOf(x){var q=cmpGrpOf(x);var r=!!(q&&q.rakus&&q.rakus.length),y=!!(q&&q.yahoos&&q.yahoos.length);return (r&&!y)?'r':((y&&!r)?'y':'');}
 var CMP_PAGE=150,cmpLimit=CMP_PAGE;
 function cmpResetLimit(){cmpLimit=CMP_PAGE;}
@@ -3082,10 +3084,10 @@ function renderCmpTabs(){
   if(el3){
     var _sc=function(side){var rows=null;try{if(cmpData.raku||cmpData.yahoo)rows=cmpRows();}catch(e){}if(!rows)return 0;var n=0,f=cmpFilter;
       for(var i=0;i<rows.length;i++){var x=rows[i];if(cmpSubOf(x))continue;if(!cmpShowReg&&cmpHasReg(x))continue;if(cmpSideOf(x)!==side)continue;
-        var v=rakuCmpVal(cmpHeadOf(x));if(f===CMP_DEF_F){if(!rcActive(v))continue;}else if(f&&v!==f)continue;n++;}return n;};
+        var v=rakuCmpVal(cmpHeadOf(x));if(!rcIn14(v))continue;if(rcIn14(f)&&v!==f)continue;n++;}return n;};
     var _sf=cmpQ?'':cmpSideFilter;
-    el3.innerHTML='<button class="ctab ctab-side'+((cmpMode&&_sf==='r')?' on':'')+'" data-side="r" title="楽天にだけ情報があり、Yahooと結びつけされていない商品">楽天のみ<span class="cnt">'+_sc('r')+'</span></button>'
-      +'<button class="ctab ctab-side'+((cmpMode&&_sf==='y')?' on':'')+'" data-side="y" title="Yahooにだけ情報があり、楽天と結びつけされていない商品">Yahooのみ<span class="cnt">'+_sc('y')+'</span></button>';
+    el3.innerHTML='<button class="ctab ctab-side'+((cmpMode&&_sf==='r')?' on':'')+'" data-side="r" title="楽天にだけ情報があり、Yahooと結びつけされていない商品（リニュ実施の①〜④の中から）">楽天のみ<span class="cnt">'+_sc('r')+'</span></button>'
+      +'<button class="ctab ctab-side'+((cmpMode&&_sf==='y')?' on':'')+'" data-side="y" title="Yahooにだけ情報があり、楽天と結びつけされていない商品（リニュ実施の①〜④の中から）">Yahooのみ<span class="cnt">'+_sc('y')+'</span></button>';
   }
   renderCmpStat();
 }
@@ -3719,6 +3721,8 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
       var _hd=cmpHeadOf(x);
       /* 検索中は絞り込み（進行中・実施予定など）を無視して、すべてから探す */
       var _cf=cmpQ?'':cmpFilter;
+      /* 楽天のみ／Yahooのみ は、リニュ実施の①〜④の中で絞り込む（①〜④のどれかを選んでいればそれと重ねる） */
+      if(cmpSideFilter&&!cmpQ){var _v14=rakuCmpVal(_hd);if(!rcIn14(_v14))return false;if(rcIn14(_cf)&&_v14!==_cf)return false;_cf='';}
       if(_cf===CMP_DEF_F){if(!rcActive(rakuCmpVal(_hd)))return false;}else if(_cf==='__none__'){if(_hd.rakuCmp)return false;}else if(_cf){if(rakuCmpVal(_hd)!==_cf)return false;}
       if(cmpSideFilter&&!cmpQ&&cmpSideOf(x)!==cmpSideFilter)return false;
       if(cmpOkFilter&&!cmpQ){var _gg=_cmpG[x.id];var _stt=cmpOkState(_gg&&_gg.key);
