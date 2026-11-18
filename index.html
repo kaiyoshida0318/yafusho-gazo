@@ -1366,7 +1366,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.18</span>
+        <span class="version" id="version">v4.19</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1746,7 +1746,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.18</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.19</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2988,14 +2988,15 @@ function renderCmpTabs(){
   }
   var el2=$('cmpPills2');
   if(el2){
-    var h2='<button class="ctab'+((cmpMode&&cmpFilter===CMP_DEF_F)?' on':'')+'" data-cmp="'+CMP_DEF_F+'" title="実施後・SKIP（2種）を除いた商品（選択前・実施予定・実施候補）">進行中<span class="cnt">'+cmpCount(CMP_DEF_F)+'</span></button>';
+    var _fx=cmpQ?'':cmpFilter;   /* 検索中は「全て」が選ばれている表示にする */
+    var h2='<button class="ctab'+((cmpMode&&_fx===CMP_DEF_F)?' on':'')+'" data-cmp="'+CMP_DEF_F+'" title="実施後・SKIP（2種）を除いた商品（選択前・実施予定・実施候補）">進行中<span class="cnt">'+cmpCount(CMP_DEF_F)+'</span></button>';
     var op=getOpts('rakuCmp');
     for(var i=0;i<op.length;i++){
-      var c3=RC_COLOR[op[i].c]||'#7a756d',on3=(cmpMode&&cmpFilter===op[i].l);
+      var c3=RC_COLOR[op[i].c]||'#7a756d',on3=(cmpMode&&_fx===op[i].l);
       h2+='<button class="ctab ctab-col'+(on3?' on':'')+'" style="'+(on3?('background:'+c3+';border-color:'+c3+';color:#fff'):'')+'" data-cmp="'+escA(op[i].l)+'">'+numTile(NUMS[i],c3)+esc(op[i].n||op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';
     }
     h2+='<span class="pill-sep"></span>';
-    h2+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="" title="実施後・SKIP（2種）も含めてすべて表示">全て<span class="cnt">'+cmpCount('')+'</span></button>';
+    h2+='<button class="ctab'+((cmpMode&&_fx==='')?' on':'')+'" data-cmp="" title="実施後・SKIP（2種）も含めてすべて表示">全て<span class="cnt">'+cmpCount('')+'</span></button>';
     h2+='<span class="pill-sep"></span>';
     h2+='<button class="ctab ctab-clr" data-cmpclr="1" title="すべての絞り込み・検索・並び替えを解除します">✕ クリア</button>';
     /* 結び作成用：押している間だけ「楽天結び」「Yahoo結び」の列を出す（リニュ選定の段を消したのでこちらへ移動） */
@@ -3619,8 +3620,10 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
     list=cmpRows().filter(function(x){
       if(!cmpShowReg&&cmpHasReg(x))return false;
       var _hd=cmpHeadOf(x);
-      if(cmpFilter===CMP_DEF_F){if(!rcActive(rakuCmpVal(_hd)))return false;}else if(cmpFilter==='__none__'){if(_hd.rakuCmp)return false;}else if(cmpFilter){if(rakuCmpVal(_hd)!==cmpFilter)return false;}
-      if(cmpOkFilter){var _gg=_cmpG[x.id];var _stt=cmpOkState(_gg&&_gg.key);
+      /* 検索中は絞り込み（進行中・実施予定など）を無視して、すべてから探す */
+      var _cf=cmpQ?'':cmpFilter;
+      if(_cf===CMP_DEF_F){if(!rcActive(rakuCmpVal(_hd)))return false;}else if(_cf==='__none__'){if(_hd.rakuCmp)return false;}else if(_cf){if(rakuCmpVal(_hd)!==_cf)return false;}
+      if(cmpOkFilter&&!cmpQ){var _gg=_cmpG[x.id];var _stt=cmpOkState(_gg&&_gg.key);
         if(cmpOkFilter==='no'){if(_stt!=='')return false;}else if(_stt!==cmpOkFilter)return false;}
       if(cmpQ&&!srchHit(x))return false;
       return true;
@@ -3633,7 +3636,8 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
     if(statusFilter==='__none__'){if(x.status)return false;}else if(statusFilter){if(x.status!==statusTarget(statusFilter))return false;}
     if(lpCountFilter==='__none__'){if(x.pagePlan)return false;}else if(lpCountFilter){if(x.pagePlan!==lpCountFilter)return false;}
     if(lpTypeFilter==='__none__'){if(x.lpType)return false;}else if(lpTypeFilter){if(x.lpType!==lpTypeFilter)return false;}
-    if(cmpFilter===CMP_DEF_F){if(!rcActive(x.rakuCmp))return false;}else if(cmpFilter==='__none__'){if(x.rakuCmp)return false;}else if(cmpFilter){if(rcNorm(x.rakuCmp)!==cmpFilter)return false;}
+    var _cf2=cmpQ?'':cmpFilter;   /* 検索中はすべてから探す */
+    if(_cf2===CMP_DEF_F){if(!rcActive(x.rakuCmp))return false;}else if(_cf2==='__none__'){if(x.rakuCmp)return false;}else if(_cf2){if(rcNorm(x.rakuCmp)!==_cf2)return false;}
     if(cmpQ&&!srchHit(x))return false;
     return true;
   });
@@ -5279,7 +5283,9 @@ function cmpPillClick(e){
   var nv=b.getAttribute('data-cmp')||'';
   /* 選択中のボタンをもう一度押したら「全て」に戻す */
   /* 選択中をもう一度押したら既定（進行中）に戻す */
-  cmpFilter=(cmpMode&&nv===cmpFilter)?CMP_DEF_F:nv;cmpMode=true;cmpResetLimit();
+  /* 検索中に絞り込みボタンを押したら、検索を解除してその絞り込みにする */
+  if(cmpQ){cmpQ='';try{var _si=$('cmpSearch');if(_si)_si.value='';var _sc=$('cmpSearchClr');if(_sc)_sc.hidden=true;}catch(_e){}cmpFilter=nv;cmpMode=true;cmpResetLimit();}
+  else{cmpFilter=(cmpMode&&nv===cmpFilter)?CMP_DEF_F:nv;cmpMode=true;cmpResetLimit();}
   renderCmpTabs();renderHead();render();updateStickyH();
   if(!cmpData.raku)cmpLoad(false);
 }
@@ -5296,6 +5302,7 @@ function applySearch(){
   var el=$('cmpSearch');var v=el?el.value:'';
   cmpQ=cmpNorm(v);cmpResetLimit();
   var c=$('cmpSearchClr');if(c)c.hidden=!v;
+  try{renderCmpTabs();}catch(e){}
   render();
 }
 if($('cmpSearch'))$('cmpSearch').addEventListener('input',function(){
