@@ -947,6 +947,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .cmp-imga{display:block}
 .cmp-img.cmp-r{border-color:#f0c8c2}
 .cmp-img.cmp-y{border-color:#c5d6ec}
+.cmp-img-retry{font:inherit;font-size:10.5px;padding:3px 6px;border:1px dashed #c5d6ec;border-radius:6px;background:#fff;color:#2f6fb0;cursor:pointer}
 .cmp-na{color:var(--ink-3);font-size:12px}
 .cmp-yen{font-family:"Roboto Mono",monospace;font-size:12.5px;font-weight:700;color:var(--ink-1)}
 .cmp-zero{font-family:"Roboto Mono",monospace;font-size:12.5px;color:var(--ink-3)}
@@ -1367,7 +1368,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.28</span>
+        <span class="version" id="version">v4.29</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1750,7 +1751,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.28</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.29</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2524,6 +2525,9 @@ async function cmpLoad(force){
       if(!yahoo[yk].img)yahoo[yk].img=c.yImg.replace('{shop}',c.shop).replace('{code}',yahoo[yk].code);
     }
   }catch(e2){cmpData.err=(cmpData.err?cmpData.err+' / ':'')+'Yahoo: '+((e2&&e2.message)||e2);}
+  /* 取得に失敗した側は、前回取れていたデータを残す（空で上書きして表示が消えないように） */
+  if(!Object.keys(raku).length&&cmpData.raku&&Object.keys(cmpData.raku).length)raku=cmpData.raku;
+  if(!Object.keys(yahoo).length&&cmpData.yahoo&&Object.keys(cmpData.yahoo).length)yahoo=cmpData.yahoo;
   try{cmpMarkSeen(raku,yahoo);}catch(_se){}
   cmpData.raku=raku;cmpData.yahoo=yahoo;cmpData.rakuL=cmpBuildLoose(raku);cmpData.yahooL=cmpBuildLoose(yahoo);cmpData.ym=lm.label;cmpData.at=Date.now();cmpData.loading=false;
   cmpSaveCache();
@@ -2549,7 +2553,19 @@ function cmpYahooOf(it){return cmpPick(cmpData.yahoo,cmpData.yahooL,it&&it.code)
 function cmpImgHtml(o,side){
   if(!cmpData.raku&&!cmpData.yahoo)return '<span class="cmp-na">—</span>';
   if(!o||!o.img)return '<span class="cmp-na">—</span>';
-  return '<a class="cmp-imga" href="'+escA(o.img)+'" target="_blank" rel="noopener" title="'+escA(o.name||'')+'"><img class="cmp-img '+(side==='r'?'cmp-r':'cmp-y')+'" loading="lazy" src="'+escA(o.img)+'" alt="" onerror="this.closest(\'.cmp-imga\').innerHTML=\'<span class=&quot;cmp-na&quot;>—</span>\'"></a>';
+  return '<a class="cmp-imga" href="'+escA(o.img)+'" target="_blank" rel="noopener" title="'+escA(o.name||'')+'"><img class="cmp-img '+(side==='r'?'cmp-r':'cmp-y')+'" loading="lazy" src="'+escA(o.img)+'" alt="" onerror="cmpImgErr(this)"></a>';
+}
+/* 画像の読み込みに失敗したら、少し待って最大3回まで読み直す（一度にたくさん読むと、Yahooの画像サーバーが一時的に失敗を返すことがあるため）。
+   それでもだめなら「再読込」を出す（押すと読み直す） */
+function cmpImgErr(img){
+  try{
+    var n=+(img.getAttribute('data-r')||0);var base=img.getAttribute('data-src')||img.src.replace(/[?&]_r=\d+$/,'');img.setAttribute('data-src',base);
+    if(n<3){img.setAttribute('data-r',n+1);setTimeout(function(){img.src=base+(base.indexOf('?')<0?'?':'&')+'_r='+(n+1);},800*(n+1)+Math.random()*600);return;}
+    var a=img.closest('.cmp-imga');if(!a)return;
+    var b=document.createElement('button');b.type='button';b.className='cmp-img-retry';b.textContent='再読込';b.title='画像を読み込めませんでした。押すともう一度読み込みます';
+    b.onclick=function(e){e.preventDefault();e.stopPropagation();var im=document.createElement('img');im.className=img.className;im.alt='';im.setAttribute('data-src',base);im.onerror=function(){cmpImgErr(im);};im.src=base+(base.indexOf('?')<0?'?':'&')+'_r='+Date.now();a.replaceChildren(im);};
+    a.replaceChildren(b);
+  }catch(e){}
 }
 function cmpYen(n){return '¥'+String(Math.round(n||0)).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function cmpSalesHtml(o){
