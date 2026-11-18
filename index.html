@@ -942,6 +942,7 @@ span.row-thumb.strip-thumb-text{display:inline-flex;align-items:center;justify-c
 .cmp-stat.none{color:var(--ink-3)}
 .cmp-stat.ok{color:#17643f}
 .cmp-stat.err{color:var(--red)}
+.cmp-reload{font:inherit;font-size:11.5px;font-weight:700;margin-left:6px;padding:2px 8px;border-radius:6px;border:1px solid var(--red);background:#fff;color:var(--red);cursor:pointer}
 .cmp-stat.load{color:#d98324}
 .cmp-img{width:72px;height:72px;object-fit:contain;border:1px solid var(--line-2);border-radius:7px;background:#fff;display:block;margin:0 auto}
 .cmp-imga{display:block}
@@ -1368,7 +1369,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.29</span>
+        <span class="version" id="version">v4.30</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1751,7 +1752,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.29</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.30</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2390,7 +2391,8 @@ var CMP_FRESH_MS=60*60*1000;
 function cmpLoadCache(){
   try{
     var c=JSON.parse(localStorage.getItem(CMPCACHE));
-    if(c&&c.v===3&&c.raku&&c.yahoo){cmpData.raku=c.raku;cmpData.yahoo=c.yahoo;cmpData.rakuL=cmpBuildLoose(c.raku);cmpData.yahooL=cmpBuildLoose(c.yahoo);cmpData.ym=c.ym||'';cmpData.at=c.at||0;return true;}
+    /* 楽天・Yahooのどちらかが空の保存データは使わない（前回の取得失敗で空になっていることがあるため、取り直させる） */
+    if(c&&c.v===3&&c.raku&&c.yahoo&&Object.keys(c.raku).length&&Object.keys(c.yahoo).length){cmpData.raku=c.raku;cmpData.yahoo=c.yahoo;cmpData.rakuL=cmpBuildLoose(c.raku);cmpData.yahooL=cmpBuildLoose(c.yahoo);cmpData.ym=c.ym||'';cmpData.at=c.at||0;return true;}
   }catch(e){}
   return false;
 }
@@ -2398,7 +2400,8 @@ async function cmpLoad(force){
   if(cmpData.loading)return;
   var lm=cmpLastMonth();
   /* 売上は先月分のままでよいが、今月追加した商品も出したいので、取得から1時間たったら商品一覧ごと取り直す */
-  if(!force&&cmpData.raku&&cmpData.ym===lm.label&&cmpData.at&&(Date.now()-cmpData.at)<CMP_FRESH_MS)return;
+  var _bothOk=cmpData.raku&&cmpData.yahoo&&Object.keys(cmpData.raku).length&&Object.keys(cmpData.yahoo).length;
+  if(!force&&_bothOk&&!cmpData.err&&cmpData.ym===lm.label&&cmpData.at&&(Date.now()-cmpData.at)<CMP_FRESH_MS)return;
   cmpData.loading=true;cmpData.err='';renderCmpStat();
   var c=cmpCfg();
   var adUrl=c.adUrl.replace('{shop}',c.shop)+'?t='+Date.now();
@@ -3118,7 +3121,12 @@ function renderCmpStat(){
   try{renderCmpSave();}catch(e){}
   if(cmpData.loading){el.textContent='比較データ取得中…';el.className='cmp-stat load';return;}
   if(!cmpData.raku&&!cmpData.yahoo){el.textContent='比較データ未取得（🔄 比較データ を押してください）';el.className='cmp-stat none';return;}
-  if(cmpData.err){el.textContent='⚠ '+cmpData.err;el.className='cmp-stat err';return;}
+  var _rn=Object.keys(cmpData.raku||{}).length,_yn=Object.keys(cmpData.yahoo||{}).length;
+  if(cmpData.err||!_rn||!_yn){
+    /* 取得に失敗した／片方が0件のときは、目立つ警告と「取り直す」ボタンを出す */
+    var _msg=cmpData.err?('⚠ '+cmpData.err):('⚠ '+(!_yn?'Yahoo':'楽天')+'のデータが0件です');
+    el.innerHTML=esc(_msg)+' <button type="button" class="cmp-reload" title="比較データ（楽天・Yahoo）を取り直します">🔄 取り直す</button>';
+    el.className='cmp-stat err';var _b=el.querySelector('.cmp-reload');if(_b)_b.onclick=function(){cmpLoad(true);};return;}
   el.textContent='';el.className='cmp-stat';
 }
 function cmpColsVisible(){
