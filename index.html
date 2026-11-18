@@ -1367,7 +1367,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.26</span>
+        <span class="version" id="version">v4.27</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1750,7 +1750,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.26</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.27</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -3489,7 +3489,7 @@ function cellHtml(key,it){
     if(key==='date')return '<td class="mono cell-date">'+(cmpRowAdded(it)?fmtUpd(cmpRowAdded(it),cmpRowAdded(it)):'')+'</td>';
     if(key==='codeName')return '<td><div class="cn-wrap">'
       +'<div class="mono cn-code">'+esc(it.code)+(cmpMode?'':'<span class="gh-badge">未登録</span>')+'</div>'
-      +'<div class="cell-name cn-name">'+(it.name?esc(it.name):'<span class="sm-empty">—</span>')+'</div>'
+      +((cmpMode&&cmpSubOf(it))?'':('<div class="cell-name cn-name">'+(it.name?esc(it.name):'<span class="sm-empty">—</span>')+'</div>'))   /* セットの2行目以降は商品名を出さない */
       +(cmpMode?'':'<div class="gh-ln"><button type="button" class="btn-reg" data-reg="'+escA(it.code)+'" title="この商品を本ツールに登録します">＋ 登録</button></div>')
       +'</div></td>';
     if(key==='code')return '<td class="mono">'+esc(it.code)+'<span class="gh-badge">未登録</span></td>';
@@ -3518,7 +3518,7 @@ function cellHtml(key,it){
     var _cd=it.code||'',_nm=it.name||'';
     return '<td><div class="cn-wrap">'
       +'<div class="dc-cell mono cn-code" data-id="'+escA(it.id)+'" data-field="code" data-full="'+escA(_cd)+'">'+(_cd?esc(_cd):'<span class="sm-empty">—</span>')+'</div>'
-      +'<div class="dc-cell cell-name cn-name" data-id="'+escA(it.id)+'" data-field="name" data-full="'+escA(_nm)+'">'+(_nm?esc(_nm):'<span class="sm-empty">—</span>')+'</div>'
+      +((cmpMode&&cmpSubOf(it))?'':('<div class="dc-cell cell-name cn-name" data-id="'+escA(it.id)+'" data-field="name" data-full="'+escA(_nm)+'">'+(_nm?esc(_nm):'<span class="sm-empty">—</span>')+'</div>'))   /* セットの2行目以降は商品名を出さない */
       +(cmpMode?'':cnLinksHtml(it))
       +'</div></td>';
   }
