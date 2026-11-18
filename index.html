@@ -1366,7 +1366,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.19</span>
+        <span class="version" id="version">v4.20</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1746,7 +1746,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.19</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.20</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2374,6 +2374,7 @@ function cmpStats(){
 function cmpSaveCache(){
   try{localStorage.setItem(CMPCACHE,JSON.stringify({v:3,raku:cmpData.raku,yahoo:cmpData.yahoo,ym:cmpData.ym,at:cmpData.at}));}catch(e){}
 }
+var CMP_FRESH_MS=60*60*1000;
 function cmpLoadCache(){
   try{
     var c=JSON.parse(localStorage.getItem(CMPCACHE));
@@ -2384,7 +2385,8 @@ function cmpLoadCache(){
 async function cmpLoad(force){
   if(cmpData.loading)return;
   var lm=cmpLastMonth();
-  if(!force&&cmpData.raku&&cmpData.ym===lm.label)return;
+  /* 売上は先月分のままでよいが、今月追加した商品も出したいので、取得から1時間たったら商品一覧ごと取り直す */
+  if(!force&&cmpData.raku&&cmpData.ym===lm.label&&cmpData.at&&(Date.now()-cmpData.at)<CMP_FRESH_MS)return;
   cmpData.loading=true;cmpData.err='';renderCmpStat();
   var c=cmpCfg();
   var adUrl=c.adUrl.replace('{shop}',c.shop)+'?t='+Date.now();
@@ -3011,7 +3013,7 @@ function renderCmpStat(){
   try{var pc=$('pullCmpState');if(pc){
     if(cmpData.loading)pc.textContent='取得中…';
     else if(!cmpData.raku&&!cmpData.yahoo)pc.textContent='未取得';
-    else pc.textContent=cmpData.ym+'分を取得済み（楽天'+Object.keys(cmpData.raku||{}).length+'件／Yahoo'+Object.keys(cmpData.yahoo||{}).length+'件'+(cmpData.at?('・'+new Date(cmpData.at).toLocaleString('ja-JP')):'')+'）'+(cmpData.err?(' ⚠'+cmpData.err):'');
+    else pc.textContent='売上は'+cmpData.ym+'分・商品一覧は取得時点の最新（楽天'+Object.keys(cmpData.raku||{}).length+'件／Yahoo'+Object.keys(cmpData.yahoo||{}).length+'件'+(cmpData.at?('・'+new Date(cmpData.at).toLocaleString('ja-JP')):'')+'）'+(cmpData.err?(' ⚠'+cmpData.err):'');
   }}catch(e){}
   try{renderCmpSave();}catch(e){}
   if(cmpData.loading){el.textContent='比較データ取得中…';el.className='cmp-stat load';return;}
@@ -5252,6 +5254,9 @@ function renderLpTypeTabs(){var el=$('lpTypeRow');if(!el)return;var opts=getLpOp
 renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();renderCmpTabs();
 try{cmpLoadCache();renderCmpStat();}catch(e){}
 setTimeout(function(){try{if(cmpMode||cmpColsVisible()||cmpFilter)cmpLoad(false);}catch(e){}},1500);
+/* 開いたままでも、1時間ごと（＋タブに戻ってきたとき）に商品一覧が古ければ取り直す */
+setInterval(function(){try{if(!document.hidden&&(cmpMode||cmpColsVisible()))cmpLoad(false);}catch(e){}},10*60*1000);
+document.addEventListener('visibilitychange',function(){try{if(!document.hidden&&(cmpMode||cmpColsVisible()))cmpLoad(false);}catch(e){}});
 if($('lpCountRow'))$('lpCountRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpc')||'';lpCountFilter=(nv&&nv===lpCountFilter)?'':nv;render();});
 if($('lpTypeRow'))$('lpTypeRow').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ltab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ltab'))return;var nv=b.getAttribute('data-lpt')||'';lpTypeFilter=(nv&&nv===lpTypeFilter)?'':nv;render();});
 if($('catPills'))$('catPills').addEventListener('click',function(e){var b=e.target;while(b&&b!==this&&!(b.classList&&b.classList.contains('ctab')))b=b.parentNode;if(!b||!b.classList||!b.classList.contains('ctab'))return;var nv=b.getAttribute('data-listing')||'';listingFilter=(nv&&nv===listingFilter)?'':nv;if(cmpMode){cmpMode=false;cmpFilter='';cmpOkFilter='';renderCmpTabs();renderHead();}render();updateStickyH();});
