@@ -1367,7 +1367,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.24</span>
+        <span class="version" id="version">v4.25</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1747,7 +1747,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.24</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.25</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2733,13 +2733,32 @@ function cmpFlushSave(){
 /* ===== 確定コード（両モールの手動ひも付け） ===== */
 function cmpFixMap(){var s=getSettings();return (s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};}
 function cmpFixOf(code){var k=cmpNorm(code);if(!k)return '';var m=cmpFixMap();return m[k]||'';}
+function cmpGroupHeadByKey(key){
+  try{var rows=cmpRows();for(var i=0;i<rows.length;i++){var g=_cmpG[rows[i].id];if(g&&g.key===key&&!g.sub)return rows[i];}}catch(e){}
+  return null;
+}
 function cmpSetFix(code,v){
   var k=cmpNorm(code);if(!k)return;
   cmpSnapEnsure();
+  /* 結びつける前に、この商品が入っていたグループのリニュ実施を覚えておく */
+  var _oldKey=cmpKeyOf(code),_oldHead=cmpGroupHeadByKey(_oldKey),_oldVal=_oldHead?rakuCmpVal(_oldHead):CMP_DEF_VAL;
   var s=getSettings();var m=(s.cmpFix&&typeof s.cmpFix==='object')?s.cmpFix:{};
   v=String(v==null?'':v).trim();
   if(v)m[k]=v;else delete m[k];
   s.cmpFix=m;cmpQuietSave(s);cmpInvalidate();
+  /* 結びつけた先の親が「選択前」で、もともと選択前以外が付いていたら、そちらを優先して親に付ける */
+  try{
+    if(v&&_oldVal&&_oldVal!==CMP_DEF_VAL){
+      var _nk=cmpKeyOf(code);if(_nk!==_oldKey){
+        var _h=cmpGroupHeadByKey(_nk);
+        if(_h&&rakuCmpVal(_h)===CMP_DEF_VAL){
+          if(_h.__ghost)cmpSetStg(_nk,_oldVal);
+          else{cmpSnapItem(_h.id);stageEditQuiet(_h.id,'rakuCmp',_oldVal);}
+          cmpInvalidate();
+        }
+      }
+    }
+  }catch(e){}
 }
 function cmpKeyOf(code){var f=cmpFixOf(code);return f?('f:'+cmpNorm(f)):('c:'+cmpNorm(code));}
 /* 非表示（削除）した商品 */
