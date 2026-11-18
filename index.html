@@ -1018,6 +1018,11 @@ tr.ghost-row td{color:var(--ink-2)}
 .chc-fix.on{background:#1f3a63;border-color:#1f3a63;color:#fff}
 .chc-fix:disabled{opacity:.45;cursor:default}
 .ctab-clr{font-weight:800;color:var(--ink-3);border-style:dashed}
+.rcn-list{display:grid;gap:8px;margin:6px 0 4px}
+.rcn-row{display:grid;grid-template-columns:26px 120px 1fr;align-items:center;gap:10px}
+.rcn-no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:6px;color:#fff;font-weight:800;font-size:13px}
+.rcn-orig{font-size:12px;color:var(--ink-3)}
+.rcn-in{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line-2);border-radius:8px}
 .ctab-fixmode{font-weight:800;color:#0e7c8a;border-color:#9fd3da}
 .ctab-clr:hover{border-color:var(--red);color:var(--red);border-style:solid}
 .pull-sec{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-2)}
@@ -1361,7 +1366,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.16</span>
+        <span class="version" id="version">v4.18</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1741,7 +1746,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.16</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.18</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -1799,13 +1804,22 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <button class="btn btn-red btn-sm" id="btnResizeDone">完了</button>
 </div>
 
+<div class="overlay" id="rcNameModal" hidden>
+  <div class="mini">
+    <h2>🏷️ リニュ実施の項目名</h2>
+    <p class="hint">ボタンと上の絞り込みに出る名前を変えられます。空欄にすると元の名前に戻ります。<br>※名前だけの変更です。各商品に付いている状態や件数はそのままです。</p>
+    <div id="rcNameList" class="rcn-list"></div>
+    <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="rcNameModal">キャンセル</button><button class="btn btn-dark" id="btnRcNameSave">保存</button></div>
+  </div>
+</div>
 <div class="overlay" id="topMgrModal" hidden>
   <div class="mini">
     <h2>📋 表示内容</h2>
-    <p class="hint">表に出す項目と、「LP本数」の選択肢を編集します。</p>
+    <p class="hint">表に出す項目、リニュ実施の項目名、「LP本数」の選択肢を編集します。</p>
     <div class="setedit-btns">
       <button type="button" class="setedit-item" id="tmStatus"><span class="se-ico">📋</span><span class="se-txt"><b>表示項目</b><small>表に出す項目の出し入れ・並び替え</small></span></button>
       <button type="button" class="setedit-item" id="tmCat" style="display:none"><span class="se-ico">📂</span><span class="se-txt"><b>出品内容</b><small>カテゴリ（A/B/C…）の追加・名前・アイコン・並び替え</small></span></button>
+      <button type="button" class="setedit-item" id="tmRc"><span class="se-ico">🏷️</span><span class="se-txt"><b>リニュ実施の項目名</b><small>選択前・実施予定…の表示名を変更</small></span></button>
       <button type="button" class="setedit-item" id="tmLp"><span class="se-ico">📄</span><span class="se-txt"><b>LP本数</b><small>本数の選択肢（数字）を編集</small></span></button>
     </div>
     <div class="acts"><span class="sp"></span><button class="btn btn-ghost" data-close="topMgrModal">閉じる</button></div>
@@ -2631,7 +2645,7 @@ function cmpDiffList(){
     if(String(o1==null?'':o1)!==String(n1==null?'':n1))out.push({g:'リニュ選定',c:String(k).replace(/^[cf]:/,''),f:okLabelOf(o1),t:okLabelOf(n1)});}
   var m2=s.cmpStg||{};seen={};for(k in m2)seen[k]=1;for(k in cmpSnap.stg)seen[k]=1;
   for(k in seen){var o2=cmpSnap.stg[k]||'選択前',n2=m2[k]||'選択前';
-    if(o2!==n2)out.push({g:'リニュ実施',c:String(k).replace(/^[cf]:/,''),f:o2,t:n2});}
+    if(o2!==n2)out.push({g:'リニュ実施',c:String(k).replace(/^[cf]:/,''),f:rcLabel(o2),t:rcLabel(n2)});}
   var m3=s.cmpFix||{};seen={};for(k in m3)seen[k]=1;for(k in cmpSnap.fix)seen[k]=1;
   for(k in seen){var o3=cmpSnap.fix[k]||'(なし)',n3=m3[k]||'(なし)';
     if(o3!==n3)out.push({g:'確定コード',c:k,f:o3,t:n3});}
@@ -2641,7 +2655,7 @@ function cmpDiffList(){
   for(k in cmpSnap.items){
     var it=findItemById(k);if(!it)continue;
     var o5=cmpSnap.items[k]||'選択前',n5=it.rakuCmp||'選択前';
-    if(o5!==n5)out.push({g:'リニュ実施',c:it.code||k,f:o5,t:n5});
+    if(o5!==n5)out.push({g:'リニュ実施',c:it.code||k,f:rcLabel(o5),t:rcLabel(n5)});
   }
   return out;
 }
@@ -2978,7 +2992,7 @@ function renderCmpTabs(){
     var op=getOpts('rakuCmp');
     for(var i=0;i<op.length;i++){
       var c3=RC_COLOR[op[i].c]||'#7a756d',on3=(cmpMode&&cmpFilter===op[i].l);
-      h2+='<button class="ctab ctab-col'+(on3?' on':'')+'" style="'+(on3?('background:'+c3+';border-color:'+c3+';color:#fff'):'')+'" data-cmp="'+escA(op[i].l)+'">'+numTile(NUMS[i],c3)+esc(op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';
+      h2+='<button class="ctab ctab-col'+(on3?' on':'')+'" style="'+(on3?('background:'+c3+';border-color:'+c3+';color:#fff'):'')+'" data-cmp="'+escA(op[i].l)+'">'+numTile(NUMS[i],c3)+esc(op[i].n||op[i].l)+'<span class="cnt">'+cmpCount(op[i].l)+'</span></button>';
     }
     h2+='<span class="pill-sep"></span>';
     h2+='<button class="ctab'+((cmpMode&&cmpFilter==='')?' on':'')+'" data-cmp="" title="実施後・SKIP（2種）も含めてすべて表示">全て<span class="cnt">'+cmpCount('')+'</span></button>';
@@ -3015,12 +3029,14 @@ var DEFAULT_LISTING=['新規出品','リニューアル-同一ページ','リニ
 var DEFAULT_OPTS={
   status:[{l:'未着手',c:'gray',t:'1'},{l:'作成中',c:'orange',t:'2'},{l:'確認待ち',c:'blue',t:'3'},{l:'完了',c:'green',t:'4'}],
   listingType:[{l:'新規出品',c:'green',t:'新'},{l:'リニューアル-同一ページ',c:'blue',t:'同'},{l:'リニューアル-新規ページ',c:'orange',t:'新'},{l:'再登録',c:'gray',t:'再'}],
-  rakuCmp:[{l:'選択前',c:'gray',t:'前'},{l:'実施予定',c:'orange',t:'予'},{l:'実施候補',c:'teal',t:'候'},{l:'実施後',c:'green',t:'後'},{l:'SKIP-薄利益',c:'purple',t:'S'},{l:'SKIP-微妙商品',c:'slate',t:'微'}],
+  rakuCmp:[{l:'選択前',c:'gray',t:'前'},{l:'実施予定',c:'orange',t:'予'},{l:'実施候補',c:'blue',t:'候'},{l:'実施後',c:'green',t:'後'},{l:'SKIP-薄利益',c:'red',t:'S'},{l:'SKIP-微妙商品',c:'purple',t:'微'}],
   pagePlan:[{l:'1',c:'gray',t:'1'},{l:'2',c:'gray',t:'2'},{l:'3',c:'gray',t:'3'},{l:'4',c:'gray',t:'4'},{l:'5',c:'gray',t:'5'},{l:'6',c:'gray',t:'6'},{l:'7',c:'gray',t:'7'},{l:'8',c:'gray',t:'8'},{l:'9',c:'gray',t:'9'}]
 };
-function cloneOpts(o){var r={};for(var k in o){r[k]=o[k].map(function(x){return {l:x.l,c:x.c,t:x.t};});}return r;}
-function mergeOpts(c){var r=cloneOpts(DEFAULT_OPTS);for(var k in r){if(c&&c[k]&&c[k].length){r[k]=c[k].map(function(x){return {l:(x.l||''),c:(x.c||'gray'),t:(x.t!=null?x.t:'')};});}}return r;}
+function cloneOpts(o){var r={};for(var k in o){r[k]=o[k].map(function(x){var y={l:x.l,c:x.c,t:x.t};if(x.n)y.n=x.n;return y;});}return r;}
+function mergeOpts(c){var r=cloneOpts(DEFAULT_OPTS);for(var k in r){if(c&&c[k]&&c[k].length){r[k]=c[k].map(function(x){var y={l:(x.l||''),c:(x.c||'gray'),t:(x.t!=null?x.t:'')};if(x.n)y.n=String(x.n);return y;});}}return r;}
 function getOpts(field){return getSettings().opts[field]||DEFAULT_OPTS[field];}
+/* リニュ実施の表示名（中身の値はそのまま・見た目の名前だけ変える）。「表示内容 → リニュ実施の項目名」で変更 */
+function rcLabel(v){var op=getOpts('rakuCmp');for(var i=0;i<op.length;i++){if(op[i].l===v)return op[i].n||op[i].l;}return v;}
 function optByLabel(field,label){if(!label)return null;var a=getOpts(field);for(var i=0;i<a.length;i++){if(a[i].l===label)return a[i];}return null;}
 function markHtml(opt){if(!opt)return '';return '<span class="mk mk-'+esc(opt.c||'gray')+'">'+esc(opt.t||'')+'</span>';}
 var DEFAULT_CATEGORIES=[{id:'cat_a',label:'新規出品',icon:'letter:A'},{id:'cat_b',label:'リニューアル-同一ページ',icon:'letter:B'},{id:'cat_c',label:'リニューアル-新規ページ',icon:'letter:C'},{id:'cat_d',label:'再登録',icon:'letter:D'}];
@@ -3113,7 +3129,7 @@ function writeSettingsRaw(js){
   }
 }
 var _setObj=null,_setObjKey=null;
-function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false,cmpMig18:false,cmpMig19:false,cmpMig20:false,cmpMig21:false,cmpMig22:false,cmpMig23:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;if(c.cmpMig18)d.cmpMig18=true;if(c.cmpMig19)d.cmpMig19=true;if(c.cmpMig20)d.cmpMig20=true;if(c.cmpMig21)d.cmpMig21=true;if(c.cmpMig22)d.cmpMig22=true;if(c.cmpMig23)d.cmpMig23=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
+function getSettings(){var _rw=setRaw();if(_setObj&&_setObjKey===_rw)return _setObj;var d={opts:cloneOpts(DEFAULT_OPTS),cols:null,colcfg:{},colorder:null,categories:null,statuses:null,lpOpts:null,colcfgV:{},colorderV:{},colcfgS:{},colorderS:{},scopeOpt:{},scopeMig1:false,pp9mig1:false,ppColor:'',allView:'',cmpShop:'',cmpAdUrl:'',cmpYUrl:'',cmpYImg:'',cmpRUrl:'',cmpFix:{},cmpHide:{},cmpOk:{},cmpStg:{},cmpMig2:false,cmpMig3:false,cmpMig4:false,cmpMig5:false,cmpMig6:false,cmpMig7:false,cmpMig8:false,cmpMig9:false,cmpMig10:false,cmpMig11:false,cmpMig12:false,cmpMig13:false,cmpMig14:false,cmpMig15:false,cmpMig16:false,cmpMig17:false,cmpMig18:false,cmpMig19:false,cmpMig20:false,cmpMig21:false,cmpMig22:false,cmpMig23:false,cmpMig24:false};try{var c=JSON.parse(setRaw());if(c){if(c.opts)d.opts=mergeOpts(c.opts);if(c.cols)d.cols=c.cols;if(c.colcfg&&typeof c.colcfg==='object')d.colcfg=c.colcfg;if(c.colorder&&c.colorder.length)d.colorder=c.colorder;if(c.categories)d.categories=c.categories;if(c.statuses)d.statuses=c.statuses;if(c.lpOpts&&c.lpOpts.length)d.lpOpts=c.lpOpts;if(c.colcfgV&&typeof c.colcfgV==='object')d.colcfgV=c.colcfgV;if(c.colorderV&&typeof c.colorderV==='object')d.colorderV=c.colorderV;if(c.colcfgS&&typeof c.colcfgS==='object')d.colcfgS=c.colcfgS;if(c.colorderS&&typeof c.colorderS==='object')d.colorderS=c.colorderS;if(c.scopeOpt&&typeof c.scopeOpt==='object')d.scopeOpt=c.scopeOpt;if(c.scopeMig1)d.scopeMig1=true;if(c.pp9mig1)d.pp9mig1=true;if(c.ppColor)d.ppColor=c.ppColor;if(c.allView)d.allView=c.allView;if(c.cmpShop)d.cmpShop=c.cmpShop;if(c.cmpAdUrl)d.cmpAdUrl=c.cmpAdUrl;if(c.cmpYUrl)d.cmpYUrl=c.cmpYUrl;if(c.cmpYImg)d.cmpYImg=c.cmpYImg;if(c.cmpRUrl)d.cmpRUrl=c.cmpRUrl;if(c.cmpFix&&typeof c.cmpFix==='object')d.cmpFix=c.cmpFix;if(c.cmpHide&&typeof c.cmpHide==='object')d.cmpHide=c.cmpHide;if(c.cmpOk&&typeof c.cmpOk==='object')d.cmpOk=c.cmpOk;if(c.cmpStg&&typeof c.cmpStg==='object')d.cmpStg=c.cmpStg;if(c.cmpMig2)d.cmpMig2=true;if(c.cmpMig3)d.cmpMig3=true;if(c.cmpMig4)d.cmpMig4=true;if(c.cmpMig5)d.cmpMig5=true;if(c.cmpMig6)d.cmpMig6=true;if(c.cmpMig7)d.cmpMig7=true;if(c.cmpMig8)d.cmpMig8=true;if(c.cmpMig9)d.cmpMig9=true;if(c.cmpMig10)d.cmpMig10=true;if(c.cmpMig11)d.cmpMig11=true;if(c.cmpMig12)d.cmpMig12=true;if(c.cmpMig13)d.cmpMig13=true;if(c.cmpMig14)d.cmpMig14=true;if(c.cmpMig15)d.cmpMig15=true;if(c.cmpMig16)d.cmpMig16=true;if(c.cmpMig17)d.cmpMig17=true;if(c.cmpMig18)d.cmpMig18=true;if(c.cmpMig19)d.cmpMig19=true;if(c.cmpMig20)d.cmpMig20=true;if(c.cmpMig21)d.cmpMig21=true;if(c.cmpMig22)d.cmpMig22=true;if(c.cmpMig23)d.cmpMig23=true;if(c.cmpMig24)d.cmpMig24=true;}}catch(e){}_setObj=d;_setObjKey=_rw;return d;}
 function getLpOpts(){var s=getSettings();if(s.lpOpts&&s.lpOpts.length)return s.lpOpts.map(function(o){return {v:o.v,label:o.label,c:o.c||'#7a756d'};});return LP_OPTS.map(function(o){return {v:o.v,label:o.label,c:LP_COLORS[o.v]||'#7a756d'};});}
 function saveLpOpts(arr){var s=getSettings();s.lpOpts=arr.map(function(o){return {v:o.v,label:o.label,c:o.c};});saveSettings(s);}
 function lpColor(v){var o=getLpOpts();for(var i=0;i<o.length;i++)if(o[i].v===v)return o[i].c;return null;}
@@ -3331,7 +3347,7 @@ function rcBtnsHtml(it){
   for(var i=0;i<op.length;i++){
     var on=(cur===op[i].l);
     var _rc=RC_COLOR[op[i].c]||'#7a756d';
-    h+='<button type="button" class="ok3b rcb'+(on?' on':'')+'" style="'+(on?('background:'+_rc+';color:#fff'):'')+'" data-rc="'+escA(op[i].l)+'" data-rcid="'+escA(it.id)+'"><span class="bnum" style="'+(on?'':('color:'+_rc))+'">'+NUMS[i]+'</span>'+esc(op[i].l)+'</button>';
+    h+='<button type="button" class="ok3b rcb'+(on?' on':'')+'" style="'+(on?('background:'+_rc+';color:#fff'):'')+'" data-rc="'+escA(op[i].l)+'" data-rcid="'+escA(it.id)+'"><span class="bnum" style="'+(on?'':('color:'+_rc))+'">'+NUMS[i]+'</span>'+esc(op[i].n||op[i].l)+'</button>';
   }
   return h+'</div>';
 }
@@ -3767,6 +3783,21 @@ function openManage(){var box=$('optPage');if(box){box.innerHTML='';var opts=get
 function collectOpts(field){var rows=$(contOf(field)).querySelectorAll('.opt-row');var arr=[];for(var i=0;i<rows.length;i++){var l=rows[i].querySelector('.opt-label').value.trim();if(!l)continue;arr.push({l:l,c:'',t:''});}return arr;}
 if($('btnManage'))$('btnManage').onclick=openManage;
 if($('tmLp'))$('tmLp').onclick=function(){hide('topMgrModal');openManage();};
+function openRcNames(){
+  var box=$('rcNameList');if(!box)return;var op=getOpts('rakuCmp');var h='';
+  for(var i=0;i<op.length;i++){var c=RC_COLOR[op[i].c]||'#7a756d';
+    h+='<label class="rcn-row"><span class="rcn-no" style="background:'+c+'">'+NUMS[i]+'</span><span class="rcn-orig">'+esc(op[i].l)+'</span>'
+      +'<input type="text" class="rcn-in" data-i="'+i+'" value="'+escA(op[i].n||'')+'" placeholder="'+escA(op[i].l)+'（元の名前）" maxlength="20" autocomplete="off"></label>';}
+  box.innerHTML=h;show('rcNameModal');
+}
+if($('tmRc'))$('tmRc').onclick=function(){hide('topMgrModal');openRcNames();};
+if($('btnRcNameSave'))$('btnRcNameSave').onclick=function(){
+  var s=getSettings();if(!s.opts)s.opts={};if(!s.opts.rakuCmp||!s.opts.rakuCmp.length)s.opts.rakuCmp=cloneOpts(DEFAULT_OPTS).rakuCmp;
+  var ins=document.querySelectorAll('#rcNameList .rcn-in');
+  for(var i=0;i<ins.length;i++){var k=+ins[i].getAttribute('data-i'),v=(ins[i].value||'').trim();var o=s.opts.rakuCmp[k];if(!o)continue;
+    if(v&&v!==o.l)o.n=v;else delete o.n;}
+  saveSettings(s);hide('rcNameModal');renderCmpTabs();renderHead();render();toast('リニュ実施の項目名を保存しました');
+};
 if($('tmLpType'))$('tmLpType').onclick=function(){hide('topMgrModal');openLpManager();};
 var LP_PALETTE=[['#2f6fb0','青'],['#4db8e8','水色'],['#1f9d63','緑'],['#16c79a','ミント'],['#c0392b','赤'],['#d98324','オレンジ'],['#f5b301','イエロー'],['#8257c9','紫'],['#0e9aa7','ティール'],['#e84393','ピンク'],['#2c3e50','ネイビー'],['#8d6e63','ブラウン'],['#7a756d','グレー']];
 function lpColorSel(c){var o='';for(var i=0;i<LP_PALETTE.length;i++){o+='<option value="'+LP_PALETTE[i][0]+'"'+(c===LP_PALETTE[i][0]?' selected':'')+'>■ '+LP_PALETTE[i][1]+'</option>';}return o;}
@@ -6131,6 +6162,16 @@ function migrateRc6(){
     if(ch){try{persist();scheduleSync();}catch(_e){}}
   }catch(e){}}finally{_migrating=false;}
 }
+/* リニュ実施の色：実施候補＝青、SKIP-薄利益＝赤、SKIP-微妙商品＝紫（行の背景も薄い同系色になる）。一度だけ */
+function migrateRcColors(){
+  _migrating=true;
+  try{try{
+    var s=getSettings();if(s.cmpMig24)return;
+    var want={'選択前':'gray','実施予定':'orange','実施候補':'blue','実施後':'green','SKIP-薄利益':'red','SKIP-微妙商品':'purple'};
+    if(s.opts&&s.opts.rakuCmp)s.opts.rakuCmp.forEach(function(o){if(o&&want[o.l])o.c=want[o.l];});
+    s.cmpMig24=true;saveSettings(s);
+  }catch(e){}}finally{_migrating=false;}
+}
 function migrateRcW(){
   _migrating=true;
   try{try{
@@ -6140,7 +6181,7 @@ function migrateRcW(){
     m.rakuCmp=c;s.colcfgS[CMP_SCOPE]=m;s.cmpMig13=true;saveSettings(s);
   }catch(e){}}finally{_migrating=false;}
 }
-function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();migrateRcCand();migrateAdCols();migrateAdColsW();migrateRcAfter();migrateRcSkip2();migrateRc6();applyScope();}catch(e){}}
+function applyInitialView(){try{migrateScopes();migrateCmpCols();migrateCmpCols2();migrateCmpCols3();migrateCmpCols4();migrateCmpCols5();migrateCmpCols6();migrateCmpOpts();migrateCmpOpts2();migrateCmpOkW();migrateRcW();migrateMainW();migrateSalesW();migrateRcInScopes();migrateRcScopesW();migrateRcCand();migrateAdCols();migrateAdColsW();migrateRcAfter();migrateRcSkip2();migrateRc6();migrateRcColors();applyScope();}catch(e){}}
 applyInitialView();
 try{updateCapBadge();capLoad(false);}catch(e){}
 if(/[?&]home=1/.test(location.search)){try{goHome();if(history.replaceState)history.replaceState(null,'',location.pathname);}catch(e){}}
