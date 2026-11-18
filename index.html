@@ -1367,7 +1367,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
       <img class="logo-img" src="logo1.png" alt="ヤフショ画像くん" onerror="var s=document.createElement('span');s.className='logo-text';s.textContent='🖼️ ヤフショ画像くん';this.parentNode.insertBefore(s,this);this.remove();">
       <button class="btn btn-line" id="btnNewTab">↗ 新しいタブ</button>
       <div class="header-actions">
-        <span class="version" id="version">v4.25</span>
+        <span class="version" id="version">v4.26</span>
         <span class="view-badge" id="viewBadge" hidden title="このPCには保存用トークンが未設定です。GitHubの内容をそのまま表示します（この端末での変更は保存されません）">👀 閲覧モード</span>
         <button class="btn btn-ghost" id="btnManageStatus"><span class="btn-arrow">←</span>表示内容</button>
         <button class="btn btn-ghost" id="btnCols2" style="display:none"><span class="btn-arrow">↓</span>列名・列幅・列順管理</button><!-- 「⇔ 列・幅」に統合 -->
@@ -1402,6 +1402,9 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
 
   <!-- 2段目：出品内容 ＋ 右側に検索・追加・一括編集・保存（LP本数の段は廃止） -->
   <div class="frow frow-status frow-lp">
+    <!-- 絞り込み：楽天だけ／Yahooだけに情報がある（結びつけされていない）商品 -->
+    <span class="frow-label">絞り込み</span>
+    <div class="pill-group" id="cmpPills3"></div>
     <span class="frow-label" style="display:none">出品内容</span>
     <div class="pill-group" id="catPills" style="display:none"></div><!-- 出品内容の絞り込みは廃止（要素はJSの互換のため残す） -->
     <span class="spacer"></span>
@@ -1747,7 +1750,7 @@ body.col-resize-on #grid th.col-spx,body.col-resize-on #gridBody td.col-spx{back
   <div class="mini">
     <h2>📜 アプリログ</h2>
     <p class="hint">GitHub保存・画像アップロード等のログです。</p>
-    <textarea readonly>[起動] ヤフショ画像くん v4.25</textarea>
+    <textarea readonly>[起動] ヤフショ画像くん v4.26</textarea>
     <div class="acts"><button class="btn btn-line" id="btnCopyLog">📋 ログをコピー</button><span class="sp"></span><button class="btn btn-ghost" data-close="logModal">閉じる</button></div>
   </div>
 </div>
@@ -2280,10 +2283,13 @@ var RC_LEGACY={'SKIP':'SKIP-薄利益','SKIP-敵強い':'SKIP-薄利益','実施
 function rcNorm(v){var k=String(v||'');return RC_LEGACY[k]||v;}
 function rcActive(v){v=String(rcNorm(v)||'選択前');return v!=='実施後'&&v.indexOf('SKIP')!==0;}   /* 進行中＝選択前・実施予定・実施候補・Y-新商品 */
 var cmpFilter=CMP_DEF_F,cmpMode=true,cmpOkFilter='',cmpQ='';
+/* 楽天のみ（'r'）／Yahooのみ（'y'）：片方にしか情報がなく、結びつけされていない商品 */
+var cmpSideFilter='';
+function cmpSideOf(x){var q=cmpGrpOf(x);var r=!!(q&&q.rakus&&q.rakus.length),y=!!(q&&q.yahoos&&q.yahoos.length);return (r&&!y)?'r':((y&&!r)?'y':'');}
 var CMP_PAGE=150,cmpLimit=CMP_PAGE;
 function cmpResetLimit(){cmpLimit=CMP_PAGE;}
 function cmpClearFilters(){
-  cmpMode=true;cmpFilter=CMP_DEF_F;cmpOkFilter='';cmpQ='';cmpSort={key:'',dir:-1};cmpResetLimit();
+  cmpMode=true;cmpFilter=CMP_DEF_F;cmpOkFilter='';cmpQ='';cmpSideFilter='';cmpSort={key:'',dir:-1};cmpResetLimit();
   statusFilter='';listingFilter='';lpCountFilter='';lpTypeFilter='';
   try{var si=$('cmpSearch');if(si)si.value='';var sc=$('cmpSearchClr');if(sc)sc.hidden=true;}catch(e){}
   try{renderCmpTabs();renderCatTabs();renderStatusTabs();renderLpCountTabs();renderLpTypeTabs();}catch(e){}
@@ -3072,6 +3078,15 @@ function renderCmpTabs(){
     h2+='<span class="pill-sep"></span><button class="ctab ctab-fixmode'+(cmpFixMode?' on':'')+'" data-cmpfixmode="1" title="押すと「楽天結び」「Yahoo結び」の列を表示します（もう一度押すと隠します）">🔗 結び作成用</button>';
     el2.innerHTML=h2;
   }
+  var el3=$('cmpPills3');
+  if(el3){
+    var _sc=function(side){var rows=null;try{if(cmpData.raku||cmpData.yahoo)rows=cmpRows();}catch(e){}if(!rows)return 0;var n=0,f=cmpFilter;
+      for(var i=0;i<rows.length;i++){var x=rows[i];if(cmpSubOf(x))continue;if(!cmpShowReg&&cmpHasReg(x))continue;if(cmpSideOf(x)!==side)continue;
+        var v=rakuCmpVal(cmpHeadOf(x));if(f===CMP_DEF_F){if(!rcActive(v))continue;}else if(f&&v!==f)continue;n++;}return n;};
+    var _sf=cmpQ?'':cmpSideFilter;
+    el3.innerHTML='<button class="ctab ctab-side'+((cmpMode&&_sf==='r')?' on':'')+'" data-side="r" title="楽天にだけ情報があり、Yahooと結びつけされていない商品">楽天のみ<span class="cnt">'+_sc('r')+'</span></button>'
+      +'<button class="ctab ctab-side'+((cmpMode&&_sf==='y')?' on':'')+'" data-side="y" title="Yahooにだけ情報があり、楽天と結びつけされていない商品">Yahooのみ<span class="cnt">'+_sc('y')+'</span></button>';
+  }
   renderCmpStat();
 }
 function renderCmpStat(){
@@ -3705,6 +3720,7 @@ function render(){if(gridEditingNow()){_renderQueued=true;return;}resetViewCache
       /* 検索中は絞り込み（進行中・実施予定など）を無視して、すべてから探す */
       var _cf=cmpQ?'':cmpFilter;
       if(_cf===CMP_DEF_F){if(!rcActive(rakuCmpVal(_hd)))return false;}else if(_cf==='__none__'){if(_hd.rakuCmp)return false;}else if(_cf){if(rakuCmpVal(_hd)!==_cf)return false;}
+      if(cmpSideFilter&&!cmpQ&&cmpSideOf(x)!==cmpSideFilter)return false;
       if(cmpOkFilter&&!cmpQ){var _gg=_cmpG[x.id];var _stt=cmpOkState(_gg&&_gg.key);
         if(cmpOkFilter==='no'){if(_stt!=='')return false;}else if(_stt!==cmpOkFilter)return false;}
       if(cmpQ&&!srchHit(x))return false;
@@ -5376,6 +5392,14 @@ function cmpPillClick(e){
 }
 if($('cmpPills'))$('cmpPills').addEventListener('click',cmpPillClick);
 if($('cmpPills2'))$('cmpPills2').addEventListener('click',cmpPillClick);
+if($('cmpPills3'))$('cmpPills3').addEventListener('click',function(e){
+  var b=e.target&&e.target.closest?e.target.closest('[data-side]'):null;if(!b)return;
+  var sd=b.getAttribute('data-side');
+  if(cmpQ){cmpQ='';try{var _si=$('cmpSearch');if(_si)_si.value='';var _sc=$('cmpSearchClr');if(_sc)_sc.hidden=true;}catch(_e){}cmpSideFilter=sd;}
+  else cmpSideFilter=(cmpSideFilter===sd)?'':sd;   /* もう一度押すと解除 */
+  if(!cmpMode)cmpFilter=CMP_DEF_F;cmpMode=true;cmpResetLimit();
+  renderCmpTabs();renderHead();render();updateStickyH();
+});
 if($('btnCmpLoad'))$('btnCmpLoad').onclick=function(){cmpLoad(true);};
 if($('btnCmpSave'))$('btnCmpSave').onclick=function(){cmpFlushSave();};
 if($('btnSaveBar'))$('btnSaveBar').onclick=function(){cmpFlushSave();try{renderSaveChip();}catch(e){}};
